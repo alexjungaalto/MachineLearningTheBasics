@@ -349,11 +349,11 @@ showstringspaces=false            %
 \newpage
 \chapter*{Preface}
 
-Machine learning has become a commodity in our every-day lives. We routinely 
-ask machine-learning empowered smartphones to suggest lovely food places 
-or to guide us through a strange place. Machine learning methods have also 
+Machine learning (ML) has become a commodity in our every-day lives. 
+We routinely ask ML empowered smartphones to suggest lovely food places 
+or to guide us through a strange place. ML methods have also 
 become standard tools in many fields of science and engineering. A plethora 
-of machine learning applications is driving a revolution of human lives at 
+of ML applications is driving a revolution of human lives at 
 unprecedented pace and scale. 
 
 This book portrays machine learning methods as the combination of three basic 
@@ -363,39 +363,30 @@ Trial and error amounts to continuously adapting a model about some data generat
 phenomenon by minimizing some notion of loss. A plethora of different ML methods 
 is obtained by combining different design choices for the data representation, model and loss.  
 
-Machine learning methods differ vastly in their actual implementations which obscures 
-their unifying basic principles. Deep learning methods use cloud computing frameworks 
-to train large models on huge online datasets. Operating on a much finer granularity 
-for data and computation, linear least squares regression can be implemented on small 
-embedded systems. However, deep learning methods and linear regression use the same 
-principle of iteratively updating a model based on the discrepancy between model predictions 
-and actual observed data. 
+Machine learning methods differ vastly in their actual implementations 
+which might obscure their unifying basic principles. Deep learning methods 
+use cloud computing frameworks to train large models on huge online 
+datasets. Operating on a much finer granularity for data and computation, 
+linear least squares regression can be implemented on small embedded 
+systems. However, deep learning methods and linear regression use 
+the same principle of iteratively updating a model based on the discrepancy 
+between model predictions and actual observed data. 
 
-Our three component picture of machine learning allows a unified treatment of a wide range 
-of concepts and techniques which seem quite unrelated at first sight. On a low-level, 
-we discuss the regularization effect of early stopping in terms of adjusting the effective 
-model space. On a higher-level, we can interpret privacy-preserving and explainable machine learning as 
-particular design choices for the model, data and loss. 
+The three component picture of ML championed in this book allows a 
+unified treatment of a wide range of concepts and techniques 
+which seem quite unrelated at first sight. On a low-level, we discuss 
+the regularization effect of early stopping in terms of adjusting the effective 
+model space. On a higher-level, we can interpret privacy-preserving 
+and explainable machine learning as particular design choices for the model, data and loss. 
 
-To make good use of widely available ML tools it is instrumental to understand its 
-underlying principles at different levels of detail. On a lower-level, this tutorial helps 
-machine learning engineers to choose suitable methods for the application at hand. 
-We also provide leaders a higher-level view on the development of ML which is required 
-to manage a machine learning team. 
-%This tutorial introduces some widely used concepts and methods for machine learning (ML). 
-%From an engineering point of view, ML revolves around the design and study of systems that 
-%implement the scientific principle. The scientific principle consists of formulating a hypothesis 
-%(choose a model) about some phenomenon, then collecting data to test the hypothesis (validate the model) 
-%and refinement of the hypothesis (model) based on the discrepancy between observations and predictions. 
-%A plethora of different ML methods is obtained by implementing the scientific principle on different 
-%computational and data platforms. Deep learning methods are one such class of ML methods that 
-%combine cloud computing and access to online (training) data. Stochastic gradient descent methods also 
-%implement the scientific principle but on a much finer granularity level for data and computation. 
-%The three steps of the scientific principle allow for different design choices. We find it therefore useful 
-%to think of ML methods as combining particular choices for the hypothesis space (model), data modelling 
-%and a quality measure (loss) steering the model tuning. 
-We believe that thinking about ML using this three components helps to navigate the steadily growing 
-offer for ready-to-use ML methods. 
+To make good use of widely available ML tools it is instrumental 
+to understand its underlying principles at different levels of detail. 
+On a lower-level, this tutorial helps machine learning engineers to 
+choose suitable methods for the application at hand. The book also 
+provides leaders a higher-level view on the development of ML 
+which is required to manage a machine learning team. 
+We believe that thinking about ML using this three components 
+helps to navigate the steadily growing offer for ready-to-use ML methods. 
 
 \section*{Acknowledgement}
 This tutorial is based on lecture notes prepared for the 
@@ -443,10 +434,11 @@ but rather take only some extra shirt for change.
 	\label{fig:skiday}
 \end{figure}
 
-How can we predict the maximum daytime temperature for the specific day 
-depicted in Figure \ref{fig:skiday}? Let us now show how this can be done via 
-machine learning. In a nutshell, ML methods are computational implementations 
-of a simple (scientific) principle. 
+How can we predict the maximum daytime temperature for 
+the specific day depicted in Figure \ref{fig:skiday}? Let us now 
+show how this can be done via ML. In a nutshell, 
+ML methods are computational implementations of a simple 
+(scientific) principle. 
 
 \begin{quote}
 Find a good hypothesis based on {\bf a model} for the phenomenon of interest by 
@@ -539,13 +531,13 @@ observation stations distributed all over Finland. We can download the history o
 minimum and maximum daytime temperature recorded by the station nearest to 
 our home location. Let us denote the resulting dataset by 
 \begin{equation}
-\mathcal{X} = \{ z^{(1)},\ldots,z^{(\samplesize)}\}.  
+ z^{(1)},\ldots,z^{(\samplesize)}\}.  
 \end{equation} 
 Each data point $\vz^{(i)}$ represents some previous day for which the 
 minimum and maximum daytime temperature $x^{(i)}$ and $y^{(i)}$ has been recorded. 
 Thus, we can represent such a day by these measurements only. We 
 will use the minimum daytime temperature $x^{(i)}$ as the feature and the 
-maximum daytime temperature $y^{(i)}$ as the label of the datapoint $\vz^{(i)}$. 
+maximum daytime temperature $y^{(i)}$ as the label of the data point $\vz^{(i)}$. 
 %In general we consider features being any property of a datapoint that can be 
 %determined without human intervention. In contrast, labels are properties of 
 %datapoints that require human expert knowledge or domain expertise. 
@@ -652,25 +644,32 @@ Finnish meteorological institute (FMI).
 \section{Linear Algebra} 
 
 Modern ML methods are computationally efficient methods to fit high-dimensional 
-models to large amounts of data. The models underlying state-of-the art ML methods 
-can contain billions of tunable or learnable parameters. To make ML methods computationally 
-efficient we need to use suitable representations for data and models. Maybe the 
-most important mathematical structure that provides such a representation is the Euclidean 
-space $\mathbb{R}^{n}$ with some dimension $n$. The rich algebraic and geometric structure 
-of $\mathbb{R}^{n}$ allows for the design of ML algorithms that can process vast amounts of 
-data in order to quickly update a model (parameters). 
+models to large amounts of data. The models underlying state-of-the art 
+ML methods can contain billions of tunable or learnable parameters. To 
+make ML methods computationally efficient we need to use suitable representations 
+for data and models. 
 
-The scatter plot in Figure \ref{fig_scatterplot_temp_FMI} is based on representing data points (individual days) 
-using vectors $\vz \in \mathbb{R}$. For a given data points, its vector representation $\vz=(x,y)^{T}$ 
-is obtained by stacking the minimum daytime temperature $x$ and the maximum daytime 
-temperature $y$ into a vector of length two. 
+Maybe the most important mathematical structure that provides such a 
+representation is the Euclidean space $\mathbb{R}^{n}$ with some dimension 
+$n$. The rich algebraic and geometric structure of $\mathbb{R}^{n}$ allows 
+for the design of ML algorithms that can process vast amounts of data to 
+quickly update a model (parameters). 
 
-We can use the Euclidean space $\mathbb{R}^{n}$ not only to represent data points but also 
-models for the data. One such class of models is obtained by linear subsets of $\mathbb{R}^{n}$, 
-such as those depicted in Figure \ref{fig_three_maps_example}. We can then use the geometric 
-structure of $\mathbb{R}^{n}$, defined by the Euclidean norm, to search for the best model. 
-As an example, we could search for the linear model, represented by a straight line, such that
-the average distance to the data points in Figure \ref{fig_scatterplot_temp_FMI} is smallest 
+The scatter plot in Figure \ref{fig_scatterplot_temp_FMI} depicts 
+data points (individual days) using vectors $\vz \in \mathbb{R}^{2}$. 
+We obtain the vector representation $\vz=(x,y)^{T}$ of a particular 
+day is obtained by stacking the minimum daytime temperature $x$ 
+and the maximum daytime temperature $y$ into a vector $\vz$ of 
+length two. 
+
+We can use the Euclidean space $\mathbb{R}^{n}$ not only to represent 
+data points but also models for the data. One such class of models is 
+obtained by linear subsets of $\mathbb{R}^{n}$, such as those depicted 
+in Figure \ref{fig_three_maps_example}. We can then use the geometric 
+structure of $\mathbb{R}^{n}$, defined by the Euclidean norm, to search 
+for the best model. As an example, we could search for the linear model, 
+represented by a straight line, such thatthe average distance to the data 
+points in Figure \ref{fig_scatterplot_temp_FMI} is smallest 
 (see Figure \ref{fig_scatterplot_temp_FMI_linalg}). 
 
 The properties of linear structures, such as straight lines, is studied within linear 
@@ -977,14 +976,18 @@ which amounts to choosing  a predictor based on minimizing the average loss (or 
 {\bf labeled training data}. The ERM principle amounts to a precise mathematical formulation of the 
 ``learning by trial and error'' paradigm. 
 
-In Chapter \ref{ch_GD} we discuss a particular optimization method, i.e., {\bf gradient descent (GD)} which 
-is an iterative method for solving the ERM problem in order to find good predictors. Variations of GD 
-are currently the de-facto standard method for solving ERM arising in large-scale ML problems \cite{Goodfellow-et-al-2016}. 
+Chapter \ref{ch_GD} discusses a particular optimization method 
+{\bf gradient descent (GD)} which is an iterative method for solving 
+the ERM problem in order to find good predictors. Variations of GD 
+are currently the de-facto standard method for solving ERM arising 
+in large-scale ML problems \cite{Goodfellow-et-al-2016}. 
 
-We then discuss in Chapter \ref{ch_validation_selection} the basic idea of validating a predictor by 
-trying it out on labeled data (so called ``validation data'') which is different from the training data used 
-to learn a predictor. As detailed in Chapter \ref{ch_overfitting_regularization}, a main reason for 
-doing validation is to detect and avoid {\bf overfitting} which causes poor performance of ML methods. 
+We then discuss in Chapter \ref{ch_validation_selection} the basic 
+idea of validating a predictor by trying it out on labeled data (so called 
+``validation data'') which is different from the training data used 
+to learn a predictor. As detailed in Chapter \ref{ch_overfitting_regularization}, 
+a main reason for doing validation is to detect and avoid {\bf overfitting} 
+which causes poor performance of ML methods. 
 
 The main focus of this tutorial is on {\bf supervised ML methods} which assign labels to each data 
 point and require the availability of some data points (the training set) whose labels are known. 
@@ -1125,9 +1128,10 @@ components of ML.
 \begin{center}
     \includegraphics[width=8cm]{AMLProblem1.jpg}  
 \end{center} 
-\caption{A formal ML problem consists of (i) a particular choice of features and label to characterize 
-	data points, (ii) a hypothesis space which consists of (computationally) feasible predictor maps 
-	from features to labels and (iii) a loss function which is used to assess the quality of a particular predictor.}
+\caption{A formal ML problem consists of (i) a particular choice of features and 
+	label to characterize data points, (ii) a hypothesis space which consists of 
+	(computationally) feasible maps from features to labels and (iii) a loss function 
+	which is used to assess the quality of a particular predictor.}
 \label{fig_ml_problem}
 \end{figure}
 
@@ -1313,36 +1317,37 @@ In contrast to features, determining the value of labels is more difficult to au
 Many ML methods revolve around finding efficient ways to determine the label of a 
 data point given its features. 
 
-As already mentioned above, the distinction of data point properties into labels and 
-those that are features is blurry. Roughly speaking, labels are properties of data points 
-that might only be determined with the help of human experts. For data points representing 
-humans, the label $y$ indicating 
-if the person has flu ($y=1$) or not ($y=0$) can typically only be determined by a physician. 
-However, in another application we might have enough resources to determine the flu status 
-of any person of interest and could use it as a feature that characterizes a person. 
+As already mentioned above, the distinction of data point properties into 
+labels and those that are features is blurry. Roughly speaking, labels are 
+properties of data points that might only be determined with the help of 
+human experts. For data points representing humans we could define 
+its label $y$ as an indicator if the person has flu ($y=1$) or not ($y=0$). 
+This label value can typically only be determined by a physician. However, 
+in another application we might have enough resources to determine the 
+flu status of any person of interest and could use it as a feature that 
+characterizes a person. 
 
-Consider a data point that represents some hike, at the start of which the snapshot in Figure 
-\ref{fig:image} has been taken. The features of this data point could be the red, green and 
-blue intensities of each pixel in the snapshot in Figure \ref{fig:image}. We can stack these 
-values into a vector $\mathbf{x} \in \mathbb{R}^{\featurelen}$ whose length $\featurelen$ 
-is given by three times the number of pixels in the image. The label $y$ associated with this 
-data point could be the expected hiking time to reach the mountain in the snapshot. Alternatively, 
-we could define the label $y$ as the water temperature of the lake visible in the snapshot. 
+Consider a data point that represents some hike, at the start of 
+which the snapshot in Figure \ref{fig:image} has been taken. The 
+features of this data point could be the red, green and blue intensities 
+of each pixel in the snapshot in Figure \ref{fig:image}. We can stack 
+these values into a vector $\vx \in \mathbb{R}^{\featurelen}$ whose 
+length $\featurelen$ is given by three times the number of pixels in 
+the image. The label $y$ associated with this data point could be 
+the expected hiking time to reach the mountain in the snapshot. 
+Alternatively, we could define the label $y$ as the water temperature 
+of the lake visible in the snapshot. 
 
-%The precise definition of the features and labels of a data point is a design choice. 
-%The label is the quantity of interest for a particular application. If we are interested in developing a 
-%smartphone-app that predicts the hiking time given a snapshot of the mountain, we use this hiking 
-%time as label. However, if we are interested in developing a smartphone-app that predicts water temperature 
-%of a lake, we use this temperature as the label. 
-
-The label space $\labelspace$ contains all possible label values of data points 
-arising in some ML problem. For the choice $\labelspace = \mathbb{R}$, it is customary 
-to refer to such a problem as a {\bf regression problem}. It is common to refer to ML 
+The label space $\labelspace$ of an ML problem contains all possible label values 
+of data points. For the choice $\labelspace = \mathbb{R}$, it is customary to refer 
+to such a problem as a {\bf regression problem}. It is also common to refer to ML 
 problems involving a discrete (finite or countably infinite) label space as {\bf classification problems}. 
-ML problems with only two different label values are referred to as {\bf binary classification problems}. 
-Examples of classification problems are: detecting presence of a tumour in a tissue, classifying 
-persons according to their age group or detecting the current floor conditions ( ``grass'', ``tiles'' or ``soil'') for 
-a mower robot. 
+
+ML problems with only two different label values are referred to as 
+{\bf binary classification problems}. Examples of classification 
+problems are: detecting presence of a tumour in a tissue, classifying 
+persons according to their age group or detecting the current floor 
+conditions ( ``grass'', ``tiles'' or ``soil'') for a mower robot. 
 
 
 
@@ -1614,14 +1619,17 @@ A widely used estimator for the square root of the variance is the
 \section{The Model}
 \label{sec_hypo_space}
 
-Consider the problem of classifying hand-drawings into two categories. The first category 
-consists of all hand-drawings that show an apple. The second category consists of all 
-hand-drawings that do not show an apple. We consider each hand-drawing as one particular  
-data point. Each data point is associated with a numeric label $y \in \mathbb{R}$ which is a 
-percentage measuring how much the underlying hand-drawing resembles an apple. 
-Beside its label $y$, each data point (hand-drawing) is characterized by a feature vector 
-$\vx=\big(x_{1},\ldots,x_{n}\big)^{T}$ obtained by stacking the greyscale intensities of 
-a $128 \times 128$ pixel image of the hand-drawing.  
+Consider the problem of classifying hand-drawings into two categories. 
+The first category consists of all hand-drawings that show an apple. 
+The second category consists of all hand-drawings that do not show 
+an apple. We consider each hand-drawing as one particular data point. 
+
+Each data point is associated with a numeric label $y \in \mathbb{R}$ 
+which is a percentage measuring how much the underlying hand-drawing 
+resembles an apple. Beside its label $y$, each data point (hand-drawing) 
+is characterized by a feature vector $\vx=\big(x_{1},\ldots,x_{n}\big)^{T}$ 
+obtained by stacking the greyscale intensities of a $128 \times 128$ 
+pixel image of the hand-drawing.  
 
 Given a set of $m$ labeled data points (the ``training data'')
 \begin{equation} 
@@ -1634,7 +1642,8 @@ ML methods learn a predictor $h(\vx)$ such that
 y \approx \underbrace{h(\vx)}_{\hat{y}}
 \end{equation}  
 for any data point with features $\vx$. The approximation \eqref{equ_approx_label_pred} 
-should be accurate for any data point, also those not contained in the training set \eqref{eq_def_training_set}. 
+should be accurate for any data point, also those not contained 
+in the training set \eqref{eq_def_training_set}. 
 
 %????
 %Consider the cleaning robot \rumba\, which is depicted in Figure \ref{fig:cleaning_robot}. 
@@ -1643,11 +1652,13 @@ should be accurate for any data point, also those not contained in the training 
 %$\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ of the snapshot $\vz^{(\sampleidx)}$ delivered 
 %by the on-board camera at time $\sampleidx$. ?????
 
-To have any chance to solve this task, we must assume (or hypothesize) an underlying 
-relation between the features $\vx^{(\sampleidx)}$ and the label $y^{(\sampleidx)}$. 
-We represent this relation between features $\vx^{(\sampleidx)}$ and label $y^{(\sampleidx)}$ 
-using a {\bf hypothesis map} $h: \featurespace \rightarrow \labelspace$, which maps the feature 
-vector $\vx^{(\sampleidx)}$ of the snapshot to a predicted label $\hat{y}^{(\sampleidx)} = h(\vx^{(\sampleidx)})$. 
+To have any chance to solve this task, we must assume (or hypothesize) 
+an underlying relation between the features $\vx^{(\sampleidx)}$ 
+and the label $y^{(\sampleidx)}$. We represent this relation between 
+features $\vx^{(\sampleidx)}$ and label $y^{(\sampleidx)}$ using a 
+{\bf hypothesis map} $h: \featurespace \rightarrow \labelspace$, which 
+maps the feature vector $\vx^{(\sampleidx)}$ of the snapshot to a 
+predicted label $\hat{y}^{(\sampleidx)} = h(\vx^{(\sampleidx)})$. 
 
 %A reasonable hypothesis $h$ should approximate the true label $y^{(\sampleidx)}$ 
 %as accurately as possible such that $\hat{y}^{(\sampleidx)}=h(\vx^{(\sampleidx)}) \approx y^{(\sampleidx)}$ 
@@ -1687,18 +1698,20 @@ vector $\vx^{(\sampleidx)}$ of the snapshot to a predicted label $\hat{y}^{(\sam
 \label{fig_feature_map_eval}
 \end{figure}
 
-In principle, we could use any possible map $h: \featurespace \rightarrow \labelspace$ for predicting the 
-label $y \in \labelspace$ based on the features $\vx \in \featurespace$ via computing $\hat{y} = h(\vx)$. 
-However, any practical ML methods has only {\bf limited computational resources} and therefore 
-can only make use of a subset of all possible predictor maps. This subset of computationally feasible (``affordable'') 
-predictors is referred to as the {\bf hypothesis space} or {\bf concept class}. 
+In principle, we could use any possible map $h: \featurespace \rightarrow \labelspace$ 
+for predicting the label $y \in \labelspace$ based on the features $\vx \in \featurespace$ 
+via computing $\hat{y} = h(\vx)$. However, any practical ML methods has only {\bf limited 
+	computational resources} and therefore can only make use of a subset of all possible 
+predictor maps. This subset of computationally feasible (``affordable'') predictors is referred 
+to as the {\bf hypothesis space} or {\bf concept class}. 
 
-The choice of which hypothesis space to use depends crucially on the available computational 
-infrastructure. Different types of computational infrastructure call for different choices for the 
-hypothesis space. For ML methods implemented in a small embedded system, we might prefer a 
-linear hypothesis space which can be processed using numerical linear algebra. Deep learning 
-methods implemented using cloud computing can make use of much larger hypothesis spaces 
-obtained from deep neural networks. 
+The choice of which hypothesis space to use depends crucially on the available 
+computational infrastructure. Different types of computational infrastructure call 
+for different choices for the hypothesis space. For ML methods implemented in 
+a small embedded system, we might prefer a linear hypothesis space which can 
+be processed using numerical linear algebra. Deep learning methods implemented 
+using cloud computing can make use of much larger hypothesis spaces obtained 
+from deep neural networks. 
 
 If the computational infrastructure allows for efficient numerical linear algebra and the feature 
 space is the Euclidean space $\mathbb{R}^{\featuredim}$, a popular choice for the hypothesis 
@@ -1961,19 +1974,23 @@ well the training dataset. Such a predictor will perform poorly on data which is
 the training data (it will not generalize well). 
 \end{itemize}
 
-The notion of a hypothesis space being too small or being too large can be made precise in 
-different ways. For a finite hypothesis spaces $\hypospace$, we might simply use the 
-cardinality $|\hypospace|$ as a measure of its size. Consider data points represented by 
-$10 \times 10 = 100$ black and white pixels (see Figure \ref{fig_snapshot_pixels}) and 
-characterized by a binary label. This amounts to a feature space $\featurespace = \{0,1\}^{1000}$ 
-and label space $\labelspace = \{0,1\}$. The largest possible hypothesis space consisting of 
-all maps is finite with size $|\hypospace| = 2^{1000}$, which is larger than the estimated number 
-of atoms in the visible universe (which is around $10^{80}$). 
+The notion of a hypothesis space being too small or being too large can 
+be made precise in different ways. For a finite hypothesis spaces $\hypospace$, 
+we might simply use the cardinality $|\hypospace|$ as a measure of its size. 
+Consider data points represented by $100 \times 10 = 1000$ black and white 
+pixels (see Figure \ref{fig_snapshot_pixels}) and characterized by a binary label. 
 
-Many ML methods use a hypothesis space which contains infinitely many different predictors (see, e.g., \eqref{equ_def_hypo_linear_pred}). 
-For infinite hypothesis spaces, we cannot easily use its cardinality as a measure for its size. Different 
-concepts have been studied for measuring the size of infinite hypothesis spaces with the 
-{\bf Vapnik–Chervonenkis (VC) dimension} being maybe the most famous one \cite{VapnikBook}. 
+This amounts to a feature space $\featurespace = \{0,1\}^{1000}$ and label space 
+$\labelspace = \{0,1\}$. The largest possible hypothesis space consisting of 
+all maps is finite with size $|\hypospace| = 2^{1000}$, which is larger than 
+the estimated number of atoms in the visible universe (which is around $10^{80}$). 
+
+Many ML methods use a hypothesis space which contains infinitely many 
+different predictors (see, e.g., \eqref{equ_def_hypo_linear_pred}). For infinite 
+hypothesis spaces, we cannot easily use its cardinality as a measure for its size. 
+Different concepts have been studied for measuring the size of infinite 
+hypothesis spaces with the {\bf Vapnik–Chervonenkis (VC) dimension} being 
+maybe the most famous one \cite{VapnikBook}. 
 
 We will use a simpler variant of the VC dimension concept and define the size of a hypothesis 
 space $\hypospace$ as the maximum number $\sizehypospace$ of arbitrary data points that 
@@ -2404,15 +2421,18 @@ some other form of indirect feedback or ``reward'' that can be attributed to a p
 prediction \cite{PredictionLearningGames,SuttonEd2}. 
 
 Consider the ML problem of predicting the optimal direction for 
-moving next a toy care given the current state. The state is sensed via a feature 
-vector $\vx$ whose entries are pixel intensities of an on-board camera. A hypothesis 
-maps the feature vector $\vx$ to a guess $\hat{y} = h(|vx)$ for the optimal steering 
-direction.  i.e., on-board camera 
-snapshots annotated (labeled) with the optimal steering direction $y$ (true label). 
-Instead, we might have only some indirect signal about the loss incurred by the 
-prediction $\hat{y}=h(\vx)$. Such a feedback signal, or reward, could be obtained 
-by a distance sensor who measures the the change of the distance between the 
-car and its goal such as the charging station. 
+moving next a toy care given the current state. ML methods can sense the 
+state via a feature vector $\vx$ whose entries are pixel intensities of a 
+snapshot. The goal is to learn a hypothesis map from the feature vector 
+$\vx$ to a guess $\hat{y} = h(vx)$ for the optimal steering direction $y$ (true label). 
+
+In some applications, we might have not access to the true label of any 
+data point. This means that we cannot evaluate the quality of a particular 
+map based on the average loss on training data. Instead, we might have 
+only some indirect signal about the loss incurred by the prediction 
+$\hat{y}=h(\vx)$. Such a feedback signal, or reward, could be obtained 
+by a distance sensor who measures the the change of the distance 
+between the car and its goal such as the charging station. 
 
 \section{Putting Together the Pieces} 
 \label{sec_putting_togehter_the_pieces}
@@ -2680,7 +2700,8 @@ training set, i.e., $y^{(1)} = h\big(\vx^{(1)} \big),\ldots, y^{(\samplesize)} =
 \newpage
 \chapter{Some Examples} 
 \label{ch_some_examples}
-As discussed in Chapter \ref{ch_Elements_ML}, ML methods combine three main components: 
+As discussed in Chapter \ref{ch_Elements_ML}, ML methods combine 
+three main components: 
 \begin{itemize} 
 \item the data which is characterized by {\bf features} which can be computed 
 or measured easily and {\bf labels} which represent high-level facts. 
@@ -2700,6 +2721,53 @@ most popular ML methods.
 %%    \caption{Hypothesis Map}\label{fig:Hypothesis Map}
 %  \label{fig_python_cheat_sheet}
 %\end{figure}
+\begin{figure}
+\begin{tikzpicture}[auto]
+	\coordinate (OR) at (0.00, 0.0);
+	\coordinate (RIGHT) at (15,0,0.0); 
+	\coordinate (TOP) at (0.0,6) ; 
+  %  \coordinate (MIDDLE) at (3,2) ; 
+	\node[](a) at (OR) {};
+    \node[](b) at (RIGHT) {};
+    \node[](c) at (TOP) {};
+    %\node[](c) at (TOP) {};
+    \node[]  at  ($ (b) + (1,0) $)  {model};
+    \node[anchor=east]  at  ($ (c) + (0,0.1) $)  {loss};
+    \node[right=2cm of OR] (linpred) {} ;
+    \node[]  at  ($ (linpred) - (0,1) $)  {linear maps};
+  %  \draw ($ (linpred) + (0,2) $) rectangle (2,2) node[pos=.5] {linear regression};
+    \node[draw,text width=3cm]  at  ($ (linpred) + (0,2) $)  {linear regression};
+    \draw[black,line width=1] ($ (linpred) - (0,0.1) $) to ($ (linpred) + (0,0.1) $) ;
+    \draw[->,black,line width=1] ($ (a) - (1,0) $) to (b);
+    \draw[->,black,line width=1] ($ (a) - (0,0.4) $) to (c);
+%\draw[blue,thin,dashed] (OR) -- (b.160);
+%\draw[blue,thin,dashed] (OR) -- (b.210);
+%\draw[red,thin,dashed] (OR) -- (a.-150);
+%\draw[red,thin,dashed] (OR) -- (a.-30);   
+%\node[punkt] (data) {observations};
+%\node[red,below=0.5cm of data] (data1) {data};
+%\node[above=of data] (dummy) {};
+%\node[punkt,above=1cm of dummy] (hypothesis) {hypothesis};
+%\node[right=1.4cm of dummy] (t) {make prediction} ; 
+%\node[left=1.4cm of dummy] (g) {validate/adapt} ;
+%\node[blue,below=0.5cm of g,anchor=east] (g1) {loss} ; 
+%\node[black!30!blue,below=1cm of t,anchor=west] (g6) {inference} ; 
+%\node[black!30!green,above=1cm of hypothesis,anchor=south] (g3) {model} ; 
+%\draw [->,line width=0.5mm] (hypothesis.east) to [out=0,in=90] (t.north);
+%\draw [->,line width=0.5mm] (t.south) to [out=270,in=0] (data.east);
+%\draw [->,line width=0.5mm] (data.west) to [out=180,in=270] (g.south);
+%\draw [->,line width=0.5mm] (g.north) to [out=90,in=180] (hypothesis.west);
+%\draw [thick] (-3,-3) rectangle (4,4) node [anchor=east,above] {$\featurespace$} ;
+%\draw [thick] (2,2) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(5)}$};
+%\draw [thick] (-2,1.6) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(4)}$};
+%\draw [thick] (-2,-1.7) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(3)}$};
+%\draw [thick] (2,-1.9) circle (0.1cm) node[anchor=west] {\hspace*{0mm}$\vx^{(2)}$};
+%\draw [thick] (.5,.5) rectangle ++(0.1cm,0.1cm) node[anchor=west,above] {\hspace*{0mm}$\vx^{(1)}$};
+%       \node[] (B) at (12,2) {$\labelspace$};
+%       \fill  (11.5,2.5)  circle (2pt) node[above] (D) {$y \in \labelspace$};    
+%      \draw [->,thick] (5,3)   --  (11.5,2.5) node[above,midway] {$h(\vx)$} ;
+\end{tikzpicture}
+\end{figure}
 
 
 \section{(Least Squares) Linear Regression} 
@@ -3144,27 +3212,38 @@ discuss Bayes' classifier methods in more detail in Section \ref{sec_ERM_Bayes}.
 \section{Kernel Methods} 
 \label{sec_kernel_methods}
 
-Consider a ML (classification or regression) problem with an underlying feature space $\featurespace$. 
-In order to predict the label $y \in \labelspace$ of a data point based on its features $\vx \in \featurespace$, 
-we apply a predictor $h$ selected out of some hypothesis space $\hypospace$. Let us assume that the 
-available computational infrastructure only allows to use a linear hypothesis space $\hypospace^{(\featuredim)}$ (see \eqref{equ_lin_hypospace}).
+Consider a ML (classification or regression) problem with an 
+underlying feature space $\featurespace$. In order to predict 
+the label $y \in \labelspace$ of a data point based on its 
+features $\vx \in \featurespace$, we apply a predictor $h$ 
+selected out of some hypothesis space $\hypospace$. Let 
+us assume that the available computational infrastructure only 
+allows to use a linear hypothesis space $\hypospace^{(\featuredim)}$ (see \eqref{equ_lin_hypospace}).
 
-For some applications using only linear predictor maps in $\hypospace^{(\featuredim)}$ is not 
-sufficient to model the relation between features and labels (see Figure \ref{fig_scatterplot_poly} 
-for a data set which suggests a non-linear relation between features and labels). In such cases it 
-is beneficial to add a pre-processing step before applying a predictor $h$. 
+For some applications using only linear predictor maps in 
+$\hypospace^{(\featuredim)}$ is not sufficient to model the 
+relation between features and labels (see Figure \ref{fig_scatterplot_poly} 
+for a data set which suggests a non-linear relation between 
+features and labels). In such cases it is beneficial to add a 
+pre-processing step before applying a predictor $h$. 
 
-The family of kernel methods is based on transforming the features $\vx$ to new features $\hat{\vx} \in \featurespace'$ 
+The family of kernel methods is based on transforming the 
+features $\vx$ to new features $\hat{\vx} \in \featurespace'$ 
 which belong to a (typically very) high-dimensional space $\featurespace'$ \cite{LampertNowKernel}. It is 
-not uncommon that, while the original feature space is a low-dimensional Euclidean space (e.g., $\featurespace = \mathbb{R}^{2}$), 
+not uncommon that, while the original feature space is a 
+low-dimensional Euclidean space (e.g., $\featurespace = \mathbb{R}^{2}$), 
 the transformed feature space $\featurespace'$ is an infinite-dimensional function space. 
 
-The rationale behind transforming the original features into a new (higher-dimensional) feature space $\featurespace'$ 
-is to reshape the intrinsic geometry of the feature vectors $\vx^{(\sampleidx)} \in \featurespace$ such that the transformed 
-feature vectors $\hat{\vx}^{(\sampleidx)}$ have a ``simpler'' geometry (see Figure \ref{fig_kernelmethods}). 
+The rationale behind transforming the original features into a 
+new (higher-dimensional) feature space $\featurespace'$ is to 
+reshape the intrinsic geometry of the feature vectors 
+$\vx^{(\sampleidx)} \in \featurespace$ such that the transformed 
+feature vectors $\hat{\vx}^{(\sampleidx)}$ have a ``simpler'' 
+geometry (see Figure \ref{fig_kernelmethods}). 
 
-Kernel methods are obtained by formulating ML problems (such as linear regression or 
-logistic regression) using the transformed features $\hat{\vx}= \phi(\vx)$. A key challenge 
+Kernel methods are obtained by formulating ML problems 
+(such as linear regression or logistic regression) using the 
+transformed features $\hat{\vx}= \phi(\vx)$. A key challenge 
 within kernel methods is the choice of the feature map $\phi: \featurespace \rightarrow \featurespace'$ which 
 maps the original feature vector $\vx$ to a new feature vector $\hat{\vx}= \phi(\vx)$. 
 
@@ -3468,8 +3547,8 @@ scale=0.6
   \vspace*{-4mm}
 \end{tikzpicture}
   \vspace*{-4mm}
-\caption{ANN representation of a predictor $h^{(\vw)}(\vx)$ which maps the input (feature) vector $\vx=(x_{1},x_{2})^{T}$ to 
-a predicted label (output) $h^{(\vw)}(\vx)$.}
+\caption{ANN representation of a predictor $h^{(\vw)}(\vx)$ which maps 
+	the input (feature) vector $\vx=(x_{1},x_{2})^{T}$ to a predicted label (output) $h^{(\vw)}(\vx)$.}
     \label{fig_ANN}
 \end{figure}
 A feature vector $\vx \in \mathbb{R}^{\featuredim}$ is fed into the input units, 
@@ -5513,42 +5592,56 @@ if we can find some generative probabilistic model which well explains the
 observed data points $\vz^{(\sampleidx)}$ we can study the generalization 
 ability via probability theory. 
 
-In order to study generalization within a linear regression problem (see Section \ref{sec_lin_regression}), 
-we will invoke a {\bf probabilistic toy model} for the data arising in an ML application. In particular, 
-we assume that any observed data point $\vz=(\vx,y)$ with features $\vx \in \mathbb{R}^{\featuredim}$ 
-and label $y \in \mathbb{R}$ can be considered as an   i.i.d.\ realization of a Gaussian random vector. 
-The feature vector $\vx$ is assumed to have zero mean and covariance being the identity matrix, i.e., 
-$\vx \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$. The label $y$ of a data point is related to 
-its features $\vx$ via a {\bf linear Gaussian model} 
+To study generalization within a linear regression problem 
+(see Section \ref{sec_lin_regression}), we will invoke a {\bf probabilistic toy model} 
+for the data arising in an ML application. We assume that 
+any observed data point $\vz=(\vx,y)$ with features $\vx \in \mathbb{R}^{\featuredim}$ 
+and label $y \in \mathbb{R}$ is an i.i.d.\ realization of a 
+Gaussian random vector. 
+
+The feature vector $\vx$ is assumed to have zero mean and covariance 
+being the identity matrix, i.e., $\vx \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$. 
+The label $y$ of a data point is related to its features $\vx$ via a 
+{\bf linear Gaussian model} 
 \begin{equation} 
 \label{equ_linear_obs_model}
 y = \vw_{\rm true}^{T}  \vx + \varepsilon \mbox{, with noise } \varepsilon \sim \mathcal{N}(0,\sigma^{2}).
 \end{equation} 
-The noise variance $\sigma^{2}$ is assumed fixed (non-random) and known. Note that the error component $\varepsilon$  
-in \eqref{equ_linear_obs_model} is intrinsic to the data (within our toy model) and cannot be overcome 
-by any ML method. We highlight that this model for the observed data points might not be accurate for a particular 
-ML application. However, this toy model will allow us to study some fundamental behaviour of ML methods. 
+The noise variance $\sigma^{2}$ is assumed fixed (non-random) and known. 
+Note that the error component $\varepsilon$ in \eqref{equ_linear_obs_model} 
+is intrinsic to the data (within our toy model) and cannot be overcome by 
+any ML method. We highlight that this model for the observed data 
+points might not be accurate for a particular ML application. However, 
+this toy model will allow us to study some fundamental behaviour of ML methods. 
 
-In order to predict the label $y$ from the features $\vx$ we will use predictors $h$ that are linear maps of the first $r$ features 
-$x_{1},\ldots,x_{r}$. This results in the hypothesis space 
+In order to predict the label $y$ from the features $\vx$ we will use 
+predictors $h$ that are linear maps of the first $r$ features $x_{1},\ldots,x_{r}$. 
+This results in the hypothesis space 
 \vspace*{-2mm}
 \begin{equation}
 \label{equ_generalization_hypospace_r}
 \hypospace^{(r)} = \{ h^{(\vw)}(\vx)= (\vw^{T},\mathbf{0}) \vx \mbox{ with } \mathbf{w} \in \mathbb{R}^{r} \}.   
 \vspace*{-1mm}
 \end{equation}
-The design parameter $r$ determines the size of the hypothesis space $\hypospace^{(r)}$ and allows to control the computational 
-complexity of the resulting ML method which is based on the hypothesis space $\hypospace^{(r)}$. For $r < \featuredim$, the 
-hypothesis space $\hypospace^{(r)}$ is a proper subset of the space of linear predictors \eqref{equ_def_hypo_linear_pred} used 
-within linear regression (see Section \ref{sec_lin_regression}). Note that each element $h^{(\vw)} \in \hypospace^{(r)}$ 
-corresponds to a particular choice of the weight vector $\vw \in \mathbb{R}^{r}$. 
+The design parameter $r$ determines the size of the hypothesis space 
+$\hypospace^{(r)}$ and allows to control the computational complexity 
+of the resulting ML method which is based on the hypothesis space 
+$\hypospace^{(r)}$. For $r < \featuredim$, the hypothesis space $\hypospace^{(r)}$ 
+is a proper subset of the space of linear predictors \eqref{equ_def_hypo_linear_pred} 
+used within linear regression (see Section \ref{sec_lin_regression}). Note that 
+each element $h^{(\vw)} \in \hypospace^{(r)}$ corresponds to a particular 
+choice of the weight vector $\vw \in \mathbb{R}^{r}$. 
 
-The quality of a particular predictor $h^{(\vw)} \in \hypospace^{(r)}  $ is measured via the mean squared error $\emperror (h^{(\vw)} \mid \trainset)$ 
-incurred over a labeled training set $\trainset= \{ \vx^{(\sampleidx)}, y^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize_{\rm t}}$. 
-Within our toy model (see \eqref{equ_linear_obs_model}, \eqref{equ_toy_model_iid} and \eqref{equ_labels_training_data}), 
-the training data points $(\vx^{(\sampleidx)},y^{(\sampleidx)})$ are i.i.d.\ copies of the data point $\vz = (\vx,y)$. In particular, 
-each of the data points in the training dataset is statistically independent from any other data point $(\vx,y)$ (which has not 
-been used for training). However, the training data points $(\vx^{(\sampleidx)},y^{(\sampleidx)})$ and any other (new) 
+The quality of a particular predictor $h^{(\vw)} \in \hypospace^{(r)}$ is measured 
+via the mean squared error $\emperror (h^{(\vw)} \mid \trainset)$ incurred over a 
+labeled training set $\trainset= \{ \vx^{(\sampleidx)}, y^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize_{\rm t}}$. 
+Within our toy model (see \eqref{equ_linear_obs_model}, \eqref{equ_toy_model_iid} 
+and \eqref{equ_labels_training_data}), the training data points $(\vx^{(\sampleidx)},y^{(\sampleidx)})$ 
+are i.i.d.\ copies of the data point $\vz = (\vx,y)$. 
+
+Each of the data points in the training dataset is statistically independent from 
+any other data point $(\vx,y)$ (which has not been used for training). However, 
+the training data points $(\vx^{(\sampleidx)},y^{(\sampleidx)})$ and any other (new) 
 data point $(\vx,y)$ share the same probability distribution (a multivariate normal distribution): 
 \begin{equation} 
 \label{equ_toy_model_iid}
@@ -7147,35 +7240,50 @@ FL method only exchange model parameter updates; no raw local data is revealed;
 A key challenge for the successful deployment of ML methods to 
 many (critical) application domain is their explainability. Human users 
 of ML seem to have a strong desire to get explanations that resolve 
-the uncertainty about predictions and decisions obtained from ML methods. 
+the uncertainty about predictions and decisions obtained from ML 
+methods. Explainable ML enables the user to better predict the 
+outcomes of ML methods. 
 
-Explainable ML is challenging since explanations must be tailored (personalized) to individual 
-users with varying backgrounds. Some users might have received university-level 
-education in ML, while other users might have no formal training in linear algebra. 
-Linear regression with few features might be perfectly interpretable for the first 
-group but might be considered a black-box by the latter. 
+Explainable ML is challenging since explanations must be tailored 
+(personalized) to individual users with varying backgrounds. Some 
+users might have received university-level education in ML, while 
+other users might have no formal training in linear algebra. Linear 
+regression with few features might be perfectly interpretable for 
+the first group but might be considered a black-box by the latter. 
 
 
 ?????? 
-discuss relation between finding good explanations and active learning. Active learning aims 
-at finding data points (by their features) which provide most information about the 
-true model parameters. XML aims at finding explanations (e.g. data points from training set) 
-which provide most information about the prediction provided by some black-box ML method. 
+discuss relation between finding good explanations and active 
+learning. Active learning aims at finding data points (by their features) 
+which provide most information about the true model parameters. 
+XML aims at finding explanations (e.g. data points from training set) 
+which provide most information about the prediction provided by 
+some black-box ML method. 
 ?????????????
-discuss relation between XML and feature learning. XML can be obtained from feature learning methods 
-by learning those subset of features which provide most information about the prediction (not about the label itself)
+discuss relation between XML and feature learning. XML can be 
+obtained from feature learning methods by learning those subset 
+of features which provide most information about the prediction 
+(not about the label itself)
 ?????????????? 
 
 
 \section{A Model Agnostic Method}
+\label{sec_model_agn_xml}
 
-We propose a simple probabilistic model for the predictions and user knowledge. 
-This model allows to study explainable ML using information theory. Explaining is 
-here considered as the task of reducing the ``surprise'' incurred by a prediction. 
-We quantify the effect of an explanation by the conditional mutual information 
+We propose a simple probabilistic model for the predictions and 
+user knowledge. This model allows to study explainable ML using 
+information theory. Explaining is here considered as the task of 
+reducing the ``surprise'' incurred by a prediction. We quantify 
+the effect of an explanation by the conditional mutual information 
 between the explanation and prediction, given the user background. 
 
 \section{Explainable Empirical Risk Minimization} 
+The approach discussed in Section \ref{sec_model_agn_xml} constructs explanations 
+for any given ML method such that the user is able to better predict 
+the outcome of this ML method. Instead of providing an explanation 
+we could also try to make the ML method itself more predictable for 
+a user. 
+
 
 \chapter{Lists of Symbols}
 

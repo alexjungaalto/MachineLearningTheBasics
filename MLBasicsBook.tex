@@ -402,7 +402,7 @@ Python \url{https://github.com/alexjungaalto/}.
 This text benefited from the numerous feedback of the 
 students within the courses that have been (co-)taught 
 by the author. The author is indebted to Shamsiiat Abdurakhmanova, 
-Tomi Janhunen, Natalia Vesselinova, Ekaterina Voskoboinik, 
+Tomi Janhunen, Yu Tian, Natalia Vesselinova, Ekaterina Voskoboinik, 
 Buse Atli, Stefan Mojsilovic for carefully reviewing early 
 drafts of this tutorial. Some of the figures have been 
 generated with the help of Eric Bach. The author is grateful 
@@ -559,9 +559,9 @@ day with minimum temperature $x$ and maximum temperature $y$. Then,
 it seems reasonable to assume that these two properties of the same day are 
 correlated. 
 
-For a larger minimum temperature $x^{(i)}$, we typically expect a larger 
-maximum daytime temperature $y$. We can formalize this assumption by modelling 
-the maximum daytime temperature as $y \approx h(x)$ with some 
+For a higher minimum temperature $x^{(i)}$, we typically expect a higher 
+maximum daytime temperature $y$. We can formalize this assumption by 
+modelling the maximum daytime temperature as $y \approx h(x)$ with some 
 hypothesis map $h$ which is monotonically increasing. One candidate for 
 such a map is a linear function of the form
 \begin{equation} 
@@ -1384,166 +1384,13 @@ $\vx \in \featurespace$ of a data point as its input and outputs a predicted lab
 be such that $\hat{y} \approx y$, i.e., the predicted label $\hat{y}$ is close (with 
 small error $\hat{y} - y$) to the true underlying label $y$. 
 
-
-%ML methods, which have to cope with limited resources available for acquiring labels, are geared 
-%to get along with as little labeled data points as possible. In fact, a good part of ML revolves around 
-%learning to predict the label $y$ of a data point based solely on the its features $\vx$. 
-%
-%The set of all possible values the label $y$ can take is known as the {\bf label space} $\labelspace$. 
-%For the ML problem arising from indoor localization of cleaning robots (see Figure \ref{fig_collecting_labeled_snapshots}), 
-%the label might be the current location $y_{\timeidx}$ of a cleaning robot and the features might 
-%be the RGB values of the pixels in the current snapshot taken by an on-board camera. Here, the 
-%label space might be the finite set $\{1,\ldots,\gridsizex\}$ of vertical grid indices. 
-
-
-
-%In the end, both features and labels are just specific properties of individual data points 
-%which can be defined to some extent freely. However, the handling of these two types of 
-%quantities in practice is fundamentally different. Whereas features can be computed or 
-%measured easily, determining the correct label often requires much more effort including 
-%human expert labor.\footnote{There are marketplaces for human labelling workforce (see, e.g., \url{https://www.mturk.com}).} 
-
-
-\begin{figure}[htbp]
-    \begin{center}
-    \includegraphics[width=0.7\textwidth]{RumbaSnapshotFeatureLabel.jpg}  
-    \end{center}
-    \caption{The cleaning robot \rumba\, is collecting snapshots $\vz^{(\sampleidx)}$, each of which is 
-    represented by the feature vector $\vx^{(\sampleidx)}$ and labeled with the $y$-coordinate $y^{(\sampleidx)}$ 
-    of \rumba's location at time $\sampleidx$.}
-    \label{fig_collecting_labeled_snapshots}
-\end{figure}
-
-
-
-
-%\begin{center}
-%	\framebox[0.96\textwidth]{
-%		\parbox{0.9\textwidth}{
-%			If data is considered the oil of the $21$st century, {\bf labeled data} is the {\bf premium fuel} while 
-%			{\bf unlabeled data} corresponds to {\bf crude oil}. 
-%	}}
-%\end{center}
-
-
-%\subsection{Example: Cryptocurrencies} 
-%\label{example_cryptocurr}
-%
-%Let us illustrate the concept of features and labels in the context of predicting cryptocurrency prices. 
-%In particular, we are interested in predicting the price of the cryptocurrency ``Bitcoin'' at a particular 
-%day based solely on the price of another cryptocurrency ``Ethereum'' on the same day. For solving 
-%this task we will make use of historic data $\dataset$ (see Figure \ref{fig_historic_recordings}). 
-%
-%The available dataset $\dataset$ contains data points $\vz^{(\sampleidx)}$ which are constituted by the closing 
-%and opening prices as well as the traded volumes of both currencies at a particular day $\sampleidx$ 
-%(see Figure \ref{fig_historic_recordings}). Since we are interested in predicting the price of Bitcoin, we use the 
-%Bitcoin closing price at the $\sampleidx$-th day as the label $y^{(\sampleidx)}$ of the data point $\vz^{(\sampleidx)}$. 
-%The prediction should be based solely on the closing price of Ethereum on the same day. Thus, we use the closing 
-%price of Ethereum as the feature $x^{(\sampleidx)}$ characterizing the data point $\vz^{(\sampleidx)}$. 
-%
-%%\pgfplotstableset{columns={Date,Open}}
-%\begin{figure}[htbp]
-%\begin{center}
-%\begin{minipage}[]{0.4 \textwidth}
-%\scalebox{.4}{
-%\pgfplotstabletypeset[col sep=comma,columns/Date/.style={string type},every head row/.style={
-%        before row=\toprule,after row=\midrule}]{BTC-USDshort.csv}}
-%        \vspace*{5mm}
-%        
-%\hspace*{20mm}  (a)
-% \end{minipage}
-% \hspace*{10mm}
-% \begin{minipage}[]{0.4 \textwidth}
-%\scalebox{.4}{
-%\pgfplotstabletypeset[col sep=comma,columns/Date/.style={string type},every head row/.style={
-%        before row=\toprule,after row=\midrule}]{ETH-USDshort.csv}}
-%              \vspace*{5mm}
-%              
-%\hspace*{20mm}  (b)
-% \end{minipage}
-% \end{center}
-%\caption{Historic recordings of (a) Bitcoin and (b) Ethereum statistics.}
-%\label{fig_historic_recordings}
-%\end{figure}
-%
-%{\bf Normalization.} In order to get intuition about the relation between the closing prices $x^{(\sampleidx)}$ and $y^{(\sampleidx)}$ of 
-%Ethereum and Bitcoin, respectively, we plot them as a function of time (time series) in Figure \ref{fig_time_series_crypto}. 
-%
-%\begin{figure}[htbp]
-%\begin{center}
-%\begin{tikzpicture}
-%    \begin{axis}[
-%            axis x line=middle,
-%            axis y line=middle,
-%            enlarge y limits=true,
-%            width=15cm, height=8cm,     % size of the image
-%            grid = major,
-%            scale = 0.7,
-%            grid style={dashed, gray!30},
-%            x label style={at={(current axis.right of origin)},anchor=north, below=1mm},
-%            ylabel=closing price,
-%            xlabel=time,
-%         ]        
-%          \addplot[blue, solid] table [x=index,y=CloseETH, col sep = comma] {BTCETH-USD.csv}  node [above left,color=blue] {Ethereum} ;
-%          \addplot[black, dashed] table [x=index,y=CloseBTC, col sep = comma] {BTCETH-USD.csv}  node [above left,color=black,xshift=0cm] {Bitcoin} ;
-%    \end{axis}
-%\end{tikzpicture}
-%\end{center}
-%\caption{Time series of Ethereum closing price $x^{(\sampleidx)}$ and Bitcoin closing price 
-%$y^{(\sampleidx)}$. 
-%} 
-%\label{fig_time_series_crypto}
-%\end{figure}
-%
-%As evident from Figure \ref{fig_time_series_crypto}, comparing the raw closing prices between Bitcoin and 
-%Ethereum is difficult because of the significantly different value ranges of Bitcoin and Ethereum prices. 
-%Therefore, we normalize (scale) the closing prices according to 
-%\begin{equation}
-%\label{equ_rescaling_crypto}
-%x_{\rm scaled}^{(\sampleidx)} \defeq \frac{x^{(\sampleidx)}}{\max\limits_{ j=1,\ldots,\samplesize} x^{(j)}} \mbox{, and } y_{\rm scaled}^{(\sampleidx)} \defeq \frac{y^{(\sampleidx)}}{\max\limits_{ j=1,\ldots,\samplesize} y^{(j)}}. 
-%\end{equation} 
-%The normalization \eqref{equ_rescaling_crypto} results in features $x_{\rm scaled}^{(\sampleidx)}$ 
-%and labels $y_{\rm scaled}^{(\sampleidx)}$ in the same value range $[0,1]$. We depict the time 
-%series of normalized closing prices in Figure \ref{fig_time_series_crypto_normalized}, which suggests 
-%that the closing prices might be correlated. 
-%
-%
-%
-%\begin{figure}[htbp]
-%\begin{center}
-%\begin{tikzpicture}
-%    \begin{axis}[
-%            axis x line=middle,
-%            axis y line=middle,
-%            enlarge y limits=true,
-%            width=15cm, height=8cm,     
-%            grid = major,
-%               scale = 0.7,
-%            grid style={dashed, gray!30},
-%            x label style={at={(current axis.right of origin)},anchor=north, below=1mm},
-%            ylabel=normalized closing price,
-%            xlabel=time,
-%         ]        
-%          \addplot[blue, solid] table [x=index,y=CloseETHNorm, col sep = comma] {BTCETH-USD.csv}  node [above left,color=blue,xshift=-0.5cm,yshift=-0.5cm] {Ethereum} ;
-%          \addplot[black, dashed] table [x=index,y=CloseBTCNorm, col sep = comma] {BTCETH-USD.csv}  node [above left,color=black,yshift=-3.5cm] {Bitcoin} ;
-%    \end{axis}
-%\end{tikzpicture}
-%\end{center}
-%\caption{Normalized closing prices $x_{\rm scaled}^{(\sampleidx)}$ and 
-%$y_{\rm scaled}^{(\sampleidx)}$ of Ethereum and Bitcoin, respectively. 
-%} 
-%\label{fig_time_series_crypto_normalized}
-%\end{figure}
-
-
-
 \subsection{Scatterplot} 
 \label{equ_subsection_scatterplot}
 
-Consider datapoints characterized by a single numeric feature $x$ and label $y$. 
-As an example consider datapoints representing individual days whose features 
-and labels are the minimum and maximum daytime temperature, respectively, at 
-some place in Finland. 
+Consider datapoints characterized by a single numeric feature $x$ 
+and label $y$. Each data point represents a particular day whose 
+feature and label are the minimum and maximum daytime temperature, 
+respectively, at some place in Finland. 
 
 We can access these datapoints via the archives of the Finnish Meteorological Institute (FMI). 
 To get more insight into the relation between feature $x^{(\sampleidx)}$ and label 
@@ -1634,7 +1481,7 @@ pixel image of the hand-drawing.
 Given a set of $m$ labeled data points (the ``training data'')
 \begin{equation} 
 \label{eq_def_training_set}
-\mathcal{X}  = \big\{ (\vx^{(1)},y^{(1)}), \ldots, (\vx^{(\samplesize)},y^{(\samplesize)}) \}
+\dataset  = \big\{ (\vx^{(1)},y^{(1)}), \ldots, (\vx^{(\samplesize)},y^{(\samplesize)}) \}
 \end{equation}
 ML methods learn a predictor $h(\vx)$ such that 
 \begin{equation} 
@@ -1996,7 +1843,7 @@ We will use a simpler variant of the VC dimension concept and define the size of
 space $\hypospace$ as the maximum number $\sizehypospace$ of arbitrary data points that 
 can be perfectly fit (with probability one). For any set of $\sizehypospace$ data points with 
 different features, we can always find a hypothesis $h \in \sizehypospace$ such that $y=h(\vx)$ 
-for all data points $(\vx,y) \in \mathcal{X}$. 
+for all data points $(\vx,y) \in \dataset$. 
 
 Let illustrate the our notion of hypothesis space size with two examples: linear regression and 
 polynomial regression. First, we discuss the size of the hypothesis space $\hypospace^{(\featuredim)}$ 
@@ -2249,7 +2096,7 @@ The squared error loss is a bad choice for classification problems with a discre
 \end{center}
 \end{figure}
 
-We new present some popular choices for the loss function suitable for ML 
+We now discuss some popular choices for the loss function suitable for ML 
 problems with binary labels. While the representation of the label values is completely irrelevant, 
 it will be convenient to encode of the two label values by the real numbers $-1$ and $1$. As label 
 space we use $\labelspace=\mathbb{R}$. The formulas for the loss functions we present only apply 
@@ -2595,8 +2442,8 @@ combining a feature map $x \mapsto \mathbf{z}$ with a predictor of the form $\ma
 Consider an ML application generating data points characterized by a scalar feature $x \in \mathbb{R}$ 
 and numeric label $y \in \mathbb{R}$. We construct non-linear predictor maps by first mapping the 
 feature $x$ to a new feature vector $\vz=(\phi_{1}(x),\phi_{2}(x),\phi_{3}(x),\phi_{4}(x))$. 
-The components $\phi_{1}(x),\ldots,\phi_{4}(x)$ are obtained by indicator functions of intervals 
-$[-10,-5), [-5,0),[0,5),[5,10]$. In particular, $\phi_{1}(x) = 0$ for $x \in [-10,-5)$ and $\phi_{1}(x)=0$ otherwise. 
+The components $\phi_{1}(x),\ldots,\phi_{4}(x)$ are indicator functions of intervals 
+$[-10,-5), [-5,0),[0,5),[5,10]$. In particular, $\phi_{1}(x) = 1$ for $x \in [-10,-5)$ and $\phi_{1}(x)=0$ otherwise. 
 We construct a hypothesis space $\hypospace_{1}$ by all maps of the form $\vw^{T}\vz$. 
 Note that the map is a function of the feature $x$ since the feature vector $\vz$ is a function 
 of $x$. Which of the following predictor maps belong to $\hypospace_{1}$?
@@ -4698,28 +4545,40 @@ belongs to the same family (of linear classifiers) as logistic regression and th
 These three classification methods differ only in the way of choosing the decision boundary 
 (see Figure \ref{fig_lin_dec_boundary}) separating the two half-spaces in the feature space. 
 
-For the estimator $\widehat{\bf \Sigma}$ \eqref{equ_ML_mean_cov_Gauss} to be accurate (close to 
-the unknown covariance matrix) we need a number of data points (sample size) which is at least on 
-the order of $\featuredim^{2}$. This sample size requirement might be infeasible in applications with 
-only few data points. Moreover, the maximum likelihood estimate $\widehat{\bf \Sigma}$ \eqref{ML_est_naive_Bayes} 
-is not invertible whenever $\samplesize < \featuredim$ such that the expression \eqref{equ_classif_Bayes_impl} 
-becomes useless in this case. In order to cope with small sample size $\samplesize < \featuredim$ we 
-can simplify the model \eqref{equ_prob_model_Bayes} by requiring the covariance to be diagonal 
-${\bf \Sigma} = {\rm diag} (\sigma_{1}^{2}, \ldots, \sigma_{\featuredim}^{2})$. This is equivalent to 
-modelling the individual features $x_{1},\ldots,x_{\featuredim}$ of a particular data point as conditionally 
-independent, given the label $y$ the data point. The resulting special case of a Bayes' classifier is 
-often referred to as a {\bf naive Bayes} classifier. 
+For the estimator $\widehat{\bf \Sigma}$ \eqref{equ_ML_mean_cov_Gauss} 
+to be accurate (close to the unknown covariance matrix) we need a number 
+of data points (sample size) which is at least on the order of $\featuredim^{2}$. 
+This sample size requirement might be infeasible for applications with only few 
+data points available. 
 
-We finally highlight that the classifier \eqref{equ_classif_Bayes_impl} is obtained using the generative model 
-\eqref{equ_prob_model_Bayes} for the data. Therefore, Bayes' classifiers belong to the family of generative 
-ML methods which involve modelling the data generation. In contrast, logistic regression and SVM do not 
-require a generative model for the data points but aim directly at finding the relation between features $\vx$ 
-and label $y$ of a data point. These methods belong therefore to the family of discriminative ML methods. 
-Generative methods such as Bayes' classifier are preferable for applications with only very limited amounts 
-of labeled data. Indeed, having a generative model such as \eqref{equ_prob_model_Bayes} allows to synthetically 
-generate more labeled data by generating random features and labels according to the probability distribution 
-\eqref{equ_prob_model_Bayes}. We refer to \cite{NIPS2001_2020} for a more detailed comparison between 
-generative and discriminative methods. 
+The maximum likelihood estimate $\widehat{\bf \Sigma}$ \eqref{ML_est_naive_Bayes} 
+is not invertible whenever $\samplesize < \featuredim$. In this case, the expression 
+\eqref{equ_classif_Bayes_impl} becomes useless. To cope with small sample size 
+$\samplesize < \featuredim$ we can simplify the model \eqref{equ_prob_model_Bayes} 
+by requiring the covariance to be diagonal ${\bf \Sigma} = {\rm diag} (\sigma_{1}^{2}, \ldots, \sigma_{\featuredim}^{2})$. 
+This is equivalent to modelling the individual features $x_{1},\ldots,x_{\featuredim}$ 
+of a particular data point as conditionally independent, given the label $y$ the data 
+point. The resulting special case of a Bayes' classifier is often referred to as a 
+{\bf naive Bayes} classifier. 
+
+We finally highlight that the classifier \eqref{equ_classif_Bayes_impl} 
+is obtained using the generative model \eqref{equ_prob_model_Bayes} 
+for the data. Therefore, Bayes' classifiers belong to the family of generative 
+ML methods which involve modelling the data generation. In contrast, 
+logistic regression and SVM do not require a generative model for the 
+data points but aim directly at finding the relation between features $\vx$ 
+and label $y$ of a data point. These methods belong therefore to the 
+family of discriminative ML methods. 
+
+
+Generative methods such as Bayes' classifier are preferable for 
+applications with only very limited amounts of labeled data. Indeed, 
+having a generative model such as \eqref{equ_prob_model_Bayes} 
+allows to synthetically generate more labeled data by generating 
+random features and labels according to the probability distribution 
+\eqref{equ_prob_model_Bayes}. We refer to \cite{NIPS2001_2020} 
+for a more detailed comparison between generative and discriminative 
+methods. 
 
 \section{Online Learning} 
 \label{sec_online_learning}

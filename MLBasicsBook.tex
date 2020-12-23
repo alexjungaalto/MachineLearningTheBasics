@@ -463,7 +463,7 @@ Let us denote the resulting dataset by
 \label{equ_FMI_data}
 \vz^{(1)},\ldots,\vz^{(\samplesize)}.  
 \end{equation} 
-Each data point $\vz^{(i)} = \big(x^{(i)},y^{(i)}$ represents some previous day 
+Each data point $\vz^{(i)} = \big(x^{(i)},y^{(i)}\big)$ represents some previous day 
 for which the minimum and maximum daytime temperature $x^{(i)}$ and $y^{(i)}$ 
 has been recorded at some FMI station.  %We will use the minimum daytime temperature $x^{(i)}$ as the feature and the 
 %maximum daytime temperature $y^{(i)}$ as the label of the data point $\vz^{(i)}$. 
@@ -538,7 +538,7 @@ We say that the map \eqref{equ_def_linear_map} is parametrized by the weight vec
 $\mathbf{w}= \big(w_{1},w_{0}\big)$ and indicate this by writing $h^{(\mathbf{w})}$. 
 For a given weight vector $\mathbf{w}= \big(w_{1},w_{0}\big)$, we obtain the map 
 $h^{(\mathbf{w})}(x) = w_{1}x +w_{0}$. 
-Figure \ref{fig_three_maps_example} depicts three particular maps $h^{(\mathbf{w})}$ 
+Figure \ref{fig_three_maps_example} depicts three maps $h^{(\mathbf{w})}$ 
 obtained for three different choices for the weights $\mathbf{w}$.  
 \begin{figure}[htbp]
 	\begin{center}
@@ -573,14 +573,15 @@ obtained for three different choices for the weights $\mathbf{w}$.
 		\end{tikzpicture}
 		\vspace*{-4mm}
 	\end{center}
-	\caption{Three particular hypothesis maps of the form \eqref{equ_def_linear_map}.}
+	\caption{Three hypothesis maps of the form \eqref{equ_def_linear_map}.}
 	\label{fig_three_maps_example}
 \end{figure}
 
 ML would be trivial if there is only one single hypothesis. Having 
 only a single hypothesis means that there is no need to try out 
-different hypotheses to find the best one. To enable ML we need 
-to allow for more than one hypothesis. ML allows to choose (learn) 
+different hypotheses to find the best one. To enable ML, we need 
+to choose between a whole space of different hypotheses. ML 
+methods are computationally efficient methods to choose (learn) 
 a good hypothesis out of (typically very large) hypothesis spaces. 
 The hypothesis space constituted by the maps \eqref{equ_def_linear_map} 
 for different weights is uncountably infinite. 
@@ -591,7 +592,7 @@ the quality of a particular hypothesis map. ML methods use
 data and a loss function for this purpose. 
 
 A loss function is a measure for the difference between the actual 
-data and the predictions obtained from a hypothesis map (see Figure \ref{}). 
+data and the predictions obtained from a hypothesis map (see Figure \ref{fig_scatterplot_temp_FMI_linalg}). 
 One widely-used example of a loss function is the squared error loss $(y-h(x))^2$. 
 Using this loss function, ML methods learn a hypothesis map 
 out of the model \eqref{equ_def_linear_map} by tuning $w_{1},w_{0}$ to minimize 
@@ -3081,29 +3082,47 @@ of the loss (see Chapter \ref{ch_GD}).
 \section{Bayes' Classifier}
 \label{sec_NaiveBayes}
 
-Consider a classification problem involving data points characterized by features 
-$\vx \in \featurespace$ and associated with labels $y \in \labelspace$ out of a discrete 
-label space $\labelspace$. The family of Bayes' classifier methods is based on ML 
-problems using the $0/1$ loss \eqref{equ_def_0_1} for assessing the quality of 
-classifiers $h$. 
+Consider data points characterized by features $\vx \in \featurespace$ 
+and some binary label $y \in \labelspace$. We can use any two different 
+label values but let us assume that the two possible label values 
+are $y=-1$ and $y=1$. 
+
+%The family 
+%of Bayes' classifier methods is based on ML problems using the $0/1$ 
+%loss \eqref{equ_def_0_1} for assessing the quality of classifiers $h$. 
 
 The goal of ML is to find (or learn) a classifier $h: \featurespace \rightarrow \labelspace$ 
-such that the predicted (or estimated) label $\hat{y} = h(\vx)$ agrees with the true label 
-$y \in \labelspace$ as much as possible. Thus, it is reasonable to assess the quality of 
-a classifier $h$ using the $0/1$ loss \eqref{equ_def_0_1}. If we model the data points, with 
-its features $\vx$ and label $y$, as i.i.d. random variables, the $0/1$ loss approximates the 
-misclassification (error) probability  $P_{\rm err} = \prob{ y \neq h(\vx) }$. 
+such that the predicted (or estimated) label $\hat{y} = h(\vx)$ agrees 
+with the true label $y \in \labelspace$ as much as possible. Thus, it 
+is reasonable to assess the quality of a classifier $h$ using the $0/1$ 
+loss \eqref{equ_def_0_1}. We could then learn a classifier using the ERM 
+with the loss function \eqref{equ_def_0_1}. However, the resulting 
+optimization problem is typically intractable since the loss \eqref{equ_def_0_1} 
+is non-convex and non-differentiable. 
+
+We take a different route to construct a classifier, which we refer to 
+as Bayes' classifier. This construction is based on a simple probabilistic 
+model for the data points. Using this model, we can interpret the average 
+$0/1$ loss on training data as an approximation for the probability 
+%with its features $\vx$ and label $y$, as i.i.d. 
+%random variables, the $0/1$ loss approximates the misclassification (error) 
+%probability  
+$P_{\rm err} = \prob{ y \neq h(\vx) }$. 
 
 
-An important subclass of Bayes' classifiers uses the hypothesis space \eqref{equ_lin_hypospace} 
-which is also underlying logistic regression (see Section \ref{sec_LogReg}) and the SVM (see 
-Section \ref{sec_SVM}. Thus, logistic regression, the SVM and Bayes' classifiers yield linear classifiers 
-(see Figure \ref{fig_lin_dec_boundary}) which partition the feature space $\featurespace$ 
-into two half-spaces: one half-space consists of all feature vectors $\vx$ which result in the 
-predicted label $\hat{y}=1$ and the other half-space constituted by all feature vectors $\vx$ 
-which result in the predicted label $\hat{y}=-1$. The difference between these three linear 
-classifiers is how they choose these half-spaces by using different loss-functions. We will 
-discuss Bayes' classifier methods in more detail in Section \ref{sec_ERM_Bayes}.  
+An important subclass of Bayes' classifiers uses the hypothesis 
+space \eqref{equ_lin_hypospace} which is also underlying logistic 
+regression (see Section \ref{sec_LogReg}) and the SVM (see Section 
+\ref{sec_SVM}. Logistic regression, the SVM and Bayes' 
+classifiers are different instances of linear classifiers (see Figure \ref{fig_lin_dec_boundary}). 
+
+Linear classifiers partition the feature space $\featurespace$ into two half-spaces. 
+One half-space consists of all feature vectors $\vx$ which result in the 
+predicted label $\hat{y}=1$ and the other half-space constituted by all 
+feature vectors $\vx$ which result in the predicted label $\hat{y}=-1$. 
+The difference between these three linear classifiers is how they choose 
+these half-spaces by using different loss functions. We will discuss 
+Bayes' classifier methods in more detail in Section \ref{sec_ERM_Bayes}.  
 
  
 \section{Kernel Methods} 
@@ -3188,19 +3207,26 @@ feature space $\featurespace'$ the data points can be separated perfectly by a l
 \section{Decision Trees} 
 \label{sec_decision_trees}
 
-A decision tree is a flowchart-like description of a map $h: \featurespace \rightarrow \labelspace$ 
-which maps the features $\vx \in \featurespace$ of a data point to a predicted label $h(\vx) \in \labelspace$ \cite{hastie01statisticallearning}. 
-While decision trees can be used for arbitrary feature space $\featurespace$ and label space $\labelspace$, 
-we will discuss them for the particular feature space $\featurespace = \mathbb{R}^{2}$ and label 
-space $\labelspace=\mathbb{R}$. %Here, a decision tree describes 
+A decision tree is a flowchart-like description of a map 
+$h: \featurespace \rightarrow \labelspace$ which maps 
+the features $\vx \in \featurespace$ of a data point to a 
+predicted label $h(\vx) \in \labelspace$ \cite{hastie01statisticallearning}. 
+
+While decision trees can be used for arbitrary feature space 
+$\featurespace$ and label space $\labelspace$, we will discuss 
+them for the particular feature space $\featurespace = \mathbb{R}^{2}$ 
+and label space $\labelspace=\mathbb{R}$. %Here, a decision tree describes 
 %how a feature vector $\vx=(x_{1},x_{2})^{T}$ is mapped to a predicted label $h(\vx)$. 
 
-We have depicted an example of a decision tree in Figure \ref{fig_decision_tree}. The decision tree consists of 
-nodes which are connected by directed edges. It is useful to think of a decision tree as a step-by-step instruction 
-(a ``recipe'') for how to compute the predictor value $h(\vx)$ given the input feature $\vx \in \featurespace$. This 
-computation starts at the {\bf root node} and ends at one of the {\bf leaf nodes}. A leaf node $m$, which does not 
-have any outgoing edges, corresponds to a certain subset or ``region'' $\mathcal{R}_{m} \subseteq \featurespace$ 
-of the feature space. The hypothesis $h$ associated with a decision tree is constant over the regions $\mathcal{R}_{m}$, 
+We have depicted an example of a decision tree in Figure \ref{fig_decision_tree}. 
+The decision tree consists of nodes which are connected by directed edges. We 
+can of a decision tree as a step-by-step instruction, or a ``recipe'', for how to 
+compute the predictor value $h(\vx)$ given the input feature $\vx \in \featurespace$. 
+This computation starts at the {\bf root node} and ends at one of the {\bf leaf nodes}. 
+
+A leaf node $m$, which does not have any outgoing edges, corresponds to a certain 
+subset or ``region'' $\mathcal{R}_{m} \subseteq \featurespace$ of the feature space. 
+The hypothesis $h$ associated with a decision tree is constant over the regions $\mathcal{R}_{m}$, 
 such that $h(\vx) = h_{m}$ for all $\vx \in \mathcal{R}_{m}$ and some fixed number $h_{m} \in \mathbb{R}$. 
 In general, there are two types of nodes in a decision tree: 
 \begin{itemize} 

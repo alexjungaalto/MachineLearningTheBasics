@@ -336,10 +336,9 @@ showstringspaces=false            %
 	\end{tikzpicture}
 	\vspace*{-13mm}
 	\caption{
-		Machine learning methods implement the scientific principle of 
-		iteratively validating and refining a hypothesis (or model) about 
-		some ``real-world'' phenomenon. This principle involves 
-		some data, some model (or hypothesis space) and some loss function.}
+		Machine learning implements the scientific principle of iteratively 
+		validating and refining a hypothesis about a ``real-world'' phenomenon. 
+		This principle involves data, a model (or hypothesis space) and a loss function.}
 	\label{fig_AlexMLBP}
 \end{figure}
 \end{center}
@@ -356,19 +355,19 @@ become standard tools in many fields of science and engineering. A plethora
 of ML applications is driving a revolution of human lives at 
 unprecedented pace and scale. 
 
-This book portrays machine learning methods as the combination of three basic 
+This book portrays ML methods as the combination of three basic 
 components: data, model and loss. ML methods combine these three components 
 as computationally efficient implementations of the basic scientific principle ``trial and error''. 
 Trial and error amounts to continuously adapting a model about some data generating 
 phenomenon by minimizing some notion of loss. A plethora of different ML methods 
 is obtained by combining different design choices for the data representation, model and loss.  
 
-Machine learning methods differ vastly in their actual implementations 
+ML methods differ vastly in their actual implementations 
 which might obscure their unifying basic principles. Deep learning methods 
 use cloud computing frameworks to train large models on huge online 
 datasets. Operating on a much finer granularity for data and computation, 
 linear least squares regression can be implemented on small embedded 
-systems. However, deep learning methods and linear regression use 
+systems. Nevertheless, deep learning methods and linear regression use 
 the same principle of iteratively updating a model based on the discrepancy 
 between model predictions and actual observed data. 
 
@@ -377,14 +376,14 @@ unified treatment of a wide range of concepts and techniques
 which seem quite unrelated at first sight. On a low-level, we discuss 
 the regularization effect of early stopping in terms of adjusting the effective 
 model space. On a higher-level, we can interpret privacy-preserving 
-and explainable machine learning as particular design choices for the model, data and loss. 
+and explainable ML as particular design choices for the model, data and loss. 
 
 To make good use of widely available ML tools it is instrumental 
 to understand its underlying principles at different levels of detail. 
-On a lower-level, this tutorial helps machine learning engineers to 
+On a lower-level, this tutorial helps ML engineers to 
 choose suitable methods for the application at hand. The book also 
 provides leaders a higher-level view on the development of ML 
-which is required to manage a machine learning team. 
+which is required to manage a ML team. 
 We believe that thinking about ML using this three components 
 helps to navigate the steadily growing offer for ready-to-use ML methods. 
 
@@ -446,21 +445,32 @@ using {\bf observed data} in order to minimize {\bf a loss function}.
 \end{quote}
 
 This principle contains three components: data, a model and a 
-loss function. Any machine learning method, including linear 
+loss function. Any ML method, including linear 
 regression and deep reinforcement learning, combines these 
-three components. We will discuss in Chapter \ref{ch_Elements_ML} 
-that each of these components incur design choices such as 
-which data representation or model class to use. One such 
-choice for data and model representation is to use vectors 
-and matrices. The seemingly overwhelming offer for different 
-ML methods is based on different design choices for data 
-representation, models and loss function. 
+three components.  
 
-Let us now illustrate the (rather abstract) concepts behind the main components 
-of ML with the above problem of predicting the maximum daytime temperature. 
-The data are weather observations collected by the Finnish metrological institute. 
-We depict such data in Figure \ref{fig_scatterplot_temp_FMI}, with each dot 
-representing some previous day. Each day is characterized by the minimum daytime 
+We illustrate the (rather abstract) concepts behind the main 
+components of ML with the above problem of predicting the 
+maximum daytime temperature during some day in Finland (see Figure \ref{fig:skiday}). 
+The prediction shall be based solely on the minimum daytime 
+temperature observed in the morning of that day. 
+
+The Finnish Meteorological Institute (FMI) offers data on historic weather 
+observations. We can download historic recordings of minimum and 
+maximum daytime temperature recorded by some FMI weather station. 
+Let us denote the resulting dataset by 
+\begin{equation}
+\label{equ_FMI_data}
+\vz^{(1)},\ldots,\vz^{(\samplesize)}.  
+\end{equation} 
+Each data point $\vz^{(i)} = \big(x^{(i)},y^{(i)}$ represents some previous day 
+for which the minimum and maximum daytime temperature $x^{(i)}$ and $y^{(i)}$ 
+has been recorded at some FMI station.  %We will use the minimum daytime temperature $x^{(i)}$ as the feature and the 
+%maximum daytime temperature $y^{(i)}$ as the label of the data point $\vz^{(i)}$. 
+
+We depict the data \eqref{equ_FMI_data} in Figure \ref{fig_scatterplot_temp_FMI}.  
+Each dot in Figure \ref{fig_scatterplot_temp_FMI} represents a 
+particular day which is characterized by the minimum daytime 
 temperature $x$ and the maximum daytime temperature $y$. 
 
 \begin{figure}[htbp]
@@ -491,92 +501,45 @@ temperature $x$ and the maximum daytime temperature $y$.
 		\end{tikzpicture}
 		\vspace*{-14mm}
 	\end{center}
-	\caption{A scatterplot where each dot represents some day that is characterized 
-		by its minimum daytime temperature $x$ and its maximum daytime temperature $y$.}
+	\caption{Each dot represents a day that is characterized 
+		by its minimum daytime temperature $x$ and its maximum 
+		daytime temperature $y$ measured at a weather stations in Finland.}
 	\label{fig_scatterplot_temp_FMI}
 	\vspace*{-3mm}
 \end{figure}
 
-ML methods allow to learn a predictor $\hat{y} = h(x)$, reading in the minimum temperature 
-$x$ and delivering a prediction/estimate/approximation $\hat{y} = h(x)$ for the actual 
-maximum daytime temperature $y$. This prediction is based on a simple model for how 
-the minimum and maximum daytime temperature during some day are related. We assume 
-that they are related approximately by a linear model: $y \approx w_{1} x + w_{0}$. Based on 
-this model, it seems reasonable to restrict the ML method to only consider linear 
-predictor maps $h(x) = w_{1}x +w_{0}$. 
-
-
-
-??? Work out this prinicple for linear regression using FMI data pionts ???
-
-Figure \ref{fig_AlexMLBP} illustrates the typical workflow of a 
-ML method. Any ML method must start with some initial guess 
-or choice for a good hypothesis. This initial guess might not be 
-made explicit but each ML method must use such an initial guess. 
-This initial guess is typically based on some prior knowledge or 
-domain expertise \cite{MitchellBias1980}. 
-
-Based on a current hypothesis, ML methods make predictions or forecasts about future 
-observations. These observations are in the form of data collected by some hard or software. 
-The discrepancy between the predictions and the actual observations is used to improve the
-hypothesis. Learning happens during improving the current hypothesis based on the 
-discrepancy between its predictions and the actual observations. 
-
-
- 
-A prominent example of a phenomenon is the weather. Forecasting the weather is 
-based on learning or fitting models to massive amounts of weather observations.  
-The Finnish Meteorological Institute collects weather measurements at different 
-observation stations distributed all over Finland. We can download the history of 
-minimum and maximum daytime temperature recorded by the station nearest to 
-our home location. Let us denote the resulting dataset by 
+ML methods allow to learn a predictor map $h(x)$, reading in 
+the minimum temperature $x$ and delivering a prediction (forecast or approximation) 
+$\hat{y} = h(x)$ for the actual maximum daytime temperature $y$. 
+We base this prediction on a simple hypothesis for how the minimum 
+and maximum daytime temperature during some day are related. 
+We assume that they are related approximately by 
 \begin{equation}
- z^{(1)},\ldots,z^{(\samplesize)}\}.  
-\end{equation} 
-Each data point $\vz^{(i)}$ represents some previous day for which the 
-minimum and maximum daytime temperature $x^{(i)}$ and $y^{(i)}$ has been recorded. 
-Thus, we can represent such a day by these measurements only. We 
-will use the minimum daytime temperature $x^{(i)}$ as the feature and the 
-maximum daytime temperature $y^{(i)}$ as the label of the data point $\vz^{(i)}$. 
-%In general we consider features being any property of a datapoint that can be 
-%determined without human intervention. In contrast, labels are properties of 
-%datapoints that require human expert knowledge or domain expertise. 
+\label{equ_initial_hypo_FMI}
+y \approx w_{1} x + w_{0} \mbox{ with } w_{1} \geq 0. 
+\end{equation}
+This hypothesis reflects the intuition that the maximum daytime temperature 
+$y$ should be higher for days with a higher minimum daytime temperature $x$. 
 
-Consider waking up on some day $i$. We can easily determine the minimum temperature 
-since this is what we can measure in the morning. However, we cannot easily determine 
-the maximum day temperature as this will be attained only a few hours later in 
-early afternoon. However, for this application we can get labeled datapoint, i.e., for 
-which we know the true label by using historic recordings. One main source for 
-labeled data is by looking into the past. 
-
-
-
-
-Machine learning (ML) uses data to learn models that allow, in turn, to make predictions of forecasts. 
-The models used in ML come in the form of assumptions or 
-hypothesis for the properties of observed data. Consider the data point $\vz$ representing some 
-day with minimum temperature $x$ and maximum temperature $y$. Then, 
-it seems reasonable to assume that these two properties of the same day are 
-correlated. 
-
-For a higher minimum temperature $x^{(i)}$, we typically expect a higher 
-maximum daytime temperature $y$. We can formalize this assumption by 
-modelling the maximum daytime temperature as $y \approx h(x)$ with some 
-hypothesis map $h$ which is monotonically increasing. One candidate for 
-such a map is a linear function of the form
+Given our initial hypothesis \eqref{equ_initial_hypo_FMI}, it seems reasonable 
+to restrict the ML method to only consider linear predictor maps
 \begin{equation} 
 \label{equ_def_linear_map}
-h(x) = w_{1} x + w_{0} \mbox{ with some weights } w_{1},w_{0} \in \mathbb{R}. 
+h(x) = w_{1} x + w_{0} \mbox{ with some weights } w_{1} \in \mathbb{R}_{+},w_{0} \in \mathbb{R}. 
 \end{equation}
-The map \eqref{equ_def_linear_map} is monotonically increasing whenever $w_{1}\!>\!0$. 
+The map \eqref{equ_def_linear_map} is monotonically increasing since $w_{1}\!\geq\!0$. 
+
 Note that \eqref{equ_def_linear_map} defines a whole ensemble of hypothesis maps, 
 each individual map corresponding to a particular choice for $w_{1} \geq 0$ and $w_{0}$. 
+We refer to such an ensemble of potential predictor maps as the {\bf model} or 
+{\bf hypothesis space} of a ML method. 
+
 We say that the map \eqref{equ_def_linear_map} is parametrized by the weight vector 
 $\mathbf{w}= \big(w_{1},w_{0}\big)$ and indicate this by writing $h^{(\mathbf{w})}$. 
 For a given weight vector $\mathbf{w}= \big(w_{1},w_{0}\big)$, we obtain the map 
 $h^{(\mathbf{w})}(x) = w_{1}x +w_{0}$. 
-Figure \ref{fig_three_maps_example} depicts three particular maps $h^{(\mathbf{w})}$ obtained 
-for three different choices for the weights $\mathbf{w}$.  
+Figure \ref{fig_three_maps_example} depicts three particular maps $h^{(\mathbf{w})}$ 
+obtained for three different choices for the weights $\mathbf{w}$.  
 \begin{figure}[htbp]
 	\begin{center}
 		\begin{tikzpicture}
@@ -597,16 +560,16 @@ for three different choices for the weights $\mathbf{w}$.
 		ymin=-5,
 		ymax=5
 		]
-	  \addplot[green, ultra thick] (x,4*x);
-		  \addplot[red, ultra thick] (x,1*x+2);	
-		    \addplot[blue, ultra thick] (x,2*x+3);	
-	%	\addplot [smooth, color=red, ultra thick] table [x=a, y=b, col sep=comma] {polynomials.csv};    
-	%	\addplot [color=blue, ultra thick] table [x=a, y=c, col sep=comma] {polynomials.csv};     
-	%	\addplot [color=black, thick] table [x=a, y=d, col sep=comma] {polynomials.csv};      
+		\addplot[green, ultra thick] (x,4*x);
+		\addplot[red, ultra thick] (x,1*x+2);	
+		\addplot[blue, ultra thick] (x,2*x+3);	
+		%	\addplot [smooth, color=red, ultra thick] table [x=a, y=b, col sep=comma] {polynomials.csv};    
+		%	\addplot [color=blue, ultra thick] table [x=a, y=c, col sep=comma] {polynomials.csv};     
+		%	\addplot [color=black, thick] table [x=a, y=d, col sep=comma] {polynomials.csv};      
 		\end{axis}
-	%	\node [right,color=red] at (5.5,1.5) {$h^{(\mathbf{w}_{1})}(x) = 7(x^2 - x^3)$};
-%		\node [right,color=blue] at (2.3,0.5) {$h^{(\mathbf{w}_{2})}(x) =x^2$};
-%		\node [right] at (2.5,2.8) {$h^{(\mathbf{w}_{3})}(x)\!=\!x$};
+		%	\node [right,color=red] at (5.5,1.5) {$h^{(\mathbf{w}_{1})}(x) = 7(x^2 - x^3)$};
+		%		\node [right,color=blue] at (2.3,0.5) {$h^{(\mathbf{w}_{2})}(x) =x^2$};
+		%		\node [right] at (2.5,2.8) {$h^{(\mathbf{w}_{3})}(x)\!=\!x$};
 		\end{tikzpicture}
 		\vspace*{-4mm}
 	\end{center}
@@ -614,31 +577,137 @@ for three different choices for the weights $\mathbf{w}$.
 	\label{fig_three_maps_example}
 \end{figure}
 
-
 ML would be trivial if there is only one single hypothesis. Having 
 only a single hypothesis means that there is no need to try out 
-different hypotheses to find the best one. To enable (machine) 
-learning we need to allow for more than one hypothesis. ML allows 
-to choose (learn) a good hypothesis out of (typically very large) 
-hypothesis spaces. The hypothesis space constituted by the 
-maps \eqref{equ_def_linear_map} for different weights is uncountably 
-infinite. 
+different hypotheses to find the best one. To enable ML we need 
+to allow for more than one hypothesis. ML allows to choose (learn) 
+a good hypothesis out of (typically very large) hypothesis spaces. 
+The hypothesis space constituted by the maps \eqref{equ_def_linear_map} 
+for different weights is uncountably infinite. 
 
-To find, or {\bf learn}, a good hypothesis we need to somehow 
-assess the quality of a given hypothesis map. ML methods use 
-data for this purpose. These methods assess the quality of a 
-hypothesis by comparing its predictions with actual observed 
-data. 
+To find, or {\bf learn}, a good hypothesis out of the infinite 
+set \eqref{equ_def_linear_map}, we need to somehow assess 
+the quality of a particular hypothesis map. ML methods use 
+data and a loss function for this purpose. 
 
-Consider the hypothesis map \eqref{equ_def_linear_map} for 
-predicting the maximum daytime temperature based on the 
-minimum (morning) daytime temperature $x$. We can evaluate 
-the quality of this map by comparing its predictions with actual 
-observed minimum and maximum temperature for previous days. 
-Figure \ref{fig_scatterplot_temp_FMI} depicts a set of data points 
-represented earlier days characterized by minimum and maximum 
-temperature. These data points can been downloaded from the 
-Finnish meteorological institute (FMI). 
+A loss function is a measure for the difference between the actual 
+data and the predictions obtained from a hypothesis map (see Figure \ref{}). 
+One widely-used example of a loss function is the squared error loss $(y-h(x))^2$. 
+Using this loss function, ML methods learn a hypothesis map 
+out of the model \eqref{equ_def_linear_map} by tuning $w_{1},w_{0}$ to minimize 
+the average loss $$(1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \big( y^{(\sampleidx)} - h\big(x^{(\sampleidx)} \big) \big)^{2}.$$
+
+\begin{figure}[htbp]
+	\begin{center}
+		\begin{tikzpicture}
+		\tikzset{x=0.35cm,y=2cm,every path/.style={>=latex},node style/.style={circle,draw}}
+		%		\csvreader[ head to column names,%
+		%		late after head=\xdef\iold{\maxtmp}\xdef\xold{\mintmp},,%
+		%		after line=\xdef\iold{\maxtmp}\xdef\xold{\mintmp}]%
+		%		{FMIData.csv}{}
+		%		{\draw [line width=0.0mm] (\iold, \xold) (\i,\x) node {\large $\circ$};
+		%		}
+		%	
+		\begin{axis}[axis x line=none,
+		axis y line=none,
+		ylabel near ticks,
+		xlabel near ticks,
+		enlarge y limits=true,
+		xmin=-40, xmax=40,
+		ymin=-40, ymax=40,
+		width=10cm, height=10cm, ]
+		\addplot[only marks] table [x=mintmp, y=maxtmp, col sep = comma] {FMIData.csv};
+		\node at (axis cs:30,1) [anchor=west] {$x$};
+		\node at (axis cs:0,30) [anchor=west] {$y$};
+		\draw[->] (axis cs:-30,0) -- (axis cs:32,0);
+		\draw[->] (axis cs:0,-30) -- (axis cs:0,30);
+		\draw[red,line width=3] (axis cs:-30,-10) -- (axis cs:20,25);
+		%	\draw [red,rotate=40,thick] \boundellipse{axis cs:10,-36}{300}{50} node[left,xshift=3mm,yshift=10mm]  {$\,\,p(\vz)$}; 
+		%	\fill (axis cs:0,0) circle (2pt) ; 
+		%	\node [right] at (axis cs:-9,8) {$ {\bm \Sigma}^{(3)}$} ; 
+		\end{axis}
+		\end{tikzpicture}
+		\vspace*{-14mm}
+	\end{center}
+	\caption{Dots represent days characterized by its minimum daytime temperature $x$ 
+		and its maximum daytime temperature $y$. We also depict a straight line representing 
+		a linear predictor map. ML methods learn a predictor map with minimum discrepancy 
+		between predictor map and data points. 
+	}
+	\label{fig_scatterplot_temp_FMI_linalg}
+	\vspace*{-3mm}
+\end{figure}
+
+
+
+%??? Work out this prinicple for linear regression using FMI data pionts ???
+
+The above weather prediction is prototypical for many other 
+ML applications. Figure \ref{fig_AlexMLBP} illustrates the typical 
+workflow of a ML method. Starting from some initial guess, ML 
+methods repeatedly improve their current hypothesis based on 
+(new) observed data. 
+
+Using the current hypothesis, ML methods make predictions or 
+forecasts about future observations. The discrepancy between 
+the predictions and the actual observations, as measured using 
+some loss function, is used to improve 
+the hypothesis. Learning happens during improving the current 
+hypothesis based on the discrepancy between its predictions 
+and the actual observations. 
+
+ML methods must start with some initial guess or choice for a 
+good hypothesis. This initial guess can be based on some prior 
+knowledge or domain expertise \cite{MitchellBias1980}. While 
+the initial guess for a hypothesis might not be made explicit in 
+some ML methods, each method must use such an initial guess. 
+In our weather prediction application discussed above, we 
+used the approximate linear model \eqref{equ_initial_hypo_FMI} 
+as the initial hypothesis. 
+ 
+%A prominent example of a phenomenon is the weather. Forecasting the weather is 
+%based on learning or fitting models to massive amounts of weather observations.  
+%The Finnish Meteorological Institute collects weather measurements at different 
+%observation stations distributed all over Finland. 
+
+
+%In general we consider features being any property of a datapoint that can be 
+%determined without human intervention. In contrast, labels are properties of 
+%datapoints that require human expert knowledge or domain expertise. 
+
+%Consider waking up on some day $i$. We can easily determine the minimum temperature 
+%since this is what we can measure in the morning. However, we cannot easily determine 
+%the maximum day temperature as this will be attained only a few hours later in 
+%early afternoon. However, for this application we can get labeled datapoint, i.e., for 
+%which we know the true label by using historic recordings. One main source for 
+%labeled data is by looking into the past. 
+
+%Machine learning (ML) uses data to learn models that allow, in turn, 
+%to make predictions of forecasts. The models used in ML come in 
+%the form of assumptions or hypothesis for the properties of observed 
+%data. Consider the data point $\vz$ representing some day with minimum 
+%temperature $x$ and maximum temperature $y$. Then, it seems reasonable 
+%to assume that these two properties of the same day are correlated. 
+%
+%For a higher minimum temperature $x^{(i)}$, we typically expect a higher 
+%maximum daytime temperature $y$. We can formalize this assumption by 
+%modelling the maximum daytime temperature as $y \approx h(x)$ with some 
+%hypothesis map $h$ which is monotonically increasing. One candidate for 
+%such a map is a linear function of the form
+%
+%
+%
+%
+%
+%Consider the hypothesis map \eqref{equ_def_linear_map} for 
+%predicting the maximum daytime temperature based on the 
+%minimum (morning) daytime temperature $x$. We can evaluate 
+%the quality of this map by comparing its predictions with actual 
+%observed minimum and maximum temperature for previous days. 
+%Figure \ref{fig_scatterplot_temp_FMI} depicts a set of data points 
+%represented earlier days characterized by minimum and maximum 
+%temperature. These data points can been downloaded from the 
+%Finnish meteorological institute (FMI). 
 
 
 \section{Linear Algebra} 
@@ -668,56 +737,15 @@ obtained by linear subsets of $\mathbb{R}^{n}$, such as those depicted
 in Figure \ref{fig_three_maps_example}. We can then use the geometric 
 structure of $\mathbb{R}^{n}$, defined by the Euclidean norm, to search 
 for the best model. As an example, we could search for the linear model, 
-represented by a straight line, such thatthe average distance to the data 
-points in Figure \ref{fig_scatterplot_temp_FMI} is smallest 
+represented by a straight line, such that the average distance to the data 
+points in Figure \ref{fig_scatterplot_temp_FMI} is as small as possible 
 (see Figure \ref{fig_scatterplot_temp_FMI_linalg}). 
 
-The properties of linear structures, such as straight lines, is studied within linear 
-algebra \cite{StrangLinAlg2016}. The basic principles behind important ML methods, 
-such as linear regression or principal component analysis, are deeply rooted in the 
-theory of linear algebra (see Sections \ref{sec_lin_regression} and \ref{sec_pca}).
-
-
-\begin{figure}[htbp]
-	\begin{center}
-		\begin{tikzpicture}
-		\tikzset{x=0.35cm,y=2cm,every path/.style={>=latex},node style/.style={circle,draw}}
-		%		\csvreader[ head to column names,%
-		%		late after head=\xdef\iold{\maxtmp}\xdef\xold{\mintmp},,%
-		%		after line=\xdef\iold{\maxtmp}\xdef\xold{\mintmp}]%
-		%		{FMIData.csv}{}
-		%		{\draw [line width=0.0mm] (\iold, \xold) (\i,\x) node {\large $\circ$};
-		%		}
-		%	
-		\begin{axis}[axis x line=none,
-		axis y line=none,
-		ylabel near ticks,
-		xlabel near ticks,
-		enlarge y limits=true,
-		xmin=-40, xmax=40,
-		ymin=-40, ymax=40,
-		width=10cm, height=10cm, ]
-		\addplot[only marks] table [x=mintmp, y=maxtmp, col sep = comma] {FMIData.csv};
-		\node at (axis cs:30,1) [anchor=west] {$x$};
-		\node at (axis cs:0,30) [anchor=west] {$y$};
-		\draw[->] (axis cs:-30,0) -- (axis cs:32,0);
-		\draw[->] (axis cs:0,-30) -- (axis cs:0,30);
-		\draw[red,line width=3] (axis cs:-30,-10) -- (axis cs:20,25);
-	%	\draw [red,rotate=40,thick] \boundellipse{axis cs:10,-36}{300}{50} node[left,xshift=3mm,yshift=10mm]  {$\,\,p(\vz)$}; 
-		%	\fill (axis cs:0,0) circle (2pt) ; 
-		%	\node [right] at (axis cs:-9,8) {$ {\bm \Sigma}^{(3)}$} ; 
-		\end{axis}
-		\end{tikzpicture}
-		\vspace*{-14mm}
-	\end{center}
-	\caption{Dots represent earlier days characterized by its minimum daytime temperature $x$ 
-		and its maximum daytime temperature $y$. We also depict a straight line as a simple model 
-		for the inherent structure in the data. 
-	  }
-	\label{fig_scatterplot_temp_FMI_linalg}
-	\vspace*{-3mm}
-\end{figure}
-
+The properties of linear structures, such as straight lines, is 
+studied within linear algebra \cite{StrangLinAlg2016}. The basic 
+principles behind important ML methods, such as linear regression 
+or principal component analysis, are deeply rooted in the theory 
+of linear algebra (see Sections \ref{sec_lin_regression} and \ref{sec_pca}).
 
 \newpage
 \section{Optimization} 
@@ -737,13 +765,17 @@ are computed over subsets of data points (the training set).
 
 \section{Theoretical Computer Science} 
 
-On a high level, ML methods take data as input and produce some prediction as the output. 
-The predictions are computed using algorithms such as linear solvers or optimization methods. 
-These algorithms are implemented using some finite computational infrastructure. One example 
-for such a computational infrastructure is a single desktop computer. Another example for a 
-computational infrastructure is an interconnected collection of computing nodes. ML methods 
-must implement their computations within the available finite computational resources such as 
-time, memory or communication bandwidth.  
+On a high level, ML methods take data as input and produce 
+some prediction as the output. The predictions are computed 
+using algorithms such as linear solvers or optimization methods. 
+These algorithms are implemented using some finite computational 
+infrastructure. 
+
+One example for such a computational infrastructure is a single 
+desktop computer. Another example for a computational infrastructure 
+is an interconnected collection of computing nodes. ML methods 
+must implement their computations within the available finite computational 
+resources such as time, memory or communication bandwidth.  
 
 %A main design principle within ML is to formulate learning tasks as an optimization problem. 
 %ML methods are then obtained by applying optimization methods to these learning problems. 
@@ -779,10 +811,10 @@ being too slow to process data at their rate of arrival (in real-time) means tha
 %we want to predict) based on observed variables (the data we can feed into ML algorithms). 
 %???????
 
-Consider the datapoints depicted in Figure \ref{fig_scatterplot_temp_FMI}. Each datapoint 
-represents some previous day. Each datapoint (day) is characterized by the minimum and 
+Consider the data points depicted in Figure \ref{fig_scatterplot_temp_FMI}. Each data point 
+represents some previous day. Each data point (day) is characterized by the minimum and 
 maximum daytime temperature as measured by some weather observation station. It might 
-be useful to interpret these datapoints as independent and identically distributed (i.i.d.) 
+be useful to interpret these data points as independent and identically distributed (i.i.d.) 
 realizations of a random vector $\mathbf{z} =\big(x,y\big)^{T}$. The random vector $\vz$ 
 is distributed according to some fixed but typically unknown probability distribution $p(\vz)$. 
 Figure \ref{fig_scatterplot_temp_FMI_stat_model} extends the scatter plot of Figure \ref{fig_scatterplot_temp_FMI} 
@@ -866,9 +898,10 @@ well as the state of the AI system. The behaviour of an AI system
 is determined by how the perceptions made about the environment 
 are used to form the next action. 
 
-From an engineering point of view, AI aims at optimizing behaviour to maximize a 
-long-term {\bf return}. The optimization of behaviour is based solely on the perceptions 
-made by the agent. Let us consider some application domains where AI systems can be used:
+From an engineering point of view, AI aims at optimizing behaviour to 
+maximize a long-term {\bf return}. The optimization of behaviour is based 
+solely on the perceptions made by the agent. Let us consider some 
+application domains where AI systems can be used:
 \begin{itemize}
 \item a {\bf forest fire management system}: perceptions given by 
 satellite images and local observations using sensors or ``crowd sensing'' 
@@ -945,12 +978,12 @@ What sets AI methods apart from other ML methods is that they must
 compute predictions in real-time while collecting data and choosing 
 the next action. Consider an AI system that steers a toy car. In any 
 given state (point of time) the resulting prediction influences immediately 
-the features of the following datapoints. 
+the features of the following data points. 
 
 Consider data points to represent the different states of a toy car. 
 For such data points we  could define their labels as the optimal 
 steering angle for these states. However, it might be very challenging 
-to obtain accurate label values for any of these datapoints. Instead, 
+to obtain accurate label values for any of these data points. Instead, 
 we could evaluate the usefulness of a particular steering angle only 
 in an indirect fashion by using a reward signal. For the toy car example, 
 we might obtain a reward from a distance sensor that indicates if the 
@@ -961,20 +994,29 @@ car reduces the distance to some goal or target location.
 
 \section{Organization of this Book}
 
-We can formalize a particular ML application or problem by defining the {\bf features} and 
-{\bf labels} of data points and choosing the {\bf loss function} for measuring how good a 
-particular ML method performs (see Chapter \ref{ch_Elements_ML}). Besides features, labels 
-and loss function we also highlight the importance of restricting the class of potential predictor 
-maps from features to labels. We will refer to the restricted class of {\bf computationally feasible} 
-maps used by a ML method as its {\bf hypothesis space} or {\bf model}. 
+Chapter \ref{ch_Elements_ML} discusses the design choices incurred 
+by the ML components data, model and loss. These design choices 
+include the representation for data and  models. %One such choice for 
+%data and model representation is to use vectors and matrices. 
 
-We detail in Chapter \ref{ch_some_examples} how some widely used ML methods are obtained 
-as combinations of particular choices for feature and label space, loss function and hypothesis space. 
+Chapter \ref{ch_some_examples} shows how well-known ML methods 
+are obtained by different design choices for data representation, models 
+and loss function. 
 
-In Chapter \ref{ch_Optimization} we introduce and discuss the principle of {\bf empirical risk minimization (ERM)} 
-which amounts to choosing  a predictor based on minimizing the average loss (or empirical risk) incurred over 
-{\bf labeled training data}. The ERM principle amounts to a precise mathematical formulation of the 
-``learning by trial and error'' paradigm. 
+%We can formalize a particular ML application or problem by defining the {\bf features} and 
+%{\bf labels} of data points and choosing the {\bf loss function} for measuring how good a 
+%particular ML method performs (see Chapter \ref{ch_Elements_ML}). Besides features, labels 
+%and loss function we also highlight the importance of restricting the class of potential predictor 
+%maps from features to labels. We will refer to the restricted class of {\bf computationally feasible} 
+%maps used by a ML method as its {\bf hypothesis space} or {\bf model}. 
+
+%We detail in how some widely used ML methods are obtained 
+%as combinations of particular choices for feature and label space, loss function and hypothesis space. 
+
+Chapter \ref{ch_Optimization} explains the principle of {\bf empirical risk minimization (ERM)} 
+which amounts to choosing  a predictor based on minimizing the average loss (or empirical risk) 
+incurred over {\bf labeled training data}. The ERM principle amounts to a precise mathematical 
+formulation of the ``learning by trial and error'' paradigm. 
 
 Chapter \ref{ch_GD} discusses a particular optimization method 
 {\bf gradient descent (GD)} which is an iterative method for solving 
@@ -989,24 +1031,32 @@ to learn a predictor. As detailed in Chapter \ref{ch_overfitting_regularization}
 a main reason for doing validation is to detect and avoid {\bf overfitting} 
 which causes poor performance of ML methods. 
 
-The main focus of this tutorial is on {\bf supervised ML methods} which assign labels to each data 
-point and require the availability of some data points (the training set) whose labels are known. 
-The label of a data point is some quantity of interest such as the fact if an image shows a cat or not. 
-Another example is weather prediction where a data point represents a user query containing a location 
-and time. The label associated with this data point could be the local temperature at the queried location 
+The main focus of this tutorial is on {\bf supervised ML methods} which 
+assign labels to each data point and require the availability of some data 
+points (the training set) whose labels are known. The label of a data point 
+is some quantity of interest such as the fact if an image shows a cat or not. 
+Another example is weather prediction where a data point represents a 
+user query containing a location and time. The label associated with this 
+data point could be the local temperature at the queried location 
 and time. 
 
-Supervised ML methods aim at finding a (predictor or classifier) map that reads in features 
-of a data point and outputs a prediction. The prediction should be an accurate approximation 
-to the true label (see Chapter \ref{ch_Elements_ML}). To find such a map, supervised ML methods 
-use historic data in order to try out different choices for the map and picking the best one. 
+Supervised ML methods aim at finding a (predictor or classifier) map 
+that reads in features of a data point and outputs a prediction. The 
+prediction should be an accurate approximation to the true label 
+(see Chapter \ref{ch_Elements_ML}). To find such a map, supervised 
+ML methods use historic data in order to try out different choices for 
+the map and picking the best one. 
 
-The basic idea of supervised ML methods, as illustrated in Figure \ref{fig_curve_fitting}, is to fit a 
-curve (representing the predictor map) to data points obtained from historic data (see Chapter \ref{ch_Optimization}). 
-While this sounds like a trivial task, the challenge of modern ML applications is the amount of data points. 
-ML methods must process billions of data points with each single data point characterized by a potentially 
-vast number of features. Consider data points representing social network users, whose features include all 
-media that has been posted (videos, images, text). 
+The basic idea of supervised ML methods, as illustrated in 
+Figure \ref{fig_curve_fitting}, is to fit a curve (representing 
+the predictor map) to data points obtained from historic data 
+(see Chapter \ref{ch_Optimization}). While this sounds like a 
+trivial task, the challenge of modern ML applications is the sheer 
+amount of data points. ML methods must process billions of 
+data points with each single data point characterized by a potentially 
+vast number of features. Consider data points representing 
+social network users, whose features include all media that 
+has been posted (videos, images, text). 
 
 Beside the size of datasets, another computational challenge for modern ML methods is that they must be 
 able to fit highly non-linear predictor maps. Deep learning methods address this challenge by using a 
@@ -1138,14 +1188,14 @@ components of ML.
 \section{The Data}
 \label{sec_the_data}
 
-{\bf Data as Collections of Datapoints.} Maybe the most important component of any 
+{\bf Data as Collections of Data Points.} Maybe the most important component of any 
 ML problem (and method) is data. We consider data as collections of 
-individual datapoints which are atomic units of ``information containers''. Datapoints 
+individual data points which are atomic units of ``information containers''. Datapoints 
 can represent text documents, signal samples of time series generated by sensors, 
 entire time series generated by collections of sensors, frames within a single video, 
 videos within a movie database, cows within a herd, trees within a forest, forests 
 within a collection of forests. Consider the problem of predicting the duration 
-of a moutain hike (see Figure \ref{fig:image}). Here, datapoints could represent 
+of a mountain hike (see Figure \ref{fig:image}). Here, datapoints could represent 
 different hiking tours.  
 
 \begin{figure}[htbp]
@@ -4597,7 +4647,7 @@ continuously learning an improved model as new data arrives.
 To illustrate online learning, we consider the ML problem discussed in Section \ref{sec_putting_togehter_the_pieces}. 
 This problem amounts to learning a linear predictor for the label $y$ of data points 
 using a single numeric feature $x$. We learn the predictor based on some training 
-data \eqref{}. The weight vector for the optimal linear predictor is characterized by \eqref{equ_zero_grad_condition_putting_together_special_form_mtx}. 
+data. The weight vector for the optimal linear predictor is characterized by \eqref{equ_zero_grad_condition_putting_together_special_form_mtx}. 
 
 Let us assume that the training data is built up sequentially, we start with $m=1$ data points 
 in the first time step, then in the next time step collect another data point to get 
@@ -7146,6 +7196,13 @@ a user.
 
 \chapter{Lists of Symbols}
 
+\section{Sets} 
+\begin{align} 
+&\mathbb{R}  &\quad &\mbox{Set of real numbers $x$.} \nonumber \\
+&\mathbb{R}_{+}  &\quad &\mbox{Set of non-negative real numbers $x\geq0$.} \nonumber \\ \nonumber
+\end{align} 
+
+\section{Machine Learning}
 \begin{align} 
 &\timeidx  &\quad &\mbox{A discrete time index.} \nonumber \\
 &\sampleidx  &\quad &\mbox{Generic index used to enumrate data points in a list of data points. } \nonumber \\

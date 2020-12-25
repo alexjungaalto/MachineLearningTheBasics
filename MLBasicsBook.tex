@@ -334,11 +334,11 @@ showstringspaces=false            %
 	%edge[pil, bend right=45] (formidler.west)
 	%  edge[pil,<->, bend left=45] node[auto] {Direct (a)} (t)
 	\end{tikzpicture}
-	\vspace*{-13mm}
+	\vspace*{-9mm}
 	\caption{
 		Machine learning implements the scientific principle of ``trial and error''. 
-		This principle validates and refines a hypothesis about a phenomenon 
-		such as the weather. This principle involves data, a model and a loss 
+		Machine learning continuously validates and refines a hypothesis based on 
+		a model about a phenomenon that generates observable data.
 		function.}
 	\label{fig_AlexMLBP}
 \end{figure}
@@ -2280,13 +2280,16 @@ In general, different loss functions are preferable for different ML application
 \begin{center}
 \framebox[0.96\textwidth]{
  \parbox{0.9\textwidth}{
-An important aspect guiding the choice of loss function is the computational complexity 
-of the resulting ML method. Indeed, the basic idea behind ML methods is quite simple: 
-learn (find) the particular hypothesis out of a given hypothesis space which yields the 
-smallest loss (on average). The difficulty of the resulting optimization problem (see Chapter \ref{ch_Optimization}) 
-depends crucially on the properties of the chosen loss function. Some loss functions allow to use 
-very simple but efficient iterative methods for solving the optimization problem underlying 
-an ML method (see Chapter \ref{ch_GD}). 
+An important aspect guiding the choice of loss function is the 
+computational complexity of the resulting ML method. The basic 
+idea behind ML methods is quite simple: learn (find) the particular 
+hypothesis out of a given hypothesis space which yields the smallest 
+loss (on average). 
+The difficulty of the resulting optimization problem (see Chapter \ref{ch_Optimization}) 
+depends crucially on the properties of the chosen loss function. 
+Some loss functions allow to use very simple but efficient iterative 
+methods for solving the optimization problem underlying an ML 
+method (see Chapter \ref{ch_GD}). 
 }}
 \end{center}
 
@@ -2318,16 +2321,17 @@ The concept of regret minimization is useful when we do not make any
 assumptions (such as i.i.d. samples) of the data points. If we do not use 
 such a probabiliistic model we cannot use the Bayes risk (of Bayes optimal 
 estimator) as benchmark. Regret minimization 
-techniques can be designed and analyzed without any such probabilistic model 
-for the data \cite{PredictionLearningGames}. This approach replaces the Bayes risk 
-benchmark with few given reference predictors (experts) to serve as benchmark. 
+techniques can be designed and analyzed without any such probabilistic 
+model for the data \cite{PredictionLearningGames}. This approach replaces 
+the Bayes risk benchmark with few given reference predictors (experts) to 
+serve as benchmark. 
 
 {\bf Partial Feedback, ``Reward''.}  
-In some application it is not possible to determine the true label of any data point. 
-Without any labeled data we cannot use the concept of a loss function to measure 
-the quality of a prediction (by comparing with the true label). Instead we must use 
-some other form of indirect feedback or ``reward'' that can be attributed to a particular 
-prediction \cite{PredictionLearningGames,SuttonEd2}. 
+In some application it is not possible to determine the true label of 
+any data point. Without any labeled data we cannot use the concept 
+of a loss function to measure the quality of a prediction (by comparing 
+with the true label). Instead we must use some other form of indirect 
+feedback or ``reward'' that can be attributed to a particular prediction \cite{PredictionLearningGames,SuttonEd2}. 
 
 Consider the ML problem of predicting the optimal direction for 
 moving next a toy care given the current state. ML methods can sense the 
@@ -2353,15 +2357,17 @@ We assume to have access to $\samplesize$ labeled data points
 \begin{equation} 
 \big(x^{(1)},y^{(1)}\big),\ldots, \big(x^{(\samplesize)},y^{(\samplesize)}\big)  \label{equ_labeled_data_putting_together}
 \end{equation} 
-for which we know the true label values $y^{(i)}$. Note that the assumption of knowing 
-the exact true label values $y^{(i)}$ for any data point is an idealization. We might often 
-face labelling or measurement errors such that the observed labels are noisy versions 
-of the true label. However, there are efficient methods that can cope with noisy 
-labels (see Chapter \ref{ch_overfitting_regularization}). 
+for which we know the true label values $y^{(i)}$. 
 
-Our goal is to learn a predictor map $h(x)$ such that $h(x) \approx y$ for any data point. 
-We require the predictor map to belong to the hypothesis space $\hypospace$ of 
-linear predictors 
+The assumption of knowing the exact true label values $y^{(i)}$ 
+for any data point is an idealization. We might often face labelling 
+or measurement errors such that the observed labels are noisy 
+versions of the true label. However, there are efficient methods 
+that can cope with noisy labels (see Chapter \ref{ch_overfitting_regularization}). 
+
+Our goal is to learn a predictor map $h(x)$ such that $h(x) \approx y$ 
+for any data point. We require the predictor map to belong to 
+the hypothesis space $\hypospace$ of linear predictors 
 \begin{equation} 
 \label{equ_def_lin_pred_intercept}
 h^{(w_{0},w_{1})}(x) = w_{1} x + w_{0}. 
@@ -2383,8 +2389,9 @@ using the average squared error loss (see \eqref{equ_squared_loss})
 f(w_{0},w_{1}) & \defeq (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \big( y^{(\sampleidx)} - h^{(w_{0},w_{1})}(x^{(i)})  \big)^{2} \nonumber \\
 & \stackrel{\eqref{equ_def_lin_pred_intercept}}{=}  (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \big( y^{(\sampleidx)} - ( w_{1} x^{(i)} + w_{0}) \big)^{2}. 
 \end{align}
-The training error $f(w_{0},w_{1})$ is the average of the squared prediction errors incurred 
-by the predictor $h^{(w_{0},w_{1})}(x)$ to the labeled data points \eqref{equ_labeled_data_putting_together}. 
+The training error $f(w_{0},w_{1})$ is the average of the squared 
+prediction errors incurred by the predictor $h^{(w_{0},w_{1})}(x)$ 
+to the labeled data points \eqref{equ_labeled_data_putting_together}. 
 
 It seems natural to learn a good predictor \eqref{equ_def_lin_pred_intercept} by choosing 
 the weights $w_{0},w_{1}$ to minimize the training error 
@@ -2404,15 +2411,18 @@ using basic rules for calculating derivatives, we obtain the following optimalit
  (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \big( y^{(\sampleidx)} - ( w'_{1} x^{(\sampleidx)} + w'_{0}) \big)= 0 \mbox{, and } (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} x^{(\sampleidx)} \big( y^{(\sampleidx)} - ( w'_{1} x^{(\sampleidx)} + w'_{0}) \big) = 0. 
 \end{equation} 
 
-Any weights $w'_{0},w'_{1}$ that satisfy \eqref{equ_zero_grad_condition_putting_together_special_form} define 
-a predictor $h^{(w'_{0},w'_{1})} = w'_{1}x + w'_{0}$ that is optimal in the sense of incurring minimum training error, 
+Any weights $w'_{0},w'_{1}$ that satisfy \eqref{equ_zero_grad_condition_putting_together_special_form} 
+define a predictor $h^{(w'_{0},w'_{1})} = w'_{1}x + w'_{0}$ that 
+is optimal in the sense of incurring minimum training error, 
 $$f(w'_{0},w'_{1}) = \min_{w_{0},w_{1} \in \mathbb{R}} f(w_{0},w_{1}).$$
 
 We find it convenient to rewrite the optimality condition \eqref{equ_zero_grad_condition_putting_together_special_form} 
-using matrices and vectors. To this end, we first rewrite the predictor \eqref{equ_def_lin_pred_intercept} as 
+using matrices and vectors. To this end, we first rewrite the 
+predictor \eqref{equ_def_lin_pred_intercept} as 
 $$ h(\vx) = \vw^{T} \vx \mbox{ with } \mathbf{w} = \big(w_{0},w_{1}\big)^{T}, \mathbf{x} = \big(1,x\big)^{T}.$$
-Let us stack the feature vectors $\vx^{(i)} = \big(1,x^{(i)} \big)^{T}$ and labels $y^{(i)}$ of training data points 
-\eqref{equ_labeled_data_putting_together} into the feature matrix and label vector, 
+Let us stack the feature vectors $\vx^{(i)} = \big(1,x^{(i)} \big)^{T}$ 
+and labels $y^{(i)}$ of training data points \eqref{equ_labeled_data_putting_together} 
+into the feature matrix and label vector, 
 \begin{equation}
 \mX  = \big(\vx^{(1)},\ldots,\vx^{(\samplesize)}\big)^{T} \in \mathbb{R}^{\samplesize \times 2}, \vy = \big(y^{(1)},\ldots,y^{(\samplesize)}\big)^{T} \in \mathbb{R}^{\samplesize}. 
 \end{equation} 
@@ -4063,74 +4073,129 @@ training data point.
      \end{tikzpicture}
      \vspace*{-4mm}
 \end{center}
-\caption{ML methods aim at learning (finding) the predictor $h \in \hypospace$ with minimal 
-average prediction error. However, the average prediction error (dashed curve) cannot be 
-determined in general. Empirical risk minimization methods are based on replacing (or approximating) 
-the average prediction error with the empirical risk (solid curve) incurred by a predictor when 
-applied to a finite set of labeled data points (the training set).}
+\caption{ML methods aim at learning a predictor $h \in \hypospace$ that incurs 
+	small loss on any data point. Empirical risk minimization approximates the
+    expected loss or risk with the empirical risk (solid curve) incurred on a 
+    finite set of labeled data points (the training set).}
 \label{fig_ERM_idea}
 \end{figure}
 
 
-As detailed in Chapter \ref{ch_Elements_ML}, ML problems (and methods) consist of the following 
-components (see Figure \ref{fig_ml_problem}): 
+Chapter \ref{ch_Elements_ML} explained three components of ML (see Figure \ref{fig_ml_problem}): 
 \begin{itemize} 
 \item the feature space $\featurespace$ and label space $\labelspace$, 
 \item a hypothesis space $\hypospace$ of computationally feasible predictor maps $\featurespace \rightarrow \labelspace$, 
 \item and a loss function $\loss{(\vx,y)}{h}$ which measures the error incurred by predictor $h \in \hypospace$. 
 \end{itemize} 
-Given such a ML problem specification, ML methods aim at finding (learning) an accurate predictor 
-map $h$ out of $\hypospace$ such that $h(\vx) \approx y$ for a random data point $(\vx,y)$. We 
-make this informal statement precise by using a simple probabilistic model for the data. In particular, 
-we assume data points are i.i.d. realizations drawn from some fixed (unknown) probability distribution $p(\vx,y)$. 
+ML methods find - or learn - an accurate predictor map $h$ out 
+of the model $\hypospace$ such that $h(\vx) \approx y$ for any 
+data point $(\vx,y)$. The deviation between the predicted label $\hat{y}=h(\vx)$ 
+and true label $y$ is measured by a loss function $\loss{(\vx,y)}{h}$. 
+However, how can we make precise the requirement that the loss 
+should be small for any data point ? 
 
-The average prediction error or average risk of a given predictor is then defined as the expected loss 
-$\expect \big \{ \loss{(\vx,y)}{h} \}$. ML methods can be considered as optimization methods that choose 
-(optimize or learn) a predictor out of $\hypospace$ such that it has minimum average risk. If we would 
-know the probability distribution of the data, we could in principle readily determine the best predictor 
-map by solving an optimization problem. This optimal predictor is known as a Bayes predictor and depends 
-on the loss function. For the squared error loss, the Bayes predictor is the posterior mean of $y$ given the 
-features $\vx$. 
+To assess how well a predictor map is doing for any data point, 
+we can use the concept of an expected loss or risk. The risk is 
+defined as the expectation of the loss incurred by the predictor 
+for a randomly drawn data point. In this approach, we interpret 
+data points as realizations of random variables which are 
+characterized by a probability distribution. 
 
-Note that in practive we cannot directly construct Bayes' optimal predictors using probability calculus since 
-we do not know probability distribution underlying the data. However, Bayes' optimal predictors can provide 
-a very useful benchmark against we can compare practical ML methods. Let us now see how the construction 
-of Bayes' optimal predictors can be adapted to obtain practical ML methods. 
+If the probability distribution underlying the data points is known, 
+minimizing the expected loss or risk amounts to computing the 
+Bayes' estimator for the label given the feature vector. 
+Roughly speaking, this estimator can be read of directly from the 
+posterior probability distribution of the label given the features. 
+
+In practice we do not know the true underlying probability 
+distribution and have to estimate it from data. Therefore, we cannot 
+compute the Bayes' optimal estimator exactly. However, we can 
+approximately compute this estimator by replacing the exact probability 
+distribution with an estimate. Moreover, the risk of the Bayes' optimal 
+estimator provides a useful benchmark against we can compare the 
+average loss of practical ML methods. 
+
+Using a simple probabilistic model for data points, we formally define 
+empirical risk minimization (ERM) in Section \eqref{equ_sec_emp_risk_approximates_expected_loss}. 
+We then specialize the ERM for three particular ML problems. In Section \ref{sec_ERM_lin_reg}, 
+we discuss the ERM obtained for linear regression (see Section \ref{sec_lin_regression}). 
+The resulting ERM has appealing properties as it amounts to 
+minimizing a differentiable (smooth) and convex function which 
+can be done efficiently using efficient gradient based methods (see Chapter \ref{ch_GD}). 
+
+We then discuss in Section \ref{sec_ERM_decision_tree} the ERM obtained for decision trees 
+which yields a discrete optimization problem and is therefore fundamentally different from the 
+smooth ERM obtained for linear regression. In particular, we cannot apply gradient based 
+methods (see Chapter \ref{ch_GD}) to solve them but have to rely on discrete search methods. 
+
+Section \ref{sec_ERM_Bayes} discusses how Bayes' methods can be used to solve 
+the non-convex and non-differentiable ERM problem obtained for classification 
+problems with the $0/1$ loss \eqref{equ_def_0_1}. 
+
+As explained in Section \ref{sec_training_inference}, many ML methods 
+use the ERM during a training period to learn a hypothesis which is 
+then applied to new data points during the inference period. 
+Section \ref{sec_online_learning} discusses how to obtain online 
+learning by solving the ERM sequentially as new data points come in. 
+Online learning can be interpreted as interleaving training and inference 
+periods. 
 
 
-%Note that the average error of a given predictor depends on the probability distribution underlying 
-%the data generation which is typically not known. Instead, we can determine only the error 
-%(empirical risk) incurred over some labeled data points $\dataset = \{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$. 
+%Let us now see how the construction of Bayes' 
+%optimal predictors can 
+%be adapted to obtain practical ML methods. 
 
-\section{The Basic Idea of ERM} 
+\section{Empirical Risk Approximates Expected Loss} 
+\label{equ_sec_emp_risk_approximates_expected_loss}
 
-In practice, we typically do not know exactly the probability distribution and therefore cannot determine 
-precisely the average error uncured by a particular hypothesis. However, we can estimate this 
-average error using an empirical average on some data points (``training data''). 
-Many ML methods are optimization methods that use the empirical risk on the training data 
-as an estimate for the average (expected) error. Thus, in contrast to standard optimization methods, 
-these ML methods optimize an estimate (approximation) of the true objective function 
-(the average error of a predictor map).  
+We assume that data points are i.i.d.\ realizations drawn from some fixed 
+probability distribution $p(\vx,y)$. The probability distribution $p(\vx,y)$ 
+allows us to define the expected loss or risk 
+$$\label{equ_def_risk} \expect \big \{ \loss{(\vx,y)}{h} \}.$$
+Many ML methods learn a predictor out of $\hypospace$ such 
+that \eqref{equ_def_risk} is minimal. 
 
-A key idea underlying many ML methods is to find (learn) a predictor map with small empirical risk, 
-which serves as a proxy for the average prediction error. The resulting ML methods are optimization 
-methods which solve an {\bf empirical risk minimization (ERM) problem} 
+If we would know the probability distribution of the data, we could 
+in principle readily determine the best predictor map by solving an 
+optimization problem. This optimal predictor is known as the Bayes' 
+predictor and depends on the probability distribution $p(\vx,y)$ 
+and the loss function. For the squared error loss, the Bayes' 
+predictor is the posterior mean of $y$ given the features $\vx$. 
+
+We often do not know the probability distribution and therefore 
+cannot evaluate the expectation in \eqref{equ_def_risk}. 
+%However, we can 
+%estimate the expectation using an empirical average over a set of 
+%data points (``training data''). 
+%Many ML methods are optimization methods that use the empirical 
+%risk on the training data as an estimate for the average (expected) 
+%error. Thus, in contrast to standard optimization methods, these 
+%ML methods optimize an estimate - or approximation - of the actual 
+%objective function \eqref{equ_def_risk}. 
+%A key idea underlying many ML methods is to find (learn) a predictor map with small empirical risk, 
+%which serves as a proxy for the average prediction error. The resulting ML methods are optimization 
+ {\bf Empirical risk minimization (ERM)} replaces the expectation in 
+ \eqref{equ_def_risk} with an average over a given set of labeled data points,  
 \begin{align}
 \label{equ_def_ERM_funs}
    \hat{h} & = \argmin_{h \in \hypospace} \emperror(h|\dataset) \nonumber \\ 
    & \stackrel{\eqref{eq_def_emp_error_101}}{=}  \argmin_{h \in \hypospace} (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}.
 \end{align}
-The ERM \eqref{equ_def_ERM_funs} amounts to learning (finding) a good predictor $\hat{h}$ (out of the hypothesis 
-space $\hypospace$) by ``training'' it on the dataset $\dataset = \{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$, 
-which is referred to as the {\bf training set}. 
+The ERM \eqref{equ_def_ERM_funs} amounts to learning (finding) a 
+good predictor $\hat{h} \in \hypospace$ by ``training'' it on the 
+dataset $\dataset = \{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$, 
+which is therefore referred to as the {\bf training set}. 
 
-Solving the optimization problem \eqref{equ_def_ERM_funs} provides two things. First, the 
-minimizer $\hat{h}$ is a predictor which performs optimal on the training set $\dataset$. Second, 
-the corresponding objective value $\emperror(\hat{h}|\dataset)$ (the ``training error'') indicates 
-how accurate the predictions of $\hat{h}$ will be. However, as we will discuss in Chapter \ref{ch_overfitting_regularization}, 
-in certain ML problems the training error $\emperror(\hat{h}|\dataset)$ obtained for the 
-dataset $\dataset$ can be very different from the average prediction error of $\hat{h}$ when applied 
-to new data points which are not contained in $\dataset$. 
+Solving the optimization problem \eqref{equ_def_ERM_funs} provides 
+two things. First, the minimizer $\hat{h}$ is a predictor which performs 
+optimal on the training set $\dataset$. Second, the corresponding 
+objective value $\emperror(\hat{h}|\dataset)$ (the ``training error'') 
+indicates how accurate the predictions of $\hat{h}$ will be. 
+
+As we will discuss in Chapter \ref{ch_overfitting_regularization}, for some 
+datasets $\dataset$, the training error $\emperror(\hat{h}|\dataset)$ obtained 
+for $\dataset$ can be very different from the average prediction error of $\hat{h}$ 
+when applied to new data points which are not contained in $\dataset$. 
 
 %????I would like that the "equivalent to find optimum weight vertoc w0" from slide Optimal Linear Regression would be explained again. The mathematical notation used there isn't that familiar for me.?????
 %Consider, e.g., the hypothesis space $\hypospace$ of linear predictors is based on a parametrization of the hypothesis $h(\vx^{(\timeidx)})$. 
@@ -4147,29 +4212,30 @@ when applied to the data points in the dataset $\dataset$. Note that the two for
 are fully equivalent. In particular, given the optimal weight vector $\vw_{\rm opt}$ solving 
 \eqref{eq_def_ERM_weight}, the predictor $h^{(\vw_{\rm opt})}$ is an optimal predictor solving \eqref{equ_def_ERM_funs}. 
 
-Learning a good predictor map via ERM \eqref{equ_def_ERM_funs} can interpreted as 
-learning by ``trial and error'': An instructor (or supervisor) provides some snapshots 
-$\vz^{(\sampleidx)}$ which are characterized by features $\vx^{(\sampleidx)}$ and associated 
-with known labels $y^{(\sampleidx)}$. We (as the learner) then try out some predictor map $h$ 
-in order to tell the label $y^{(\sampleidx)}$ only from the snapshot features $\vx^{(\sampleidx)}$ 
-and determine the (training) error $\emperror(h|\dataset)$ incurred. If the error $\emperror(h|\dataset)$ 
-is too large we try out another predictor map $h'$ instead of $h$ with the hope of achieving 
-a smaller training error $\emperror(h'|\dataset)$. 
+Learning a hypothesis via ERM \eqref{equ_def_ERM_funs} is a form of 
+learning by ``trial and error''. An instructor (or supervisor) provides some 
+snapshots $\vz^{(\sampleidx)}$ which are characterized by features 
+$\vx^{(\sampleidx)}$ and associated with known labels $y^{(\sampleidx)}$. 
 
+The learner then tries out some hypothesis $h$ to tell the label $y^{(\sampleidx)}$ 
+only from the snapshot features $\vx^{(\sampleidx)}$ and determine the (training) 
+error $\emperror(h|\dataset)$ incurred. If the error $\emperror(h|\dataset)$ 
+is too large we try out another predictor map $h'$ instead of $h$ with the 
+hope of achieving a smaller training error $\emperror(h'|\dataset)$. 
 
-This principle of learning by supervision, i.e., using labeled data points (``training examples''), could 
-also be used to model the development of language in human brains (``concept learning''). Consider a 
-child, who should learn the concept ``tractor'' (see Figure \ref{fig_tractors}). We could try to show 
-many different pictures to the child and for each picture say ``tractor'' or ``no tractor''. Based on this 
-``labeled data'', the child tries to learn the relation between features of an image and the presence 
-(or absence) of a tractor in the image. 
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.7\textwidth]{LabeledDataTractor1.jpg}  
-    \label{fig_tractors}
-        \caption{A bunch of labeled images. The label $y$ of an image indicates if a tractor is shown ($y=1$) or not ($y=-1$).}
-\end{figure}
+%This principle of learning by supervision, using labeled data points (``training examples''), 
+%could also be used to model the development of language in human brains (``concept learning''). Consider a 
+%child, who should learn the concept ``tractor'' (see Figure \ref{fig_tractors}). We could try to show 
+%many different pictures to the child and for each picture say ``tractor'' or ``no tractor''. Based on this 
+%``labeled data'', the child tries to learn the relation between features of an image and the presence 
+%(or absence) of a tractor in the image. 
+%
+%\begin{figure}[htbp]
+%    \centering
+%    \includegraphics[width=0.7\textwidth]{LabeledDataTractor1.jpg}  
+%    \label{fig_tractors}
+%        \caption{A bunch of labeled images. The label $y$ of an image indicates if a tractor is shown ($y=1$) or not ($y=-1$).}
+%\end{figure}
 
 We highlight that the precise shape of the objective function $f(\vw)$ in \eqref{eq_def_ERM_weight} 
 depends heavily on the parametrization of the predictor functions, i.e., how does the predictor $h^{(\vw)}$ 
@@ -4225,23 +4291,6 @@ involve non-differentiable and non-convex objective functions.
 \caption{Different types of objective functions obtained for ERM in different settings.}
 \label{fig_diff_types_bojec}
 \end{figure}
-
-
-
-In what follows, we discuss the structure of the ERM obtained for three particular ML problems: 
-In Section \ref{sec_ERM_lin_reg}, we discuss the ERM obtained for linear regression (see Section \ref{sec_lin_regression}). 
-The resulting ERM has appealing properties as it amounts to minimizing a differentiable (smooth) 
-and convex function which can be done efficiently using efficient gradient based methods (see Chapter \ref{ch_GD}). 
-
-We then discuss in Section \ref{sec_ERM_decision_tree} the ERM obtained for decision trees 
-which yields a discrete optimization problem and is therefore fundamentally different from the 
-smooth ERM obtained for linear regression. In particular, we cannot apply gradient based 
-methods (see Chapter \ref{ch_GD}) to solve them but have to rely on discrete search methods. 
-
-Finally, in Section \ref{sec_ERM_Bayes}, we discuss how Bayes' methods can be used to solve 
-the non-convex and non-differentiable ERM problem obtained for classification 
-problems with the $0/1$ loss \eqref{equ_def_0_1}. 
-%problem we will consider decision trees. 
 
 \section{ERM for Linear Regression}
 \label{sec_ERM_lin_reg}
@@ -4325,24 +4374,18 @@ matrix $\mX^{T} \mX$. Computing the inverse can be computationally challenging f
 inverting a matrix which is close to singular typically introduces numerical errors. 
 
 
-%????
-%{\bf Example.} Consider polynomial regression with .... According to Section \ref{}, polyonmial regression is equivalent to linear 
-%regression with the feature vectors $\vx^{(\sampleidx)}$ if we stack these feature vectors into the matrix 
-%\begin{equation} 
-%\label{equ_vandermonde}
-%\mathbf{X} = \begin{pmatrix} \end{pmatrix} 
-%\end{equation} 
-%we could use \eqref{equ_close_form_lin_reg} to find the optimal weight vector. However, it turns out that computing the inverse of the 
-%matrix $\big(  \mX^{T} \mX \big)$ with the feature matrix is often challenging numerically. Indeed, the condition number of  $\big(  \mX^{T} \mX \big)$ (see \eqref{equ_def_condition_number})
-%tends to be extremely large (see \cite{Gautschi1988}) which makes it difficult to apply standard solver implementations using finite precision arithmetic. 
-%????
-
-In Section \ref{sec_lin_reg}, we will discuss an alternative method for computing (approximately) the optimal weight 
-vector $\vw_{\rm opt}$ which does not require any matrix inversion. This alternative method, referred to as ``gradient descent'', 
-is based on constructing a sequence $\vw^{(0)}, \vw^{(1)},\ldots$ of increasingly accurate approximations of $\vw_{\rm opt}$. 
-Two particular benefits of using this iterative method, instead of using the formula \eqref{equ_close_form_lin_reg}, for 
-computing $\vw_{\rm opt}$ are (i) it is computationally cheaper and (ii) it also works when the matrix $\mX$ is not full 
-rank in which case the formula \eqref{equ_close_form_lin_reg} becomes invalid. 
+Section \ref{sec_lin_reg} a method for computing the optimal weight vector 
+$\vw_{\rm opt}$ which does not require any matrix inversion. This  method, 
+referred to as ``gradient descent'', is based on constructing a sequence 
+$\vw^{(0)}, \vw^{(1)},\ldots$ of increasingly accurate approximations of $\vw_{\rm opt}$. 
+This iterative method has two major benefits compared to evaluating 
+the formula \eqref{equ_close_form_lin_reg} using direct matrix inversion, 
+such as Gauss-Jordan elimination \cite{golub96}. 
+First, it is computationally much cheaper than direct matrix inversion, which 
+is crucial in modern ML applications involving large feature matrices. 
+Second, this iterative method does not break when the matrix $\mX$ is not 
+full rank in which case the formula \eqref{equ_close_form_lin_reg} becomes 
+invalid. 
 
 \section{ERM for Decision Trees}
 \label{sec_ERM_decision_tree}
@@ -4667,6 +4710,23 @@ random features and labels according to the probability distribution
 for a more detailed comparison between generative and discriminative 
 methods. 
 
+
+
+
+\section{Training and Inference Periods} 
+\label{sec_training_inference} 
+
+Some ML methods repeat the cycle in Figure \ref{fig_AlexMLBP} in a 
+highly irregular fashion. Consider a large image collection which we 
+use to learn a hypothesis about how cat images look like. It might 
+be reasonable to adjust the hypothesis by fitting a model to the image 
+collection. This fitting or training amounts to repeating the cycle in Figure \ref{fig_AlexMLBP} 
+during some specific time period (the ``training time'') for a large number. After the training period, 
+we only apply the hypothesis to predict the labels of new images. This second phase is also known 
+as inference time and might be much longer compared to the training time. Ideally, we would like 
+to have only a very short training period to learn a good hypothesis and then only use the hypothesis 
+for inference. 
+
 \section{Online Learning} 
 \label{sec_online_learning}
 
@@ -4705,18 +4765,6 @@ in solving \eqref{equ_zero_grad_condition_putting_together_special_form_mtx} at 
 
 
 
-\section{Training and Inference Periods} 
-Some ML methods repeat the cycle in Figure \ref{fig_AlexMLBP} in a 
-highly irregular fashion. Consider a large image collection which we 
-use to learn a hypothesis about how cat images look like. It might 
-be reasonable to adjust the hypothesis by fitting a model to the image 
-collection. This fitting or training amounts to repeating the cycle in Figure \ref{fig_AlexMLBP} 
-during some specific time period (the ``training time'') for a large number. After the training period, 
-we only apply the hypothesis to predict the labels of new images. This second phase is also known 
-as inference time and might be much longer compared to the training time. Ideally, we would like 
-to have only a very short training period to learn a good hypothesis and then only use the hypothesis 
-for inference. 
-
 \section{Exercise} 
 \label{sec_exercise_chap_4} 
 
@@ -4724,6 +4772,32 @@ for inference.
 \label{ex_chap_5_lin_reg} 
 Consider linear regression with squared error loss. When is the optimal linear predictor 
 unique. Does there always exist an optimal linear predictor?
+
+\subsection{Polynomial Regression} 
+\label{ex_chap_5_poly_reg} 
+Polynomial regression for data points with a single feature $x$ and 
+label $y$ is equivalent to linear regression with the feature 
+vectors $\vx = \big(x^{0},x^{1},\ldots,x^{\featuredim-1}\big)^{T}$. 
+Given $\samplesize = \featurelen$ data points $\big(x^{(1)},y^{(1)}\big),\ldots,\big(x^{(\samplesize)},y^{(\samplesize)}\big)$, 
+we construct the feature matrix $\mathbf{X} \in \mathbb{R}^{\samplesize \times \samplesize}$. 
+The columns of the feature matrix are the feature vectors $\vx^{(\sampleidx)}$. 
+Is this feature matrix a Vandermonde matrix \cite{Gautschi1988}? Can you say 
+something about the determinant of the feature matrix?
+
+\subsection{Empirical Risk Approximates Expected Loss} 
+\label{ex_chap_5_empriskapp} 
+Consider training data points $\big(x^{(i)},y^{(i)} \big)$, for $\sampleidx = 1,\ldots,100$ 
+which are i.i.d.\ realizations of a random data point $(x,y)$. The feature 
+$x$ of a random data point is a Gaussian random variable 
+with zero mean and unit variance. The label is is obtained 
+via $y = x + e$ with noise $e \sim \mathcal{N}(0,1)$ being 
+a standard Gaussian RV. The feature $x$ and noise $e$ 
+are statistically independent. For the hypothesis $h(x)=0$, 
+what is the probability that the empirical risk (average loss) on 
+the training data is more than $20$ \% larger than the 
+expected loss or risk?
+
+
 
 
 

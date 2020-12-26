@@ -338,8 +338,7 @@ showstringspaces=false            %
 	\caption{
 		Machine learning implements the scientific principle of ``trial and error''. 
 		Machine learning continuously validates and refines a hypothesis based on 
-		a model about a phenomenon that generates observable data.
-		function.}
+		a model about a phenomenon that generates observable data.}
 	\label{fig_AlexMLBP}
 \end{figure}
 \end{center}
@@ -4368,41 +4367,51 @@ Moreover, the solution of \eqref{equ_zero_gradient_lin_reg} is then unique and g
 \label{equ_close_form_lin_reg}
 \vw_{\rm opt} = \big(  \mX^{T} \mX \big)^{-1} \mX^{T} \vy. 
 \end{equation}
-The closed-form solution \eqref{equ_close_form_lin_reg} requires the inversion of the $\featuredim \times \featuredim$ 
-matrix $\mX^{T} \mX$. Computing the inverse can be computationally challenging for large feature length $\featuredim$ 
-(see Figure \ref{fig_snapshot_pixels} for a simple ML problem where the feature length is almost a million). Moreover, 
-inverting a matrix which is close to singular typically introduces numerical errors. 
+The closed-form solution \eqref{equ_close_form_lin_reg} requires 
+the inversion of the $\featuredim \times \featuredim$ matrix $\mX^{T} \mX$. 
+Computing the inverse can be computationally challenging for 
+large feature length $\featuredim$ (see Figure \ref{fig_snapshot_pixels} 
+for a simple ML problem where the feature length is almost a million). 
+Moreover, inverting a matrix which is close to singular typically 
+introduces numerical errors. 
 
-
-Section \ref{sec_lin_reg} a method for computing the optimal weight vector 
-$\vw_{\rm opt}$ which does not require any matrix inversion. This  method, 
-referred to as ``gradient descent'', is based on constructing a sequence 
-$\vw^{(0)}, \vw^{(1)},\ldots$ of increasingly accurate approximations of $\vw_{\rm opt}$. 
-This iterative method has two major benefits compared to evaluating 
-the formula \eqref{equ_close_form_lin_reg} using direct matrix inversion, 
-such as Gauss-Jordan elimination \cite{golub96}. 
-First, it is computationally much cheaper than direct matrix inversion, which 
-is crucial in modern ML applications involving large feature matrices. 
-Second, this iterative method does not break when the matrix $\mX$ is not 
-full rank in which case the formula \eqref{equ_close_form_lin_reg} becomes 
-invalid. 
+Section \ref{sec_lin_reg} discusses a method for computing the optimal weight vector 
+$\vw_{\rm opt}$ which does not require any matrix inversion. This method, 
+referred to as {\bf gradient descent}, constructs a sequence 
+$\vw^{(0)}, \vw^{(1)},\ldots$ of increasingly accurate approximations 
+of $\vw_{\rm opt}$. This iterative method has two major benefits 
+compared to evaluating the formula \eqref{equ_close_form_lin_reg} using 
+direct matrix inversion, such as Gauss-Jordan elimination \cite{golub96}. 
+First, gradient descent requires much fewer arithmetic operations compared 
+to direct matrix inversion. This is crucial in modern ML applications involving 
+large feature matrices. Second, gradient descent does not break when the 
+matrix $\mX$ is not full rank and the formula \eqref{equ_close_form_lin_reg} 
+cannot be used any more. 
 
 \section{ERM for Decision Trees}
 \label{sec_ERM_decision_tree}
 
-Let us now consider the ERM problem \eqref{equ_def_ERM_funs} for a regression problem with label 
-space $\labelspace=\mathbb{R}$, feature space $\featurespace= \mathbb{R}^{\featuredim}$ and using 
-a hypothesis space defined by decision trees (see Section \ref{sec_decision_trees}). In stark contrast 
-to the ERM problem obtained for linear or logistic regression, the ERM problem obtained for decision 
-trees amounts to a {\bf discrete optimization problem}. Consider the particular hypothesis space 
-$\hypospace$ depicted in Figure \ref{fig_hypospace_DT_depth_2}. This hypothesis space contains a 
-finite number of predictor maps, each map corresponding to a particular decision tree. 
+Consider the ERM problem \eqref{equ_def_ERM_funs} for a regression 
+problem with label space $\labelspace=\mathbb{R}$, feature space 
+$\featurespace= \mathbb{R}^{\featuredim}$ and using a hypothesis 
+space defined by decision trees (see Section \ref{sec_decision_trees}). 
 
-For the small hypothesis space $\hypospace$ in Figure \ref{fig_hypospace_DT_depth_2}, the ERM 
-problem is easy since we just have to evaluate the empirical risk for each of the elements in $\hypospace$ 
-and pick the one yielding the smallest. However, in ML applications we typically use significantly 
-larger hypothesis spaces and then discrete optimization tends to be more complicated compared 
-to smooth optimization which can solved by (variants of) gradient descent (see Chapter \ref{ch_GD}). 
+In stark contrast to the ERM problem obtained for linear or logistic 
+regression, the ERM problem obtained for decision trees amounts 
+to a {\bf discrete optimization problem}. Consider the particular 
+hypothesis space $\hypospace$ depicted in Figure \ref{fig_hypospace_DT_depth_2}. 
+This hypothesis space contains a finite number of predictor maps, 
+each map corresponding to a particular decision tree. 
+
+For the small hypothesis space $\hypospace$ in Figure \ref{fig_hypospace_DT_depth_2}, 
+ERM is easy. Indeed, we just have to evaluate the empirical risk 
+for each of the elements in $\hypospace$ and pick the one yielding 
+the smallest empirical risk. 
+
+However, in ML applications we typically use significantly 
+larger hypothesis spaces and then discrete optimization tends to be 
+more complicated compared to smooth optimization which can solved 
+by (variants of) gradient descent (see Chapter \ref{ch_GD}). 
 
 A popular approach to ERM for decision trees is to use greedy algorithms which try to expand (grow) 
 a given decision tree by adding new branches to leaf nodes in order to reduce the empirical risk 
@@ -4786,10 +4795,10 @@ something about the determinant of the feature matrix?
 
 \subsection{Empirical Risk Approximates Expected Loss} 
 \label{ex_chap_5_empriskapp} 
-Consider training data points $\big(x^{(i)},y^{(i)} \big)$, for $\sampleidx = 1,\ldots,100$ 
-which are i.i.d.\ realizations of a random data point $(x,y)$. The feature 
-$x$ of a random data point is a Gaussian random variable 
-with zero mean and unit variance. The label is is obtained 
+Consider training data points $\big(x^{(i)},y^{(i)} \big)$, for $\sampleidx = 1,\ldots,100$. 
+The data points are i.i.d.\ realizations of a random data point $(x,y)$. 
+The feature $x$ of a random data point is a Gaussian random variable 
+with zero mean and unit variance. The label is modelled as 
 via $y = x + e$ with noise $e \sim \mathcal{N}(0,1)$ being 
 a standard Gaussian RV. The feature $x$ and noise $e$ 
 are statistically independent. For the hypothesis $h(x)=0$, 
@@ -6493,7 +6502,7 @@ means update \eqref{equ_cluster_mean_update} would be not well defined for the c
 \end{itemize}
 The following algorithm fixes those three issues in a particular way \cite{Gray1980}.  
 \begin{algorithm}[htbp]
-\caption{``$k$-Means II'' (a reformulation of the ``Fixed Point Algorithm'' presented in \cite{Gray1980})}\label{alg:kmeansimpl}
+\caption{``$k$-Means II'' (slight variation of ``Fixed Point Algorithm'' in \cite{Gray1980})}\label{alg:kmeansimpl}
 \begin{algorithmic}[1]
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
@@ -6509,11 +6518,12 @@ set iteration counter $r \defeq 0$; compute  $E^{(r)} = \emperror \big( \{\vm^{(
 \label{equ_cluster_assign_update2}
 y^{(\sampleidx)} \defeq \min \{  \argmin\limits_{\clusteridx' \in \{1,\ldots,\nrcluster\}} \| \vx^{(\sampleidx)} - \vm^{(\clusteridx')} \| \} \mbox{  (update cluster assignments)} 
 \end{equation}
-\State for all clusters $\clusteridx\!=\!1,\ldots,\nrcluster$, update activity indicator  $b^{(\clusteridx)} = \begin{cases} 1 & \mbox{ if } |\{i: y^{(\sampleidx)}= \clusteridx\}| > 0 \\ 0 & \mbox{ else.} \end{cases}$
+\State for all clusters $\clusteridx\!=\!1,\ldots,\nrcluster$, update activity indicator 
+$$b^{(\clusteridx)} \defeq \begin{cases} 1 & \mbox{ if } |\{i: y^{(\sampleidx)}= \clusteridx\}| > 0 \\ 0 & \mbox{ else.} \end{cases}$$
 \State for all $\clusteridx\!=\!1,\ldots,\nrcluster$ with $b^{(\clusteridx)}=1$, update cluster means 
 \begin{equation}
 \label{equ_cluster_mean_update2} 
-\vm^{(\clusteridx)}= \frac{1}{|\{i: y^{(\sampleidx)}= \clusteridx\}|}  \sum_{i: y^{(\sampleidx)} = \clusteridx} \vx^{(\sampleidx)}  \mbox{  (update cluster means) } 
+\vm^{(\clusteridx)} \defeq \frac{1}{|\{i: y^{(\sampleidx)}= \clusteridx\}|}  \sum_{i: y^{(\sampleidx)} = \clusteridx} \vx^{(\sampleidx)}  \mbox{  (update cluster means) } 
 \end{equation} 
 \State $r \defeq r +1$  (increment iteration counter)
 \State $E^{(r)} = \emperror \big( \{\vm^{(\clusteridx)}\}_{\clusteridx=1}^{\nrcluster},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize} \mid \dataset \big)$  (see \eqref{equ_def_emp_risk_kmeans})
@@ -6522,28 +6532,39 @@ y^{(\sampleidx)} \defeq \min \{  \argmin\limits_{\clusteridx' \in \{1,\ldots,\nr
 \end{algorithmic}
 \end{algorithm}
 
-The variables $b^{(c)} \in \{0,1\}$ indicate if cluster $c$ is active ($b^{(c)}= 1$) or cluster 
-$c$ is inactive ($b^{(c)}=0$), in the sense of having no data points assigned to it during the preceding 
-cluster assignment step \eqref{equ_cluster_assign_update2}. Using these additional variables 
-allows to ensure the cluster mean update step \eqref{equ_cluster_mean_update2} to be well defined, 
-since it is only applied to cluster $c$ associated with at least one data point $\vx^{(\sampleidx)}$. 
+The variables $b^{(c)} \in \{0,1\}$ indicate if cluster $c$ is 
+active ($b^{(c)}= 1$) or cluster $c$ is inactive ($b^{(c)}=0$), 
+in the sense of having no data points assigned to it during 
+the preceding cluster assignment step \eqref{equ_cluster_assign_update2}. 
+We use the cluster activity inductors $b^{(c)}$ to make sure 
+that the mean update \eqref{equ_cluster_mean_update2} only 
+to clusters $c$ with at least one data point $\vx^{(\sampleidx)}$. 
 
-It can be shown that Algorithm \ref{alg:kmeansimpl} amounts to a fixed-point iteration 
+It can be shown that Algorithm \ref{alg:kmeansimpl} amounts to 
+a fixed-point iteration 
 \begin{equation}
 \label{equ_fixed_point_clustering}
 \{ y^{(\sampleidx)} \}_{i=1}^{\samplesize} \mapsto \mathcal{P}  \{ y^{(\sampleidx)} \}_{i=1}^{\samplesize}
 \end{equation}
-with a particular operator $\mathcal{P}$ (which depends on the dataset $\dataset$). Each iteration of 
-Algorithm \ref{alg:kmeansimpl} updates the cluster assignments $y^{(\sampleidx)}$ by applying the 
-operator $\mathcal{P}$. By interpreting Algorithm \ref{alg:kmeansimpl} as a fixed-point iteration 
-\eqref{equ_fixed_point_clustering}, the authors of \cite[Thm. 2]{Gray1980} present an elegant 
-proof of the convergence of Algorithm \ref{alg:kmeansimpl} within a finite number of iterations 
-(even for $\varepsilon = 0$). What is more, after running Algorithm \ref{alg:kmeansimpl} for a finite 
-number of iterations the cluster assignments $\{ y^{(\sampleidx)} \}_{i=1}^{\samplesize}$ do not change anymore.   
+with a particular operator $\mathcal{P}$ (which depends on 
+the dataset $\dataset$). 
 
-We illustrate the operation of Algorithm \ref{alg:kmeansimpl} in Figure \ref{fig:first_iter_kmeans}. Each column 
-corresponds to one iteration of Algorithm \ref{alg:kmeansimpl}. The upper picture in each column depicts the 
-update of cluster means while the lower picture shows the update of the cluster assignments during each iteration. 
+Each iteration of Algorithm \ref{alg:kmeansimpl} updates the cluster 
+assignments $y^{(\sampleidx)}$ by applying the operator $\mathcal{P}$. 
+By interpreting Algorithm \ref{alg:kmeansimpl} as a fixed-point iteration 
+\eqref{equ_fixed_point_clustering}, the authors of \cite[Thm. 2]{Gray1980} 
+present an elegant proof of the convergence of Algorithm \ref{alg:kmeansimpl} 
+within a finite number of iterations (even for $\varepsilon = 0$). What is more, 
+after running Algorithm \ref{alg:kmeansimpl} for a finite number of iterations 
+the cluster assignments $\{ y^{(\sampleidx)} \}_{i=1}^{\samplesize}$ do 
+not change any more.   
+
+We illustrate the operation of Algorithm \ref{alg:kmeansimpl} in 
+Figure \ref{fig:first_iter_kmeans}. Each column corresponds to 
+one iteration of Algorithm \ref{alg:kmeansimpl}. The upper picture 
+in each column depicts the update of cluster means while the 
+lower picture shows the update of the cluster assignments 
+during each iteration. 
 
 \begin{figure}[htbp]
 \begin{center}

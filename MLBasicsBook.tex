@@ -4804,7 +4804,9 @@ a standard Gaussian RV. The feature $x$ and noise $e$
 are statistically independent. For the hypothesis $h(x)=0$, 
 what is the probability that the empirical risk (average loss) on 
 the training data is more than $20$ \% larger than the 
-expected loss or risk?
+expected loss or risk? What is the expectation and variance 
+of the training error and how are those related to the 
+expected loss ? 
 
 
 
@@ -4814,13 +4816,26 @@ expected loss or risk?
 \chapter{Gradient Based Learning}
 \label{ch_GD}
 
-This chapter is devoted to a workhorse of many ML algorithms. This workhorse, 
-known as gradient descent, is an optimization method that can be applied to vastly different 
-ML applications. Variants of gradient descent are used to tune the weights of 
-artificial neural networks within deep learning methods \cite{Goodfellow-et-al-2016}. Gradient 
-descent can also be applied to reinforcement learning applications. The difference between 
-these applications is merely in the details for how to compute or estimate the gradient and 
-how to incorporate the information provided by the gradients. 
+ML methods are optimization methods, that learn an optimal 
+hypothesis out of the model. The quality of each hypothesis is 
+measured or scored by some average loss or empirical risk. This
+average loss, viewed as a function of the hypothesis, defines 
+an objective function whose minimum is achieved by the 
+optimal hypothesis. 
+
+Many ML methods use gradient based methods to efficiently search 
+for a (nearly) optimal hypothesis. These methods locally 
+approximate the objective function by a linear function which 
+is used to improve the current guess for the optimal hypothesis. 
+The prototype of a gradient based optimization methods is 
+{\bf gradient descent} (GD). 
+
+Variants of GD are used to tune the weights of artificial neural 
+networks within deep learning methods \cite{Goodfellow-et-al-2016}. 
+GD can also be applied to reinforcement learning applications. The 
+difference between these applications is merely in the details for 
+how to compute or estimate the gradient and how to incorporate 
+the information provided by the gradients. 
 
 In the following, we will mainly focus on ML problems with hypothesis space $\hypospace$ consisting of predictor 
 maps $h^{(\vw)}$ which are parametrized by a weight vector $\vw \in \mathbb{R}^{\featuredim}$. Moreover, we 
@@ -5343,14 +5358,17 @@ the function at some point $n$ to obtain the values $f[n], f[n-1]$ and $f[n+1]$.
 % \begin{quote} 
  %``There are known knowns ... But there are also unknown unknowns'' (D. Rumsfeld)
 % \end{quote}
-The idea of ERM is to learn a good predictor by searching the hypothesis space $\hypospace$ 
-for a predictor map $h$ with minimum average loss (empirical error) on a training set. For ML 
-methods using high-dimensional hypothesis spaces, such as linear maps with a large number of 
-features or deep neural networks, this approach bears the risk of overfitting. A 
-method overfits if it learns a predictor $h \in \hypospace$ that, merely by luck, fits 
-well the training data but does a poor job on other data. Such a predictor will fail 
-to {\bf generalize} well to new data for which we do not know the label $y$ but 
-only the features $\vx$ (if we would know the label, then there is no point in learning 
+The idea of ERM is to learn a hypothesis out of $\hypospace$ that incurs 
+minimum average loss (empirical error) on a set of labelled data points, 
+which is used as training set. For ML methods using high-dimensional 
+hypothesis spaces, such as linear maps with a large number of features 
+or deep neural networks, this approach bears the risk of overfitting. 
+
+A method overfits if it learns a predictor $h \in \hypospace$ that, 
+merely by luck, fits well the training data but does a poor job on 
+other data. Such a predictor will fail to {\bf generalize} well to new 
+data for which we do not know the label $y$ but only the features 
+$\vx$ (if we would know the label, then there is no point in learning 
 predictors which estimate the label). 
 
 This chapter discusses few basic techniques to detect and avoid overfitting. 
@@ -5734,10 +5752,12 @@ As we will see below, the prediction quality achieved by $h^{(\widehat{\vw})}$ d
 \label{equ_def_est_err}
 \mathcal{E}_{\rm est} \defeq \expect \{  \| \Delta \vw \|^{2}_{2} \} =  \expect \big\{ \big \| \widehat{\vw} - \vw_{\rm true} \big\|^{2}_{2} \big \}. 
 \end{equation}
-It is useful to characterize the MSE $\mathcal{E}_{\rm est}$ by decomposing it into two components, one component 
-(the ``bias'') which depends on the choice $r$ for the hypothesis space and another component (the ``variance'') which 
-only depends on the distribution of the observed feature vectors $\vx^{(\sampleidx)}$ and labels $y^{(\sampleidx)}$. 
-It is then not too hard to show that 
+It is useful to characterize the MSE $\mathcal{E}_{\rm est}$ by 
+decomposing it into two components, one component (the ``bias'') 
+which depends on the choice $r$ for the hypothesis space and 
+another component (the ``variance'') which only depends on the 
+distribution of the observed feature vectors $\vx^{(\sampleidx)}$ 
+and labels $y^{(\sampleidx)}$. It is then not too hard to show that 
 \vspace*{-1mm}
 \begin{align}
 \label{equ_bias_var_decomp}
@@ -5777,10 +5797,13 @@ By inserting \eqref{equ_expr_expect_inv-wishart} and $\mbox{trace} \{ \mathbf{I}
 \label{equ_formulae_variance_toy_model}
 V= \expect \{ \| \widehat{\vw} - \expect\{ \widehat{\vw} \} \|^{2}_{2} \} = \sigma^{2} r/(\samplesize_{\rm t}-r-1). 
 \end{equation} 
-As indicated by \eqref{equ_formulae_variance_toy_model}, the variance term increases with increasing model 
-complexity $r$ (see Figure \ref{fig_bias_variance}). This behaviour is in stark contrast to the bias term which 
-decreases with increasing $r$. The opposite dependency of bias and variance on the model complexity is known 
-as the {\bf bias-variance tradeoff}. Thus, the choice of model complexity $r$ (see \eqref{equ_generalization_hypospace_r}) 
+As indicated by \eqref{equ_formulae_variance_toy_model}, the 
+variance term increases with increasing model complexity $r$ 
+(see Figure \ref{fig_bias_variance}). This behaviour is in stark 
+contrast to the bias term which decreases with increasing $r$. 
+The opposite dependency of bias and variance on the model 
+complexity is known as the {\bf bias-variance tradeoff}. Thus, 
+the choice of model complexity $r$ (see \eqref{equ_generalization_hypospace_r}) 
 has to balance between small variance and small bias term. 
 
 \begin{figure}
@@ -5967,9 +5990,10 @@ We then obtain the regularized ERM
 \label{equ_ERM_fun_regularized}
   \hat{h} = \argmin_{h \in \hypospace} \emperror(h|\dataset)  + \mathcal{R}(h). 
 \end{equation} 
-The additional term $\mathcal{R}(h)$ aims at approximating (or anticipating) the 
-increase in the empirical risk of a predictor $\hat{h}$ when it is applied to new 
-data points, which are different from the dataset $\dataset$ used to learn the 
+The additional term $\mathcal{R}(h)$ aims at approximating 
+(or anticipating) the increase in the empirical risk of a predictor 
+$\hat{h}$ when it is applied to new data points, which are 
+different from the dataset $\dataset$ used to learn the 
 predictor $\hat{h}$ by \eqref{equ_ERM_fun_regularized}. 
 
 The two approaches \eqref{equ_ERM_fun_pruned} and \eqref{equ_ERM_fun_regularized}, for 
@@ -5983,22 +6007,26 @@ This statements can be made precise using the theory of duality for optimization
 
 
 
-In what follows we will analyze the occurrence of overfitting in Section \ref{sec_overfitting} and then discuss in 
-Section \ref{sec_regularization} how to avoid overfitting using regularization. 
+In what follows we will analyze the occurrence of overfitting 
+in Section \ref{sec_overfitting} and then discuss in Section 
+\ref{sec_regularization} how to avoid overfitting using regularization. 
 
 
 \section{Robustness} 
 \label{sec_robustness} 
 
-Overfitting is one of main challenges in applying modern ML  methods. Modern ML 
-methods use large hypothesis spaces that allow to represent highly non-linear predictor 
-maps. Just by pure luck we can find one such predictor map that perfectly fits the 
-training set resulting in zero training error and, in turn, solving ERM \eqref{equ_def_ERM_funs}. 
+Overfitting is a main challenges in applying modern ML methods. 
+Modern ML methods use large hypothesis spaces that allow to 
+represent highly non-linear predictor maps. Just by pure luck 
+we can find one such predictor map that perfectly fits the 
+training set resulting in zero training error and, in turn, solving 
+ERM \eqref{equ_def_ERM_funs}. 
 
-Overfitting is closely related to another property of ML methods: robustness. If a method 
-overfits it will typically be not robust to small perturbations in the training data. The robustness 
-to small perturbations in the data is almost a mandatory requirement for ML methods  to be 
-useful in important application domains. 
+Overfitting is closely related to another property of ML methods: 
+robustness. If a method overfits it will typically be not robust to 
+small perturbations in the training data. The robustness to small 
+perturbations in the data is almost a mandatory requirement for 
+ML methods to be useful in important application domains. 
 
 The ML methods discussed in Chapter \ref{ch_Optimization} rest on the 
 idealizing assumption that we have access to the true label values and feature 
@@ -6112,17 +6140,21 @@ is always valid, even when $\mX^{T} \mX$ is singular (not invertible). This impl
 that for $\lambda> 0$ the optimization problem \eqref{equ_def_rlr_w_opt} (and \eqref{equ_reg_lin_reg_opt_weight}) 
 have a unique solution (which is given by \eqref{equ_close_form_reglinreg}). 
 
-Let us now study the effect of regularization on the resulting bias, variance and average 
-prediction error incurred by the predictor $h^{(\hat{\vw}^{(\lambda)})}(\vx) = \big(\hat{\vw}^{(\lambda)}\big)^{T} \vx$. 
-To this end, we will again invoke the simple probabilistic toy model (see \eqref{equ_linear_obs_model}, \eqref{equ_toy_model_iid} 
-and \eqref{equ_labels_training_data}) used already in Section \ref{sec_gen_linreg}. In particular, we interpret 
-the training data $\dataset^{(\rm train)} = \{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize_{\rm t}}$ 
-as realizations of i.i.d.\ random variables according to \eqref{equ_linear_obs_model}, \eqref{equ_toy_model_iid} and \eqref{equ_labels_training_data}. 
+We now study the effect of regularization on the bias, variance 
+and average prediction error incurred by the predictor $h^{(\hat{\vw}^{(\lambda)})}(\vx) = \big(\hat{\vw}^{(\lambda)}\big)^{T} \vx$. 
+To this end, we will again invoke the simple probabilistic toy 
+model (see \eqref{equ_linear_obs_model}, \eqref{equ_toy_model_iid} 
+and \eqref{equ_labels_training_data}) used already in Section \ref{sec_gen_linreg}. 
+In particular, we interpret the training data $\dataset^{(\rm train)} = \{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize_{\rm t}}$ 
+as realizations of i.i.d.\ random variables according to \eqref{equ_linear_obs_model}, 
+\eqref{equ_toy_model_iid} and \eqref{equ_labels_training_data}. 
 %We aim at predicting the label $y$ based on the first $r$ entries of the feature vector $\vx$ (see \eqref{equ_generalization_hypospace_r}). 
 
-As discussed in Section \ref{sec_gen_linreg}, the average prediction error is the sum of three 
-components: the bias, the variance and the noise variance $\sigma^{2}$ (see \eqref{equ_decomp_E_pred_toy_model}). 
-The bias of regularized linear regression \eqref{equ_reg_lin_reg_opt_weight} is obtained as 
+As discussed in Section \ref{sec_gen_linreg}, the average prediction 
+error is the sum of three components: the bias, the variance and the 
+noise variance $\sigma^{2}$ (see \eqref{equ_decomp_E_pred_toy_model}). 
+The bias of regularized linear regression \eqref{equ_reg_lin_reg_opt_weight} 
+is obtained as 
 \begin{equation} 
 \label{equ_bias_reg_lin_reg}
 B^{2} = \big \| (\mathbf{I} - \expect \{ ( \mX^{T} \mX +  \samplesize \lambda \mathbf{I})^{-1} \mX^{T} \mX  \})  \vw_{\rm true} \big  \|^{2}_{2}. 
@@ -6139,9 +6171,11 @@ such that \eqref{equ_bias_reg_lin_reg} can be approximated as
 B^{2} & \approx \big \| (\mathbf{I}\!-\!(\mathbf{I}\!+\!\lambda \mathbf{I})^{-1} ) \vw_{\rm true} \big  \|^{2}_{2} \nonumber \\
 & =  \sum_{l=1}^{\featuredim} \frac{\lambda}{1+\lambda} w_{{\rm true},l}^2 .
 \end{align} 
-By comparing the (approximate) bias term \eqref{equ_bias_reg_lin_reg_approx} of regularized linear regression 
-with the bias term \eqref{equ_def_bias_term} obtained for ordinary linear regression, we see that introducing 
-regularization typically increases the bias. The bias increases with larger values of the regularization parameter $\lambda$. 
+By comparing the (approximate) bias term \eqref{equ_bias_reg_lin_reg_approx} 
+of regularized linear regression with the bias term \eqref{equ_def_bias_term} of 
+ordinary linear regression, we see that introducing regularization typically 
+increases the bias. The bias increases with larger values of the regularization 
+parameter $\lambda$. 
 
 The variance of regularized linear regression \eqref{equ_reg_lin_reg_opt_weight} satisfies 
 \begin{align}
@@ -6179,38 +6213,48 @@ $\lambda$ in an opposite manner resulting in a bias-variance tradeoff.}
 %Choice of lambda can be guided by validation error 
 %???????
 
-So far, we have only discussed the statistical effect of regularization on the resulting ML method (how 
-regularization influences bias, variance, average prediction error). However, regularization has also 
-an effect on the computational properties of the resulting ML method. Note that the objective function 
-in \eqref{equ_def_rlr_w_opt} is a smooth (infinitely often differentiable) convex function. Thus, as for 
-linear regression, we can solve the regularization linear regression problem using GD \eqref{equ_squared_loss} 
-(see Algorithm \ref{alg:gd_reglinreg}). The effect of adding the regularization term $\lambda \| \vw \|^{2}_{2}$ 
-to the objective function within linear regression is a {\bf speed up of GD}. Indeed, we can rewrite \eqref{equ_def_rlr_w_opt} 
-as the quadratic problem 
+So far, we have only discussed the statistical effect of 
+regularization on the resulting ML method (how regularization 
+influences bias, variance, average prediction error). However, 
+regularization has also an effect on the computational properties 
+of the resulting ML method. Note that the objective function 
+in \eqref{equ_def_rlr_w_opt} is a smooth (infinitely often differentiable) 
+convex function. 
+
+Similar to linear regression, we can solve the regularization 
+linear regression problem using GD \eqref{equ_squared_loss} 
+(see Algorithm \ref{alg:gd_reglinreg}). The effect of adding the 
+regularization term $\lambda \| \vw \|^{2}_{2}$ to the objective 
+function within linear regression is a {\bf speed up of GD}. Indeed, 
+we can rewrite \eqref{equ_def_rlr_w_opt} as the quadratic problem 
 \begin{align} 
 \label{equ_quadr_form_reglinreg}
 \min_{\vw \in \mathbb{R}^{\featuredim}} & \underbrace{(1/2) \vw^{T} \mQ \vw - \vq^{T}  \vw}_{= f(\vw)} \nonumber \\ 
  & \mbox{ with } \mathbf{Q}= (1/\samplesize) \mX^{T} \mX + \lambda \mathbf{I}, \vq =(1/\samplesize) \mX^{T} \vy. %\mathbf{X}^{T} 
 %\min_{\mathbf{w} \in \mathbb{R}^{\featuredim}} \mathbf{w}^{T} \mathbf{Q} \mathbf{w}  \mbox{, with } \mathbf{Q} = \mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I}.
 \end{align} 
-This is similar to the quadratic problem \eqref{equ_quadr_form_linreg} underlying linear regression but 
-with different matrix $\mQ$. It turns out that the convergence speed of GD (see \eqref{equ_def_GD_step}) 
-applied to solving a quadratic problem of the form \eqref{equ_quadr_form_reglinreg} depends crucially 
-on the condition number $\kappa(\mQ) \geq 1$ of the psd matrix $\mQ$ \cite{JungFixedPoint}. In particular, 
-GD methods are fast if the condition number $\kappa(\mQ)$ is small (close to $1$). 
+This is similar to the quadratic problem \eqref{equ_quadr_form_linreg} 
+underlying linear regression but with different matrix $\mQ$. It turns out 
+that the convergence speed of GD (see \eqref{equ_def_GD_step}) applied 
+to solving a quadratic problem of the form \eqref{equ_quadr_form_reglinreg} 
+depends crucially on the condition number $\kappa(\mQ) \geq 1$ of the 
+psd matrix $\mQ$ \cite{JungFixedPoint}. In particular, GD methods are fast 
+if the condition number $\kappa(\mQ)$ is small (close to $1$). 
 
 This condition number is given by $\frac{\lambda_{\rm max}((1/\samplesize) \mX^{T} \mX)} {\lambda_{\rm min}((1/\samplesize) \mX^{T} \mX)}$ for ordinary linear regression 
 (see \eqref{equ_quadr_form_linreg}) and given by $\frac{\lambda_{\rm max}((1/\samplesize)\mX^{T} \mX) + \lambda} {\lambda_{\rm min}((1/\samplesize)\mX^{T} \mX)+ \lambda}$ 
-for regularized linear regression \eqref{equ_quadr_form_reglinreg}. For increasing regularization parameter $\lambda$, the condition number 
-obtained for regularized linear regression \eqref{equ_quadr_form_reglinreg} tends to $1$: 
+for regularized linear regression \eqref{equ_quadr_form_reglinreg}. For increasing 
+regularization parameter $\lambda$, the condition number obtained for regularized 
+linear regression \eqref{equ_quadr_form_reglinreg} tends to $1$: 
 \begin{equation}
 \label{equ_cond_numer_goes_1_rlr}
 \lim_{\lambda \rightarrow \infty} \frac{\lambda_{\rm max}((1/\samplesize)\mX^{T} \mX) + \lambda} {\lambda_{\rm min}((1/\samplesize)\mX^{T} \mX)+ \lambda} =1. 
 \end{equation} 
-Thus, according to \eqref{equ_cond_numer_goes_1_rlr}, the GD implementation of regularized linear 
-regression (see Algorithm \ref{alg:gd_reglinreg}) with a large value of the regularization parameter 
-$\lambda$ in \eqref{equ_reg_lin_reg_opt_weight} will converge faster compared to GD for linear 
-regression (see Algorithm \ref{alg:gd_linreg}). 
+Thus, according to \eqref{equ_cond_numer_goes_1_rlr}, the GD 
+implementation of regularized linear regression (see Algorithm \ref{alg:gd_reglinreg}) 
+with a large value of the regularization parameter $\lambda$ 
+in \eqref{equ_reg_lin_reg_opt_weight} will converge faster compared 
+to GD for linear regression (see Algorithm \ref{alg:gd_linreg}). 
 
 
 \begin{algorithm}[htbp]
@@ -6344,39 +6388,34 @@ to the feature vectors and labels of the training data ?
 \label{fig_scatterplot_clustering}
 \end{figure}
 
-Up to now, we mainly considered ML methods which required some labeled training data in order to 
-learn a good predictor or classifier. We will now start to discuss ML methods which do not make use 
-of labels. These methods are often referred to as ``unsupervised'' since they do not require a supervisor 
+Up to now, we mainly considered ML methods which required 
+some labeled training data in order to learn a good predictor or 
+classifier. We will now start to discuss ML methods which do 
+not make use of labels. These methods are often referred to as 
+``unsupervised'' since they do not require a supervisor 
 (or teacher) which provides the labels for data points in a training set. 
 
-An important class of unsupervised methods, known as clustering methods, aims at grouping data points 
-into few subsets (or {\bf clusters}). While there is no unique formal definition, we understand by cluster a 
-subset of data points which are more similar to each other than to the remaining data points (belonging 
-to different clusters). Different clustering methods are obtained for different ways to measure the 
+An important class of unsupervised methods, known as clustering 
+methods, aims at grouping data points into few subsets (or {\bf clusters}). 
+While there is no unique formal definition, we understand by cluster 
+a subset of data points which are more similar to each other than 
+to the remaining data points (belonging to different clusters). Different 
+clustering methods are obtained for different ways to measure the 
 ``similarity'' between data points. 
 
-In what follows we assume that data points $\vz^{(\sampleidx)}$, for $\sampleidx=1,\ldots,\samplesize$, 
-are characterized by feature vectors $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and measure 
-similarity between data points using the Euclidean distance $\| \vx^{(\sampleidx)} - \vx^{(j)} \|$.
-\footnote{With a slight abuse of notation, we will occasionally denote a data point $\vz^{(\sampleidx)}$ 
-using its feature vector $\vx^{(\sampleidx)}$. In general, the feature vector is only a (incomplete) representation 
-of a data point but it is costumary in many unsupervised ML methods to identify a data point with its features.} 
-Thus, we consider two data points $\vz^{(\sampleidx)}$ and $\vz^{(j)}$ similar if $\| \vx^{(\sampleidx)} - \vx^{(j)} \|$ 
-is small. Moreover, we assume the number $k$ of clusters prescribed. 
-
-
-Consider the scatter plot in Figure \ref{fig_scatterplot_clustering} which is obtained from the redness 
-and greenness of several snapshots, which we would like to order into two groups: those snapshots 
-which depict mostly grass and those which depict mostly something else than grass. We characterize 
-a snapshot using the feature vector $\vx = (x_{r},x_{g})^{T} \in \mathbb{R}^{2}$ and the label $y \in \{ 1,2 \}$ 
-with $y=1$ if the snapshot shows grass and $y=2$ otherwise. 
-
-If we were able to group the snapshots based solely on their features $\vx^{(\sampleidx)}$ into $k=2$ 
-groups $\mathcal{C}_{1}$ (which correspond to snapshots of grass) and $\mathcal{C}_{2}$ (no grass), 
-we would need to acquire the label of one data point only. Indeed, given a perfect clustering, if we know 
-the label of one data point, we immediately know the label of all other data points in the same cluster. 
-Moreover, we would also know the labels of the data points in the other cluster, since there 
-are only two possible label values.  
+%
+%Consider the scatter plot in Figure \ref{fig_scatterplot_clustering} which is obtained from the redness 
+%and greenness of several snapshots, which we would like to order into two groups: those snapshots 
+%which depict mostly grass and those which depict mostly something else than grass. We characterize 
+%a snapshot using the feature vector $\vx = (x_{r},x_{g})^{T} \in \mathbb{R}^{2}$ and the label $y \in \{ 1,2 \}$ 
+%with $y=1$ if the snapshot shows grass and $y=2$ otherwise. 
+%
+%If we were able to group the snapshots based solely on their features $\vx^{(\sampleidx)}$ into $k=2$ 
+%groups $\mathcal{C}_{1}$ (which correspond to snapshots of grass) and $\mathcal{C}_{2}$ (no grass), 
+%we would need to acquire the label of one data point only. Indeed, given a perfect clustering, if we know 
+%the label of one data point, we immediately know the label of all other data points in the same cluster. 
+%Moreover, we would also know the labels of the data points in the other cluster, since there 
+%are only two possible label values.  
 
 There are two main flavours of clustering methods: 
 \begin{itemize} 
@@ -6387,43 +6426,54 @@ Within hard clustering, each data point $\vx^{(\sampleidx)}$ belongs to one and 
 soft clustering methods assign a data point $\vx^{(\sampleidx)}$ to several different clusters with varying degree 
 of belonging (confidence). 
 
-Clustering methods determine for each data point $\vz^{(\sampleidx)}$ a cluster assignment $y^{(\sampleidx)}$. 
-The cluster assignment $y^{(\sampleidx)}$ encodes the cluster to which the data point $\vx^{(\sampleidx)}$ is assigned. 
+Clustering methods determine for each data point $\vz^{(\sampleidx)}$ 
+a cluster assignment $y^{(\sampleidx)}$. The cluster assignment $y^{(\sampleidx)}$ 
+encodes the cluster to which the data point $\vx^{(\sampleidx)}$ is assigned. 
 For hard clustering with a prescribed number of $k$ clusters, the cluster assignments $y^{(\sampleidx)} \in \{1,\ldots,k\}$ 
 represent the index of the cluster to which $\vx^{(\sampleidx)}$ belongs. 
 
-In contrast, soft clustering methods allow each data point to belong to several different clusters. The degree with which 
-data point $\vx^{(\sampleidx)}$ belongs to cluster $c \in \{1,\ldots,k\}$ is represented by the degree of belonging $y_{c}^{(\sampleidx)} \in [0,1]$, 
-which we stack into the vector $\vy^{(\sampleidx)} = \big(y_{1}^{(\sampleidx)},\ldots,y_{k}^{(\sampleidx)}\big)^{T} \in [0,1]^{k}$. 
-Thus, while hard clustering generates non-overlapping clusters, the clusters produced by soft clustering methods may overlap. 
+In contrast, soft clustering methods allow each data point to belong to 
+several different clusters. The degree with which data point $\vx^{(\sampleidx)}$ 
+belongs to cluster $c \in \{1,\ldots,k\}$ is represented by the degree of 
+belonging $y_{c}^{(\sampleidx)} \in [0,1]$, which we stack into the vector 
+$\vy^{(\sampleidx)} = \big(y_{1}^{(\sampleidx)},\ldots,y_{k}^{(\sampleidx)}\big)^{T} \in [0,1]^{k}$. 
+Thus, while hard clustering generates non-overlapping clusters, the 
+clusters produced by soft clustering methods may overlap. 
 
-We intentionally used the same symbol $y^{(\sampleidx)}$ used to denote the cluster assignments of a data point $\vx^{(\sampleidx)}$ as 
-we used to denote an associated label $y^{(\sampleidx)}$ in earlier sections. There is a strong conceptual link between clustering and classification. 
-\vspace*{2mm}
-\begin{center}
-\framebox[0.96\textwidth]{
- \parbox{0.9\textwidth}{
-We can interpret clustering as an extreme case of classification without having access to any labeled training data, i.e., we do not 
-know the label of any data point.
-}}
-\end{center}
-Thus, in order to have any chance to find the correct labels (cluster assignments) $y_{c}^{(\sampleidx)}$ we have 
-to rely solely on the intrinsic geometry of the data points which is given by the locations of the feature vectors $\vx^{(\sampleidx)}$. 
-
-
-
-
+We intentionally used the same symbol $y^{(\sampleidx)}$ for 
+cluster assignments of a data point as we used to denote an 
+associated label in classification problems. There is a strong 
+conceptual link between clustering and classification. We can 
+interpret clustering as an extreme case of classification without 
+having access to any labeled training data, i.e., we do not 
+know the label of any data point.To find the correct labels 
+(cluster assignments) $y_{c}^{(\sampleidx)}$, clustering method 
+rely solely on the intrinsic geometry of the data points. 
+%which is given by the locations of the feature vectors $\vx^{(\sampleidx)}$. 
 
 \newpage
-\section{Hard Clustering}
+\section{Hard Clustering with K-Means}
 \label{sec_hard_clustering}
 
-A simple method for hard clustering is  the ``$k$-means'' algorithm which requires the number $k$ of 
-clusters to specified before-hand. The idea underlying $k$-means is quite simple: First, given a current 
-guess for the cluster assignments $y^{(\sampleidx)}$, determine the cluster means $\vm^{(c)} = \frac{1}{|\{i: y^{(\sampleidx)}= c\}|} \sum\limits_{i: y^{(\sampleidx)}=c} \vx^{(\sampleidx)}$ 
+In what follows we assume that data points $\vz^{(\sampleidx)}$, for $\sampleidx=1,\ldots,\samplesize$, 
+are characterized by feature vectors $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and measure 
+similarity between data points using the Euclidean distance $\| \vx^{(\sampleidx)} - \vx^{(j)} \|$. 
+With a slight abuse of notation, we will occasionally denote a data point $\vz^{(\sampleidx)}$ 
+using its feature vector $\vx^{(\sampleidx)}$. In general, the feature vector 
+is only a (incomplete) representation of a data point but it is customary in 
+many unsupervised ML methods to identify a data point with its features.
+Thus, we consider two data points $\vz^{(\sampleidx)}$ and $\vz^{(j)}$ 
+similar if $\| \vx^{(\sampleidx)} - \vx^{(j)} \|$ is small. Moreover, we assume 
+the number $k$ of clusters prescribed. 
+
+A simple method for hard clustering is  the ``$k$-means'' algorithm 
+which requires the number $k$ of clusters to specified before-hand. 
+The idea underlying $k$-means is quite simple: First, given a current 
+guess for the cluster assignments $y^{(\sampleidx)}$, determine the 
+cluster means $\vm^{(c)} = \frac{1}{|\{i: y^{(\sampleidx)}= c\}|} \sum\limits_{i: y^{(\sampleidx)}=c} \vx^{(\sampleidx)}$ 
 for each cluster. Then, in a second step, update the cluster assignments $y^{(\sampleidx)} \in \{1,\ldots,k\}$ 
-for each data point $\vx^{(\sampleidx)}$ based on the nearest cluster mean. By iterating these two steps 
-we obtain Algorithm \ref{alg:kmeans}. 
+for each data point $\vx^{(\sampleidx)}$ based on the nearest cluster 
+mean. By iterating these two steps we obtain Algorithm \ref{alg:kmeans}. 
 
 
 \begin{algorithm}[htbp]
@@ -6453,51 +6503,65 @@ In \eqref{equ_cluster_assign_update} we denote by $\argmin\limits_{\clusteridx' 
 set of all cluster indices $\clusteridx \in \{1,\ldots,\nrcluster\}$ such that $ \| \vx^{(\sampleidx)} - \vm^{(\clusteridx)} \| =  \min_{\clusteridx' \in \{1,\ldots,\nrcluster\}} \| \vx^{(\sampleidx)} - \vm^{(\clusteridx')} \|$. 
 
 
-The $k$-means algorithm requires the specification of initial choices for the cluster means $\vm^{(c)}$, for $c=1,\ldots,k$. 
-There is no unique optimal strategy for the initialization but several heuristic strategies can be used. 
-One option is to initialize the cluster means with i.i.d.\ realizations of a random vector $\vm$ whose 
-distribution is matched to the dataset $\dataset = \{ \vx^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$, e.g., $\vm \sim \mathcal{N}( \hat{\vm}, \widehat{\mathbf{C}})$ 
-with sample mean $\hat{\vm} = (1/\samplesize) \sum_{i=1}^{\samplesize} \vx^{(\sampleidx)}$ and the sample covariance 
-$\widehat{\mathbf{C}} = (1/\samplesize) \sum_{i=1}^{\samplesize} (\vx^{(\sampleidx)}\!-\!\hat{\vm}) (\vx^{(\sampleidx)}\!-\!\hat{\vm})^{T}$. 
-Another option is to choose the cluster means $\vm^{(c)}$ by randomly selecting $k$ different data points $\vx^{(\sampleidx)}$. 
-The cluster means might also be chosen by evenly partitioning the principal component of the dataset 
+The $k$-means algorithm requires the specification of initial choices 
+for the cluster means $\vm^{(c)}$, for $c=1,\ldots,k$. There is no unique 
+optimal strategy for the initialization but several heuristic strategies 
+can be used. One option is to initialize the cluster means with i.i.d.\ 
+realizations of a random vector $\vm$ whose distribution is matched 
+to the dataset $\dataset = \{ \vx^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$, 
+e.g., $\vm \sim \mathcal{N}( \hat{\vm}, \widehat{\mathbf{C}})$ with 
+sample mean $\hat{\vm} = (1/\samplesize) \sum_{i=1}^{\samplesize} \vx^{(\sampleidx)}$ 
+and the sample covariance $\widehat{\mathbf{C}} = (1/\samplesize) \sum_{i=1}^{\samplesize} (\vx^{(\sampleidx)}\!-\!\hat{\vm}) (\vx^{(\sampleidx)}\!-\!\hat{\vm})^{T}$. Another option is to choose the 
+cluster means $\vm^{(c)}$ by randomly selecting $k$ different data 
+points $\vx^{(\sampleidx)}$. The cluster means might also be chosen 
+by evenly partitioning the principal component of the dataset 
 (see Chapter \ref{ch_FeatureLearning}). 
 
-It can be shown that $k$-means implements a variant of empirical risk minimization. 
-To this end we define the empirical risk (or ``clustering error'')
+We now show that $k$-means can be interpreted as a variant of ERM. 
+To this end we define the empirical risk as the {\bf clustering error}, 
 \begin{equation}
 \label{equ_def_emp_risk_kmeans}
 \vspace*{-2mm}
  \emperror \big( \{\vm^{(\clusteridx)}\}_{\clusteridx=1}^{\nrcluster},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize} \mid \dataset \big)
 =(1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} {\left\|\vx^{(\sampleidx)}-\vm^{(y^{(\sampleidx)})}\right\|^2}.
 \end{equation} 
-Note that the empirical risk \eqref{equ_def_emp_risk_kmeans} depends on the current guess for the cluster means 
-$\{ \vm^{(\clusteridx)} \}_{\clusteridx=1}^{\nrcluster}$ and cluster assignments $\{ y^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$. 
+Note that the empirical risk \eqref{equ_def_emp_risk_kmeans} depends 
+on the current guess for the cluster means $\{ \vm^{(\clusteridx)} \}_{\clusteridx=1}^{\nrcluster}$ 
+and cluster assignments $\{ y^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$. 
 %The optimal 
 %cluster assignments and means minimize the empirical risk $\emperror \big( \{\vm^{(c)}\}_{c=1}^{k},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize} \mid \dataset \big)$. 
 
-Finding the global optimum of the function \eqref{equ_def_emp_risk_kmeans} over all possible cluster 
-means $\{\vm^{(\clusteridx)}\}_{\clusteridx=1}^{\nrcluster}$ and cluster assignments $\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize}$ is difficult as the function is non-convex. 
-However, minimizing \eqref{equ_def_emp_risk_kmeans} only with respect to the cluster assignments $\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize}$ 
-but with the cluster means $\{\vm^{(\clusteridx)}\}_{\clusteridx=1}^{\nrcluster}$ held fixed is easy. 
-Similarly, minimizing \eqref{equ_def_emp_risk_kmeans} over the choices of cluster means with 
-the cluster assignments held fixed is also straightforward. This observation is used by Algorithm 
-\ref{alg:kmeans}:  it is alternatively minimizing $\emperror$ over all cluster means with the assignments 
-$\{ y^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$ held fixed and minimizing $\emperror$ over all 
-cluster assignments with the cluster means $\{ \vm^{(\clusteridx)} \}_{\clusteridx=1}^{\nrcluster}$ held fixed. 
+Finding the global optimum of the function \eqref{equ_def_emp_risk_kmeans}, 
+over all possible cluster means $\{\vm^{(\clusteridx)}\}_{\clusteridx=1}^{\nrcluster}$ 
+and cluster assignments $\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize}$, 
+is difficult as the function is non-convex. However, minimizing \eqref{equ_def_emp_risk_kmeans} 
+only with respect to the cluster assignments $\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize}$ 
+but with the cluster means $\{\vm^{(\clusteridx)}\}_{\clusteridx=1}^{\nrcluster}$ 
+held fixed is easy. Similarly, minimizing \eqref{equ_def_emp_risk_kmeans} over the 
+choices of cluster means with the cluster assignments held fixed is also straightforward. 
+This observation is used by Algorithm \ref{alg:kmeans}:  it is alternatively minimizing 
+$\emperror$ over all cluster means with the assignments $\{ y^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$ 
+held fixed and minimizing $\emperror$ over all cluster assignments with the 
+cluster means $\{ \vm^{(\clusteridx)} \}_{\clusteridx=1}^{\nrcluster}$ held fixed. 
 
-The interpretation of Algorithm \ref{alg:kmeans} as a method for minimizing the cost function \eqref{equ_def_emp_risk_kmeans} is 
-useful for convergence diagnosis. In particular, we might terminate Algorithm \ref{alg:kmeans} if the decrease of 
-the objective function $ \emperror$ is below a prescribed (small) threshold. 
+The interpretation of Algorithm \ref{alg:kmeans} as a method for 
+minimizing the cost function \eqref{equ_def_emp_risk_kmeans} is 
+useful for convergence diagnosis. In particular, we might terminate 
+Algorithm \ref{alg:kmeans} if the decrease of the objective function 
+$\emperror$ is below a prescribed (small) threshold. 
  
 A practical implementation of Algorithm \ref{alg:kmeans} needs to fix three issues: 
 \begin{itemize} 
-\item Issue 1: We need to specify a ``tie-breaking strategy'' to handle the case when several 
-different cluster indices $\clusteridx\!\in\!\{1,\ldots,\nrcluster\}$ achieve the minimum value in \eqref{equ_cluster_assign_update}. 
-\item Issue 2: We need to specify how to handle the situation when after a cluster assignment 
-update  \eqref{equ_cluster_assign_update}, there is a cluster $\clusteridx$ with no data points are 
-associated with it, i.e., $|\{ \sampleidx: y^{(\sampleidx)} = \clusteridx \}|=0$. In this case, the cluster 
-means update \eqref{equ_cluster_mean_update} would be not well defined for the cluster $\clusteridx$. 
+\item Issue 1: We need to specify a ``tie-breaking strategy'' to 
+handle the case when several different cluster indices 
+$\clusteridx\!\in\!\{1,\ldots,\nrcluster\}$ achieve the minimum 
+value in \eqref{equ_cluster_assign_update}. 
+\item Issue 2: We need to specify how to handle the situation 
+when after a cluster assignment update  \eqref{equ_cluster_assign_update}, 
+there is a cluster $\clusteridx$ with no data points are associated 
+with it, i.e., $|\{ \sampleidx: y^{(\sampleidx)} = \clusteridx \}|=0$. 
+In this case, the cluster means update \eqref{equ_cluster_mean_update} 
+would be not well defined for the cluster $\clusteridx$. 
 \item Issue 3: We need to specify a stopping criterion (``checking convergence''). 
 \end{itemize}
 The following algorithm fixes those three issues in a particular way \cite{Gray1980}.  
@@ -6507,28 +6571,31 @@ The following algorithm fixes those three issues in a particular way \cite{Gray1
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
 \Require   dataset  $\dataset=\{ \vx^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize}$; 
-number $k$ of clusters; prescribed tolerance $\varepsilon \geq 0$. 
+number $k$ of clusters; tolerance $\varepsilon \geq 0$. 
 \Statex\hspace{-6mm}{\bf Initialize:} choose initial cluster means 
 $\big\{ \vm^{(\clusteridx)} \big\}_{\clusteridx=1}^{\nrcluster}$ and 
 cluster assignments $\big\{ y^{(\sampleidx)} \big\}_{\sampleidx=1}^{\samplesize}$;  
-set iteration counter $r \defeq 0$; compute  $E^{(r)} = \emperror \big( \{\vm^{(\clusteridx)}\}_{\clusteridx=1}^{\nrcluster},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize} \mid \dataset \big)$;
+set iteration counter $\itercntr \defeq 0$; compute  $E^{(\itercntr)} = \emperror \big( \{\vm^{(\clusteridx)}\}_{\clusteridx=1}^{\nrcluster},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize} \mid \dataset \big)$;
 \Repeat 
-\State for all data points $i\!=\!1,\ldots,\samplesize$, update cluster assignment
+\State for all data points $\sampleidx\!=\!1,\ldots,\samplesize$, update cluster assignment
 \begin{equation} 
 \label{equ_cluster_assign_update2}
 y^{(\sampleidx)} \defeq \min \{  \argmin\limits_{\clusteridx' \in \{1,\ldots,\nrcluster\}} \| \vx^{(\sampleidx)} - \vm^{(\clusteridx')} \| \} \mbox{  (update cluster assignments)} 
 \end{equation}
-\State for all clusters $\clusteridx\!=\!1,\ldots,\nrcluster$, update activity indicator 
-$$b^{(\clusteridx)} \defeq \begin{cases} 1 & \mbox{ if } |\{i: y^{(\sampleidx)}= \clusteridx\}| > 0 \\ 0 & \mbox{ else.} \end{cases}$$
-\State for all $\clusteridx\!=\!1,\ldots,\nrcluster$ with $b^{(\clusteridx)}=1$, update cluster means 
+\State for all clusters $\clusteridx\!=\!1,\ldots,\nrcluster$, update
+ the activity indicator 
+$$b^{(\clusteridx)} \defeq \begin{cases} 1 & \mbox{ if } |\{\sampleidx: y^{(\sampleidx)}= \clusteridx\}| > 0 \\ 0 & \mbox{ else.} \end{cases}$$
+\State for all $\clusteridx\!=\!1,\ldots,\nrcluster$ with $b^{(\clusteridx)}=1$, 
+update cluster means 
 \begin{equation}
 \label{equ_cluster_mean_update2} 
 \vm^{(\clusteridx)} \defeq \frac{1}{|\{i: y^{(\sampleidx)}= \clusteridx\}|}  \sum_{i: y^{(\sampleidx)} = \clusteridx} \vx^{(\sampleidx)}  \mbox{  (update cluster means) } 
 \end{equation} 
-\State $r \defeq r +1$  (increment iteration counter)
-\State $E^{(r)} = \emperror \big( \{\vm^{(\clusteridx)}\}_{\clusteridx=1}^{\nrcluster},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize} \mid \dataset \big)$  (see \eqref{equ_def_emp_risk_kmeans})
-\Until $E^{(r-1)} - E^{(r)} > \varepsilon$
-\Ensure cluster assignments $y^{(\sampleidx)}\!\in\!\{1,\ldots,\nrcluster\}$ and cluster means $\vm^{(\clusteridx)}$ %and active flags $b^{(c)}$ for $c\!=\!1,\ldots,k$
+\State $\itercntr \defeq \itercntr +1$  (increment iteration counter)
+\State $E^{(\itercntr)} = \emperror \big( \{\vm^{(\clusteridx)}\}_{\clusteridx=1}^{\nrcluster},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize} \mid \dataset \big)$  (see \eqref{equ_def_emp_risk_kmeans})
+\Until $E^{(\itercntr\!-\!1)} - E^{(\itercntr)} \leq \varepsilon$
+\Ensure cluster assignments $y^{(\sampleidx)}\!\in\!\{1,\ldots,\nrcluster\}$ and 
+cluster means $\vm^{(\clusteridx)}$ %and active flags $b^{(c)}$ for $c\!=\!1,\ldots,k$
 \end{algorithmic}
 \end{algorithm}
 
@@ -6575,12 +6642,15 @@ during each iteration.
 \label{fig:first_iter_kmeans}
 \end{figure}
 
-While Algorithm \ref{alg:kmeansimpl} is guaranteed to terminate after a finite number of iterations, the delivered 
-cluster assignments and cluster means might only be (approximations) of local minima of the clustering error 
-\eqref{equ_def_emp_risk_kmeans} (see Figure \ref{fig_emp_risk_k_means}). In order to escape local minima, 
-it is useful to run Algorithm \ref{alg:kmeansimpl} several times, using different initializations for the cluster means, 
-and picking the cluster assignments $\{ y^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$ with smallest clustering 
-error \eqref{equ_def_emp_risk_kmeans}. 
+While Algorithm \ref{alg:kmeansimpl} is guaranteed to terminate after a 
+finite number of iterations, the delivered cluster assignments and cluster 
+means might only be (approximations) of local minima of the clustering error 
+\eqref{equ_def_emp_risk_kmeans} (see Figure \ref{fig_emp_risk_k_means}). 
+
+To escape local minima, it is useful to run Algorithm \ref{alg:kmeansimpl} 
+several times, using different initializations for the cluster means, 
+and picking the cluster assignments $\{ y^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$ 
+with smallest clustering error \eqref{equ_def_emp_risk_kmeans}. 
 
 \begin{figure}[htbp]
 \begin{center}
@@ -6638,47 +6708,56 @@ larger values of $k$.
 
 
 
-\section{Soft Clustering}
+\section{Soft Clustering with Gaussian Mixture Models}
 \label{sec_soft_clustering}
 
-The cluster assignments obtained from hard-clustering methods, such as Algorithm \ref{alg:kmeansimpl}, provide 
-rather coarse-grained information. Indeed, even if two data points $\vx^{(\sampleidx)}, \vx^{(j)}$ are assigned to the 
-same cluster $c$, their distances to the cluster mean $\vm^{(c)}$ might be very different. For some applications, we 
-would like to have a more fine-grained information about the cluster assignments. 
+The cluster assignments obtained from hard-clustering 
+methods, such as Algorithm \ref{alg:kmeansimpl}, provide 
+rather coarse-grained information. Indeed, even if two data 
+points $\vx^{(\sampleidx)}, \vx^{(j)}$ are assigned to the 
+same cluster $c$, their distances to the cluster mean $\vm^{(c)}$ 
+might be very different. For some applications, we would 
+like to have a more fine-grained information about the cluster 
+assignments. 
 
 %In particular, we are interested in the degree by which a data point belongs to a particular cluster. 
-Soft-clustering methods provide such fine-grained information by explicitly modelling the degree (or confidence) by which 
-a particular data point belongs to a particular cluster. More precisely, soft-clustering methods track for each data 
-point $\vx^{(\sampleidx)}$ the degree of belonging to each of the clusters $\clusteridx \in \{1,\ldots,\nrcluster\}$.  
+Soft-clustering methods provide such fine-grained information 
+by explicitly modelling the degree (or confidence) by which 
+a particular data point belongs to a particular cluster. More 
+precisely, soft-clustering methods track for each data point 
+$\vx^{(\sampleidx)}$ the degree of belonging to each of the 
+clusters $\clusteridx \in \{1,\ldots,\nrcluster\}$.  
 
-A principled approach to modelling a degree of belonging to different clusters uses a probabilistic (generative) model for 
-the dataset $\dataset = \{ \vx^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$. Within this model, we represent % the cluster assignment $\clusteridx^{(\sampleidx)}$ 
-%In what follows, we use a probabilistic model for the observed data points to motivate a particular soft-clustering method. 
-%As mentioned above, soft clustering methods associate each data point $\vx^{(\sampleidx)}$ with a vector 
-%$\vy^{(\sampleidx)} = \big(y_{1}^{(\sampleidx)},\ldots,y_{k}^{(\sampleidx)}\big)^{T}$. The entry $y_{c}^{(\sampleidx)} \in [0,1]$ represents 
-%the degree of belonging (or our confidence) that data point $\vx^{(\sampleidx)}$ belongs to cluster $c$. 
-%In order to develop a soft-clustering method, it is useful to represent 
-eacc cluster by a probability distribution. 
-One popular choice for this distribution is the multivariate normal distribution 
+A principled approach to modelling a degree of belonging to 
+different clusters is based on a probabilistic (generative) model 
+for the dataset $\dataset = \{ \vx^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$. 
+This approach identifies a cluster with a probability distribution. 
+One popular choice for this distribution is the multivariate normal 
+distribution 
 \begin{equation}
 \label{equ_def_mvn_distribution}
  \mathcal{N} (\vx ; {\bm \mu}, {\bm \Sigma}) = \frac{1}{\sqrt{{\rm det } \{ 2 \pi  {\bm \Sigma} \} }} \exp\big( - (1/2) (\vx\!-\!{\bm \mu})^{T}  {\bm \Sigma}^{-1} (\vx\!-\!{\bm \mu})  \big)
 \end{equation} 
-of a Gaussian random vector with mean ${\bm \mu}$ and (invertible) covariance matrix ${\bf \Sigma}$.\footnote{Note that the distribution \eqref{equ_def_mvn_distribution} 
+of a Gaussian random vector with mean ${\bm \mu}$ and (invertible) covariance 
+matrix ${\bf \Sigma}$.\footnote{Note that the distribution \eqref{equ_def_mvn_distribution} 
 is only defined for an invertible (non-singular) covariance matrix ${\bm \Sigma}$.}
-We maintain a separate distribution of the form \eqref{equ_def_mvn_distribution} for each of the $\nrcluster$ clusters. 
-Thus, each cluster $\clusteridx \in \{1,\ldots,\nrcluster\}$ is represented by a distribution of the form \eqref{equ_def_mvn_distribution} 
-with a cluster-specific mean ${\bm \mu}^{(\clusteridx)} \in \mathbb{R}^{\featuredim}$ and cluster-specific covariance matrix ${\bm \Sigma}^{(\clusteridx)} \in \mathbb{R}^{\featuredim \times \featuredim}$. 
 
-Since we do not know the correct cluster $\clusteridx^{(\sampleidx)}$ of the data point $\vx^{(\sampleidx)}$, we model the 
-cluster assignment $\clusteridx^{(\sampleidx)}$ as a random variable with probability distribution  
+Each cluster $\clusteridx \in \{1,\ldots,\nrcluster\}$ is represented by a distribution 
+of the form \eqref{equ_def_mvn_distribution} with a cluster-specific mean 
+${\bm \mu}^{(\clusteridx)} \in \mathbb{R}^{\featuredim}$ and cluster-specific 
+covariance matrix ${\bm \Sigma}^{(\clusteridx)} \in \mathbb{R}^{\featuredim \times \featuredim}$. 
+
+Since we do not know before-hand the cluster assignment $\clusteridx^{(\sampleidx)}$ 
+of the data point $\vx^{(\sampleidx)}$, we model $\clusteridx^{(\sampleidx)}$ 
+as a random variable with probability distribution  
 \begin{equation} 
 \label{equ_def_cluster_prob}
 p_{\clusteridx} \defeq \prob{c^{(\sampleidx)}=\clusteridx} \mbox{ for } \clusteridx=1,\ldots,\nrcluster.
 \end{equation}  
-Note that the (prior) probabilities $p_{c}$ are unknown and therefore have to be estimated somehow by the soft-clustering method. 
-The random cluster assignment $\clusteridx^{(\sampleidx)}$ selects the cluster-specific distribution \eqref{equ_def_mvn_distribution} of the random 
-data point $\vx^{(\sampleidx)}$: %Given a particular value for the cluster $\clusteridx \in \{1,\ldots,k\}$ is represented by a conditional probability distribution 
+The (prior) probabilities $p_{c}$ are unknown and therefore have 
+to be estimated somehow by the soft-clustering method. The random 
+cluster assignment $\clusteridx^{(\sampleidx)}$ selects the cluster-specific 
+distribution \eqref{equ_def_mvn_distribution} of the random data point $\vx^{(\sampleidx)}$, 
 \begin{equation}
 \label{equ_cond_dist_GMM}
  \prob{\vx^{(\sampleidx)} | \clusteridx^{(\sampleidx)} } = \mathcal{N} (\vx; {\bm \mu}^{(\clusteridx^{(\sampleidx)})}, {\bm \Sigma}^{(\clusteridx^{(\sampleidx)})})
@@ -6690,45 +6769,53 @@ with mean vector ${\bm \mu}^{(c)}$ and covariance matrix ${\bm \Sigma}^{(c)}$.
 %Thus, we consider $\vx^{(\sampleidx)}$ drawn from some cluster, with index $c^{(\sampleidx)} \in \{1,\ldots,k\}$. Each cluster $c \in \{1,\ldots,k\}$ 
 %corresponds to a multivariate Gaussian distribution with mean ${\bm \mu}^{(c^)}$ and covariance matrix ${\bm \Sigma}^{(c)}$. 
 
-The modelling of cluster assignments $\clusteridx^{(\sampleidx)}$ as (unobserved) random variables lends naturally  
-to a rigorous definition for the notion of the degree $y^{(\sampleidx)}_{c}$ by which data point $\vx^{(\sampleidx)}$ belongs to cluster $c$. 
-In particular, we define the degree $y^{(\sampleidx)}_{c}$ of data point $\vx^{(\sampleidx)}$ belonging to cluster $c$ as the ``a-posteriori'' probability 
-of the cluster assignment $\clusteridx^{(\sampleidx)}$ being equal to a particular cluster index $\clusteridx \in \{1,\ldots,\nrcluster\}$: 
+The modelling of cluster assignments $\clusteridx^{(\sampleidx)}$ as 
+(unobserved) random variables suggests naturally a precise definition 
+for the notion of the degree $y^{(\sampleidx)}_{c}$ by which data point 
+$\vx^{(\sampleidx)}$ belongs to cluster $c$. 
+
+We define the degree $y^{(\sampleidx)}_{c}$ of data point $\vx^{(\sampleidx)}$ 
+belonging to cluster $c$ as the ``a-posteriori'' probability of the cluster 
+assignment $\clusteridx^{(\sampleidx)}$ being equal to a particular
+cluster index $\clusteridx \in \{1,\ldots,\nrcluster\}$: 
 \begin{equation}
 \label{equ_def_deg_belonging_prob}
 y^{(\sampleidx)}_{\clusteridx} \defeq \prob{ \clusteridx^{(\sampleidx)} = \clusteridx | \dataset}.
 %y^{(\sampleidx)}_{\clusteridx} \defeq \prob{ \clusteridx^{(\sampleidx)}= \clusterfidx | \dataset}
 \end{equation} 
-By their very definition \eqref{equ_def_deg_belonging_prob}, the degrees of belonging $y^{(\sampleidx)}_{\clusteridx}$ have to sum 
-to one: 
+By their very definition \eqref{equ_def_deg_belonging_prob}, 
+the degrees of belonging $y^{(\sampleidx)}_{\clusteridx}$ always 
+sum to one, 
 \begin{equation} 
 \label{equ_dob_sum_to_one}
 \sum_{\clusteridx=1}^{\nrcluster} y^{(\sampleidx)}_{\clusteridx}=1 \mbox{ for each } \sampleidx=1,\ldots,\samplesize.
 \end{equation}  
-It is important to note that we use the conditional cluster probability \eqref{equ_def_deg_belonging_prob}, conditioned on the 
-dataset, for defining the degree of belonging $y^{(\sampleidx)}_{\clusteridx}$. This is reasonable since the degree of belonging 
-$y^{(\sampleidx)}_{\clusteridx}$ depends on the overall (cluster) geometry of the data set $\dataset$.
+It is important to note that we use the conditional cluster 
+probability \eqref{equ_def_deg_belonging_prob}, conditioned 
+on the dataset, for defining the degree of belonging $y^{(\sampleidx)}_{\clusteridx}$. 
+This is reasonable since the degree of belonging $y^{(\sampleidx)}_{\clusteridx}$ 
+depends on the overall (cluster) geometry of the data set $\dataset$.
 
-A probabilistic model for the observed data points $\vx^{(\sampleidx)}$ is obtained 
-by considering each data point $\vx^{(\sampleidx)}$ being the result of a random 
-draw from the distribution $\mathcal{N} (\vx ; {\bm \mu}^{(c^{(\sampleidx)})}, {\bm \Sigma}^{(c^{(\sampleidx)})})$ 
-with some cluster $c^{(\sampleidx)}$. Since the cluster indices $c^{(\sampleidx)}$ are 
-unknown,\footnote{After all, the goal of soft-clustering is to estimate the 
+A probabilistic model for the observed data points $\vx^{(\sampleidx)}$ 
+is obtained by considering each data point $\vx^{(\sampleidx)}$ being 
+the result of a random draw from the distribution $\mathcal{N} (\vx ; {\bm \mu}^{(c^{(\sampleidx)})}, {\bm \Sigma}^{(c^{(\sampleidx)})})$ 
+with some cluster $c^{(\sampleidx)}$. Since the cluster indices $c^{(\sampleidx)}$ 
+are unknown,\footnote{After all, the goal of soft-clustering is to estimate the 
 cluster indices $c^{(\sampleidx)}$.} we model them as random variables. 
-In particular, we model the cluster indices $c^{(\sampleidx)}$ as i.i.d. with probabilities
-$p_{\clusteridx} = \prob{ c^{(\sampleidx)} = \clusteridx}.$ 
+In particular, we model the cluster indices $c^{(\sampleidx)}$ as i.i.d.\ with 
+probabilities$p_{\clusteridx} = \prob{ c^{(\sampleidx)} = \clusteridx}.$ 
 
 The overall probabilistic model \eqref{equ_cond_dist_GMM}, \eqref{equ_def_cluster_prob} 
-amounts to a {\bf Gaussian mixture model} (GMM). Indeed, using the law of total probability, 
-the marginal distribution $\prob{\vx^{(\sampleidx)}}$ (which is the same for all data points 
-$\vx^{(\sampleidx)}$) is a (additive) mixture of multivariate Gaussian distributions: 
+amounts to a {\bf Gaussian mixture model} (GMM). The marginal distribution $\prob{\vx^{(\sampleidx)}}$, 
+which is the same for all data points $\vx^{(\sampleidx)}$, is a (additive) mixture of 
+multivariate Gaussian distributions, 
 \begin{equation} 
 \label{equ_def_GMM}
  \prob{\vx^{(\sampleidx)}} = \sum_{c=1}^{k} \underbrace{\prob{c^{(\sampleidx)}=c}}_{p_{c}}  \underbrace{\prob{\vx^{(\sampleidx)} | c^{(\sampleidx)}=c}}_{\mathcal{N}(\vx^{(\sampleidx)};{\bm \mu}^{(c)}, {\bm \Sigma}^{(c)})}. 
 \end{equation} 
-Within our statistical model for the dataset $\dataset$, the cluster assignments $c^{(\sampleidx)}$ are 
-hidden (unobserved) random variables. We thus have to infer or estimate these variables from the 
-observed data points $\mathbf{x}^{(\sampleidx)}$ which are i.i.d.\ realizations of the GMM \eqref{equ_def_GMM}. 
+The cluster assignments $c^{(\sampleidx)}$ are hidden (unobserved) random 
+variables. We thus have to infer or estimate these variables from the observed 
+data points $\mathbf{x}^{(\sampleidx)}$ which are i.i.d.\ realizations of the GMM \eqref{equ_def_GMM}. 
 
 \begin{figure}
 \begin{center}
@@ -6745,19 +6832,24 @@ observed data points $\mathbf{x}^{(\sampleidx)}$ which are i.i.d.\ realizations 
 \end{tikzpicture}
 \end{center}
 \label{fig_GMM_elippses}
-\caption{The GMM \eqref{equ_def_GMM} yields a probability density function which 
-is a weighted sum of multivariate normal distributions $\mathcal{N}({\bm \mu}^{(c)}, {\bm \Sigma}^{(c)})$. 
-The weight of the $c$-th component is the cluster probability $ \prob{c^{(\sampleidx)}=c}$.}
+\caption{The GMM \eqref{equ_def_GMM} yields a probability 
+	density function which is a weighted sum of multivariate 
+	normal distributions $\mathcal{N}({\bm \mu}^{(c)}, {\bm \Sigma}^{(c)})$. 
+    The weight of the $c$-th component is the cluster probability 
+    $ \prob{c^{(\sampleidx)}=c}$.}
 \end{figure}
 %\end{document}
 
-Using the GMM \eqref{equ_def_GMM} for explaining the observed data points $\vx^{(\sampleidx)}$ 
-turns the clustering problem into a {\bf statistical inference} or {\bf parameter estimation problem} \cite{kay,LC}. 
-The estimation problem is to estimate the true underlying cluster probabilities $p_{\clusteridx}$ 
-(see \eqref{equ_def_cluster_prob}), cluster means ${\bm \mu}^{(\clusteridx)}$ and cluster 
-covariance matrices ${\bm \Sigma}^{(\clusteridx)}$ (see \eqref{equ_cond_dist_GMM}) from 
-the observed data points $\dataset = \{ \vx^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$, 
-which are drawn from the probability distribution \eqref{equ_def_GMM}. 
+Using the GMM \eqref{equ_def_GMM} for explaining the observed 
+data points $\vx^{(\sampleidx)}$ turns the clustering problem into 
+a {\bf statistical inference} or {\bf parameter estimation problem} \cite{kay,LC}. 
+The estimation problem is to estimate the true underlying cluster 
+probabilities $p_{\clusteridx}$ (see \eqref{equ_def_cluster_prob}), cluster 
+means ${\bm \mu}^{(\clusteridx)}$ and cluster covariance matrices 
+${\bm \Sigma}^{(\clusteridx)}$ (see \eqref{equ_cond_dist_GMM}) from 
+the observed data points $\dataset = \{ \vx^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$. 
+The data points $\vx^{(\sampleidx)}$ are i.i.d.\ realizations of a random vector with 
+probability distribution \eqref{equ_def_GMM}. 
 %Having estimates for the GMM parameters allows us to compute an estimate (approximation) of the ``a-posteriori'' probability 
 %$\prob\{ c^{(\sampleidx)}= c | \dataset \}$, which we consider as the ``true'' degree of data point $\vx^{(\sampleidx)}$ belonging to cluster $c$. 
 
@@ -6768,16 +6860,21 @@ of the (a-posterior) probability
 \begin{equation} 
 y_{\clusteridx}^{(\sampleidx)} = \prob{c^{(\sampleidx)} = \clusteridx \mid \dataset }
 \end{equation} 
-of the $\sampleidx$-th data point $\vx^{(\sampleidx)}$ belonging to cluster $\clusteridx$, given the observed dataset $\dataset$. 
+of the $\sampleidx$-th data point $\vx^{(\sampleidx)}$ belonging 
+to cluster $\clusteridx$, given the observed dataset $\dataset$. 
 
-It turns out that this estimation problem becomes significantly easier by operating in an alternating 
-fashion: In each iteration, we first compute a new estimate $\hat{p}_{c}$ of the cluster probabilities 
-$p_{\clusteridx}$, given the current estimate $\vm^{(\clusteridx)}, \mathbf{C}^{(\clusteridx)}$ for the 
-cluster means and covariance matrices. Then, using this new estimate $\hat{p}_{\clusteridx}$ for the 
-cluster probabilities, we update the estimates $\vm^{(\clusteridx)}, \mathbf{C}^{(\clusteridx)}$ of the 
-cluster means and covariance matrices. Then, using the new estimates $\vm^{(\clusteridx)}, \mathbf{C}^{(\clusteridx)}$, 
-we compute a new estimate $\hat{p}_{\clusteridx}$ and so on. By repeating these two update steps, 
-we obtain an iterative soft-clustering method which is summarized in Algorithm \ref{alg:softclustering}. 
+This estimation problem becomes significantly easier by operating 
+in an alternating fashion. In each iteration, we first compute a new 
+estimate $\hat{p}_{c}$ of the cluster probabilities $p_{\clusteridx}$, 
+given the current estimate $\vm^{(\clusteridx)}, \mathbf{C}^{(\clusteridx)}$ 
+for the cluster means and covariance matrices. Then, using this 
+new estimate $\hat{p}_{\clusteridx}$ for the cluster probabilities, 
+we update the estimates $\vm^{(\clusteridx)}, \mathbf{C}^{(\clusteridx)}$ 
+of the cluster means and covariance matrices. Then, using the 
+new estimates $\vm^{(\clusteridx)}, \mathbf{C}^{(\clusteridx)}$, we 
+compute a new estimate $\hat{p}_{\clusteridx}$ and so on. By repeating 
+these two steps, we obtain an iterative soft-clustering method which 
+is summarized in Algorithm \ref{alg:softclustering}. 
 
 %Let us, for ease of exposition, restrict to the case of $k\!=\!2$ clusters $\clusteridx\!\in\!\{1,2\}$. The generalization to $k\!>\!2$ clusters is easy. 
 %For $k=2$, we only need to track the degree of belonging $y_{1}^{(\sampleidx)}$ to cluster $\clusteridx=1$ since $y_{2}^{(\sampleidx)}\!=\!1\!-\!y_{1}^{(\sampleidx)}$ (see \eqref{equ_dob_sum_to_one}). 
@@ -6808,39 +6905,45 @@ y_{c}^{(\sampleidx)} & =  \frac{\hat{p}_{\clusteridx} \mathcal{N}(\vx^{(\samplei
 \item cluster covariance matrix $\mathbf{C}^{(\clusteridx)}  = (1/\samplesize_{\clusteridx}) {\sum\limits_{\sampleidx=1}^{\samplesize} y_{\clusteridx}^{(\sampleidx)} \big(\vx^{(\sampleidx)}\!-\!\mathbf{m}^{(\clusteridx)}\big)   \big(\vx^{(\sampleidx)}\!-\!\mathbf{m}^{(\clusteridx)}\big)^{T} }$
 \end{itemize}
 \vspace*{1mm}
-\Until convergence
+\Until convergence \label{equ_conv_soft_clustering_algo}
 \Ensure soft cluster assignments $\vy^{(\sampleidx)}=(y_{1}^{(\sampleidx)},\ldots,y_{k}^{(\sampleidx)})^{T}$ for each data point $\vx^{(\sampleidx)}$ 
 \end{algorithmic}
 \end{algorithm}
 
-As for hard clustering, we can interpret the soft clustering problem as an instance 
-of the ERM principle (Chapter \ref{ch_Optimization}). In particular, Algorithm \ref{alg:softclustering} 
-aims at minimizing the empirical risk 
+As for k-means, we can interpret the soft clustering problem 
+as an instance of the ERM principle (Chapter \ref{ch_Optimization}). 
+In particular, Algorithm \ref{alg:softclustering} aims at minimizing the 
+empirical risk 
 \begin{equation} 
 \label{equ_def_emp_risk_soft_clustering}
 \emperror \big( \{ \vm^{(\clusteridx)}, \mathbf{C}^{(\clusteridx)}, \hat{p}_{\clusteridx} \}_{\clusteridx=1}^{\nrcluster} \mid \dataset \big)=
  - \log {\rm Prob} \big\{\dataset; \{ \vm^{(\clusteridx)}, \mathbf{C}^{(\clusteridx)}, \hat{p}_{\clusteridx} \}_{\clusteridx=1}^{\nrcluster}\big\}. 
 \end{equation} 
-The interpretation of Algorithm \ref{alg:softclustering} as a method for minimizing the empirical 
-risk \eqref{equ_def_emp_risk_soft_clustering} suggests to monitor the decrease of the empirical 
-risk $ - \log {\rm Prob} \big\{\dataset; \{ \vm^{(\clusteridx)}, \mathbf{C}^{(\clusteridx)}, \hat{p}_{\clusteridx} \}_{\clusteridx=1}^{\nrcluster}\big\}$ 
-to decide when to stop iterating (``convergence test''). % the termination criterion. % Algorithm \ref{alg:softclustering}. 
+The interpretation of Algorithm \ref{alg:softclustering} as a 
+method for minimizing the empirical risk \eqref{equ_def_emp_risk_soft_clustering} 
+suggests to monitor the decrease of the empirical risk 
+$ - \log {\rm Prob} \big\{\dataset; \{ \vm^{(\clusteridx)}, \mathbf{C}^{(\clusteridx)}, \hat{p}_{\clusteridx} \}_{\clusteridx=1}^{\nrcluster}\big\}$ 
+to decide when to stop iterating (see Step \ref{equ_conv_soft_clustering_algo} 
+of Algorithm \ref{alg:softclustering}). % the termination criterion. % Algorithm \ref{alg:softclustering}. 
 
-Similar to $k$-means Algorithm \ref{alg:kmeans}, also the soft clustering Algorithm \ref{alg:softclustering} 
-suffers from the problem of getting stuck in local minima of the empirical risk \eqref{equ_def_emp_risk_soft_clustering}. 
-As for $k$-means, a simple strategy to overcome this issue is to run Algorithm \ref{alg:softclustering} 
-several times, each time with a different initialization for the GMM parameter estimates 
-$ \{ \vm^{(c)}, \mathbf{C}^{(c)}, \hat{p}_{c} \}_{c=1}^{k}$ and then picking the result which yields the 
-smallest empirical risk \eqref{equ_def_emp_risk_soft_clustering}.  
+Similar to $k$-means Algorithm \ref{alg:kmeans}, also the soft clustering 
+Algorithm \ref{alg:softclustering} suffers from the problem of getting stuck 
+in local minima of the empirical risk \eqref{equ_def_emp_risk_soft_clustering}. 
+As for $k$-means, we can avoid local minima by running Algorithm \ref{alg:softclustering} 
+several times, each time with a different initialization for the GMM parameter 
+estimates $ \{ \vm^{(c)}, \mathbf{C}^{(c)}, \hat{p}_{c} \}_{c=1}^{k}$ and then 
+picking the result which yields the smallest empirical risk \eqref{equ_def_emp_risk_soft_clustering}.  
 
-We note that the empirical risk \eqref{equ_def_emp_risk_soft_clustering} underlying the 
+The empirical risk \eqref{equ_def_emp_risk_soft_clustering} underlying the 
 soft-clustering Algorithm \ref{alg:softclustering} is essentially a {\bf log-likelihood function}. 
 Thus, Algorithm \ref{alg:softclustering} can be interpreted as an {\bf approximate maximum 
 likelihood} estimator for the true underlying GMM parameters $\{{\bm \mu}^{(c)},{\bm \Sigma}^{(c)},p_{c}\}_{c=1}^{k}$. 
-In particular, Algorithm \ref{alg:softclustering} is an instance of a generic approximate maximum likelihood 
-technique referred to as {\bf expectation maximization} (EM) (see \cite[Chap. 8.5]{hastie01statisticallearning} for more details). 
-The interpretation of Algorithm \ref{alg:softclustering} as a special case of EM allows to characterize the 
-behaviour of Algorithm \ref{alg:softclustering} using existing convergence results for EM methods \cite{XuJordan1996}. 
+In particular, Algorithm \ref{alg:softclustering} is an instance of a generic 
+approximate maximum likelihood technique referred to as {\bf expectation maximization} 
+(EM) (see \cite[Chap. 8.5]{hastie01statisticallearning} for more details). 
+The interpretation of Algorithm \ref{alg:softclustering} as a special case of 
+EM allows to characterize the behaviour of Algorithm \ref{alg:softclustering} 
+using existing convergence results for EM methods \cite{XuJordan1996}. 
 %???? Discuss EM principle in more detail; point out relation to recent work of Arora on Factorization methods such as Dictionary Learning, proving global convergence 
 %New Algorithms for Learning Incoherent and Overcomplete Dictionaries, Sanjeev Arora, Rong Ge, Ankur Moitra
 %https://arxiv.org/pdf/1510.06096.pdf
@@ -6851,24 +6954,34 @@ behaviour of Algorithm \ref{alg:softclustering} using existing convergence resul
 %(March 4, 2015): 215?236.
 %??????
 
-We finally note that $k$-means hard clustering can be interpreted as an extreme case of 
-soft-clustering Algorithm \ref{alg:softclustering}. Indeed, consider fixing the cluster 
-covariance matrices $ {\bm \Sigma}^{(c)}$ within the GMM \eqref{equ_cond_dist_GMM} 
-to be the scaled identity: 
+There is an interesting link between the soft-clustering 
+Algorithm \ref{alg:softclustering} and $k$-means. In 
+particular, $k$-means hard clustering can be interpreted 
+as an extreme case of soft-clustering Algorithm \ref{alg:softclustering}. 
+
+Consider fixing the cluster covariance matrices $ {\bm \Sigma}^{(c)}$ 
+within the GMM \eqref{equ_cond_dist_GMM} to be the scaled identity: 
 \begin{equation}
 \label{equ_def_special_case}
  {\bm \Sigma}^{(c)}= \sigma^{2} \mathbf{I} \mbox{ for all } c \in \{1,\ldots,k\}.  
 \end{equation} 
-Here, we assume the covariance matrix \eqref{equ_def_special_case}, with a particular value 
-for $\sigma^{2}$, to be the actual ``correct'' covariance matrix for cluster $c$. The estimates 
-$\mathbf{C}^{(c)}$ for the covariance matrices are then trivially given by $\mathbf{C}^{(c)} =  {\bm \Sigma}^{(c)}$, 
-i.e., we can omit the covariance matrix updates in Algorithm \ref{alg:softclustering}. Moreover, when 
-choosing a very small variance $\sigma^{2}$ in \eqref{equ_def_special_case}), the update 
-\eqref{equ_update_soft_cluster_assignm} tends to enforce $y_{c}^{(\sampleidx)} \in \{0,1\}$, i.e., 
-each data point $\vx^{(\sampleidx)}$ is associated to exactly one cluster $c$, whose cluster mean 
-$\vm^{(c)}$ is closest to the data point $\vx^{(\sampleidx)}$. Thus, for $\sigma^{2} \rightarrow 0$, 
-the soft-clustering update \eqref{equ_update_soft_cluster_assignm} reduces to the hard cluster 
-assignment update \eqref{equ_cluster_assign_update} of the $k$-means Algorithm \ref{alg:kmeans}. 
+We assume the covariance matrix \eqref{equ_def_special_case}, 
+with a particular value for $\sigma^{2}$, to be the actual ``correct'' 
+covariance matrix for cluster $c$. %The estimates $\mathbf{C}^{(c)}$ 
+%for the covariance matrices are then trivially given by $\mathbf{C}^{(c)} =  {\bm \Sigma}^{(c)}$.  
+Thus, we replace the covariance matrix updates in Algorithm \ref{alg:softclustering} 
+with $\mathbf{C}^{(c)} \defeq  {\bm \Sigma}^{(c)}$.
+ 
+When using a very small variance $\sigma^{2}$ in \eqref{equ_def_special_case}), 
+the update \eqref{equ_update_soft_cluster_assignm} tends to enforce 
+$y_{c}^{(\sampleidx)} \in \{0,1\}$, i.e., each data point $\vx^{(\sampleidx)}$ 
+is associated to exactly one cluster $c$, whose cluster mean $\vm^{(c)}$ 
+is closest to the data point $\vx^{(\sampleidx)}$. Thus, for $\sigma^{2} \rightarrow 0$, 
+the soft-clustering update \eqref{equ_update_soft_cluster_assignm} reduces 
+to the hard cluster assignment update \eqref{equ_cluster_assign_update} 
+of the $k$-means Algorithm \ref{alg:kmeans}. 
+
+\section{Density Based Clustering with DBSCAN}
 
 \newpage
 \chapter{Feature Learning} 
@@ -6904,8 +7017,9 @@ feature space (see Section \ref{sec_dim_red}). However, sometimes it might be
 useful to change to a higher-dimensional feature space (see Section \ref{sec_dim_increas}). 
 
 
-??? Develop feature learning as an approximation problem. The raw data is the vector to be approximated. 
-The approximation has to be in a (small) subspace which is spanned by all possible low-dimensional feature vectors???
+??? Develop feature learning as an approximation problem. The raw data 
+is the vector to be approximated. The approximation has to be in a (small) 
+subspace which is spanned by all possible low-dimensional feature vectors???
 
 %Supervised ML methods often 
 %rely on the principle that near-by data points should have similar label values. 

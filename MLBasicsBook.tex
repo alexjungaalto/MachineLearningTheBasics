@@ -1527,31 +1527,39 @@ A widely used estimator for the square root of the variance is the
 \section{The Model}
 \label{sec_hypo_space}
 
-Consider the problem of classifying hand-drawings into two categories. 
-The first category consists of all hand-drawings that show an apple. 
-The second category consists of all hand-drawings that do not show 
-an apple. We consider each hand-drawing as one particular data point. 
+%Consider the problem of classifying hand-drawings into two categories. 
+%The first category consists of all hand-drawings that show an apple. 
+%The second category consists of all hand-drawings that do not show 
+%an apple. We consider each hand-drawing as one particular data point. 
+%
+%Each data point is associated with a numeric label $y \in \mathbb{R}$ 
+%which is a percentage measuring how much the underlying hand-drawing 
+%resembles an apple. Beside its label $y$, each data point (hand-drawing) 
+%is characterized by a feature vector $\vx=\big(x_{1},\ldots,x_{n}\big)^{T}$ 
+%obtained by stacking the greyscale intensities of a $128 \times 128$ 
+%pixel image of the hand-drawing.  
 
-Each data point is associated with a numeric label $y \in \mathbb{R}$ 
-which is a percentage measuring how much the underlying hand-drawing 
-resembles an apple. Beside its label $y$, each data point (hand-drawing) 
-is characterized by a feature vector $\vx=\big(x_{1},\ldots,x_{n}\big)^{T}$ 
-obtained by stacking the greyscale intensities of a $128 \times 128$ 
-pixel image of the hand-drawing.  
-
-Given a set of $m$ labeled data points (the ``training data'')
-\begin{equation} 
-\label{eq_def_training_set}
-\dataset  = \big\{ (\vx^{(1)},y^{(1)}), \ldots, (\vx^{(\samplesize)},y^{(\samplesize)}) \}
-\end{equation}
-ML methods learn a predictor $h(\vx)$ such that 
+Consider a ML application based on data points with features $\vx \in \featurespace$ 
+and some label $y \in \labelspace$. The goal of ML is to learn a map $h(\vx)$ such that 
+%Given a set of $m$ labeled data points (the ``training data'')
+%\begin{equation} 
+%\label{eq_def_training_set}
+%\dataset  = \big\{ (\vx^{(1)},y^{(1)}), \ldots, (\vx^{(\samplesize)},y^{(\samplesize)}) \}
+%\end{equation}
+%ML methods learn 
 \begin{equation} 
 \label{equ_approx_label_pred}
-y \approx \underbrace{h(\vx)}_{\hat{y}}
+y \approx \underbrace{h(\vx)}_{\hat{y}} \mbox{ for any data point}. 
 \end{equation}  
-for any data point with features $\vx$. The approximation \eqref{equ_approx_label_pred} 
-should be accurate for any data point, also those not contained 
-in the training set \eqref{eq_def_training_set}. 
+The informal goal \eqref{equ_approx_label_pred} needs to be made precise 
+in two aspects. First, we need to quantify the approximation error \eqref{equ_approx_label_pred} 
+incurred by a given hypothesis map $h$. Second, we need to make precise 
+what we actually mean by requiring \eqref{equ_approx_label_pred} to hold 
+for ``any data point''. We solve the first issue by the concept of a loss 
+function in Section \ref{sec_lossfct}. The second issue is then solved 
+in Chapter \ref{ch_Optimization}. 
+
+ %also those not contained in the training set \eqref{eq_def_training_set}. 
 
 %????
 %Consider the cleaning robot \rumba\, which is depicted in Figure \ref{fig:cleaning_robot}. 
@@ -1717,11 +1725,12 @@ of vectors (see \cite[Chap. 12]{Goodfellow-et-al-2016} for more details).
 %Since the choice of what features are used to characterize data points is a design choice, we can simply require the features 
 %to be represented by vectors to allow the use of  
 The hypothesis space, i.e., the subset of predictor maps $h: \featurespace \rightarrow \labelspace$ 
-used in a ML method, is a {\bf design choice}. Some particular choices have proven useful for 
-a wide range of applications (see Chapter \ref{ch_some_examples}). As with the choice of 
-what properties to use as features of a data point, finding a good choice of the hypothesis 
-space typically requires a good understanding (``domain expertise'') of statistical properties 
-of the data and the limitations of the available computational infrastructure. 
+used in a ML method, is a {\bf design choice}. Some particular choices have 
+proven useful for a wide range of applications (see Chapter \ref{ch_some_examples}). 
+As with the choice of what properties to use as features of a data point, 
+finding a good choice of the hypothesis space typically requires a good 
+understanding (``domain expertise'') of statistical properties of the data 
+and the limitations of the available computational infrastructure. 
 
 One important aspect guiding the choice for the hypothesis space is the available 
 computational infrastructure. If we only have a spreadsheet program at our disposal 
@@ -1789,13 +1798,16 @@ $\vw \in \mathbb{R}^{\featuredim}$), we refer to the map $h$ as a {\bf linear cl
 %}}
 %\end{center}
 
-One important aspect guiding the choice for the hypothesis space is the available computational 
-framework. If we can only use a {\bf spreadsheet program}, we should use a hypothesis space 
-constituted by maps $h: \featurespace \rightarrow \labelspace$ which can be implemented easily 
-by a spreadsheet (see Table \ref{table_lookup}). If we instead use the programming language 
-Python to implement a ML method, we can obtain a hypothesis class by collecting all possible 
-Python subroutines with one input (scalar feature $x$), one output argument (predicted label $\hat{y}$) 
-and consisting of less than $100$ lines of code. %(see Figure \ref{fig_hypospace_Python}). 
+One important aspect guiding the choice for the hypothesis 
+space is the available computational framework. If we can only 
+use a {\bf spreadsheet program}, we should use a hypothesis 
+space constituted by maps $h: \featurespace \rightarrow \labelspace$ 
+which can be implemented easily by a spreadsheet (see Table \ref{table_lookup}). 
+
+If we instead use the programming language Python to implement 
+a ML method, we can obtain a hypothesis class by collecting all possible 
+Python subroutines with one input (scalar feature $x$), one output 
+argument (predicted label $\hat{y}$) and consisting of less than $100$ lines of code. %(see Figure \ref{fig_hypospace_Python}). 
 
 The largest possible choice for the hypothesis space $\hypospace$ of an ML problem using 
 feature space $\featurespace$ and label space $\labelspace$ is the set $\labelspace^{\featurespace}$ 
@@ -1860,7 +1872,8 @@ features $\vw$ and label $y$ of data points.
 %\end{figure}
 
 
-The design choice for the hypothesis space $\hypospace$ has to balance between two conflicting requirements.  
+The design choice for the hypothesis space $\hypospace$ has to balance 
+between two conflicting requirements.  
 \begin{itemize} 
 \item It has to be {\bf sufficiently large} such that it contains at least 
 one accurate predictor map $\hat{h} \in \hypospace$. A hypothesis space $\hypospace$ 
@@ -1871,15 +1884,18 @@ The relation between features and label ($y \in \{ \mbox{cat}, \mbox{no cat} \}$
 Any ML method that uses a hypothesis space consisting only of linear maps will most likely 
 fail to learn a good predictor (classifier). We say that a ML method {\bf underfits} the data if it 
 uses a too small hypothesis space. 
-\item It has to be {\bf sufficiently small} such that its processing fits the available computational 
-resources (memory, bandwidth, processing time). We must be able to efficiently search over the 
-hypothesis space to find good predictors (see Section \ref{sec_lossfct} and Chapter \ref{ch_Optimization}). 
-This requirement implies also that the maps $h(\vx)$ contained in $\hypospace$ can be evaluated 
-(computed) efficiently \cite{Austin2018}. Another important reason for using a hypothesis space $\hypospace$ 
-not too large is to avoid {\bf overfitting} (see Chapter \ref{ch_overfitting_regularization}). 
-If the hypothesis space $\hypospace$ is too large, then just by luck we might find a predictor which fits 
-well the training dataset. Such a predictor will perform poorly on data which is different from 
-the training data (it will not generalize well). 
+\item It has to be {\bf sufficiently small} such that its processing fits the 
+available computational resources (memory, bandwidth, processing time). 
+We must be able to efficiently search over the hypothesis space to find 
+good predictors (see Section \ref{sec_lossfct} and Chapter \ref{ch_Optimization}). 
+This requirement implies also that the maps $h(\vx)$ contained in $\hypospace$ 
+can be evaluated (computed) efficiently \cite{Austin2018}. Another important 
+reason for using a hypothesis space $\hypospace$ not too large is to 
+avoid {\bf overfitting} (see Chapter \ref{ch_overfitting_regularization}). 
+If the hypothesis space $\hypospace$ is too large, then just by luck we 
+might find a predictor which fits well the training dataset. Such a predictor 
+will perform poorly on data which is different from the training data 
+(it will not generalize well). 
 \end{itemize}
 
 The notion of a hypothesis space being too small or being too large can 
@@ -1894,37 +1910,49 @@ all maps is finite with size $|\hypospace| = 2^{1000}$, which is larger than
 the estimated number of atoms in the visible universe (which is around $10^{80}$). 
 
 Many ML methods use a hypothesis space which contains infinitely many 
-different predictors (see, e.g., \eqref{equ_def_hypo_linear_pred}). For infinite 
-hypothesis spaces, we cannot easily use its cardinality as a measure for its size. 
-Different concepts have been studied for measuring the size of infinite 
-hypothesis spaces with the {\bf Vapnik–Chervonenkis (VC) dimension} being 
-maybe the most famous one \cite{VapnikBook}. 
+different predictors (see, e.g., \eqref{equ_def_hypo_linear_pred}). 
+For infinite hypothesis spaces, we cannot easily use its cardinality as 
+a measure for its size. Different concepts have been studied for 
+measuring the size of infinite hypothesis spaces with the 
+{\bf Vapnik–Chervonenkis (VC) dimension} being maybe the 
+most famous one \cite{VapnikBook}. 
 
-We will use a simpler variant of the VC dimension concept and define the size of a hypothesis 
-space $\hypospace$ as the maximum number $\sizehypospace$ of arbitrary data points that 
-can be perfectly fit (with probability one). For any set of $\sizehypospace$ data points with 
-different features, we can always find a hypothesis $h \in \sizehypospace$ such that $y=h(\vx)$ 
-for all data points $(\vx,y) \in \dataset$. 
+We will use a simplified variant of the VC dimension and define the 
+size of a hypothesis space $\hypospace$ as the maximum number 
+$\sizehypospace$ of arbitrary data points that can be perfectly fit 
+(with probability one). For any set of $\sizehypospace$ data points 
+with different features, we can always find a hypothesis $h \in \sizehypospace$ 
+such that $y=h(\vx)$ for all data points $(\vx,y) \in \dataset$. 
 
-Let illustrate the our notion of hypothesis space size with two examples: linear regression and 
-polynomial regression. First, we discuss the size of the hypothesis space $\hypospace^{(\featuredim)}$ 
-used in linear regression. Consider $\samplesize$ data points characterized by feature vectors 
-$\vx \in \mathbb{R}^{(\featuredim)}$ and a numeric label $y \in \mathbb{R}$. We assume that 
-data points are i.i.d. realizations of some continuous random vector (probability of the vector 
-belonging to a zero measure set is zero). This implies that the matrix obtained by columnise 
-stacking the feature vectors is full rank with probability one. Basic linear algebra allows then 
-to show that such a set of data points can be perfectly fit by a linear map $h \in \hypospace^{(\featuredim)}$ 
-as long as $\samplesize \leq n$. Thus, the size of the linear hypothesis space $\hypospace^{(\featuredim)}$
-is $\sizehypospace = \featuredim$. 
+Let illustrate the our notion of hypothesis space size with 
+two examples: linear regression and polynomial regression. 
+First, we discuss the size of the hypothesis space $\hypospace^{(\featuredim)}$ 
+used in linear regression. Consider $\samplesize$ data points 
+characterized by feature vectors $\vx \in \mathbb{R}^{(\featuredim)}$ 
+and a numeric label $y \in \mathbb{R}$. We assume that data points 
+are i.i.d.\ realizations of a continuous random vector $\vx$. 
 
-As a second example, consider data points characterized by a single numeric feature $x$ and 
-numeric label $y$. Polynomial regression aims at learning a predictor out of the 
-hypothesis space $\hypospace_{\rm poly}^{(\featuredim)}$ of polynomials with 
-maximum degree $\featuredim$. The fundamental theorem of algebra tells us that 
-any set of $\samplesize$ data points with different features can be perfectly fit by a 
-polynomial of degree $\featuredim$ as long as $\featuredim \geq \samplesize$. Therefore, 
-the size of the hypothesis space $\hypospace_{\rm poly}^{(\featuredim)}$ is $\sizehypospace=\featuredim$. 
-We will discuss polynomial regression in more detail in Section \ref{sec_polynomial_regression}. 
+This implies that the matrix obtained by columnise stacking 
+the feature vectors is full rank with probability one. Basic linear 
+algebra allows then to show that such a set of data points can 
+be perfectly fit by a linear map $h \in \hypospace^{(\featuredim)}$ 
+as long as $\samplesize \leq n$. The size of the linear 
+hypothesis space $\hypospace^{(\featuredim)}$ is $\sizehypospace = \featuredim$. 
+
+As a second example, consider data points characterized 
+by a single numeric feature $x$ and numeric label $y$. 
+Polynomial regression learns a predictor map out of 
+the hypothesis space $\hypospace_{\rm poly}^{(\featuredim)}$. 
+This hypothesis space is constituted by the set of  
+polynomials with maximum degree $\featuredim$. 
+
+The fundamental theorem of algebra tells us that any set 
+of $\samplesize$ data points with different features can 
+be perfectly fit by a polynomial of degree $\featuredim$ 
+as long as $\featuredim \geq \samplesize$. Therefore, the 
+size of the hypothesis space $\hypospace_{\rm poly}^{(\featuredim)}$ 
+is $\sizehypospace=\featuredim$. Section \ref{sec_polynomial_regression} 
+discusses polynomial regression in more detail. 
 
 
 %For the sake of simplicity let us develop a simpler concept for the size of a hypothesis space. 
@@ -2803,12 +2831,14 @@ to the scalar features $x^{(\sampleidx)}$, resulting in the transformed feature 
 \label{equ_def_poly_feature_vectors}
 \vx^{(\sampleidx)} = \phi(x^{(i)}) = \big(1,x^{(i)},\ldots,\big( x^{(i)} \big)^{\featuredim} \big)^{T} \in \mathbb{R}^{\featuredim+1}, 
 \end{equation} 
-and then applying linear regression  (see Section \ref{sec_lin_regression}) to these new feature 
-vectors. In particular, by inserting \eqref{equ_concact_phi_g_poly} into \eqref{opt_hypo_poly}, we 
-end up with a linear regression problem \eqref{equ_opt_weight_vector_linreg_weight} with feature 
-vectors \eqref{equ_def_poly_feature_vectors}. Thus, while a predictor $h^{(\vw)} \in \hypospace_{\rm poly}^{(\featuredim)}$ 
-is a non-linear function $h^{(\vw)}(x)$ of the original feature $x$, it is a linear function, given explicitly 
-by $g^{(\vw)}(\vx) = \vw^{T}\vx$ (see \eqref{equ_concact_phi_g_poly}), of the transformed features $\vx$ \eqref{equ_def_poly_feature_vectors}. 
+and then applying linear regression  (see Section \ref{sec_lin_regression}) 
+to these new feature vectors. By inserting \eqref{equ_concact_phi_g_poly} 
+into \eqref{opt_hypo_poly}, we end up with a linear regression problem 
+\eqref{equ_opt_weight_vector_linreg_weight} with feature vectors \eqref{equ_def_poly_feature_vectors}. 
+Thus, while a predictor $h^{(\vw)} \in \hypospace_{\rm poly}^{(\featuredim)}$ 
+is a non-linear function $h^{(\vw)}(x)$ of the original feature $x$, it is a linear 
+function, given explicitly by $g^{(\vw)}(\vx) = \vw^{T}\vx$ (see \eqref{equ_concact_phi_g_poly}), 
+of the transformed features $\vx$ \eqref{equ_def_poly_feature_vectors}. 
 
 \section{Least Absolute Deviation Regression}
 \label{sec_lad}
@@ -2821,51 +2851,61 @@ away from any data point. However, it might be useful to tolerate a large predic
 error $\hat{y}-y$ for few data points if they can be considered as outliers. 
 
 Replacing the squared loss with a different loss function can 
-make the learning robust against few outliers. One such robust loss function is 
-known as "Huber loss" \cite{HuberRobustBook}
-
+make the learning robust against few outliers. One such robust 
+loss function is the {\bf Huber loss} \cite{HuberRobustBook}
 \begin{equation}
 \mathcal{L}(y,\hat{y}) = \begin{cases} (1/2) (y-\hat{y})^{2} & \mbox{ for } |y-\hat{y}| \leq   \varepsilon \\ 
 \varepsilon(|y-\hat{y}| - \varepsilon/2) & \mbox{ else. }\end{cases}
 \end{equation}
 
-Note that the Huber loss contains a parameter $\epsilon$, which has to be adapted 
-to the application at hand. The Huber loss is robust to outliers since data points 
-with large errors $y - \hat{y}$ are not squared. Outliers have a smaller effect on 
-the average Huber loss over the entire dataset. 
+The Huber loss contains a parameter $\epsilon$, which has to 
+be adapted to the application at hand. The Huber loss is robust 
+to outliers since the corresponding (large) prediction errors 
+$y - \hat{y}$ are not squared. Outliers have a smaller effect 
+on the average Huber loss over the entire dataset. 
 
-The Huber loss contains two important special cases. The first special case occurs when $\varepsilon$ is chosen 
-to be very large (the precise value depending on the value range of the features and labels), such that the 
-condition $|y-\hat{y}| \leq \varepsilon$ is always satisfied. In this case, the Huber loss is equivalent to the 
-squared error loss $(y-\hat{y})^{2}$ (with an additional factor 1/2). 
+The Huber loss contains two important special cases. 
+The first special case occurs when a very large value of $\varepsilon$ 
+is chosen, such that the condition $|y-\hat{y}| \leq \varepsilon$ is 
+always satisfied. In this case, the Huber loss is equivalent to the 
+squared error loss $(y-\hat{y})^{2}$ (up to a scaling factor $1/2$). 
 
-The second special case occurs when $\varepsilon$ is very small (close to $0$) such that 
-the condition $|y-\hat{y}| \leq \varepsilon$ is never satisfied. In this case, the Huber loss 
-is equivalent to the absolute loss $|y - \hat{y}|$ scaled by a factor $\varepsilon$.
+The second special case occurs when $\varepsilon$ is chosen 
+very small (close to $0$) such that the condition $|y-\hat{y}| \leq \varepsilon$ 
+is never satisfied. In this case, the Huber loss is equivalent 
+to the absolute loss $|y - \hat{y}|$ scaled by a factor $\varepsilon$.
+
+\section{The Least Absolute Shrinkage and Selection Operator (LASSO)}
+\label{sec_lasoo}
 
 \section{Gaussian Basis Regression}
 \label{sec_linbasreg}
-As we have discussed in Section \ref{sec_polynomial_regression}, we can extend the basic linear 
-regression problem by first transforming the features $x$ using a vector-valued feature map $\phi: \mathbb{R} \rightarrow \mathbb{R}^{\featuredim}$ 
-and then applying a weight vector $\vw$ to the transformed features $\phi(x)$. For polynomial regression, 
-the feature map is constructed using powers $x^{l}$ of the scalar feature $x$. However, we can use 
-also other functions (different from polynomials) to construct the feature map $\phi$. 
+As discussed in Section \ref{sec_polynomial_regression}, we can 
+extend the basic linear regression problem by first transforming 
+the features $x$ using a vector-valued feature map $\phi: \mathbb{R} \rightarrow \mathbb{R}^{\featuredim}$ 
+and then applying a weight vector $\vw$ to the transformed 
+features $\phi(x)$. For polynomial regression, the feature map 
+is constructed using powers $x^{l}$ of the scalar feature $x$. 
 
-In principle, we can extend linear regression using an arbitrary feature map 
+It is possible to use other functions, different from polynomials, 
+to construct the feature map $\phi$. We can extend linear regression 
+using an arbitrary feature map 
 \begin{equation} 
 \phi(x) = (\phi_{1}(x),\ldots,\phi_{\featuredim}(x))^{T}  
 \end{equation} 
-with the scalar maps $\phi_{j}: \mathbb{R} \rightarrow \mathbb{R}$ which are referred to as {\bf basis functions}. 
-The choice of basis functions depends heavily on the particular application and the underlying relation between 
-features and labels of the observed data points. The basis functions underlying polynomial regression are 
-$\phi_{j}(x)= x^{j}$. Another popular choice for the basis functions are ``Gaussians'' 
+with the scalar maps $\phi_{j}: \mathbb{R} \rightarrow \mathbb{R}$ which 
+are referred to as {\bf basis functions}. The choice of basis functions 
+depends heavily on the particular application and the underlying relation 
+between features and labels of the observed data points. The basis 
+functions underlying polynomial regression are $\phi_{j}(x)= x^{j}$. Another 
+popular choice for the basis functions are ``Gaussians'' 
 \begin{equation} 
 \label{equ_basis_Gaussian}
 \phi_{\sigma,\mu}(x) = \exp(-(1/(2\sigma^{2})) (x\!-\!\mu)^{2}) 
 \end{equation}
 which are parametrized by the variance $\sigma^{2}$ and the mean (shift) $\mu$. 
 
-Thus, we obtain Gaussian basis linear regression by combining the feature map 
+We obtain Gaussian basis linear regression by combining the feature map 
 \begin{equation} 
 \phi(x) = \big (\phi_{\sigma_{1},\mu_{1}}(x) ,\ldots,\phi_{\sigma_{\featuredim},\mu_{\featuredim}}(x) \big)^{T} 
 \end{equation}
@@ -2876,11 +2916,13 @@ with linear regression (see Figure \ref{fig_lin_bas_expansion}). The resulting h
 & \mbox{ with weights } \vw=(w_{1},\ldots,w_{\featuredim})^{T} \in \mathbb{R}^{\featuredim}\}.
 \end{align}
 
-Note that we obtain a different hypothesis space $\hypospace_{\rm Gauss}$ for different choices of the 
-variance $\sigma^{2}$ and shifts $\mu_{j}$ used for the Gaussian function in \eqref{equ_basis_Gaussian}. 
-These parameters have to be chosen suitably for the ML application at hand (e.g., using model selection 
-techniques discussed in Section \ref{sec_modsel}). The hypothesis space \eqref{equ_def_Gauss_hypospace} 
-is parameterized by the weight vector $\vw \in \mathbb{R}^{\featuredim}$ since each element 
+We different hypothesis spaces $\hypospace_{\rm Gauss}$ for  
+different choices for the variance $\sigma^{2}$ and shifts $\mu_{j}$ 
+used for the Gaussian function in \eqref{equ_basis_Gaussian}. 
+These parameters have to be chosen suitably for the ML application 
+at hand (e.g., using model selection techniques discussed in Section \ref{sec_modsel}). 
+The hypothesis space \eqref{equ_def_Gauss_hypospace} is parameterized 
+by the weight vector $\vw \in \mathbb{R}^{\featuredim}$ since each element 
 of $\hypospace_{\rm Gauss}$ corresponds to a particular choice for the weight vector $\vw$. 
 
 %Note that choosing the variance $\sigma^{2}$ of the Gaussian basis functions \eqref{equ_basis_Gaussian} small and using a large number of 
@@ -4198,8 +4240,9 @@ when applied to new data points which are not contained in $\dataset$.
 
 %????I would like that the "equivalent to find optimum weight vertoc w0" from slide Optimal Linear Regression would be explained again. The mathematical notation used there isn't that familiar for me.?????
 %Consider, e.g., the hypothesis space $\hypospace$ of linear predictors is based on a parametrization of the hypothesis $h(\vx^{(\timeidx)})$. 
-Given a parameterization $h^{(\vw)}(\vx)$ of the predictor maps in the hypothesis space $\hypospace$, such as within 
-linear regression \eqref{equ_def_hypo_linear_pred} or for ANNs (see Figure \ref{fig_ANN}), % within a liner regression model, i.e., $h(\vx^{(\timeidx)}) = \vw^{T}\vx^{(\timeidx)}$, 
+Given a parameterization $h^{(\vw)}(\vx)$ of the predictor maps in the 
+hypothesis space $\hypospace$, such as within linear regression 
+\eqref{equ_def_hypo_linear_pred} or for ANNs (see Figure \ref{fig_ANN}), % within a liner regression model, i.e., $h(\vx^{(\timeidx)}) = \vw^{T}\vx^{(\timeidx)}$, 
 we can reformulate the optimization problem \eqref{equ_def_ERM_funs} (with optimization 
 domain being a function space!) as an optimization directly over the weight vector:
 \begin{equation}
@@ -4837,14 +4880,17 @@ difference between these applications is merely in the details for
 how to compute or estimate the gradient and how to incorporate 
 the information provided by the gradients. 
 
-In the following, we will mainly focus on ML problems with hypothesis space $\hypospace$ consisting of predictor 
-maps $h^{(\vw)}$ which are parametrized by a weight vector $\vw \in \mathbb{R}^{\featuredim}$. Moreover, we 
-will restrict ourselves to loss functions $\loss{(\vx,y)}{h^{(\vw)}}$ which depend smoothly on the weight vector $\vw$. 
-This requirement on the loss function is not too restrictive as many important ML problems, including linear regression 
-(see Section \ref{sec_lin_regression}) and logistic regression (see Section \ref{sec_LogReg}), result in a smooth loss 
-function.\footnote{A smooth function $f: \mathbb{R}^{\featuredim} \rightarrow \mathbb{R}$ has continuous partial 
-derivatives of all orders. In particular, we can define the gradient $\nabla f(\vw)$ for a smooth function $f(\vw)$ 
-at every point $\vw$.}
+In the following, we will mainly focus on ML problems with hypothesis 
+space $\hypospace$ consisting of predictor maps $h^{(\vw)}$ 
+which are parametrized by a weight vector $\vw \in \mathbb{R}^{\featuredim}$. 
+Moreover, we will restrict ourselves to loss functions $\loss{(\vx,y)}{h^{(\vw)}}$ 
+which depend smoothly on the weight vector $\vw$. 
+
+Many important ML problems, including linear regression (see Section \ref{sec_lin_regression}) 
+and logistic regression (see Section \ref{sec_LogReg}), involve in a smooth loss 
+function. A smooth function $f: \mathbb{R}^{\featuredim} \rightarrow \mathbb{R}$ 
+has continuous partial derivatives of all orders. In particular, we can define the 
+gradient $\nabla f(\vw)$ for a smooth function $f(\vw)$ at every point $\vw$.
 
 For a smooth loss function, the resulting ERM (see \eqref{eq_def_ERM_weight})  
 \begin{align}
@@ -4852,22 +4898,28 @@ For a smooth loss function, the resulting ERM (see \eqref{eq_def_ERM_weight})
 \vw_{\rm opt} & = \argmin_{\vw \in \mathbb{R}^{\featuredim}}  \emperror( h^{(\vw)} \mid \dataset)  \nonumber \\
 & = \underbrace{(1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h^{(\vw)}}}_{\defeq f(\vw)} 
 \end{align} 
-is a {\bf smooth optimization problem} of the form 
+is a {\bf smooth optimization problem}
 \begin{equation}
 \label{equ_generic_smooth_problem}
 \min_{\vw \in \mathbb{R}^{\featuredim}} f(\vw)
 \end{equation} 
-with a smooth function $f: \mathbb{R}^{\featuredim} \rightarrow \mathbb{R}$ of the vector argument $\vw \in \mathbb{R}^{\featuredim}$. 
-It turns out that a smooth function $f(\vw$) can be approximated locally around a point $\vw_{0}$ using a hyperplane, which passes through the point 
-$(\vw_{0},f(\vw_{0}))$ and having normal vector $\mathbf{n} = (\nabla f(\vw_{0}),-1)$ (see Figure \ref{fig_smooth_function}). 
-Indeed, elementary analysis yields the following linear approximation (around a point $\vw_{0}$) \cite{RudinBookPrinciplesMatheAnalysis}
+with a smooth function $f: \mathbb{R}^{\featuredim} \rightarrow \mathbb{R}$ of 
+the vector argument $\vw \in \mathbb{R}^{\featuredim}$. 
+
+We can approximate a smooth function $f(\vw$) locally, around some point $\vw_{0}$. 
+using a hyperplane, which passes through the point $(\vw_{0},f(\vw_{0}))$ and 
+with the normal vector $\mathbf{n} = (\nabla f(\vw_{0}),-1)$ (see Figure \ref{fig_smooth_function}). 
+Elementary calculus yields the following linear approximation (around a point $\vw_{0}$) 
+\cite{RudinBookPrinciplesMatheAnalysis}
 \begin{equation} 
 \label{equ_linear_approx_diff}
 f(\vw) \approx f(\vw_{0}) + (\vw-\vw_{0})^{T} \nabla f(\vw_{0}) \mbox{ for  all }\vw \mbox{ close to } \vw_{0}.
 \end{equation}  
-As detailed in the next section, the approximation \eqref{equ_linear_approx_diff} lends naturally to a simple but powerful iterative method for finding the 
-minimum of the function $f(\vw)$. This method is known as gradient descent (GD) and (variants of it) underlies many state-of-the 
-art ML methods (such as deep learning methods). 
+
+The approximation \eqref{equ_linear_approx_diff} lends naturally to an 
+iterative method for finding the minimum of the function $f(\vw)$. This 
+method is known as gradient descent (GD) and (variants of it) underlies 
+many state-of-the art ML methods, including deep learning methods. 
 
 \begin{figure}[htbp]
 \begin{center}

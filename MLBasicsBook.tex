@@ -1591,15 +1591,19 @@ The prediction $\hat{y}=h(\vx)$ is obtained by evaluating the hypothesis
 for the features $\vx$ of a data point. We will use the term predictor map 
 for the hypothesis map to highlight its use for computing predictions. 
 
-If the label space $\labelspace$ is finite, such as $\labelspace=\{-1,1\}$, we 
-use the term {\bf classifier} instead of hypothesis.For a finite label space 
+If the label space $\labelspace$ is finite, such as $\labelspace=\{-1,1\}$, 
+we refer to a hypothesis also as a {\bf classifier}. For a finite label space 
 $\labelspace$ and feature space $\featurespace=\mathbb{R}^{\featuredim}$, 
 we can characterize a particular classifier map $h$ using its {\bf decision boundary}. 
-The decision boundary of a classifier $h$ is the set of all border points 
-between the different regions $\mathcal{R}_{\hat{y}} \defeq \{ \vx: h(\vx) = \hat{y}\} \subseteq \featurespace$ of the feature 
-space $\featurespace$. The region $\mathcal{R}_{\hat{y}}$ contains all 
-feature values $\vx \in \featurespace$ which are mapped to the same 
-label value $\hat{y} \in \labelspace$. 
+The decision boundary of a classifier $h$ is the set of boundary points 
+between the different {\bf decision regions}
+\begin{equation} 
+\label{equ_decision_region}
+\mathcal{R}_{\hat{y}} \defeq \{ \vx: h(\vx) = \hat{y}\} \subseteq \featurespace. 
+\end{equation}% of the feature space $\featurespace$. 
+The decision region $\mathcal{R}_{\hat{y}}$ contains all feature vectors 
+$\vx \in \featurespace$ which are mapped to the same label 
+value $\hat{y} \in \labelspace$. 
 
 %A reasonable hypothesis $h$ should approximate the true label $y^{(\sampleidx)}$ 
 %as accurately as possible such that $\hat{y}^{(\sampleidx)}=h(\vx^{(\sampleidx)}) \approx y^{(\sampleidx)}$ 
@@ -1655,13 +1659,14 @@ in practice since this space is simply too large to work within a reasonable
 amount of computational resources. Instead, the hypothesis space $\hypospace$ 
 is typically a (very small) subset of $\labelspace^{\featurespace}$ (see Figure \ref{fig_hypo_space}). 
 
-The choice for the hypothesis space depends crucially on the available 
-computational infrastructure. Different computational infrastructure 
-favour different hypothesis space. ML methods implemented in 
-a small embedded system, might prefer a linear hypothesis space 
-which can be processed using numerical linear algebra. Deep learning 
-methods implemented using cloud computing can make use of much 
-larger hypothesis spaces obtained from deep neural networks. 
+The preference for a particular hypothesis space often depends 
+on the available computational infrastructure available to a ML method. 
+Different computational infrastructures favour different hypothesis 
+spaces. ML methods implemented in a small embedded system, might 
+prefer a linear hypothesis space which results in algorithms that require 
+a small number of arithmetic operations. Deep learning methods 
+implemented in a cloud computing environment typically use much larger 
+hypothesis spaces obtained from deep neural networks. 
 
 For the computational infrastructure provided by {\bf spreadsheet program}, 
 we might use a hypothesis space constituted by maps $h: \featurespace \rightarrow \labelspace$ 
@@ -1749,19 +1754,50 @@ this hypothesis space conveniently using the weight $w\in \mathbb{R}$ as $h^{(w)
 The elements of the hypothesis space $\hypospace$ in \eqref{equ_def_hypo_linear_pred} are  
 parametrized by the weight vector $\vw \in \mathbb{R}^{\featuredim}$. 
 Each map $h^{(\vw)} \in \hypospace$ is fully specified by the weight 
-vector $\vw$. Thus, instead of searching a good hypothesis directly 
-in the function space $\hypospace$ (its elements are functions!), 
-we can equivalently search over all possible weight vectors $\vw \in \mathbb{R}^{\featuredim}$. 
+vector $\vw$. Instead of searching over the function space $\hypospace$ 
+(its elements are functions!), we can equivalently search over all 
+possible weight vectors $\vw \in \mathbb{R}^{\featuredim}$. 
 The search space $\mathbb{R}^{\featuredim}$ is still (unaccountably) 
-infinite but it has lots of geometric and algebraic structure which 
-allows to efficiently search over this space. 
-
-ML methods based on the linear hypothesis space \eqref{equ_def_hypo_linear_pred} 
-can be implemented by combinations of few basic operations 
-from linear algebra such as vector-matrix multiplications. One 
-reason for the popularity of the hypothesis space \eqref{equ_def_hypo_linear_pred} 
-is the broad availability of computing hardware (graphic processing units) 
+infinite but it has a rich geometric and algebraic structure that 
+allows to efficiently search over this space. The hypothesis 
+space \eqref{equ_def_hypo_linear_pred} is also appealing because 
+of the broad availability of computing hardware (graphic processing units) 
 and programming frameworks (numerical linear algebra libraries). 
+
+The hypothesis space \eqref{equ_def_hypo_linear_pred} can also be 
+used for classification problems, e.g., with label space $\labelspace = \{-1,1\}$. 
+Indeed, given a linear predictor map $h^{(\vw)}$ we can classify data 
+points according to $\hat{y} = -1$ for $h^{(\vw)}(\vx) \geq 0$ and $\hat{y}=-1$ 
+otherwise. The resulting classifier are referred to as a {\bf linear classifier}.  
+ML methods that use linear classifiers include logistic regression 
+(see Section \ref{sec_LogReg}), the SVM (see Section \ref{sec_SVM}) and naive 
+Bayes' classifiers (see Section \ref{sec_NaiveBayes}). The decision regions \eqref{equ_decision_region} 
+of a linear classifier are half-spaces and their decision boundary is 
+a hyperplane $\{ \vx: \vw^{T} \vx = b \}$ (see Figure \ref{fig_lin_dec_boundary}).
+\begin{figure} 
+	\begin{center}
+		\begin{tikzpicture}[allow upside down, scale=1]
+		\draw[dashed,line width=3pt] (0,0) -- (10,5)  [smooth, tension=0.5]
+		node[sloped,inner sep=0cm,above,pos=.5,
+		anchor=south west,
+		minimum height=2cm,minimum width=1cm](N){adf};
+		\path [fill=yellow] (0,0) -- (0,5) -- (10,5) -- (0,0); %to %[out=-80, in=160]
+		\node [below] at (5,1) {$h(\vx)<0, \hat{y} = -1$};
+		\node [below] at (9,4) {decision boundary};
+		\node [below] at (1,3) {$h(\vx)\geq0, \hat{y} = 1$};
+		\path (N.south west)
+		edge[->,blue,thick] node[left] {$\mathbf{w}$} (N.north west);
+		\end{tikzpicture}
+	\end{center}
+	\caption{A hypothesis $h: \featurespace\!\rightarrow\!\labelspace$ for a binary 
+		classification problem, with label space $\labelspace=\{ -1,1\}$ and feature 
+		space $\featurespace=\mathbb{R}^{2}$, can be represented conveniently via the 
+		decision boundary (dashed line) which separates all feature vectors $\vx$ with 
+		$h(\vx) \geq 0 $ from the region of feature vectors with $h(\vx)<0$. If the decision 
+		boundary is a hyperplane $\{ \vx: \vw^{T} \vx = b \}$ (with normal vector 
+		$\vw \in \mathbb{R}^{\featuredim}$), we refer to the map $h$ as a {\bf linear classifier}. }
+	\label{fig_lin_dec_boundary}
+\end{figure}
 
 The hypothesis space \eqref{equ_def_hypo_linear_pred} can 
 only be used for data points whose features are numeric 
@@ -1778,13 +1814,13 @@ vectors (see \cite[Chap. 12]{Goodfellow-et-al-2016} for more details).
 
 %Since the choice of what features are used to characterize data points is a design choice, we can simply require the features 
 %to be represented by vectors to allow the use of  
-The hypothesis space, i.e., the subset of predictor maps $h: \featurespace \rightarrow \labelspace$ 
-used in a ML method, is a {\bf design choice}. Some particular choices have 
+The hypothesis space $\hypospace$, the set of possible predictor maps, 
+used in a ML method, is a {\bf design choice}. Some choices have 
 proven useful for a wide range of applications (see Chapter \ref{ch_some_examples}). 
 %As with the choice of what properties to use as features of a data point, 
-Finding a good choice of the hypothesis space typically requires a good 
-understanding (``domain expertise'') of statistical properties of the data 
-and the limitations of the available computational infrastructure. 
+In general, choosing a suitable hypothesis space requires a good 
+understanding (``domain expertise'') of statistical properties of 
+the data and the limitations of the available computational infrastructure. 
 
 %One important aspect guiding the choice for the hypothesis space is the available 
 %computational infrastructure. If we only have a spreadsheet program at our disposal 
@@ -1798,34 +1834,7 @@ and the limitations of the available computational infrastructure.
 %to the label space of a given ML problem. 
 
 
-ML methods known as {\bf linear classifiers}, which includes logistic regression 
-(see Section \ref{sec_LogReg}), the SVM (see Section \ref{sec_SVM}) and naive 
-Bayes' classifiers (see Section \ref{sec_NaiveBayes}), use classifier maps whose 
-decision boundary is a hyperplane $\{ \vx: \vw^{T} \vx = b \}$ (see Figure \ref{fig_lin_dec_boundary}).
-\begin{figure} 
-\begin{center}
-\begin{tikzpicture}[allow upside down, scale=1]
-\draw[dashed,line width=3pt] (0,0) -- (10,5)  [smooth, tension=0.5]
-node[sloped,inner sep=0cm,above,pos=.5,
-anchor=south west,
-minimum height=2cm,minimum width=1cm](N){adf};
-\path [fill=yellow] (0,0) -- (0,5) -- (10,5) -- (0,0); %to %[out=-80, in=160]
-\node [below] at (5,1) {$h(\vx)<0, \hat{y} = -1$};
-\node [below] at (9,4) {decision boundary};
-\node [below] at (1,3) {$h(\vx)\geq0, \hat{y} = 1$};
-\path (N.south west)
-edge[->,blue,thick] node[left] {$\mathbf{w}$} (N.north west);
-\end{tikzpicture}
-\end{center}
-\caption{A hypothesis $h: \featurespace\!\rightarrow\!\labelspace$ for a binary 
-	classification problem, with label space $\labelspace=\{ -1,1\}$ and feature 
-	space $\featurespace=\mathbb{R}^{2}$, can be represented conveniently via the 
-	decision boundary (dashed line) which separates all feature vectors $\vx$ with 
-	$h(\vx) \geq 0 $ from the region of feature vectors with $h(\vx)<0$. If the decision 
-	boundary is a hyperplane $\{ \vx: \vw^{T} \vx = b \}$ (with normal vector 
-$\vw \in \mathbb{R}^{\featuredim}$), we refer to the map $h$ as a {\bf linear classifier}. }
-\label{fig_lin_dec_boundary}
-\end{figure}
+
 
 
 %\begin{center}
@@ -1889,8 +1898,8 @@ $\vw \in \mathbb{R}^{\featuredim}$), we refer to the map $h$ as a {\bf linear cl
 %\end{figure}
 
 
-The design choice for the hypothesis space $\hypospace$ has to balance 
-between two conflicting requirements.  
+The design choice for the hypothesis space $\hypospace$ 
+has to balance between two conflicting requirements.  
 \begin{itemize} 
 \item It has to be {\bf sufficiently large} such that it contains at least 
 one accurate predictor map $\hat{h} \in \hypospace$. A hypothesis space $\hypospace$ 
@@ -1941,15 +1950,14 @@ $\sizehypospace$ of arbitrary data points that can be perfectly fit
 with different features, we can always find a hypothesis $h \in \sizehypospace$ 
 such that $y=h(\vx)$ for all data points $(\vx,y) \in \dataset$. 
 
-Let illustrate the our notion of hypothesis space size with 
-two examples: linear regression and polynomial regression. 
-First, we discuss the size of the hypothesis space $\hypospace^{(\featuredim)}$ 
-used in linear regression. Consider $\samplesize$ data points 
-characterized by feature vectors $\vx \in \mathbb{R}^{(\featuredim)}$ 
-and a numeric label $y \in \mathbb{R}$. We assume that data points 
-are i.i.d.\ realizations of a continuous random vector $\vx$. 
+Let illustrate our notion of hypothesis space size with two examples: 
+linear regression and polynomial regression. 
 
-This implies that the matrix obtained by columnise stacking 
+First, we discuss the size of the hypothesis space $\hypospace^{(\featuredim)}$ 
+used in linear regression. Consider $\samplesize$ data points characterized by feature 
+vectors $\vx \in \mathbb{R}^{(\featuredim)}$ and a numeric label 
+$y \in \mathbb{R}$. We assume that data points are i.i.d.\ realizations 
+of a continuous random vector $\vx$. This implies that the matrix obtained by columnise stacking 
 the feature vectors is full rank with probability one. Basic linear 
 algebra allows then to show that such a set of data points can 
 be perfectly fit by a linear map $h \in \hypospace^{(\featuredim)}$ 
@@ -2233,17 +2241,21 @@ have $\hat{y} = y$, which suggests to use the {\bf $0/1$ loss} (see Figure \ref{
 \loss{(\vx,y)}{h} \defeq \begin{cases} 1 &\mbox{ if } y h(\vx) < 0 \\ 0 & \mbox{ else.} \end{cases}
 \end{equation} 
  
-The $0/1$ loss is statistically appealing as it approximates the misclassification 
-(error) probability $\prob{ y \neq \hat{y} }$ with $\hat{y} = {\rm sign } \{ h(\vx) \}$. 
+The $0/1$ loss is appealing from a statistical perspective as 
+it can be interpreted as approximating the misclassification (error) probability 
+$\prob{ y \neq \hat{y} }$ with $\hat{y} = {\rm sign } \{ h(\vx) \}$. 
 If we interpret the data points $\dataset = \big\{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \big\}_{\sampleidx=1}^{\samplesize}$ 
-as i.i.d.\ realizations of a random feature vector $\vx \in \featurespace$ and random label $y \in \{-1,1\}$, 
+as i.i.d.\ realizations of a random feature vector 
+$\vx \in \featurespace$ and random label $y \in \{-1,1\}$, then 
 \begin{equation} 
 \label{equ_0_1_approx_prob}
 (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h} \approx \prob{ y \neq \hat{y} }
 \end{equation} 
-with high probability for sufficiently large sample size $\samplesize$. The approximation \eqref{equ_0_1_approx_prob} 
-is based on the fact that the average of a large number of independent realizations of some random variable 
-can be well approximated by its mean or expectation (``law of large numbers'') (see \cite{BillingsleyProbMeasure}).  
+with high probability for sufficiently large sample size $\samplesize$. 
+The approximation \eqref{equ_0_1_approx_prob} is based on the fact 
+that the average of a large number of independent realizations of a 
+random variable can be well approximated by its mean or expectation 
+(``law of large numbers'') \cite{BillingsleyProbMeasure}.  
 ?? Indeed, the values $\loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}$ are i.i.d.\ realizations of the random variable 
 $\loss{(\vx,y)}{h}$.??
 

@@ -426,7 +426,7 @@ Satu Korhonen.
 
 \chapter{Introduction}
 Consider waking up some morning during winter in Finland 
-and taking a look outside the window (see Figure \ref{fig:skiday}). 
+and looking outside the window (see Figure \ref{fig:skiday}). 
 It seems to become a nice sunny day which is ideal for a 
 ski trip. To choose the right gear (clothing, wax) it is 
 vital to have some idea for the maximum daytime temperature 
@@ -1495,15 +1495,16 @@ maximum daytime temperature.
 %when for some reason the counting device did not deliver the count (estimate).  
 
 \subsection{Probabilistic Models for Data} 
-Consider data points representing previous days in Finland. Each data point is 
-characterized by its (average) daytime temperature $x \in \mathbb{R}$. Assume we 
-have downloaded $\samplesize$ data points $\big(x^{(1)},\ldots,x^{(\samplesize)} \big)$. 
-
-Many successful ML methods are based on a simple but crucial idea: Interpret data points 
-as realizations of random variables. The most basic and widely used form of a probabilistic 
-model for the data points in ML is the {\bf ``independent and identically distributed'' (i.i.d.)} 
-assumption. Here, the data points are interpreted as statistically independent realizations of 
-one single random variable $x$.
+%Consider data points representing previous days in Finland. Each data point is 
+%characterized by its (average) daytime temperature $x \in \mathbb{R}$. Assume we 
+%have downloaded $\samplesize$ data points $\big(x^{(1)},\ldots,x^{(\samplesize)} \big)$. 
+In what follows we consider data points that are characterized by a 
+single feature $x$. Many successful ML methods are based on a simple 
+but crucial idea: Interpret data points as realizations of random variables. 
+One of the most basic examples of a probabilistic model for the 
+data points in ML is the {\bf ``independent and identically distributed'' (i.i.d.)} 
+assumption. This assumption interprets data points $x^{(1)},\ldots,x^{(\samplesize)}$ 
+as statistically independent realizations of one single random variable $x$.
 
 Interpreting data points as realizations of a random variable $x$, allows to 
 use the properties of the probability distribution $p(x)$ to characterize the statistical 
@@ -1511,10 +1512,13 @@ properties of the data. The probability distribution $p(x)$ is either assumed
 known or estimated from data (see Section \ref{sec_max_iikelihood}). It is often 
 enough to not estimate the distribution $p(x)$ entirely but only some of its parameters. 
 
-Some of the most basic and widely used parameters of a probability distribution $p(x)$ 
-is the expected value or mean $\mu_{x} = \expect\{x\} \defeq \int_{x} x p(x) dx$ and variance 
-$\sigma_{x}^{2} \defeq \expect\big\{\big(x-\expect\{x\}\big)^{2}\big\}$. These parameters 
-can be estimated using the sample mean (average) and sample variance, 
+Some of the most basic and widely used parameters of a probability 
+distribution $p(x)$ are the expected value or mean 
+$$\mu_{x} = \expect\{x\} \defeq \int_{x} x p(x) dx$$ 
+and the variance 
+$$\sigma_{x}^{2} \defeq \expect\big\{\big(x-\expect\{x\}\big)^{2}\big\}.$$ 
+These parameters can be estimated using the sample mean 
+(average) and sample variance, 
 \begin{equation} 
 \hat{\mu}_{x} \defeq (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} x^{(\sampleidx)}\mbox{ , and } \widehat{\sigma^{2}_{x}} \defeq (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \big( x^{(\sampleidx)} - \hat{\mu}_{x} \big)^{2}.  
 \end{equation} 
@@ -1539,8 +1543,9 @@ A widely used estimator for the square root of the variance is the
 %obtained by stacking the greyscale intensities of a $128 \times 128$ 
 %pixel image of the hand-drawing.  
 
-Consider a ML application based on data points with features $\vx \in \featurespace$ 
-and some label $y \in \labelspace$. The goal of ML is to learn a map $h(\vx)$ such that 
+Consider a ML application generating data points, each characterized 
+by features $\vx \in \featurespace$ and label $y \in \labelspace$. The goal 
+of ML is to learn a map $h(\vx)$ such that 
 %Given a set of $m$ labeled data points (the ``training data'')
 %\begin{equation} 
 %\label{eq_def_training_set}
@@ -1568,13 +1573,33 @@ in Chapter \ref{ch_Optimization}.
 %$\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ of the snapshot $\vz^{(\sampleidx)}$ delivered 
 %by the on-board camera at time $\sampleidx$. ?????
 
-To have any chance to solve this task, we must assume (or hypothesize) 
-an underlying relation between the features $\vx^{(\sampleidx)}$ 
-and the label $y^{(\sampleidx)}$. We represent this relation between 
-features $\vx^{(\sampleidx)}$ and label $y^{(\sampleidx)}$ using a 
-{\bf hypothesis map} $h: \featurespace \rightarrow \labelspace$, which 
-maps the feature vector $\vx^{(\sampleidx)}$ of the snapshot to a 
-predicted label $\hat{y}^{(\sampleidx)} = h(\vx^{(\sampleidx)})$. 
+%To have any chance to solve this task, we must assume (or hypothesize) 
+%an underlying relation between the features $\vx$ and the label $y$. 
+%Each ML method uses such an assumption indirectly by restricting the set 
+%of possible hypothesis maps $h$ to 
+%
+%We 
+%represent this relation between features $\vx$ and label $y$ using a 
+%{\bf hypothesis} $h: \featurespace \rightarrow \labelspace$. 
+%A hypothesis is a map or function, which maps the feature vector 
+%$\vx^{(\sampleidx)}$ of a data points to a predicted label $\hat{y} = h(\vx)$. 
+
+The main goal of ML is to learn a good hypothesis $h$ from data. 
+Given a good hypothesis map $h$, such that \eqref{equ_approx_label_pred} 
+is satisfied, ML methods use it to predict the label of any data point. 
+The prediction $\hat{y}=h(\vx)$ is obtained by evaluating the hypothesis 
+for the features $\vx$ of a data point. We will use the term predictor map 
+for the hypothesis map to highlight its use for computing predictions. 
+
+If the label space $\labelspace$ is finite, such as $\labelspace=\{-1,1\}$, we 
+use the term {\bf classifier} instead of hypothesis.For a finite label space 
+$\labelspace$ and feature space $\featurespace=\mathbb{R}^{\featuredim}$, 
+we can characterize a particular classifier map $h$ using its {\bf decision boundary}. 
+The decision boundary of a classifier $h$ is the set of all border points 
+between the different regions $\mathcal{R}_{\hat{y}} \defeq \{ \vx: h(\vx) = \hat{y}\} \subseteq \featurespace$ of the feature 
+space $\featurespace$. The region $\mathcal{R}_{\hat{y}}$ contains all 
+feature values $\vx \in \featurespace$ which are mapped to the same 
+label value $\hat{y} \in \labelspace$. 
 
 %A reasonable hypothesis $h$ should approximate the true label $y^{(\sampleidx)}$ 
 %as accurately as possible such that $\hat{y}^{(\sampleidx)}=h(\vx^{(\sampleidx)}) \approx y^{(\sampleidx)}$ 
@@ -1614,42 +1639,65 @@ predicted label $\hat{y}^{(\sampleidx)} = h(\vx^{(\sampleidx)})$.
 \label{fig_feature_map_eval}
 \end{figure}
 
-In principle, we could use any possible map $h: \featurespace \rightarrow \labelspace$ 
-for predicting the label $y \in \labelspace$ based on the features $\vx \in \featurespace$ 
-via computing $\hat{y} = h(\vx)$. However, any practical ML methods has only {\bf limited 
-	computational resources} and therefore can only make use of a subset of all possible 
-predictor maps. This subset of computationally feasible (``affordable'') predictors is referred 
-to as the {\bf hypothesis space} or {\bf concept class}. 
+In principle, ML methods could use any possible map $h: \featurespace \rightarrow \labelspace$ 
+to predict the label $y \in \labelspace$ via computing $\hat{y} = h(\vx)$. 
+However, any practical ML method has only {\bf limited computational resources} 
+and therefore can only make use of a subset of all possible predictor maps. 
+This subset of computationally feasible (``affordable'') predictor maps 
+is referred to as the {\bf hypothesis space} or {\bf model} underlying 
+a ML method. 
 
-The choice of which hypothesis space to use depends crucially on the available 
-computational infrastructure. Different types of computational infrastructure call 
-for different choices for the hypothesis space. For ML methods implemented in 
-a small embedded system, we might prefer a linear hypothesis space which can 
-be processed using numerical linear algebra. Deep learning methods implemented 
-using cloud computing can make use of much larger hypothesis spaces obtained 
-from deep neural networks. 
+The largest possible hypothesis space $\hypospace$ is the set $\labelspace^{\featurespace}$ 
+constituted by all maps from the feature space $\featurespace$ to the label space $\labelspace$.
+\footnote{The elements of $\labelspace^{\featurespace}$ are maps $h: \featurespace \rightarrow \labelspace$.}   
+The choice $\hypospace = \labelspace^{\featurespace}$ is rarely used 
+in practice since this space is simply too large to work within a reasonable 
+amount of computational resources. Instead, the hypothesis space $\hypospace$ 
+is typically a (very small) subset of $\labelspace^{\featurespace}$ (see Figure \ref{fig_hypo_space}). 
 
-If the computational infrastructure allows for efficient numerical linear algebra and the feature 
-space is the Euclidean space $\mathbb{R}^{\featuredim}$, a popular choice for the hypothesis 
-space is  
+The choice for the hypothesis space depends crucially on the available 
+computational infrastructure. Different computational infrastructure 
+favour different hypothesis space. ML methods implemented in 
+a small embedded system, might prefer a linear hypothesis space 
+which can be processed using numerical linear algebra. Deep learning 
+methods implemented using cloud computing can make use of much 
+larger hypothesis spaces obtained from deep neural networks. 
+
+For the computational infrastructure provided by {\bf spreadsheet program}, 
+we might use a hypothesis space constituted by maps $h: \featurespace \rightarrow \labelspace$ 
+which can be implemented easily by a spreadsheet (see Table \ref{table_lookup}). 
+If we instead use the programming language Python to implement 
+a ML method, we can obtain a hypothesis class by collecting all possible 
+Python subroutines with one input (scalar feature $x$), one output 
+argument (predicted label $\hat{y}$) and consisting of less than $100$ 
+lines of code. %(see Figure \ref{fig_hypospace_Python}). 
+
+If the computational infrastructure allows for efficient numerical 
+linear algebra and the feature space is the Euclidean space $\mathbb{R}^{\featuredim}$, 
+a popular choice for the hypothesis space is  
 \begin{align}
 \label{equ_def_hypo_linear_pred}
 \hspace*{-3mm}\hypospace^{(\featuredim)} \!\defeq\!\{ h^{(\vw)}\!:\!\mathbb{R}^{\featuredim}\!\rightarrow\!\mathbb{R}\!:\!h^{(\vw)}(\vx)\!=\!\vx^{T} \vw \mbox{ with some weight vector } \vw\!\in\!\mathbb{R}^{\featuredim} \}.  
 \end{align}
-The hypothesis space $\hypospace^{(\featuredim)}$ in \eqref{equ_def_hypo_linear_pred} is constituted 
-by the linear maps (functions) $h^{(\vw)}: \mathbb{R}^{\featuredim} \rightarrow \mathbb{R}$ which map 
-the feature vector $\vx \in \mathbb{R}^{\featuredim}$ to the predicted label (or output) $h^{(\vw)}(\vx) = \vx^{T} \vw \in \mathbb{R}$. 
-For $\featuredim\!=\!1$ the feature vector reduces to one single feature $x$ and the hypothesis space 
-\eqref{equ_def_hypo_linear_pred} consists of all maps $h^{(w)}(x) = w x$ with some weight $w \in \mathbb{R}$ (see Figure \ref{scalar_lin_space}). 
+
+The hypothesis space \eqref{equ_def_hypo_linear_pred} is constituted 
+by the linear maps (functions) $h^{(\vw)}: \mathbb{R}^{\featuredim} \rightarrow \mathbb{R}$. 
+The function $h^{(vw)}$ maps the feature vector $\vx \in \mathbb{R}^{\featuredim}$ 
+to the predicted label (or output) $h^{(\vw)}(\vx) = \vx^{T} \vw \in \mathbb{R}$. 
+For $\featuredim\!=\!1$ the feature vector reduces to one single feature $x$ and 
+the hypothesis space \eqref{equ_def_hypo_linear_pred} consists of all maps 
+$h^{(w)}(x) = w x$ with some weight $w \in \mathbb{R}$ (see Figure \ref{scalar_lin_space}). 
 
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{HypothesisMapRumba.jpg}  
-    \caption{A predictor (hypothesis) $h: \featurespace \rightarrow \labelspace$ takes the feature vector $\vx^{(\timeidx)} \in \featurespace$ 
-    (e.g., representing the snapshot taken by \rumba\, at time \timeidx) as input and outputs a predicted label $\hat{y}_{\timeidx}=h(\vx^{(\timeidx)} )$ (e.g., 
-    the predicted $y$-coordinate of \rumba\, at time $\timeidx$). 
-    A key problem studied within ML is how to automatically learn a good (accurate) predictor $h$ such that $y_{\timeidx} \approx h(\vx^{(\timeidx)} )$. }
+    \caption{A predictor (hypothesis) $h: \featurespace \rightarrow \labelspace$ takes 
+    	the feature vector $\vx^{(\timeidx)} \in \featurespace$  (e.g., representing the 
+    	snapshot taken by \rumba\, at time \timeidx) as input and outputs a predicted 
+    	label $\hat{y}_{\timeidx}=h(\vx^{(\timeidx)} )$ (e.g., the predicted $y$-coordinate 
+    	of \rumba\, at time $\timeidx$). A key problem studied within ML is how to 
+    	automatically learn a good (accurate) predictor $h$ such that $y_{\timeidx} \approx h(\vx^{(\timeidx)} )$. }
 %    \caption{Hypothesis Map}
 \label{fig:Hypothesis Map}
 \end{figure}
@@ -1699,64 +1747,56 @@ this hypothesis space conveniently using the weight $w\in \mathbb{R}$ as $h^{(w)
 \end{figure}
 
 The elements of the hypothesis space $\hypospace$ in \eqref{equ_def_hypo_linear_pred} are  
-parametrized by the weight vector $\vw \in \mathbb{R}^{\featuredim}$. Each map $h^{(\vw)} \in \hypospace$ 
-is fully specified by the weight vector $\vw$. Thus, instead of searching a good hypothesis directly 
-in the function space $\hypospace$ (its elements are functions!), we can equivalently search over 
-all possible weight vectors $\vw \in \mathbb{R}^{\featuredim}$. The search space $\mathbb{R}^{\featuredim}$ 
-is still (unaccountably) infinite but it has lots of geometric and algebraic structure which allows to 
-efficiently search over this space. 
+parametrized by the weight vector $\vw \in \mathbb{R}^{\featuredim}$. 
+Each map $h^{(\vw)} \in \hypospace$ is fully specified by the weight 
+vector $\vw$. Thus, instead of searching a good hypothesis directly 
+in the function space $\hypospace$ (its elements are functions!), 
+we can equivalently search over all possible weight vectors $\vw \in \mathbb{R}^{\featuredim}$. 
+The search space $\mathbb{R}^{\featuredim}$ is still (unaccountably) 
+infinite but it has lots of geometric and algebraic structure which 
+allows to efficiently search over this space. 
 
 ML methods based on the linear hypothesis space \eqref{equ_def_hypo_linear_pred} 
-can be implemented by combinations of few basic operations from linear algebra such 
-as vector-matrix multiplications. One reason for the popularity of methods using 
-\eqref{equ_def_hypo_linear_pred} is the broad availability of computing hardware 
-(such graphic processing units) and programming frameworks (such as numerical linear 
-algebra libraries) allow efficient computations of the elementary operations. 
+can be implemented by combinations of few basic operations 
+from linear algebra such as vector-matrix multiplications. One 
+reason for the popularity of the hypothesis space \eqref{equ_def_hypo_linear_pred} 
+is the broad availability of computing hardware (graphic processing units) 
+and programming frameworks (numerical linear algebra libraries). 
 
-The hypothesis space \eqref{equ_def_hypo_linear_pred} can only be used for ML problems 
-within which the features of data points are represented by vectors $\vx = (x_{1},\ldots,x_{\featuredim})^{T} \in \mathbb{R}^{\featuredim}$. 
-Since ML methods based on the hypothesis space \eqref{equ_def_hypo_linear_pred} are 
-quite well developed (using numerical linear algebra), it might be useful to re-formulate 
-the ML problem at hand using vectors as features. This suggests the ``country wisdom'' 
-that within ML any data has to be turned into vectors (or matrices). For text data, there has 
-been significant progress recently on methods that map a human-generated text into sequences 
-of vectors (see \cite[Chap. 12]{Goodfellow-et-al-2016} for more details). 
+The hypothesis space \eqref{equ_def_hypo_linear_pred} can 
+only be used for data points whose features are numeric 
+vectors $\vx = (x_{1},\ldots,x_{\featuredim})^{T} \in \mathbb{R}^{\featuredim}$. 
+In some application domains, such as natural language 
+processing, there is no obvious natural choice for numeric 
+features. However, since ML methods based on the hypothesis 
+space \eqref{equ_def_hypo_linear_pred} are well developed 
+(using numerical linear algebra), it might be useful to construct 
+numerical features even for non-numeric data (such as text). 
+For text data, there has been significant progress recently on 
+methods that map a human-generated text into sequences of 
+vectors (see \cite[Chap. 12]{Goodfellow-et-al-2016} for more details). 
 
 %Since the choice of what features are used to characterize data points is a design choice, we can simply require the features 
 %to be represented by vectors to allow the use of  
 The hypothesis space, i.e., the subset of predictor maps $h: \featurespace \rightarrow \labelspace$ 
 used in a ML method, is a {\bf design choice}. Some particular choices have 
 proven useful for a wide range of applications (see Chapter \ref{ch_some_examples}). 
-As with the choice of what properties to use as features of a data point, 
-finding a good choice of the hypothesis space typically requires a good 
+%As with the choice of what properties to use as features of a data point, 
+Finding a good choice of the hypothesis space typically requires a good 
 understanding (``domain expertise'') of statistical properties of the data 
 and the limitations of the available computational infrastructure. 
 
-One important aspect guiding the choice for the hypothesis space is the available 
-computational infrastructure. If we only have a spreadsheet program at our disposal 
-then it might be reasonable to use a hypothesis space which is constituted by maps 
-$h$ which can be represented by look-up tables (see Figure \ref{table_lookup}). 
-If our computational infrastructure allows for efficient numerical linear algebra. 
-which is the case for most desktop computers and scientific programming languages), 
-the linear hypothesis space \eqref{equ_def_hypo_linear_pred} might be useful.
+%One important aspect guiding the choice for the hypothesis space is the available 
+%computational infrastructure. If we only have a spreadsheet program at our disposal 
+%then it might be reasonable to use a hypothesis space which is constituted by maps 
+%$h$ which can be represented by look-up tables (see Figure \ref{table_lookup}). 
+%If our computational infrastructure allows for efficient numerical linear algebra. 
+%which is the case for most desktop computers and scientific programming languages), 
+%the linear hypothesis space \eqref{equ_def_hypo_linear_pred} might be useful.
 
 %Note that the elements of the hypothesis space $\hypospace$ are maps $h$ from the feature space 
 %to the label space of a given ML problem. 
-Remember that a hypothesis (or predictor) $h$ is a map which takes the 
-features $\vx \in \featurespace$ as its input and outputs a predicted (or 
-estimated) label $\hat{y} = h(\vx) \in \labelspace$. If the label space $\labelspace$ 
-is finite (such as $\labelspace=\{-1,1\}$) we use the term {\bf classifier} instead 
-of hypothesis. For regression problems involving a continuous label space (such 
-as $\labelspace=\mathbb{R}$) it is common to refer to a hypothesis as a {\bf predictor}. 
-%However, in the end, a classifier (or a predictor (or a hypothesis)) is nothing but a {\bf map from the feature space 
-%to the label space of an ML problem.}
 
-For a finite label space $\labelspace$ and feature space $\featurespace=\mathbb{R}^{\featuredim}$, 
-we can characterize a particular classifier map $h$ using its {\bf decision boundary}. The decision 
-boundary of a classifier $h$ is the set of all border points between the different regions 
-$\mathcal{R}_{\hat{y}} \defeq \{ \vx: h(\vx) = \hat{y}\} \subseteq \featurespace$ of the feature 
-space $\featurespace$. A particular region $\mathcal{R}_{\hat{y}}$ contains all feature 
-values $\vx \in \featurespace$ which are mapped to the same prescribed label value $\hat{y} \in \labelspace$. 
 
 ML methods known as {\bf linear classifiers}, which includes logistic regression 
 (see Section \ref{sec_LogReg}), the SVM (see Section \ref{sec_SVM}) and naive 
@@ -1797,29 +1837,6 @@ $\vw \in \mathbb{R}^{\featuredim}$), we refer to the map $h$ as a {\bf linear cl
 %for all $\vx$ below $\mathcal{C}$?
 %}}
 %\end{center}
-
-One important aspect guiding the choice for the hypothesis 
-space is the available computational framework. If we can only 
-use a {\bf spreadsheet program}, we should use a hypothesis 
-space constituted by maps $h: \featurespace \rightarrow \labelspace$ 
-which can be implemented easily by a spreadsheet (see Table \ref{table_lookup}). 
-
-If we instead use the programming language Python to implement 
-a ML method, we can obtain a hypothesis class by collecting all possible 
-Python subroutines with one input (scalar feature $x$), one output 
-argument (predicted label $\hat{y}$) and consisting of less than $100$ lines of code. %(see Figure \ref{fig_hypospace_Python}). 
-
-The largest possible choice for the hypothesis space $\hypospace$ of an ML problem using 
-feature space $\featurespace$ and label space $\labelspace$ is the set $\labelspace^{\featurespace}$ 
-constituted by all maps from the feature space $\featurespace$ to the label space $\labelspace$.
-\footnote{The elements of $\labelspace^{\featurespace}$ are maps $h: \featurespace \rightarrow \labelspace$.}   
-The choice $\hypospace = \labelspace^{\featurespace}$ is rarely used in practice since this space is 
-simply too large to work within a reasonable amount of computational resources. Instead, the 
-hypothesis space $\hypospace$ is typically a (very small) subset of $\labelspace^{\featurespace}$ 
-(see Figure \ref{fig_hypo_space}). However, choosing the hypothesis space too small might result 
-in poor performance of the overall ML method, as we might not find any suitable predictor (or 
-classifier) map $h \in \hypospace$ which allows to capture the true underlying relationship between 
-features $\vw$ and label $y$ of data points. 
 
 %Consider the dataset depicted in Figure \ref{fig_scatterplot} consisting of historic information 
 %about cryptocurrency prices. Each data point (depicted by a dot) corresponds to the cryptocurrency 
@@ -2082,14 +2099,17 @@ discusses polynomial regression in more detail.
 \section{The Loss}
 \label{sec_lossfct}
 
-Every practical ML method uses some hypothesis space $\hypospace$ which consists 
-of all {\bf computationally feasible} predictor maps $h$. Which predictor map $h$ out of 
-all the maps in the hypothesis space $\hypospace$ is the best for the ML problem at hand?
-To this end, we need to define a measure of the {\bf loss} (or error) incurred by using 
-the particular predictor $h(\vx)$ when the true label is $y$. More formally, we define a 
-loss function $\mathcal{L}: \featurespace \times \labelspace \times \hypospace \rightarrow \mathbb{R}$ 
-which measures the loss $\loss{(\vx,y)}{h}$ incurred by predicting the label $y$ of a data point using the prediction $h(\vx)(=: \hat{y})$. 
-The concept of loss functions is best understood by considering some particular examples. 
+Every practical ML method uses some hypothesis space $\hypospace$ 
+which consists of all {\bf computationally feasible} predictor maps $h$. 
+Which predictor map $h$ out of all the maps in the hypothesis space 
+$\hypospace$ is the best for the ML problem at hand? To answer this, 
+we need to define a measure of the {\bf loss} (or error) incurred by using 
+the particular predictor $h(\vx)$ when the true label is $y$. Formally, 
+we define a loss function $\mathcal{L}: \featurespace \times \labelspace \times \hypospace \rightarrow \mathbb{R}$ 
+which measures the loss $\loss{(\vx,y)}{h}$ incurred by predicting the 
+label $y$ of a data point using the prediction $h(\vx)(=: \hat{y})$. 
+The concept of loss functions is best understood by considering 
+particular examples. 
 
 {\bf Regression Loss.} For ML problems involving numeric labels $y \in \mathbb{R}$, 
 a good first choice for the loss function can be the {\bf squared error loss} (see Figure \ref{fig_squarederror_loss}) 
@@ -2139,10 +2159,12 @@ we can tell if $h$ is any good, we need to know the feature $\vx$ and the label 
 \label{fig_squarederror_loss}
 \end{figure}
 
-The squared error loss \eqref{equ_squared_loss} has appealing computational and statistical 
-properties. For linear predictor maps $h(\vx) = \vw^{T} \vx$, the squared error loss is a 
-convex and differentiable function of the weight vector $\vw$. This allows, in turn, to efficiently 
-search for the optimal linear predictor using efficient iterative optimization methods (see Chapter \ref{ch_GD}). 
+The squared error loss \eqref{equ_squared_loss} has appealing 
+computational and statistical properties. For linear predictor 
+maps $h(\vx) = \vw^{T} \vx$, the squared error loss is a 
+convex and differentiable function of the weight vector $\vw$. 
+This allows, in turn, to efficiently search for the optimal linear 
+predictor using efficient iterative optimization methods (see Chapter \ref{ch_GD}). 
 
 The squared error loss also has a useful interpretation in terms of a probabilistic 
 model for the features and labels. In particular, minimizing the squared error loss 

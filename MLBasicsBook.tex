@@ -2215,15 +2215,22 @@ The squared error loss is a bad choice for classification problems with a discre
 \end{center}
 \end{figure}
 
-We now discuss some popular choices for the loss function suitable for ML 
-problems with binary labels. While the representation of the label values is completely irrelevant, 
-it will be convenient to encode of the two label values by the real numbers $-1$ and $1$. As label 
-space we use $\labelspace=\mathbb{R}$. The formulas for the loss functions we present only apply 
-to this encoding. The modification of these formulas to a different encoding, such as label 
-values $0$ and $1$, is not very difficult. 
+??? use a different example to illustrate that squared error loss is not a good 
+idea to learn a linear classifier. e.g., using single feature and showing the graph 
+of the predictor instead of the decision boundary obtained from a linear predictor 
+(which) might be confusing ??? 
 
-Consider the problem of detecting forest fires as early as possible using webcam snapshots such as the one 
-depicted in Figure \ref{fig:webcam_forestfire}. 
+We now discuss some popular choices for the loss function 
+suitable for ML problems with binary labels. While the representation 
+of the label values is completely irrelevant, it will be convenient to 
+encode of the two label values by the real numbers $-1$ and $1$. 
+%As label space we use $\labelspace=\mathbb{R}$ 
+The formulas for the loss functions we present only apply to 
+this encoding. The modification of these formulas to a different 
+encoding, such as label values $0$ and $1$, is not very difficult. 
+
+Consider the problem of detecting forest fires as early as possible 
+using webcam snapshots such as the one depicted in Figure \ref{fig:webcam_forestfire}. 
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=8cm]{WebcamLapland.jpg}  
@@ -2231,11 +2238,14 @@ depicted in Figure \ref{fig:webcam_forestfire}.
 \label{fig:webcam_forestfire}
 \end{center}
 \end{figure}
-A particular snapshot is characterized by the features $\vx$ and the label $y \in \labelspace=\{-1,1\}$ 
-with $y=1$ if the snapshot shows a forest fire and $y=-1$ if there is no forest fire. We would like to 
-find or learn a classifier $h(\vx)$ which takes the features $\vx$ as input and provides a classification 
-according to $\hat{y} = 1$ if $h(\vx) >0$ and $\hat{y}=-1$ if $h(\vx) \leq 0$. Ideally we would like to 
-have $\hat{y} = y$, which suggests to use the {\bf $0/1$ loss} (see Figure \ref{fig_class_loss})
+A particular snapshot is characterized by the features $\vx$ and 
+the label $y \in \labelspace=\{-1,1\}$ with $y=1$ if the snapshot 
+shows a forest fire and $y=-1$ if there is no forest fire. We would 
+like to find or learn a classifier $h(\vx)$ which takes the features $\vx$ 
+as input and provides a classification according to $\hat{y} = 1$ 
+if $h(\vx) >0$ and $\hat{y}=-1$ if $h(\vx) \leq 0$. Ideally we 
+would like to have $\hat{y} = y$ for any data point. This suggests 
+to use the {\bf $0/1$ loss} (see Figure \ref{fig_class_loss})
 \begin{equation}
 \label{equ_def_0_1}
 \loss{(\vx,y)}{h} \defeq \begin{cases} 1 &\mbox{ if } y h(\vx) < 0 \\ 0 & \mbox{ else.} \end{cases}
@@ -2245,13 +2255,14 @@ The $0/1$ loss is appealing from a statistical perspective as
 it can be interpreted as approximating the misclassification (error) probability 
 $\prob{ y \neq \hat{y} }$ with $\hat{y} = {\rm sign } \{ h(\vx) \}$. 
 If we interpret the data points $\dataset = \big\{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \big\}_{\sampleidx=1}^{\samplesize}$ 
-as i.i.d.\ realizations of a random feature vector 
+as i.i.d.\ realizations of a pair of random feature vector 
 $\vx \in \featurespace$ and random label $y \in \{-1,1\}$, then 
 \begin{equation} 
 \label{equ_0_1_approx_prob}
 (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h} \approx \prob{ y \neq \hat{y} }
 \end{equation} 
 with high probability for sufficiently large sample size $\samplesize$. 
+
 The approximation \eqref{equ_0_1_approx_prob} is based on the fact 
 that the average of a large number of independent realizations of a 
 random variable can be well approximated by its mean or expectation 
@@ -2259,41 +2270,52 @@ random variable can be well approximated by its mean or expectation
 ?? Indeed, the values $\loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}$ are i.i.d.\ realizations of the random variable 
 $\loss{(\vx,y)}{h}$.??
 
-In view of \eqref{equ_0_1_approx_prob}, the $0/1$ loss seems the most natural choice for 
-assessing the quality of a classifier if our goal is to enforce correct classification ($\hat{y}=y$). 
-This appealing statistical property of the $0/1$ loss comes at the cost of high 
-computational complexity. Indeed, for a given data point $(\vx,y)$, the $0/1$ loss 
-\eqref{equ_def_0_1} is neither convex nor differentiable when viewed as a function of the 
-classifier $h$. Thus, using the $0/1$ loss for binary classification problems typically involves 
-advanced optimization methods for solving the resulting learning problem (see Section \ref{sec_NaiveBayes}). 
+In view of \eqref{equ_0_1_approx_prob}, the $0/1$ loss seems 
+a very natural choice for assessing the quality of a classifier 
+if our goal is to enforce correct classification ($\hat{y}=y$). 
+This appealing statistical property of the $0/1$ loss comes 
+at the cost of high computational complexity. Indeed, for a 
+given data point $(\vx,y)$, the $0/1$ loss \eqref{equ_def_0_1} 
+is neither convex nor differentiable when viewed as a function 
+of the classifier $h$. Thus, using the $0/1$ loss for binary 
+classification problems typically involves advanced optimization 
+methods for solving the resulting learning problem (see Section \ref{sec_NaiveBayes}). 
 
-In order to ``cure'' the non-convexity of the $0/1$ loss we approximate it by a convex loss function. 
-This convex approximation results in the {\bf hinge loss} (see Figure \ref{fig_class_loss}) 
+In order to ``cure'' the non-convexity of the $0/1$ loss we 
+approximate it by a convex loss function. This convex 
+approximation results in the {\bf hinge loss} (see Figure \ref{fig_class_loss}) 
 \begin{equation} 
 \label{equ_hinge_loss}
 \loss{(\vx,y)}{h} \defeq \max \{ 0 , 1 - y\cdot h(\vx) \}. 
 \end{equation}
-While the hinge loss avoids the non-convexity of the $0/1$ loss it still is a non-differentiable 
-function of the classifier $h$. The next example of a loss function for classification problems cures 
-also the non-differentiability issue. 
+While the hinge loss avoids the non-convexity of the $0/1$ 
+loss it still is a non-differentiable function of the classifier $h$. 
 
-As a third example for a loss function which is useful for binary classification problems 
-we mention the {\bf logistic loss} (used within logistic regression, see Section \ref{sec_LogReg})
+The next example of a loss function that is useful for 
+classification problems is differentiable. The {\bf logistic loss} 
+is used within logistic regression, see Section \ref{sec_LogReg}) 
+and defined as 
 \begin{equation} 
 \label{equ_log_loss}
 \loss{(\vx,y)}{h} \defeq  \log ( 1 + \exp(- y h(\vx))). 
 \end{equation}
-For a fixed feature vector $\vx$ and label $y$, both, the hinge and the logistic 
-loss function are {\bf convex functions} of the hypothesis $h$. However, while 
-the logistic loss \eqref{equ_log_loss} depends {\bf smoothly} on $h$ (such that we 
-could define a derivative of the loss with respect to $h$), the hinge loss \eqref{equ_hinge_loss} is 
-{\bf non-smooth} which makes it more difficult to minimize. 
 
-Thus, while ML methods based on the logistic loss function (such as logistic regression 
-in Section \ref{sec_LogReg}), can make use of simple {\bf gradient descent methods} (see 
-Chapter \ref{ch_GD}), ML methods based on the hinge loss (such as support vector 
-machines \cite{hastie01statisticallearning}) have to make use of more advanced tools 
-for solving the resulting learning problem (see Chapter \ref{ch_Optimization}).  
+For a fixed feature vector $\vx$ and label $y$, both, the hinge 
+and the logistic loss function are {\bf convex functions} of 
+the hypothesis $h$. The logistic loss \eqref{equ_log_loss} 
+depends {\bf smoothly} on $h$ such that we could define a derivative 
+of the loss with respect to $h$. In contrast, the hinge loss 
+\eqref{equ_hinge_loss} is {\bf non-smooth} which makes it 
+more difficult to minimize. 
+
+ML methods based on the logistic loss function, such as 
+logistic regression in Section \ref{sec_LogReg}), can make 
+use of simple {\bf gradient descent methods} (see 
+Chapter \ref{ch_GD}) to minimize the average loss. 
+ML methods based on the hinge loss, such as support 
+vector machines \cite{hastie01statisticallearning}) must 
+use of more sophisticated optimization methods to learn 
+a predictor by minimizing the loss (see Chapter \ref{ch_Optimization}).  
 
 \begin{figure}[htbp]
 \begin{center}
@@ -2331,12 +2353,14 @@ for solving the resulting learning problem (see Chapter \ref{ch_Optimization}).
 \label{fig_class_loss}
 \end{figure}
 
-Let us emphasize that, very much like the choice of features and hypothesis space, 
-the question of which particular loss function to use within an ML method is a 
-{\bf design choice}, which has to be tailored to the application at hand. What 
-qualifies as a useful loss function depends heavily on the overall goal we wish to 
-achieve using ML methods. Thus, there is no useful concept of ``optimal loss function''. 
-In general, different loss functions are preferable for different ML applications. 
+Let us emphasize that, very much like the choice of features 
+and hypothesis space, the question of which particular loss 
+function to use within an ML method is a {\bf design choice}, 
+which has to be tailored to the application at hand. The choice 
+for the loss function must take into account the available 
+computational resources and the statistical properties of the 
+data (e.g. presence of few outliers). 
+
 
 \begin{center}
 \framebox[0.96\textwidth]{
@@ -7068,6 +7092,31 @@ to the hard cluster assignment update \eqref{equ_cluster_assign_update}
 of the $k$-means Algorithm \ref{alg:kmeans}. 
 
 \section{Density Based Clustering with DBSCAN}
+
+Both k-means and GMM cluster data points using the Euclidean distance, 
+which is a natural measure of similarity in many cases. However, in some 
+applications, the data conforms to a different non-Euclidean structure. 
+One example for a non-Euclidean structure is a graph or network structure. 
+Here, two data points are considered similar if they can be reached by 
+intermediate data points that have a small Euclidean distance. Thus, 
+two data points can be similar in terms of connectivity, even if their 
+Euclidean distance is large.Density-based spatial clustering of 
+applications with noise (DBSCAN) is a hard clustering method that 
+uses a connectivity-based similarity measure. In contrast to k-means 
+and the GMM, DBSCAN does not require the number of clusters to 
+be pre-defined -  the number will depend on its parameters. Moreover, 
+DBSCAN detects outliers that are interpreted as degenerated clusters 
+consisting of a single data point. For a detailed discussion of how 
+DBSCAN works, we refer to https://en.wikipedia.org/wiki/DBSCAN.  DBSCAN 
+%is implemented in the DBSCAN class in scikit-learn Documentation 
+%can be found here. DBSCAN requires specifying two parameters 
+% eps and min_samples. The meaning of these parameter are well explained here. 
+%The DBSCAN implementation fit_predict(self, X[, y, sample_weight]) returns cluster labels.
+
+\section{Exercises} 
+\subsection{Image Compression with k-means} 
+use k-means to compress a RGB bitmap image. Instead of RGB values 
+we need to store only cluster index and the cluster means. 
 
 \newpage
 \chapter{Feature Learning} 

@@ -754,7 +754,7 @@ represented by a straight line, such that the average distance to the data
 points in Figure \ref{fig_scatterplot_temp_FMI} is as small as possible 
 (see Figure \ref{fig_scatterplot_temp_FMI_linalg}). 
 
-The properties of linear structures, such as straight lines, is 
+The properties of linear structures, such as straight lines, are 
 studied within linear algebra \cite{StrangLinAlg2016}. The basic 
 principles behind important ML methods, such as linear regression 
 or principal component analysis, are deeply rooted in the theory 
@@ -777,8 +777,8 @@ are computed over subsets of data points (the training set).
 
 \subsection{Theoretical Computer Science} 
 
-On a high level, ML methods take data as input and produce 
-some prediction as the output. The predictions are computed 
+On a high level, ML methods take data as input and compute 
+predictions as their output. The predictions are computed 
 using algorithms such as linear solvers or optimization methods. 
 These algorithms are implemented using some finite computational 
 infrastructure. 
@@ -801,15 +801,20 @@ efficient hard- and software implementations for numerical linear algebra.
 
 \subsection{Communication} 
 
-We can interpret ML as a particular form of data processing. A ML 
-algorithm is fed with observed data in order to adjust some model and, in turn, compute 
-a prediction of some future event. Thus, ML involves transferring or communicating 
-data to some computer which executes a ML algorithm. The design of efficient 
-ML systems also involves the design of efficient communication between data source 
-and ML algorithm. Loosely speaking, the learning progress of ML method will be 
-slowed down if we cannot fed it with data at high speed. Given limited memory or storage capacity, 
-being too slow to process data at their rate of arrival (in real-time) means that we need to 
-``throw away'' data. The lost data might have carried relevant information for the ML task at hand. 
+We can interpret ML as a particular form of data processing. 
+A ML algorithm is fed with observed data in order to adjust 
+some model and, in turn, compute a prediction of some future 
+event. Thus, ML involves transferring or communicating 
+data to some computer which executes a ML algorithm. 
+
+The design of efficient ML systems also involves the design 
+of efficient communication between data source and ML algorithm. 
+The learning progress of an ML method will be slowed down 
+if it cannot be fed it with data at sufficiently large rate. Given 
+limited memory or storage capacity, being too slow to process 
+data at their rate of arrival (in real-time) means that we need to 
+``throw away'' data. The lost data might have carried relevant 
+information for the ML task at hand. 
 
 
 
@@ -823,40 +828,47 @@ being too slow to process data at their rate of arrival (in real-time) means tha
 %we want to predict) based on observed variables (the data we can feed into ML algorithms). 
 %???????
 
-Consider the data points depicted in Figure \ref{fig_scatterplot_temp_FMI}. Each data point 
-represents some previous day. Each data point (day) is characterized by the minimum and 
-maximum daytime temperature as measured by some weather observation station. It might 
-be useful to interpret these data points as independent and identically distributed (i.i.d.) 
-realizations of a random vector $\mathbf{z} =\big(x,y\big)^{T}$. The random vector $\vz$ 
-is distributed according to some fixed but typically unknown probability distribution $p(\vz)$. 
-Figure \ref{fig_scatterplot_temp_FMI_stat_model} extends the scatter plot of Figure \ref{fig_scatterplot_temp_FMI} 
+Consider the data points depicted in Figure \ref{fig_scatterplot_temp_FMI}. 
+Each data point represents some previous day. Each data point (day) 
+is characterized by the minimum and maximum daytime temperature 
+as measured by some weather observation station. It might 
+be useful to interpret these data points as independent and 
+identically distributed (i.i.d.) realizations of a random vector 
+$\mathbf{z} =\big(x,y\big)^{T}$. The random vector $\vz$ 
+is distributed according to some fixed but typically unknown 
+probability distribution $p(\vz)$. Figure \ref{fig_scatterplot_temp_FMI_stat_model} 
+extends the scatter plot of Figure \ref{fig_scatterplot_temp_FMI} 
 with some contour line that indicates the probability distribution $p(\vz)$. 
 
 %A simple but useful model for continuous-valued random vectors is provided by the  
 %multivariate normal distribution. This distribution of parametrized by the mean vector 
 %and the covariance matrix of the random vector. We can estimate the probability distribution 
 %by estimating these two parameters based on the datapoints in Figure \ref{fig_scatterplot_temp_FMI}. 
-Probability theory offers a great selection on methods for estimating the probability 
-distribution from observed data (see Section \ref{sec_max_iikelihood}). Given (an estimate of) 
-the probability distribution $p(\vz)$, we can compute predictions 
-or estimates for the label $y$ of any data point for which we 
-know its feature value $x'$. What is more, having a probability 
-distribution $p(\vz)$ for a randomly drawn data point $\vz=(x,y)$, 
-allows us to not only compute a single prediction (point estimate) 
-$\hat{y}$ of the label $y$ but rather an entire probability distribution 
-$q(\hat{y})$ over all possible prediction values $\hat{y}$. 
+Probability theory offers a great selection on methods for 
+estimating the probability distribution from observed data 
+(see Section \ref{sec_max_iikelihood}). Given (an estimate of) 
+the probability distribution $p(\vz)$, we can compute estimates 
+for the label of a data point based on its features. 
 
-The distribution $q(\hat{y}$) represents, for each value $\hat{y}$, the probability or how likely it 
-is that this is the true label value of the data point. By its very definition, this distribution $q(\hat{y})$ 
-is precisely the conditional probability distribution $p(y|x)$ of the label value $y$, given 
-the feature value $x$ of a randomly drawn data point $\vz=(x,y) \sim p(\vz)$. 
+Having a probability distribution $p(\vz)$ for a randomly 
+drawn data point $\vz=(x,y)$, allows us to not only compute 
+a single prediction (point estimate) $\hat{y}$ of the label $y$ 
+but rather an entire probability distribution $q(\hat{y})$ over 
+all possible prediction values $\hat{y}$. 
+
+The distribution $q(\hat{y}$) represents, for each value $\hat{y}$, 
+the probability or how likely it is that this is the true label value of 
+the data point. By its very definition, this distribution $q(\hat{y})$ 
+is precisely the conditional probability distribution $p(y|x)$ of the 
+label value $y$, given the feature value $x$ of a randomly drawn 
+data point $\vz=(x,y) \sim p(\vz)$. 
 
 Having an (estimate of) probability distribution $p(\vz)$ for the observed 
 data points not only allows us to compute predictions but also to generate 
-new data points. Indeed, we can artificially augment the observed data points 
-by random drawing new data point from the probability distribution $p(\vz)$ 
+new data points. Indeed, we can artificially augment the available data  
+by randomly drawing new data points from the probability distribution $p(\vz)$ 
 (see Section \ref{sec_data_augmentation}). A recently popularized class of 
-ML methods that use a probabilistic models to generating synthetic data points 
+ML methods that use probabilistic models to generate synthetic data  
 is known as {\bf generative adversarial networks} \cite{GoodfellowGAN}. 
 
 
@@ -919,7 +931,7 @@ application domains where AI systems can be used:
 satellite images and local observations using sensors or ``crowd sensing'' 
 via some mobile application which allows humans to notify about 
 relevant events; actions amount to issuing warnings and bans of 
-open fire; return is reduction of number of forest fires. 
+open fire; return is the reduction of number of forest fires. 
 \item an {\bf control unit} for combustion engines: 
 perceptions given by various measurements such as temperature, 
 fuel consistency; actions amount to varying fuel feed and timing 
@@ -949,13 +961,13 @@ amount of cleaned floor area within a particular time period.
 health condition (blood values, weight,\ldots), lifestyle (preferred 
 food, exercise plan);  actions amount to personalized suggestions 
 for changing lifestyle habits (less meat, more jogging,\ldots); return 
-is measured via level of well-being (or the reduction in public 
+is measured via the level of well-being (or the reduction in public 
 spending for health-care).  
 \item {\bf government-system} for a community: perceived environment 
 is constituted by current economic and demographic indicators such as 
 unemployment rate, budget deficit, age distribution,\ldots; actions involve 
 the design of tax and employment laws, public investment in infrastructure, 
-organisation of health-care system; return might be determined by the 
+organization of health-care system; return might be determined by the 
 gross domestic product, the budget deficit or the gross national 
 happiness (cf. \url{https://en.wikipedia.org/wiki/Gross_National_Happiness}). 
 \end{itemize}
@@ -969,16 +981,18 @@ happiness (cf. \url{https://en.wikipedia.org/wiki/Gross_National_Happiness}).
 	\end{center}
 \end{figure}
 
-ML methods are used on different levels within AI systems. On a low-level, ML methods 
-help to extract the relevant information from raw data. As an example we could use an 
-ML method to classify images into different categories. The AI system subsequently 
-only needs to process the category of the image instead of its raw digital form. 
+ML methods are used on different levels within AI systems. 
+On a low-level, ML methods help to extract the relevant information 
+from raw data. AI systems use  ML methods to classify images into 
+different categories. The AI system subsequently only needs to process 
+the category of the image instead of its raw digital form. 
 
-ML methods are also used for higher-level tasks of an AI system. To behave optimally 
-requires an AI system or agent to learn a good hypothesis about how her behaviour 
-affects its environment. We can think of optimal behaviour as the consequent choice 
-of actions that are predicted as optimal according to some hypothesis which could 
-be obtained by ML methods. 
+ML methods are also used for higher-level tasks of an AI system. 
+To behave optimally requires an AI system or agent to learn a good 
+hypothesis about how her behaviour affects its environment. We can 
+think of optimal behaviour as the consequent choice of actions 
+that are predicted as optimal according to some hypothesis which 
+could be obtained by ML methods. 
 
 %A widely used operation mode of ML is to predict some quantity of interest, or label, of 
 %some data point based on some features. Such a data point could also represent some 
@@ -1030,7 +1044,7 @@ vast number of features. Consider data points representing
 social network users, whose features include all media that 
 has been posted (videos, images, text). 
 
-Beside the size of datasets, another computational challenge 
+Besides the size of datasets, another computational challenge 
 for modern ML methods is that they must be able to fit highly 
 non-linear predictor maps. Deep learning methods address this 
 challenge by using a computationally convenient representation 
@@ -1078,11 +1092,10 @@ according to three dimensions representing data, model and loss.
 
 Chapter \ref{ch_Optimization} explains how a simple probabilistic 
 model for data lends to the principle of {\bf empirical risk minimization (ERM)} . 
-This principle translates the problem of learning a good predictor 
-to an optimization problems. ML methods based on the ERM are 
-therefore a special class of optimization methods. The ERM principle 
-can be interpreted as a precise mathematical formulation of the 
-``learning by trial and error'' paradigm. 
+This principle translates the problem of learning into an optimization problem. 
+ML methods based on the ERM are therefore a special class of 
+optimization methods. The ERM principle can be interpreted as 
+a precise mathematical formulation of the ``learning by trial and error'' paradigm. 
 
 Chapter \ref{ch_GD} discusses a powerful principle for learning 
 predictors with a good performance. This principle uses the concept 
@@ -1126,8 +1139,9 @@ developed in Chapter \ref{ch_FeatureLearning} for feature
 learning will be perfect tools for {\bf privacy-preserving and 
 explainable ML}. 
 
-{\bf Prerequisites.} We assume some familiarity with basic concepts of linear algebra, real analysis 
-and probability theory. For a review of those concepts, we recommend \cite[Chapter 2-4]{Goodfellow-et-al-2016} 
+{\bf Prerequisites.} We assume some familiarity with basic concepts 
+of linear algebra, real analysis, and probability theory. For a review of 
+those concepts, we recommend \cite[Chapter 2-4]{Goodfellow-et-al-2016} 
 and the references therein. 
 
 {\bf Notation.} We mainly follow the notational conventions used in \cite{Goodfellow-et-al-2016}. 
@@ -1176,14 +1190,15 @@ This book portrays ML as combinations of three components:
 	\item {\bf data} as collections of data points characterized by {\bf features} (see Section \ref{sec_feature_space}) and {\bf labels} (see Section \ref{sec_labels}) 
 	\item a {\bf model} or {\bf hypothesis space} (see Section \ref{sec_hypo_space}) of computationally 
 	feasible maps (called ``predictors'' or ``classifiers'') from feature to label space 
-	\item a {\bf loss function} (see Section \ref{sec_lossfct}) to measure the quality of a predictor (or classifier). 
+	\item a {\bf loss function} (see Section \ref{sec_lossfct}) to measure 
+	the quality of a predictor (or classifier). 
 \end{itemize}
 We formalize a ML problem or application by identifying these three 
 components for a given application. A formal ML problem is obtained 
-by specific design choices for how to represent data, how to model 
-the relation between features and label of a data point and in what 
-loss function to measure the quality of a ML method. Once the ML 
-problem is formally defined, we can apply ML methods to solve them. 
+by specific design choices for how to represent data, which hypothesis 
+space or model to use and with which loss function to measure the 
+quality of a hypothesis. Once the ML problem is formally defined, 
+we can readily apply off-the-shelf ML methods to solve them. 
 
 Similar to ML problems (or applications) we also think of ML 
 methods as specific combinations of the three above components. 
@@ -1273,14 +1288,15 @@ while it might be used as a label in other applications.
 Similar to the definition of data points, also the choice of what properties 
 to be used as features is a design choice. We typically use as features any 
 quantity that can be computed or measured easily. Note that this is a highly 
-informal characterization since we do not have an objective criterion 
-to measure the difficulty in measuring a specific property. 
+informal characterization since there is no formal measure for the difficulty 
+of measuring a specific property. 
 
-If we develop a ML method that can use snapshots taken by a digital camera, then 
-these snapshots might be a useful choice for the features. However, if we only have 
-a thermometer at our disposal then we might only use the measured temperature as 
-the feature. In what follows we will denote the total number of features used to describe 
-a data point by the letter $\featurelen$. 
+If we develop a ML method that can use snapshots taken by a digital 
+camera, then these snapshots might be a useful choice for the features. 
+However, if we only have a thermometer at our disposal then we might 
+only use the measured temperature as the feature. In what follows we 
+will denote the total number of features used to describe a data point 
+by the letter $\featurelen$. 
 
 The ability of ML methods has been boosted by modern information-technology 
 which allows to measure a huge number of properties about datapoints 
@@ -1297,19 +1313,24 @@ for methods from high-dimensional statistics \cite{BuhlGeerBook,Wain2019}.
 
 %For a data point represented by a snapshot (see Figure \ref{fig:image}), we could use the red, green and blue intensities of 
 %all image pixels as features. However, we could also use only the averages (over all pixels) of red, green and blue intensity. 
-At first sight it might seem that ``the more features the better'' since using more features 
-might convey more relevant information to achieve the overall goal. However, as we discuss 
-in Chapter \ref{ch_overfitting_regularization}, it can actually be detrimental for the performance 
-of ML methods to use an excessive amount of (irrelevant) features. 
+At first sight it might seem that ``the more features the better'' 
+since using more features might convey more relevant information 
+to achieve the overall goal. However, as we discuss in Chapter \ref{ch_overfitting_regularization}, 
+it can actually be detrimental for the performance of ML methods 
+to use an excessive amount of (irrelevant) features. 
 
-Using too many irrelevant features might overwhelm or jam ML algorithms which should invest 
-their computational resources mainly in the processing of the most relevant features. It is 
-difficult to give a precise characterization on the maximum number of features that should be 
-used. Some guidance is offered by the checking the condition $\featurelen/\samplesize \gg 1$, i.e., the number 
-of features is much larger than the number of data points available for an ML algorithm. In this 
-high-dimensional regime, there is a high risk of overwhelming ML algorithms by having too many 
-irrelevant features. To avoid this we could apply some feature selection or model regularization 
-techniques (see Chapter \ref{ch_FeatureLearning} and Chapter \ref{ch_overfitting_regularization}). 
+Using too many irrelevant features might overwhelm or jam ML 
+algorithms which should invest their computational resources 
+mainly in the processing of the most relevant features. It is difficult 
+to give a precise characterization on the maximum number of 
+features that should be used. Some guidance is offered by the 
+condition $\featurelen/\samplesize \gg 1$ which requires the number 
+of features to be much larger than the number of data points 
+available for an ML algorithm. In this high-dimensional regime, 
+there is a high risk of overwhelming ML algorithms by having 
+too many irrelevant features. To avoid this we could apply some 
+feature selection or model regularization techniques (see Chapter \ref{ch_FeatureLearning} 
+and Chapter \ref{ch_overfitting_regularization}). 
 
 Choosing ``good'' features of the datapoints arising within a given ML application 
 is far from trivial and might be the most difficult task within the overall ML application. 
@@ -1426,31 +1447,34 @@ persons according to their age group or detecting the current floor
 conditions ( ``grass'', ``tiles'' or ``soil'') for a mower robot. 
 
 
+A data point is called \emph{labeled} if, besides its features $\vx$, 
+the associated label $y$ is known.The acquisition of labeled data 
+points typically involves human labour, such as handling a water 
+thermometer at certain locations in a lake. In other applications, 
+acquiring labels might require sending out a team of marine biologists 
+to the Baltic sea \cite{MLMarineBiology}, running a particle physics 
+experiment at the European organization for nuclear research (CERN) \cite{MLCERN}, 
+running animal testing in pharmacology \cite{MLPharma}. 
 
-%In contrast to features, the labels of data points are typically difficult or costly to obtain directly. 
-%For the snapshot in Figure \ref{fig:image}, we can easily determine the pixel intensities as features. 
-%However, if the label is the water temperature of the lake depicted on the snapshot, we need to actually 
-%measure this temperature. 
-A data point is called \emph{labeled} if, besides its features $\vx$, the associated label $y$ is known.
-The acquisition of labeled data points typically involves human labour, such as handling a water 
-thermometer at certain locations in a lake. In other applications, acquiring labels 
-might require sending out a team of marine biologists to the Baltic sea \cite{MLMarineBiology}, 
-running a particle physics experiment at the European organization for nuclear research (CERN) \cite{MLCERN}, 
-running animal testing in pharmacology \cite{MLPharma}. There are also online marktplaces to rent human labelling workforce \cite{Mort2018}. 
-In these labelling services, you can upload your data points, such as images, and then 
-some human labels them, such as marking those who show a cat. 
+There are also online market places to rent human labelling 
+workforce \cite{Mort2018}. In these labelling services, you can 
+upload your data points, such as images, and then some human 
+labels them, such as marking those who show a cat. 
 
-Many applications involve data points whose features can be determined easily but 
-whose labels are known for few data points only. In general, labeled data is a scarce resource. 
-As observed in \cite{UnreasonableData}, some of the most successful ML methods have been 
-devised in application domains where label information can be acquired easily. ML methods for  
-speech recognition and machine translation can make use of massive labeled datasets that is 
-freely available \cite{Koehn2005}. 
+Many applications involve data points whose features can be 
+determined easily but whose labels are known for few data points 
+only. Labeled data is a scarce resource. Some of the most successful 
+ML methods have been devised in application domains where 
+label information can be acquired easily \cite{UnreasonableData}. 
+ML methods for  speech recognition and machine translation can 
+make use of massive labeled datasets that is freely available \cite{Koehn2005}. 
 
-In the extreme case, we do not know the label of any single data point. Even in the absence of 
-any labeled data, ML methods can be useful for extracting relevant information out of the 
-features only. We refer to ML methods which do not require any labeled data points 
-as {\bf unsupervised ML methods}. We discuss some of the most important unsupervised ML 
+In the extreme case, we do not know the label of any single 
+data point. Even in the absence of any labeled data, ML methods 
+can be useful for extracting relevant information out of the 
+features only. We refer to ML methods which do not require 
+any labeled data points as {\bf unsupervised ML methods}. 
+We discuss some of the most important unsupervised ML 
 methods in Chapter \ref{ch_Clustering} and Chapter \ref{ch_FeatureLearning}).  
 
 As discussed next, many ML methods aim at constructing (or finding) a ``good'' 
@@ -1468,17 +1492,22 @@ and label $y$. Each data point represents a particular day whose
 feature and label are the minimum and maximum daytime temperature, 
 respectively, at some place in Finland. 
 
-We can access these datapoints via the archives of the Finnish Meteorological Institute (FMI). 
-To get more insight into the relation between feature $x^{(\sampleidx)}$ and label 
-$y^{(\sampleidx)}$, it can be helpful to generate a scatter plot as shown in Figure \ref{fig_scatterplot_temp_FMI}. 
-A scatter plot depicts the data points $\vz^{(\sampleidx)}=(x^{(\sampleidx)},y^{(\sampleidx)})$ 
-in a two-dimensional plane with the axes representing the values of feature $x$ and label $y$. 
+We can obtain these datapoints via the weather recordings of 
+the Finnish Meteorological Institute (FMI). To get more insight 
+into the relation between feature $x^{(\sampleidx)}$ and label 
+$y^{(\sampleidx)}$, it can be helpful to generate a scatter plot 
+as shown in Figure \ref{fig_scatterplot_temp_FMI}. A scatter plot 
+depicts the data points $\vz^{(\sampleidx)}=(x^{(\sampleidx)},y^{(\sampleidx)})$ 
+in a two-dimensional plane with the axes representing the values 
+of feature $x$ and label $y$. 
 
-A visual inspection of a scatterplot might suggest potential relationships between feature $x$ 
-and label $y$. From Figure \ref{fig_scatterplot_temp_FMI}, it seems that there might be a relation 
-between feature $x$ and label $y$ since datapoints with larger $x$ tend to have larger $y$. This 
-makes sense since having a larger minimum daytime temperature typically implies also a larger 
-maximum daytime temperature. 
+A visual inspection of a scatterplot might suggest potential 
+relationships between feature $x$ and label $y$. From Figure 
+\ref{fig_scatterplot_temp_FMI}, it seems that there might be 
+a relation between feature $x$ and label $y$ since datapoints 
+with larger $x$ tend to have larger $y$. This makes sense since 
+having a larger minimum daytime temperature typically implies 
+also a larger maximum daytime temperature. 
 
 %\begin{figure}[htbp]
 %\begin{center}
@@ -1660,7 +1689,7 @@ value $\hat{y} \in \labelspace$.
 
 In principle, ML methods could use any possible map $h: \featurespace \rightarrow \labelspace$ 
 to predict the label $y \in \labelspace$ via computing $\hat{y} = h(\vx)$. 
-However, any practical ML method has only {\bf limited computational resources} 
+However, any ML method has only {\bf limited computational resources} 
 and therefore can only make use of a subset of all possible predictor maps. 
 This subset of computationally feasible (``affordable'') predictor maps 
 is referred to as the {\bf hypothesis space} or {\bf model} underlying 
@@ -1917,14 +1946,17 @@ The design choice for the hypothesis space $\hypospace$
 has to balance between two conflicting requirements.  
 \begin{itemize} 
 \item It has to be {\bf sufficiently large} such that it contains at least 
-one accurate predictor map $\hat{h} \in \hypospace$. A hypothesis space $\hypospace$ 
-that is too small might fail to include a predictor map required to reproduce the (potentially 
-highly non-linear) relation between features and label. Consider the ML problem of classifying 
-an images into ``cat image'' and ``no cat image'' using the pixel colour intensities as features. 
-The relation between features and label ($y \in \{ \mbox{cat}, \mbox{no cat} \}$) is highly non-linear. 
-Any ML method that uses a hypothesis space consisting only of linear maps will most likely 
-fail to learn a good predictor (classifier). We say that a ML method {\bf underfits} the data if it 
-uses a too small hypothesis space. 
+one accurate predictor map $\hat{h} \in \hypospace$. A hypothesis 
+space $\hypospace$ that is too small might fail to include a predictor 
+map required to reproduce the (potentially highly non-linear) relation 
+between features and label. Consider the ML problem of classifying 
+an image into ``cat image'' and ``no cat image'' using the pixel colour 
+intensities as features. The relation between features and label 
+($y \in \{ \mbox{cat}, \mbox{no cat} \}$) is highly non-linear. 
+Any ML method that uses a hypothesis space consisting only of 
+linear maps will most likely fail to learn a good predictor (classifier). 
+We say that a ML method {\bf underfits} the data if it uses a too 
+small hypothesis space. 
 \item It has to be {\bf sufficiently small} such that its processing fits the 
 available computational resources (memory, bandwidth, processing time). 
 We must be able to efficiently search over the hypothesis space to find 
@@ -1940,7 +1972,7 @@ will perform poorly on data which is different from the training data
 \end{itemize}
 
 The notion of a hypothesis space being too small or being too large can 
-be made precise in different ways. For a finite hypothesis spaces $\hypospace$, 
+be made precise in different ways. For a finite hypothesis space $\hypospace$, 
 we might simply use the cardinality $|\hypospace|$ as a measure of its size. 
 Consider data points represented by $100 \times 10 = 1000$ black and white 
 pixels (see Figure \ref{fig_snapshot_pixels}) and characterized by a binary label. 
@@ -1965,18 +1997,18 @@ $\sizehypospace$ of arbitrary data points that can be perfectly fit
 with different features, we can always find a hypothesis $h \in \sizehypospace$ 
 such that $y=h(\vx)$ for all data points $(\vx,y) \in \dataset$. 
 
-Let illustrate our notion of hypothesis space size with two examples: 
-linear regression and polynomial regression. 
+Let us illustrate our definition for the size of a hypothesis space 
+with two examples: linear regression and polynomial regression. 
 
 First, we discuss the size of the hypothesis space $\hypospace^{(\featuredim)}$ 
 used in linear regression. Consider $\samplesize$ data points characterized by feature 
 vectors $\vx \in \mathbb{R}^{(\featuredim)}$ and a numeric label 
 $y \in \mathbb{R}$. We assume that data points are i.i.d.\ realizations 
-of a continuous random vector $\vx$. This implies that the matrix obtained by columnise stacking 
-the feature vectors is full rank with probability one. Basic linear 
-algebra allows then to show that such a set of data points can 
+of a continuous random vector $\vx$. This implies that the matrix obtained by 
+stacking (column-wise) the feature vectors is full rank with probability one. 
+Basic linear algebra allows then to show that such a set of data points can 
 be perfectly fit by a linear map $h \in \hypospace^{(\featuredim)}$ 
-as long as $\samplesize \leq n$. The size of the linear 
+as long as $\samplesize \leq \featuredim$. The size of the linear 
 hypothesis space $\hypospace^{(\featuredim)}$ is $\sizehypospace = \featuredim$. 
 
 As a second example, consider data points characterized 
@@ -2140,10 +2172,12 @@ a good first choice for the loss function can be the {\bf squared error loss} (s
 \label{equ_squared_loss}
 \loss{(\vx,y)}{h} \defeq \big(y - \underbrace{h(\vx)}_{=\hat{y}} \big)^{2}. 
 \end{equation} 
-Note that the squared error loss \eqref{equ_squared_loss} depends on the features 
-$\vx$ only via the predicted label value $\hat{y}= h(\vx)$. We can evaluate the squared 
-error loss solely using the prediction $h(\vx)$ and the true label value $y$. Beside the prediction $h(\vx)$, 
-no other properties of the data point's features $\vx$ are required to determine the squared error loss.  
+Note that the squared error loss \eqref{equ_squared_loss} depends 
+on the features $\vx$ only via the predicted label value $\hat{y}= h(\vx)$. 
+We can evaluate the squared error loss solely using the prediction $h(\vx)$ 
+and the true label value $y$. Besides the prediction $h(\vx)$, no other 
+properties of the data point's features $\vx$ are required to 
+determine the squared error loss.  
 %We refer to ML problems involving a real-valued label (e.g., temperature or probabilities of an event) as {\bf regression problems}. 
 
 \begin{figure}[htbp]
@@ -2189,21 +2223,27 @@ convex and differentiable function of the weight vector $\vw$.
 This allows, in turn, to efficiently search for the optimal linear 
 predictor using efficient iterative optimization methods (see Chapter \ref{ch_GD}). 
 
-The squared error loss also has a useful interpretation in terms of a probabilistic 
-model for the features and labels. In particular, minimizing the squared error loss 
-is equivalent to maximum likelihood estimation within a linear Gaussian model \cite[Sec. 2.6.3]{hastie01statisticallearning}. 
+The squared error loss also has a useful interpretation in 
+terms of a probabilistic model for the features and labels. 
+Minimizing the squared error loss is equivalent to maximum 
+likelihood estimation within a linear Gaussian model \cite[Sec. 2.6.3]{hastie01statisticallearning}. 
 
-Another loss function used in regression problems is the absolute error loss $|\hat{y} - y|$. 
-Using this loss function to learn a good predictor results in methods that are robust 
-against few outliers in the training set (see Section \ref{sec_lad}).  
+Another loss function used in regression problems is the absolute 
+error loss $|\hat{y} - y|$. Using this loss function to learn a good 
+predictor results in methods that are robust against few outliers in 
+the training set (see Section \ref{sec_lad}).  
 
-{\bf Classification Loss.} In classification problems with a discrete label space $\labelspace$, 
-such as in binary classification where $\labelspace = \{-1,1\}$, the squared error $(y - h(\vx))^2$ 
-is not a useful measure for the quality of a classifier $h(\vx)$. We would like to punish wrong 
-classifications, e.g., when the true label is $y=-1$ but the classifier produces a large positive 
-number, e.g., $h(\vx) = 1000$. On the other hand, for a true label $y=-1$, we do not want to 
-punish a classifier $h$ which yields a large negative number, e.g., $h(\vx) = -1000$. But exactly 
-this unwanted result would happen for the squared error loss. 
+{\bf Classification Loss.} In classification problems with a 
+discrete label space $\labelspace$, such as in binary classification 
+where $\labelspace = \{-1,1\}$, the squared error $(y - h(\vx))^2$ 
+is not a useful measure for the quality of a classifier $h(\vx)$. 
+We would like the loss function to punish wrong classifications, 
+e.g., when the true label is $y=-1$ but the classifier produces a 
+large positive number, e.g., $h(\vx) = 1000$. On the other hand, 
+for a true label $y=-1$, we do not want to punish a classifier $h$ 
+which yields a large negative number, e.g., $h(\vx) = -1000$. But 
+exactly this unwanted result would happen for the squared error 
+loss. 
 
 Figure \ref{fig_squarederrornotgoodclass} depicts a dataset consisting of $5$ labeled data points 
 with binary labels represented by circles (for $y=1$) and squares (for $y=-1$). The squared error loss 
@@ -2238,7 +2278,7 @@ of the predictor instead of the decision boundary obtained from a linear predict
 We now discuss some popular choices for the loss function 
 suitable for ML problems with binary labels. While the representation 
 of the label values is completely irrelevant, it will be convenient to 
-encode of the two label values by the real numbers $-1$ and $1$. 
+encode the two label values by the real numbers $-1$ and $1$. 
 %As label space we use $\labelspace=\mathbb{R}$ 
 The formulas for the loss functions we present only apply to 
 this encoding. The modification of these formulas to a different 
@@ -2413,18 +2453,23 @@ we use $\emperror(h)$.
 
 
 
-{\bf Regret.} In some application we might have not access to true labels 
-but only to the predictions obtained from some other methods (``experts''). 
-The quality of a hypothesis can then be measured by evaluating the loss 
-between predictions $h(\vx)$ and the predictions of experts \cite{HazanOCO}. 
-The concept of regret minimization is useful when we do not make any 
-assumptions (such as i.i.d. samples) of the data points. If we do not use 
-such a probabiliistic model we cannot use the Bayes risk (of Bayes optimal 
-estimator) as benchmark. Regret minimization 
-techniques can be designed and analyzed without any such probabilistic 
-model for the data \cite{PredictionLearningGames}. This approach replaces 
-the Bayes risk benchmark with few given reference predictors (experts) to 
-serve as benchmark. 
+{\bf Regret.} In some application, we might have access to the 
+predictions obtained from some other methods (``experts''). 
+The quality of a hypothesis $h$ can then be measured via the 
+difference between the loss incurred between its predictions 
+$h(\vx)$ and loss incurred by the predictions of the experts 
+\cite{HazanOCO}. This difference is referred to as the regret. 
+The goal of regret minimization is to learn a hypothesis with 
+small regret compared to the experts. 
+
+The concept of regret minimization is useful when we do 
+not make any assumptions (such as i.i.d. samples) of the 
+data points. If we do not use such a probabilistic model 
+we cannot use the Bayes risk (of Bayes optimal estimator) 
+as benchmark. Regret minimization techniques can be designed 
+and analyzed without any such probabilistic model for the data \cite{PredictionLearningGames}. 
+This approach replaces the Bayes risk benchmark with few 
+given reference predictors (experts) to serve as benchmark. 
 
 {\bf Partial Feedback, ``Reward''.}  
 In some application it is not possible to determine the true label of 
@@ -4071,10 +4116,13 @@ the corresponding club members have interacted outside the club.}
 %Thus the edge structure of the empirical graph $\graph$ is fully specified by the support (locations of 
 %the non-zero entries) of the weight matrix $\mathbf{W}$. 
 
-Beside the empirical graph structure $\graph$, a dataset typically conveys additional information, e.g., 
-features, labels or model parameters. We can represent this additional information by a graph signal defined over $\graph$. 
-A graph signal $h[\cdot]$ is a map $\nodes \rightarrow \mathbb{R}$, which associates every node 
-$i\!\in\!\nodes$ with the signal value $h[i] \!\in\! \mathbb{R}$. 
+Besides the empirical graph structure $\graph$, a dataset 
+typically conveys additional information, e.g., features, labels 
+or model parameters. We can represent this additional 
+information by a graph signal defined over $\graph$. 
+A graph signal $h[\cdot]$ is a map $\nodes \rightarrow \mathbb{R}$, 
+which associates every node $i\!\in\!\nodes$ with the signal 
+value $h[i] \!\in\! \mathbb{R}$. 
 
 Most methods for processing graph signals rely on a signal model which are inspired by a cluster 
 assumption \cite{SemiSupervisedBook}. The cluster assumption requires similar signal values $h[i] \approx h[j]$ 
@@ -4679,13 +4727,18 @@ by expanding different leaf node is shown in the bottom row.}
 \label{fig_growingatree}
 \end{figure}
  
-One important aspect of learning decision trees from labeled data is the question of when to stop growing. 
-A natural stopping criterion might be obtained from the limitations in computational resources, i.e., we can 
-only afford to use decision trees up to certain maximum depth. Beside the computational limitations, we also 
-face statistical limitations for the maximum size of decision trees. Indeed, if we allow very large decision trees, 
-which represent highly complicated maps, we might end up overfitting the training data (see Figure \ref{fig_decisiontree_overfits} 
-and Chapter \ref{ch_overfitting_regularization}) which is detrimental for the prediction performance of decision 
-trees obtained for new data (which has not been used for training or growing the decision tree). 
+One important aspect of learning decision trees from labeled 
+data is the question of when to stop growing. A natural stopping 
+criterion might be obtained from the limitations in computational 
+resources, i.e., we can only afford to use decision trees up to 
+certain maximum depth. Besides the computational limitations, 
+we also face statistical limitations for the maximum size of decision 
+trees. Very large decision trees, which represent 
+highly complicated maps, we might end up overfitting the training 
+data (see Figure \ref{fig_decisiontree_overfits} and Chapter \ref{ch_overfitting_regularization}) 
+which is detrimental for the prediction performance of decision 
+trees obtained for new data (which has not been used for training 
+or growing the decision tree). 
  
  \section{ERM for Bayes' Classifiers} 
  \label{sec_ERM_Bayes} 
@@ -5731,7 +5784,8 @@ with different choices for the variance $\sigma$ and shifts $\mu$ of the Gaussia
 e.g., $\hypospace_{1} = \mathcal{H}^{(2)}_{\rm Gauss}$ with $\sigma=1$ and $\mu_{1}=1$ and $\mu_{2}=2$, 
 $\hypospace_{2} = \hypospace^{(2)}_{\rm Gauss}$ with $\sigma = 1/10$, $\mu_{1}=10$, $\mu_{2}= 20$.
 
-A principled approach for choosing a hypothesis space out of a given a set of candidates $\hypospace_{1},\hypospace_{2},\ldots,\hypospace_{M}$ is as follows: 
+A principled approach for choosing a hypothesis space out of a given 
+a set of candidates $\hypospace_{1},\hypospace_{2},\ldots,\hypospace_{M}$ is as follows: 
 \begin{itemize} 
 \item randomly divide (split) the entire dataset $\dataset$ of labeled snapshots into two disjoint subsets 
 $\trainset$ (the ``training set'') and $\valset$ (the ''validation set''): 
@@ -6791,23 +6845,26 @@ which is minimized by $k$-means, is a non-convex function of the cluster means a
 It is therefore possible for $k$-means to get trapped around a local minimum.} \label{fig_emp_risk_k_means}
 \end{figure}
 
-Up till now, we have assumed the number $k$ of clusters to be given before hand. However, in some 
-applications it is not clear what a good choice for $k$ can be. One approach to choosing the value of
-$k$ is if the clustering method acts as a sub-module within an overall supervised ML system, which 
-allows to implement some sort of validation. We could then try out different values of the number $k$ 
-and determine validation errors for each choice. Then, we pick the choice of $k$ which results in the 
-smallest validation error. 
+Up till now, we have assumed the number $k$ of clusters 
+to be given before hand. In some applications it is unclear
+what a good choice for $k$ is. One approach to choosing 
+the value of$k$ is if the clustering method acts as a sub-module 
+within an overall supervised ML system, which allows to 
+implement some sort of validation. We could then try out 
+different values of the number $k$ and determine validation 
+errors for each choice. Then, we pick the choice of $k$ which 
+results in the smallest validation error. 
 
-Another approach to choosing $k$ is the so-called ``elbow-method''. This approach amounts to running 
-$k$-means Algorithm \ref{alg:kmeansimpl} for different values of $k$ resulting in the (approximate) optimum empirical error
-$\mathcal{E}^{(k)} = \emperror \big( \{\vm^{(c)}\}_{c=1}^{k},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize} \mid \dataset \big)$. 
-%where ${\vm_{c}\}_{c=1}^{k},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize}$ 
-%is the output obtained from for a particular choice of $k$. 
-We then plot the minimum empirical error $\mathcal{E}^{(k)}$ as a function of the number 
-$k$ of clusters. This plot typically looks like Figure \ref{fig_ellbow}, i.e., 
-a steep decrease for small values of $k$ and then flattening out for larger values of $k$. 
-Finally, the choice of $k$ might be guided by some probabilistic model which penalizes 
-larger values of $k$. 
+Another approach to choosing $k$ is the so-called ``elbow-method''. 
+This approach amounts to running $k$-means Algorithm \ref{alg:kmeansimpl} 
+for different values of $k$ resulting in the (approximate) optimum 
+empirical error$\mathcal{E}^{(k)} = \emperror \big( \{\vm^{(c)}\}_{c=1}^{k},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize} \mid \dataset \big)$. 
+We then plot the minimum empirical error $\mathcal{E}^{(k)}$ as a 
+function of the number $k$ of clusters. This plot typically looks 
+like Figure \ref{fig_ellbow}, i.e., a steep decrease for small values 
+of $k$ and then flattening out for larger values of $k$. Finally, the 
+choice of $k$ might be guided by some probabilistic model which 
+penalizes larger values of $k$. 
 
 
 \begin{figure}
@@ -7133,6 +7190,13 @@ DBSCAN works, we refer to https://en.wikipedia.org/wiki/DBSCAN.  DBSCAN
 \subsection{Image Compression with k-means} 
 use k-means to compress a RGB bitmap image. Instead of RGB values 
 we need to store only cluster index and the cluster means. 
+
+\subsection{Compression with k-means} 
+Consider $\samplesize=10000$ data points are characterized by two 
+floating point numbers (32 bit). We apply k-means to cluster the 
+data set into two clusters. How many bits do we need to store the 
+clustering ? 
+
 
 \newpage
 \chapter{Feature Learning} 

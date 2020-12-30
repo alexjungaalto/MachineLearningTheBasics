@@ -721,7 +721,9 @@ as the initial hypothesis.
 %Finnish meteorological institute (FMI). 
 
 
-\section{Linear Algebra} 
+\section{Relation to Other Fields}
+
+\subsection{Linear Algebra} 
 
 Modern ML methods are computationally efficient methods to fit high-dimensional 
 models to large amounts of data. The models underlying state-of-the art 
@@ -758,8 +760,7 @@ principles behind important ML methods, such as linear regression
 or principal component analysis, are deeply rooted in the theory 
 of linear algebra (see Sections \ref{sec_lin_regression} and \ref{sec_pca}).
 
-\newpage
-\section{Optimization} 
+\subsection{Optimization} 
 
 A main design principle for ML methods is to formulate learning tasks as  
 optimization problems \cite{OptMLBook}. The weather prediction problem 
@@ -774,7 +775,7 @@ Section \ref{ch_Optimization} discusses methods that are based on estimating
 the correct objective function by empirical averages that 
 are computed over subsets of data points (the training set). 
 
-\section{Theoretical Computer Science} 
+\subsection{Theoretical Computer Science} 
 
 On a high level, ML methods take data as input and produce 
 some prediction as the output. The predictions are computed 
@@ -798,7 +799,7 @@ models. Using this representation allows to implement the resulting ML methods u
 efficient hard- and software implementations for numerical linear algebra. 
 
 
-\section{Communication} 
+\subsection{Communication} 
 
 We can interpret ML as a particular form of data processing. A ML 
 algorithm is fed with observed data in order to adjust some model and, in turn, compute 
@@ -812,7 +813,7 @@ being too slow to process data at their rate of arrival (in real-time) means tha
 
 
 
-\section{Statistics}
+\subsection{Statistics}
 
 %????? omit this ? ??????
 %Many ML methods are based on statistical models for how data is generated. Once 
@@ -900,7 +901,7 @@ is known as {\bf generative adversarial networks} \cite{GoodfellowGAN}.
 
 
 
-\section{Artificial Intelligence}
+\subsection{Artificial Intelligence}
 
 ML is instrumental for the design and analysis of artificial intelligence (AI). 
 AI systems (hard and software) interacts with their environment by 
@@ -1001,47 +1002,7 @@ we might obtain a reward from a distance sensor that indicates if the
 car reduces the distance to some goal or target location. 
 
 
-
-
-\section{Organization of this Book}
-
-Chapter \ref{ch_Elements_ML} discusses the design choices incurred 
-by the ML components data, model and loss. These design choices 
-include the representation for data and  models. %One such choice for 
-%data and model representation is to use vectors and matrices. 
-
-Chapter \ref{ch_some_examples} shows how well-known ML methods 
-are obtained by different design choices for data representation, models 
-and loss function. 
-
-%We can formalize a particular ML application or problem by defining the {\bf features} and 
-%{\bf labels} of data points and choosing the {\bf loss function} for measuring how good a 
-%particular ML method performs (see Chapter \ref{ch_Elements_ML}). Besides features, labels 
-%and loss function we also highlight the importance of restricting the class of potential predictor 
-%maps from features to labels. We will refer to the restricted class of {\bf computationally feasible} 
-%maps used by a ML method as its {\bf hypothesis space} or {\bf model}. 
-
-%We detail in how some widely used ML methods are obtained 
-%as combinations of particular choices for feature and label space, loss function and hypothesis space. 
-
-Chapter \ref{ch_Optimization} explains the principle of {\bf empirical risk minimization (ERM)} 
-which amounts to choosing  a predictor based on minimizing the average loss (or empirical risk) 
-incurred over {\bf labeled training data}. The ERM principle amounts to a precise mathematical 
-formulation of the ``learning by trial and error'' paradigm. 
-
-Chapter \ref{ch_GD} discusses a particular optimization method 
-{\bf gradient descent (GD)} which is an iterative method for solving 
-the ERM problem in order to find good predictors. Variations of GD 
-are currently the de-facto standard method for solving ERM arising 
-in large-scale ML problems \cite{Goodfellow-et-al-2016}. 
-
-We then discuss in Chapter \ref{ch_validation_selection} the basic 
-idea of validating a predictor by trying it out on labeled data (so called 
-``validation data'') which is different from the training data used 
-to learn a predictor. As detailed in Chapter \ref{ch_overfitting_regularization}, 
-a main reason for doing validation is to detect and avoid {\bf overfitting} 
-which causes poor performance of ML methods. 
-
+\section{Flavours of Machine Learning} 
 The main focus of this tutorial is on {\bf supervised ML methods} which 
 assign labels to each data point and require the availability of some data 
 points (the training set) whose labels are known. The label of a data point 
@@ -1069,47 +1030,101 @@ vast number of features. Consider data points representing
 social network users, whose features include all media that 
 has been posted (videos, images, text). 
 
-Beside the size of datasets, another computational challenge for modern ML methods is that they must be 
-able to fit highly non-linear predictor maps. Deep learning methods address this challenge by using a 
-computationally convenient representation of non-linear maps via artificial neural networks \cite{Goodfellow-et-al-2016}). 
+Beside the size of datasets, another computational challenge 
+for modern ML methods is that they must be able to fit highly 
+non-linear predictor maps. Deep learning methods address this 
+challenge by using a computationally convenient representation 
+of non-linear maps via artificial neural networks \cite{Goodfellow-et-al-2016}). 
 
 
 \begin{figure}[htbp]
-\begin{center}
-\begin{tikzpicture}[auto,scale=1]
-%\draw [thick] (5,2.5) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(3)}$};
-%\draw [thick] (4,2) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(4)}$};
-%\draw [thick] (5,1) circle (0.1cm)node[anchor=west,above] {\hspace*{0mm}$\vx^{(2)}$};
-\draw [thick] (1,0.2) rectangle ++(0.1cm,0.1cm) ;%node[anchor=west,above] {\hspace*{0mm}$\vx^{(1)}$};
-\draw [thick] (2,3) rectangle ++(0.1cm,0.1cm) ; %node[anchor=west,above] {\hspace*{0mm}$\vx^{(5)}$};
-\draw [thick] (3,2) rectangle ++(0.1cm,0.1cm) node[anchor=west] {\hspace*{0mm}$(x^{(2)},y^{(2)})$};%node[anchor=west,above] {\hspace*{0mm}$\vx^{(6)}$};
-\draw [thick] (2,1) rectangle ++(0.1cm,0.1cm) node[anchor=west] {\hspace*{0mm}$(x^{(1)},y^{(1)})$};
-\draw[->] (-0.5,0) -- (3.5,0) node[right] {feature $x$};
-\draw[dashed,line width=1pt] (0,0) -- (3,3) node[anchor=west] {predictor $h(x)$} ; 
-\draw[->] (0,-0.5) -- (0,3.5) node[above] {label $y$};
-%\foreach \y/\ytext in { 1/1,2/2,3/3,4/4,5/5} \draw[shift={(0,\y)}] (2pt,0pt) -- (-2pt,0pt) node[left] {$\ytext/5$};  
-%\foreach \x/\xtext in{ 1/1,2/2,3/3,4/4,5/5}\draw[shift={(\x,0)}] (0pt,2pt) -- (0pt,-2pt) node[below] {$\xtext/5$};  
-\end{tikzpicture}
-\end{center}
-\caption{Supervised ML methods fit a curve to (a huge number of) data points. 
-} 
-\label{fig_curve_fitting}
+	\begin{center}
+		\begin{tikzpicture}[auto,scale=1]
+		%\draw [thick] (5,2.5) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(3)}$};
+		%\draw [thick] (4,2) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(4)}$};
+		%\draw [thick] (5,1) circle (0.1cm)node[anchor=west,above] {\hspace*{0mm}$\vx^{(2)}$};
+		\draw [thick] (1,0.2) rectangle ++(0.1cm,0.1cm) ;%node[anchor=west,above] {\hspace*{0mm}$\vx^{(1)}$};
+		\draw [thick] (2,3) rectangle ++(0.1cm,0.1cm) ; %node[anchor=west,above] {\hspace*{0mm}$\vx^{(5)}$};
+		\draw [thick] (3,2) rectangle ++(0.1cm,0.1cm) node[anchor=west] {\hspace*{0mm}$(x^{(2)},y^{(2)})$};%node[anchor=west,above] {\hspace*{0mm}$\vx^{(6)}$};
+		\draw [thick] (2,1) rectangle ++(0.1cm,0.1cm) node[anchor=west] {\hspace*{0mm}$(x^{(1)},y^{(1)})$};
+		\draw[->] (-0.5,0) -- (3.5,0) node[right] {feature $x$};
+		\draw[dashed,line width=1pt] (0,0) -- (3,3) node[anchor=west] {predictor $h(x)$} ; 
+		\draw[->] (0,-0.5) -- (0,3.5) node[above] {label $y$};
+		%\foreach \y/\ytext in { 1/1,2/2,3/3,4/4,5/5} \draw[shift={(0,\y)}] (2pt,0pt) -- (-2pt,0pt) node[left] {$\ytext/5$};  
+		%\foreach \x/\xtext in{ 1/1,2/2,3/3,4/4,5/5}\draw[shift={(\x,0)}] (0pt,2pt) -- (0pt,-2pt) node[below] {$\xtext/5$};  
+		\end{tikzpicture}
+	\end{center}
+	\caption{Supervised ML methods fit a curve to (a huge number of) data points. 
+	} 
+	\label{fig_curve_fitting}
 \end{figure}
 
-In some ML applications there is no reason for defining labels associated with data points. 
-The resulting ML methods are then called {\bf unsupervised ML methods}. In Chapter \ref{ch_Clustering}, 
-we will study an important family of unsupervised ML methods which amount to {\bf clustering} data 
+
+\section{Organization of this Book}
+
+Chapter \ref{ch_Elements_ML} introduces the concepts of data, 
+model and loss function as main components of ML. We also 
+highlight that each component involves design choices that must 
+take into account computational and statistical aspects. 
+%the design choices incurred 
+%by the ML components data, model and loss. These design choices 
+%include the representation for data and  models. %One such choice for 
+%data and model representation is to use vectors and matrices. 
+
+Chapter \ref{ch_some_examples} shows how well-known ML methods 
+are obtained by specific design choices for the data, model
+and loss function. The aim of this chapter is to organize ML methods 
+according to three dimensions representing data, model and loss. 
+
+Chapter \ref{ch_Optimization} explains how a simple probabilistic 
+model for data lends to the principle of {\bf empirical risk minimization (ERM)} . 
+This principle translates the problem of learning a good predictor 
+to an optimization problems. ML methods based on the ERM are 
+therefore a special class of optimization methods. The ERM principle 
+can be interpreted as a precise mathematical formulation of the 
+``learning by trial and error'' paradigm. 
+
+Chapter \ref{ch_GD} discusses a powerful principle for learning 
+predictors with a good performance. This principle uses the concept 
+of gradients to locally approximate an objective function used 
+to score predictors. A basic implementation of gradient based 
+optimization is the gradient descent (GD) algorithm. Variations 
+of GD are currently the de-facto standard method for training 
+deep neural networks \cite{Goodfellow-et-al-2016}. 
+
+Chapter \ref{ch_validation_selection} discusses one of the most 
+important ideas in applied ML. This idea is to validate a predictor 
+by trying it out on validation or test data which is different from 
+the training data that has been used to learn a predictor. As detailed 
+in Chapter \ref{ch_overfitting_regularization}, a main reason for doing 
+validation is to detect and avoid {\bf overfitting} which is a main reason 
+for ML methods to fail. 
+
+%In some ML applications there is no reason for defining labels associated with data points. 
+%The resulting ML methods are then called {\bf unsupervised ML methods}. 
+Chapter \ref{ch_Clustering} introduces some widely used clustering 
+methods. Clustering methods group or cluster {\bf clustering} data 
 points into coherent groups (clusters). 
 
-Chapter \ref{ch_FeatureLearning} discusses another important unsupervised ML problem referred 
-to as {\bf dimensionality reduction}. Dimensionality reduction methods exploit intrinsic correlations 
-and redundancy in the raw data to construct few relevant features for data points. These relevant 
-features can be subsets of raw features (feature selection) or combinations of all raw features (feature transformation). 
+The efficiency of ML methods often depends crucially on the choice 
+of data representation. Ideally we would like to have few relevant 
+features to characterize data points. Chapter \ref{ch_FeatureLearning} 
+discusses {\bf feature learning} methods that can automatically 
+determine useful features of data points. 
+%These methods exploit 
+%intrinsic correlations and redundancy in the raw data to construct 
+%few relevant features for data points. These relevant features can 
+%be subsets of raw features (feature selection) or combinations 
+%of all raw features (feature transformation). 
 
-Two main challenges in the widespread use of ML techniques are their privacy-preservation 
-and explainability. Chapters \ref{chap_privacy_preserving_ML} and \ref{chap_explainable_ML} will discuss 
-recent approaches to solve these challenges. We will see that the concepts developed in Chapter \ref{ch_FeatureLearning} 
-for feature learning will be perfect tools for privacy-preserving and explainable ML. 
+Two main challenges for the widespread use of ML techniques 
+in critical application domains is privacy-preservation and 
+explainability. Chapters \ref{chap_privacy_preserving_ML} 
+and \ref{chap_explainable_ML} will discuss recent approaches 
+to solve these challenges. We will see that the concepts 
+developed in Chapter \ref{ch_FeatureLearning} for feature 
+learning will be perfect tools for {\bf privacy-preserving and 
+explainable ML}. 
 
 {\bf Prerequisites.} We assume some familiarity with basic concepts of linear algebra, real analysis 
 and probability theory. For a review of those concepts, we recommend \cite[Chapter 2-4]{Goodfellow-et-al-2016} 
@@ -2713,9 +2728,10 @@ or measured easily and {\bf labels} which represent high-level facts.
 computationally feasible predictor maps $h \in \hypospace$. 
 \item a {\bf loss function} to measure the quality of a particular predictor map $h$. 
 \end{itemize} 
-Each of these three components involves design choices such as the type of 
-data representation. This chapter details the design choices used by some of the 
-most popular ML methods. 
+Each of these three components involves design choices for the data 
+features and labels, the model and loss function. This chapter details 
+the specific design choices used by some of the most popular ML 
+methods. 
 
 %A rough guideline for which of these methods to use for a given ML problem is depicted in Figure \ref{fig_python_cheat_sheet}.
 %\begin{figure}[htbp]

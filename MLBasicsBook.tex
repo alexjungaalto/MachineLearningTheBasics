@@ -374,12 +374,12 @@ vastly in their actual implementations which might obscure their unifying
 basic principles. 
 
 Deep learning methods use cloud computing frameworks to train large 
-models on huge online datasets. Operating on a much finer granularity 
-for data and computation, linear least squares regression can be 
-implemented on small embedded systems. Nevertheless, deep learning 
-methods and linear regression use the same principle of iteratively 
-updating a model based on the discrepancy between model predictions 
-and actual observed data. 
+models on huge datasets. Operating on a much finer granularity for 
+data and computation, linear least squares regression can be implemented 
+on small embedded systems. Nevertheless, deep learning methods and 
+linear regression use the same principle of iteratively updating a model 
+based on the discrepancy between model predictions and actual observed 
+data. 
 
 The three component picture of ML championed in this book allows a 
 unified treatment of a wide range of concepts and techniques 
@@ -866,7 +866,7 @@ data point $\vz=(x,y) \sim p(\vz)$.
 Having an (estimate of) probability distribution $p(\vz)$ for the observed 
 data points not only allows us to compute predictions but also to generate 
 new data points. Indeed, we can artificially augment the available data  
-by randomly drawing new data points from the probability distribution $p(\vz)$ 
+by randomly drawing new data points according the probability distribution $p(\vz)$ 
 (see Section \ref{sec_data_augmentation}). A recently popularized class of 
 ML methods that use probabilistic models to generate synthetic data  
 is known as {\bf generative adversarial networks} \cite{GoodfellowGAN}. 
@@ -1485,13 +1485,14 @@ It is also common to refer to ML problems involving a discrete
 
 ML problems with only two different label values are referred to as 
 {\bf binary classification problems}. Examples of classification 
-problems are: detecting presence of a tumour in a tissue, classifying 
-persons according to their age group or detecting the current floor 
-conditions ( ``grass'', ``tiles'' or ``soil'') for a mower robot. 
+problems are: detecting the presence of a tumour in a tissue, 
+classifying persons according to their age group or detecting 
+the current floor conditions ( ``grass'', ``tiles'' or ``soil'') for 
+a mower robot. 
 
 
 A data point is called \emph{labeled} if, besides its features $\vx$, 
-the associated label $y$ is known.The acquisition of labeled data 
+the value of its label $y$ is known.The acquisition of labeled data 
 points typically involves human labour, such as handling a water 
 thermometer at certain locations in a lake. In other applications, 
 acquiring labels might require sending out a team of marine biologists 
@@ -1499,10 +1500,11 @@ to the Baltic sea \cite{MLMarineBiology}, running a particle physics
 experiment at the European organization for nuclear research (CERN) \cite{MLCERN}, 
 running animal testing in pharmacology \cite{MLPharma}. 
 
-There are also online market places to rent human labelling 
-workforce \cite{Mort2018}. In these labelling services, you can 
-upload your data points, such as images, and then some human 
-labels them, such as marking those who show a cat. 
+There are also online market places for human labelling 
+workforce \cite{Mort2018}. In these market places, one 
+can upload data points, such as images, and then pay 
+some money to humans that label the data points, such 
+as marking images who show a cat. 
 
 Many applications involve data points whose features can be 
 determined easily but whose labels are known for few data points 
@@ -1998,14 +2000,19 @@ has to balance between two conflicting requirements.
 one accurate predictor map $\hat{h} \in \hypospace$. A hypothesis 
 space $\hypospace$ that is too small might fail to include a predictor 
 map required to reproduce the (potentially highly non-linear) relation 
-between features and label. Consider the ML problem of classifying 
-an image into ``cat image'' and ``no cat image'' using the pixel colour 
-intensities as features. The relation between features and label 
-($y \in \{ \mbox{cat}, \mbox{no cat} \}$) is highly non-linear. 
-Any ML method that uses a hypothesis space consisting only of 
-linear maps will most likely fail to learn a good predictor (classifier). 
-We say that a ML method {\bf underfits} the data if it uses a too 
-small hypothesis space. 
+between features and label. 
+
+Consider the task of grouping or classifying images into 
+``cat'' images and ``no cat image''. The classification of 
+each image is based solely on the feature vector obtained 
+from the pixel colour intensities. 
+
+The relation between features and label ($y \in \{ \mbox{cat}, \mbox{no cat} \}$) 
+is highly non-linear. Any ML method that uses a hypothesis space 
+consisting only of linear maps will most likely fail to 
+learn a good predictor (classifier). We say that a ML 
+method {\bf underfits} the data if it uses a too small 
+hypothesis space. 
 \item It has to be {\bf sufficiently small} such that its processing fits the 
 available computational resources (memory, bandwidth, processing time). 
 We must be able to efficiently search over the hypothesis space to find 
@@ -2021,11 +2028,10 @@ will perform poorly on data which is different from the training data
 \end{itemize}
 
 The notion of a hypothesis space being too small or being 
-too large can be made precise in different ways. For a finite 
-hypothesis space $\hypospace$, we might simply use the 
-cardinality $|\hypospace|$ as a measure of its size. 
-
-
+too large can be made precise in different ways. The size of 
+a finite hypothesis space $\hypospace$ can be defined as 
+its cardinality $|\hypospace|$ which is simply the number of 
+its elements. 
 {\bf Example.} Consider data points represented by $100 \times 10\!=\!1000$ 
 black and white pixels (see Figure \ref{fig_snapshot_pixels}) and 
 characterized by a binary label. This amounts to a feature space 
@@ -2034,13 +2040,13 @@ The largest possible hypothesis space consists of maps from
 $\featurespace$ to $\labelspace$. The cardinally of this space is 
 $|\hypospace| = 2^{1000}$.
 
-Many ML methods use a hypothesis space which contains infinitely many 
-different predictors (see, e.g., \eqref{equ_def_hypo_linear_pred}). 
-For infinite hypothesis spaces, we cannot easily use its cardinality as 
-a measure for its size. Different concepts have been studied for 
-measuring the size of infinite hypothesis spaces with the 
-{\bf Vapnik–Chervonenkis (VC) dimension} being maybe the 
-most famous one \cite{VapnikBook}. 
+Many ML methods use a hypothesis space which contains 
+infinitely many different predictor maps (see, e.g., \eqref{equ_def_hypo_linear_pred}). 
+For infinite hypothesis spaces, we cannot use its 
+cardinality as a measure for its size. Different concepts 
+have been studied for measuring the size of infinite 
+hypothesis spaces with the {\bf Vapnik–Chervonenkis (VC) dimension} 
+being maybe the most famous one \cite{VapnikBook}. 
 
 We will use a simplified variant of the VC dimension and define the 
 size of a hypothesis space $\hypospace$ as the maximum number 
@@ -2051,17 +2057,17 @@ such that $y=h(\vx)$ for all data points $(\vx,y) \in \dataset$.
 
 Let us illustrate our definition for the size of a hypothesis space 
 with two examples: linear regression and polynomial regression. 
-
-First, we discuss the size of the hypothesis space $\hypospace^{(\featuredim)}$ 
-used in linear regression. Consider $\samplesize$ data points characterized by feature 
+Linear regression uses the hypothesis space 
+$$\hypospace^{(\featuredim)} = \{ h(\cdot): \mathbb{R}^{\featuredim} \rightarrow \mathbb{R}: h(\vx) = \vw^{T} \vx \mbox{ with some vector } \vw \in \mathbb{R}^{\featurelen}\}.$$ 
+Consider $\samplesize$ data points characterized by feature 
 vectors $\vx \in \mathbb{R}^{(\featuredim)}$ and a numeric label 
 $y \in \mathbb{R}$. We assume that data points are i.i.d.\ realizations 
-of a continuous random vector $\vx$. This implies that the matrix obtained by 
-stacking (column-wise) the feature vectors is full rank with probability one. 
-Basic linear algebra allows then to show that such a set of data points can 
-be perfectly fit by a linear map $h \in \hypospace^{(\featuredim)}$ 
+of a continuous random vector $\vx$. This implies that the matrix 
+obtained by stacking (column-wise) the feature vectors is full rank 
+with probability one. Basic linear algebra allows to show that 
+such a set of data points can be perfectly fit by a linear map $h \in \hypospace^{(\featuredim)}$ 
 as long as $\samplesize \leq \featuredim$. The size of the linear 
-hypothesis space $\hypospace^{(\featuredim)}$ is $\sizehypospace = \featuredim$. 
+hypothesis space $\hypospace^{(\featuredim)}$ is therefore $\sizehypospace = \featuredim$. 
 
 As a second example, consider data points characterized 
 by a single numeric feature $x$ and numeric label $y$. 
@@ -2472,16 +2478,15 @@ data (e.g. presence of few outliers).
 \begin{center}
 \framebox[0.96\textwidth]{
  \parbox{0.9\textwidth}{
-An important aspect guiding the choice of loss function is the 
+An important aspect guiding the choice for the loss function is the 
 computational complexity of the resulting ML method. The basic 
 idea behind ML methods is quite simple: learn (find) the particular 
 hypothesis out of a given hypothesis space which yields the smallest 
-loss (on average). 
-The difficulty of the resulting optimization problem (see Chapter \ref{ch_Optimization}) 
-depends crucially on the properties of the chosen loss function. 
-Some loss functions allow to use very simple but efficient iterative 
-methods for solving the optimization problem underlying an ML 
-method (see Chapter \ref{ch_GD}). 
+(average) loss. The difficulty of the resulting optimization 
+problem (see Chapter \ref{ch_Optimization}) depends crucially 
+on the properties of the chosen loss function. Some loss functions 
+allow to use very simple but efficient iterative methods for solving 
+the optimization problem underlying an ML method (see Chapter \ref{ch_GD}). 
 }}
 \end{center}
 
@@ -2502,33 +2507,34 @@ as
 To ease notational burden, if the dataset $\dataset$ is clear from the context, 
 we use $\emperror(h)$. 
 
-
-
-
 {\bf Regret.} In some application, we might have access to the 
-predictions obtained from some other methods (``experts''). 
+predictions obtained from some reference methods or {\bf experts}. 
 The quality of a hypothesis $h$ can then be measured via the 
 difference between the loss incurred between its predictions 
 $h(\vx)$ and loss incurred by the predictions of the experts 
-\cite{HazanOCO}. This difference is referred to as the regret. 
-The goal of regret minimization is to learn a hypothesis with 
-small regret compared to the experts. 
+\cite{HazanOCO}. This difference is referred to as the {\bf regret} 
+in using the prediction $h(\vx)$ instead of the expert . 
+The goal of regret minimization is to learn a hypothesis 
+with small regret compared to all considered experts. 
 
 The concept of regret minimization is useful when we do 
-not make any assumptions (such as i.i.d. samples) of the 
-data points. If we do not use such a probabilistic model 
-we cannot use the Bayes risk (of Bayes optimal estimator) 
-as benchmark. Regret minimization techniques can be designed 
-and analyzed without any such probabilistic model for the data \cite{PredictionLearningGames}. 
-This approach replaces the Bayes risk benchmark with few 
-given reference predictors (experts) to serve as benchmark. 
+not make any probabilistic assumptions (such as i.i.d.) about 
+the data points. Without a probabilistic model we cannot use 
+the Bayes risk (of Bayes optimal estimator) as benchmark. 
+Regret minimization techniques can be designed and analyzed 
+without any such probabilistic model for the data \cite{PredictionLearningGames}. 
+This approach replaces the Bayes risk with the regret relative to 
+given reference predictors (experts) as the benchmark. 
 
 {\bf Partial Feedback, ``Reward''.}  
-In some application it is not possible to determine the true label of 
-any data point. Without any labeled data we cannot use the concept 
-of a loss function to measure the quality of a prediction (by comparing 
-with the true label). Instead we must use some other form of indirect 
-feedback or ``reward'' that can be attributed to a particular prediction \cite{PredictionLearningGames,SuttonEd2}. 
+Some application involve data points whose labels are so 
+difficult or costly to determine that we cannot assume to 
+have any labeled data available. Without any labeled data, 
+cannot use the concept of a loss function to measure the 
+quality of a prediction.\footnote{The evaluation of the loss function 
+requires that the label value is known!} Instead we must use 
+some other form of indirect feedback or ``reward'' that indicates 
+the usefulness of a particular prediction \cite{PredictionLearningGames,SuttonEd2}. 
 
 Consider the ML problem of predicting the optimal direction for 
 moving next a toy care given the current state. ML methods can sense the 
@@ -2541,7 +2547,7 @@ data point. This means that we cannot evaluate the quality of a particular
 map based on the average loss on training data. Instead, we might have 
 only some indirect signal about the loss incurred by the prediction 
 $\hat{y}=h(\vx)$. Such a feedback signal, or reward, could be obtained 
-by a distance sensor who measures the the change of the distance 
+by a distance sensor who measures the change of the distance 
 between the car and its goal such as the charging station. 
 
 \section{Putting Together the Pieces} 
@@ -2596,7 +2602,9 @@ the weights $w_{0},w_{1}$ to minimize the training error
 \min_{w_{1},w_{0} \in \mathbb{R}} f(w_{0},w_{1}) \stackrel{\eqref{equ_def_cost_fun_putting_togheter}}{=}  (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \big( y^{(\sampleidx)} - ( w_{1} x^{(\sampleidx)} + w_{0}) \big)^{2}.
 \end{equation} 
 
-The optimal weights $w_{0}',w_{1}'$ are characterized by the ``zero gradient'' condition \cite{}, 
+The optimal weights $w_{0}',w_{1}'$ are characterized by the {\bf zero-gradient condition},
+\footnote{A necessary and sufficient condition for $\vw'$ to minimize a 
+	convex differentiable function $f(\vw)$ is $\nabla f(\vw') = \mathbf{0}$ \cite[Sec.\ 4.2.3]{BoydConvexBook}.} 
 \begin{equation}
 \label{equ_zero_grad_condition_putting_together}
 \frac{\partial f(w'_{0},w'_{1})}{\partial w_{0}} = 0 \mbox{, and }\frac{\partial f(w'_{0},w'_{1})}{\partial w_{1}} = 0. 
@@ -4776,9 +4784,11 @@ child { node [env]  {$x_{2}\!\leq\!3?$ }
   edge from parent node [right,align=center] {yes}};
 \end{tikzpicture}}
 \end{minipage}
-\caption{Given the labeled dataset and a decision tree in the top row, we would like to grow the 
-decision tree by expanding it at one of its two leaf nodes. The resulting new decision trees obtained 
-by expanding different leaf node is shown in the bottom row.}
+\caption{Given the labeled dataset and a decision tree in the top row, 
+	we grow the decision tree by expanding it at one of 
+	its two leaf nodes. The resulting new decision trees 
+	obtained by expanding different leaf node is shown 
+	in the bottom row.}
 \label{fig_growingatree}
 \end{figure}
  

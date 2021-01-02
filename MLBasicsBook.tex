@@ -465,17 +465,19 @@ maximum daytime temperature during some day in Finland (see Figure \ref{fig:skid
 The prediction shall be based solely on the minimum daytime 
 temperature observed in the morning of that day. 
 
-The Finnish Meteorological Institute (FMI) offers data on historic weather 
-observations. We can download historic recordings of minimum and 
-maximum daytime temperature recorded by some FMI weather station. 
-Let us denote the resulting dataset by 
+The {\bf Finnish Meteorological Institute (FMI)} offers data 
+on historic weather observations. We can download historic 
+recordings of minimum and maximum daytime temperature 
+recorded by some FMI weather station. Let us denote the 
+resulting dataset by 
 \begin{equation}
 \label{equ_FMI_data}
 \vz^{(1)},\ldots,\vz^{(\samplesize)}.  
 \end{equation} 
-Each data point $\vz^{(i)} = \big(x^{(i)},y^{(i)}\big)$ represents some previous day 
-for which the minimum and maximum daytime temperature $x^{(i)}$ and $y^{(i)}$ 
-has been recorded at some FMI station.  %We will use the minimum daytime temperature $x^{(i)}$ as the feature and the 
+Each data point $\vz^{(\sampleidx)} = \big(x^{(\sampleidx)},y^{(\sampleidx)}\big)$, 
+for $\sampleidx=1,\ldots,\samplesize$, represents some previous 
+day for which the minimum and maximum daytime temperature 
+$x^{(i)}$ and $y^{(i)}$ has been recorded at some FMI station.  %We will use the minimum daytime temperature $x^{(i)}$ as the feature and the 
 %maximum daytime temperature $y^{(i)}$ as the label of the data point $\vz^{(i)}$. 
 
 We depict the data \eqref{equ_FMI_data} in Figure \ref{fig_scatterplot_temp_FMI}.  
@@ -767,6 +769,7 @@ optimization problems \cite{OptMLBook}. The weather prediction problem
 above can be formulated as the problem of optimizing (minimizing) the 
 prediction error for the maximum daytime temperature.  ML methods are 
 then obtained by applying optimization methods to these learning problems. 
+
 The statistical and computational properties of such ML methods can be 
 studied using tools from the theory of optimization. What sets the optimization 
 problems arising in ML apart from ``standard'' optimization problems is that 
@@ -1017,14 +1020,14 @@ car reduces the distance to some goal or target location.
 
 
 \section{Flavours of Machine Learning} 
-The main focus of this tutorial is on {\bf supervised ML methods} which 
-assign labels to each data point and require the availability of some data 
-points (the training set) whose labels are known. The label of a data point 
-is some quantity of interest such as the fact if an image shows a cat or not. 
-Another example is weather prediction where a data point represents a 
-user query containing a location and time. The label associated with this 
-data point could be the local temperature at the queried location 
-and time. 
+
+The main focus of this tutorial is on {\bf supervised ML methods}. 
+Supervised ML assigns labels to each data point. The label of a data 
+points is some quantity of interest or higher-level fact. Roughly 
+speaking, labels are properties of a data point that cannot be 
+measured or computed easily. This is in contrast to features which 
+are properties of data points that can be measured or computed 
+easily (see Chapter \ref{sec_the_data}). 
 
 Supervised ML methods aim at finding a (predictor or classifier) map 
 that reads in features of a data point and outputs a prediction. The 
@@ -1037,12 +1040,13 @@ The basic idea of supervised ML methods, as illustrated in
 Figure \ref{fig_curve_fitting}, is to fit a curve (representing 
 the predictor map) to data points obtained from historic data 
 (see Chapter \ref{ch_Optimization}). While this sounds like a 
-trivial task, the challenge of modern ML applications is the sheer 
-amount of data points. ML methods must process billions of 
-data points with each single data point characterized by a potentially 
-vast number of features. Consider data points representing 
-social network users, whose features include all media that 
-has been posted (videos, images, text). 
+simple task, the challenge of modern ML applications is the sheer 
+amount of data points. 
+
+ML methods must process billions of data points with each 
+single data point characterized by a potentially vast number 
+of features. Consider data points representing social network 
+users, whose features include all media that has been posted (videos, images, text). 
 
 Besides the size of datasets, another computational challenge 
 for modern ML methods is that they must be able to fit highly 
@@ -1073,6 +1077,31 @@ of non-linear maps via artificial neural networks \cite{Goodfellow-et-al-2016}).
 	\label{fig_curve_fitting}
 \end{figure}
 
+{\bf Unsupervised Learning.}
+Some ML applications do not need the concept of labels 
+but require only to understand the intrinsic structure of data 
+points. We refer to such applications as {\bf unsupervised ML.} 
+Examples of an intrinsic structure is when the data points 
+can be grouped into few coherent subsets of cluster (see Chapter \ref{ch_Clustering}). 
+Another example for such an intrinsic structure is when the data points 
+are localized around a low-dimensional subspace (see Chapter \ref{ch_FeatureLearning}). 
+Unsupervised ML methods allow to determine such an intrinsic structure. 
+
+{\bf Reinforcement Learning.} 
+Another main flavour of ML considers data points that are characterized 
+by labels but which cannot be determined easily beforehand. Reinforcement 
+learning studies applications where the label values can only be determined 
+in an indirect fashion. Consider the problem of choosing the optimum 
+steering direction for a car based on the snapshot of an on-board 
+camera. Data points represent a particular state of the car, its label 
+is the optimum steering direction. 
+
+It is typically impossible to get labeled 
+data points here since there are so many different driving scenarios that 
+each have different optimal steering directions. Instead, RL methods use 
+some predictor of the optimal steering direction and then evaluate the 
+quality of this prediction by some other sensor signals, e.g., which determine 
+if the car stays in the lane. 
 
 \section{Organization of this Book}
 
@@ -1108,16 +1137,16 @@ deep neural networks \cite{Goodfellow-et-al-2016}.
 Chapter \ref{ch_validation_selection} discusses one of the most 
 important ideas in applied ML. This idea is to validate a predictor 
 by trying it out on validation or test data which is different from 
-the training data that has been used to learn a predictor. As detailed 
-in Chapter \ref{ch_overfitting_regularization}, a main reason for doing 
-validation is to detect and avoid {\bf overfitting} which is a main reason 
-for ML methods to fail. 
+the training data that has been used to fit a model to data. As 
+detailed in Chapter \ref{ch_overfitting_regularization}, a main 
+reason for doing validation is to detect and avoid {\bf overfitting} 
+which is a main reason for ML methods to fail. 
 
 %In some ML applications there is no reason for defining labels associated with data points. 
 %The resulting ML methods are then called {\bf unsupervised ML methods}. 
-Chapter \ref{ch_Clustering} introduces some widely used clustering 
-methods. Clustering methods group or cluster {\bf clustering} data 
-points into coherent groups (clusters). 
+Chapter \ref{ch_Clustering} presents some basic methods for {\bf clustering} 
+data. These methods group or partition data points into 
+coherent groups which are referred to as clusters. 
 
 The efficiency of ML methods often depends crucially on the choice 
 of data representation. Ideally we would like to have few relevant 
@@ -1534,16 +1563,16 @@ is close (with small error $\hat{y} - y$) to the true underlying label $y$.
 \label{equ_subsection_scatterplot}
 
 Consider datapoints characterized by a single numeric feature $x$ 
-and label $y$. Each data point represents a particular day whose 
-feature and label are the minimum and maximum daytime temperature, 
-respectively, at some place in Finland. 
-
-We can obtain these datapoints via the weather recordings of 
-the Finnish Meteorological Institute (FMI). To get more insight 
-into the relation between feature $x^{(\sampleidx)}$ and label 
-$y^{(\sampleidx)}$, it can be helpful to generate a scatter plot 
-as shown in Figure \ref{fig_scatterplot_temp_FMI}. A scatter plot 
-depicts the data points $\vz^{(\sampleidx)}=(x^{(\sampleidx)},y^{(\sampleidx)})$ 
+and label $y$. 
+%Each data point represents a particular day whose 
+%feature and label are the minimum and maximum daytime temperature, 
+%respectively, at some place in Finland. 
+%We can obtain these datapoints via the weather recordings of 
+%the Finnish Meteorological Institute (FMI). 
+To get more insight into the relation between feature and label, 
+it can be instructive to generate a scatter plot as shown in 
+Figure \ref{fig_scatterplot_temp_FMI}. A scatter plot depicts the 
+data points $\vz^{(\sampleidx)}=(x^{(\sampleidx)},y^{(\sampleidx)})$ 
 in a two-dimensional plane with the axes representing the values 
 of feature $x$ and label $y$. 
 
@@ -1554,6 +1583,13 @@ a relation between feature $x$ and label $y$ since datapoints
 with larger $x$ tend to have larger $y$. This makes sense since 
 having a larger minimum daytime temperature typically implies 
 also a larger maximum daytime temperature. 
+
+We can obtain scatter plots for data points with more than two 
+features using feature learning methods (see Chapter \ref{ch_FeatureLearning}). 
+These methods allow to transform high-dimensional data points, 
+having billions of raw features, to three or two new features. 
+These new features can then be used as the coordinates for the 
+data point in a scatter plot.
 
 %\begin{figure}[htbp]
 %\begin{center}
@@ -2215,14 +2251,16 @@ discusses polynomial regression in more detail.
 Every practical ML method uses some hypothesis space $\hypospace$ 
 which consists of all {\bf computationally feasible} predictor maps $h$. 
 Which predictor map $h$ out of all the maps in the hypothesis space 
-$\hypospace$ is the best for the ML problem at hand? To answer this, 
-we need to define a measure of the {\bf loss} (or error) incurred by using 
-the particular predictor $h(\vx)$ when the true label is $y$. Formally, 
-we define a loss function $\mathcal{L}: \featurespace \times \labelspace \times \hypospace \rightarrow \mathbb{R}$ 
+$\hypospace$ is the best for the ML problem at hand? To answer this 
+questions, we need some way to measure of the {\bf loss} (or error) 
+incurred by using the particular predictor $h(\vx)$ when the true label 
+is $y$. 
+
+We formally define a loss function $\mathcal{L}: \featurespace \times \labelspace \times \hypospace \rightarrow \mathbb{R}$ 
 which measures the loss $\loss{(\vx,y)}{h}$ incurred by predicting the 
 label $y$ of a data point using the prediction $h(\vx)(=: \hat{y})$. 
 The concept of loss functions is best understood by considering 
-particular examples. 
+some examples. 
 
 {\bf Regression Loss.} For ML problems involving numeric labels $y \in \mathbb{R}$, 
 a good first choice for the loss function can be the {\bf squared error loss} (see Figure \ref{fig_squarederror_loss}) 
@@ -2303,11 +2341,14 @@ which yields a large negative number, e.g., $h(\vx) = -1000$. But
 exactly this unwanted result would happen for the squared error 
 loss. 
 
-Figure \ref{fig_squarederrornotgoodclass} depicts a dataset consisting of $5$ labeled data points 
-with binary labels represented by circles (for $y=1$) and squares (for $y=-1$). The squared error loss 
-incurred by the classifier $h_{1}$, which does not separate the two classes perfectly, is smaller than 
-the squared error loss incurred by classifier $h_{2}$ which perfectly separates the two classes. 
-The squared error loss is a bad choice for classification problems with a discrete label space $\labelspace$. 
+Figure \ref{fig_squarederrornotgoodclass} depicts a dataset 
+consisting of $5$ labeled data points with binary labels represented 
+by circles (for $y=1$) and squares (for $y=-1$). The squared error loss 
+incurred by the classifier $h_{1}$, which does not separate the two 
+classes perfectly, is smaller than the squared error loss incurred 
+by classifier $h_{2}$ which perfectly separates the two classes. 
+The squared error loss is a bad choice for classification problems 
+with a discrete label space $\labelspace$. 
 \begin{figure}[htbp]
 \begin{center}
 \begin{tikzpicture}[auto,scale=0.8]
@@ -2602,15 +2643,17 @@ the weights $w_{0},w_{1}$ to minimize the training error
 \min_{w_{1},w_{0} \in \mathbb{R}} f(w_{0},w_{1}) \stackrel{\eqref{equ_def_cost_fun_putting_togheter}}{=}  (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \big( y^{(\sampleidx)} - ( w_{1} x^{(\sampleidx)} + w_{0}) \big)^{2}.
 \end{equation} 
 
-The optimal weights $w_{0}',w_{1}'$ are characterized by the {\bf zero-gradient condition},
-\footnote{A necessary and sufficient condition for $\vw'$ to minimize a 
-	convex differentiable function $f(\vw)$ is $\nabla f(\vw') = \mathbf{0}$ \cite[Sec.\ 4.2.3]{BoydConvexBook}.} 
+The optimal weights $w_{0}',w_{1}'$ are characterized by the 
+{\bf zero-gradient condition},\footnote{A necessary and sufficient 
+condition for $\vw'$ to minimize a convex differentiable function 
+$f(\vw)$ is $\nabla f(\vw') = \mathbf{0}$ \cite[Sec.\ 4.2.3]{BoydConvexBook}.} 
 \begin{equation}
 \label{equ_zero_grad_condition_putting_together}
 \frac{\partial f(w'_{0},w'_{1})}{\partial w_{0}} = 0 \mbox{, and }\frac{\partial f(w'_{0},w'_{1})}{\partial w_{1}} = 0. 
 \end{equation} 
 Inserting \eqref{equ_def_cost_fun_putting_togheter} into \eqref{equ_zero_grad_condition_putting_together}, 
-using basic rules for calculating derivatives, we obtain the following optimality conditions 
+using basic rules for calculating derivatives, we obtain the 
+following optimality conditions 
 \begin{equation}
 \label{equ_zero_grad_condition_putting_together_special_form}
  (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \big( y^{(\sampleidx)} - ( w'_{1} x^{(\sampleidx)} + w'_{0}) \big)= 0 \mbox{, and } (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} x^{(\sampleidx)} \big( y^{(\sampleidx)} - ( w'_{1} x^{(\sampleidx)} + w'_{0}) \big) = 0. 
@@ -2625,8 +2668,8 @@ We find it convenient to rewrite the optimality condition \eqref{equ_zero_grad_c
 using matrices and vectors. To this end, we first rewrite the 
 predictor \eqref{equ_def_lin_pred_intercept} as 
 $$ h(\vx) = \vw^{T} \vx \mbox{ with } \mathbf{w} = \big(w_{0},w_{1}\big)^{T}, \mathbf{x} = \big(1,x\big)^{T}.$$
-Let us stack the feature vectors $\vx^{(i)} = \big(1,x^{(i)} \big)^{T}$ 
-and labels $y^{(i)}$ of training data points \eqref{equ_labeled_data_putting_together} 
+Let us stack the feature vectors $\vx^{(\sampleidx)} = \big(1,x^{(\sampleidx)} \big)^{T}$ 
+and labels $y^{(\sampleidx)}$ of training data points \eqref{equ_labeled_data_putting_together} 
 into the feature matrix and label vector, 
 \begin{equation}
 \mX  = \big(\vx^{(1)},\ldots,\vx^{(\samplesize)}\big)^{T} \in \mathbb{R}^{\samplesize \times 2}, \vy = \big(y^{(1)},\ldots,y^{(\samplesize)}\big)^{T} \in \mathbb{R}^{\samplesize}. 
@@ -2790,16 +2833,18 @@ does $\mathcal{H}$ contain?
  
  \subsection{Picture Classification} 
  \label{ex_2_6}
-Assume you want to sort a huge number of outdoor pictures you have taken during 
-your last adventure trip to into three categories (or classes) 
-\emph{dog}, \emph{bird} and \emph{fish}. How could we formalize this sorting 
-problem as a ML problem? 
+Assume you want to sort a huge number of outdoor 
+pictures you have taken during your last adventure 
+trip to into three categories (or classes) \emph{dog}, 
+\emph{bird} and \emph{fish}. How could we formalize 
+this sorting problem as a ML problem? 
 
  \subsection{Maximum Hypothesis Space} 
 \label{ex_2_7}
-Consider data points characterized by a single real-valued feature $x$ and a 
-single real-valued label $y$. How large is the largest possible hypothesis space 
-of predictor maps $h(x)$ that read in the feature value of a data point and 
+Consider data points characterized by a single real-valued 
+feature $x$ and a single real-valued label $y$. How large 
+is the largest possible hypothesis space of predictor maps 
+$h(x)$ that read in the feature value of a data point and 
 deliver a real-valued prediction $\hat{y}=h(x)$ ? 
 
  \subsection{A Large but Finite Hypothesis Space} 
@@ -2847,82 +2892,94 @@ methods.
 %  \label{fig_python_cheat_sheet}
 %\end{figure}
 \begin{figure}
+	\resizebox{.9\textwidth}{!}{
 \begin{tikzpicture}[auto]
 	\coordinate (OR) at (0.00, 0.0);
-	\coordinate (RIGHT) at (15,0,0.0); 
-	\coordinate (TOP) at (0.0,6) ; 
+	\coordinate (RIGHT) at (16,0); 
+	\coordinate (TOP) at (0.0,10) ; 
   %  \coordinate (MIDDLE) at (3,2) ; 
 	\node[](a) at (OR) {};
     \node[](b) at (RIGHT) {};
     \node[](c) at (TOP) {};
     %\node[](c) at (TOP) {};
-    \node[]  at  ($ (b) + (1,0) $)  {model};
-    \node[anchor=east]  at  ($ (c) + (0,0.1) $)  {loss};
+    \node[]  at  ($ (b) + (1,0) $)  {\large model};
+    \node[above=1cm of OR] (sqerror) {} ;
+    \node[above=2.5cm of OR] (logloss) {} ;
+     \node[above=4cm of OR] (hingeloss) {} ;
+    \node[above=5.5cm of OR] (regret) {} ;
+        \node[above=7cm of OR] (zeroone) {} ;
+    \node[align=left]  at  ($ (logloss) - (1,0) $)  {logistic\\loss};
+    \node[align=left]  at  ($ (sqerror) - (1,0) $)  {squared\\error};
+    \node[align=left]  at  ($ (hingeloss) - (1,0) $)  {hinge\\loss};
+    \node[align=left]  at  ($ (regret) - (1,0) $)  {regret};
+     \node[align=left]  at  ($ (zeroone) - (1,0) $)  {$0/1$ loss};
+    \node[anchor=east]  at  ($ (c) + (0,0.1) $)  {\large loss};
     \node[right=2cm of OR] (linpred) {} ;
-    \node[]  at  ($ (linpred) - (0,1) $)  {linear maps};
-  %  \draw ($ (linpred) + (0,2) $) rectangle (2,2) node[pos=.5] {linear regression};
-    \node[draw,text width=3cm]  at  ($ (linpred) + (0,2) $)  {linear regression};
+    \node[right=12cm of OR] (neuralnets) {} ;
+    \node[right=7cm of OR] (piecewise) {} ;
+    \node[]  at  ($ (linpred) - (0,0.5) $)  {linear maps};
+    \node[]  at  ($ (neuralnets) - (0,0.5) $)  {neural nets};
+    \node[align=left]  at  ($ (piecewise) - (0,0.5) $)  {piecewise \\ constant};
+    \node[draw,text width=3cm]  at  ($ (linpred) + (0,1) $)  {\bf linear regression};
+    \node[draw,text width=3cm]  at  ($ (linpred) + (0,2.5) $)  {\bf logistic regression};
+    \node[draw,text width=3cm]  at  ($ (linpred) + (0,4) $)  {\bf SVM};
+    \node[draw,text width=3cm]  at  ($ (linpred) + (0,5.5) $)  {\bf LinUCB};
+    \node[draw,text width=3cm]  at  ($ (linpred) + (0,7) $)  {\bf Na\"ive Bayes};
+    \node[draw,text width=3cm,,align=left]  at  ($ (piecewise) + (0,7) $)  {\bf Decision Tree \\ Classifier};
+        \node[draw,text width=3cm,,align=left]  at  ($ (piecewise) + (0,1) $)  {\bf Decision Tree \\ Regression};
+    \node[draw,text width=3cm]  at  ($ (neuralnets) + (0,5.5) $)  {\bf DeepRL};
+    \node[draw,text width=3cm,align=left]  at  ($ (neuralnets) + (0,4) $)  {\bf CNN\\  Classifier};
     \draw[black,line width=1] ($ (linpred) - (0,0.1) $) to ($ (linpred) + (0,0.1) $) ;
+    \draw[black,line width=1] ($ (neuralnets) - (0,0.1) $) to ($ (neuralnets) + (0,0.1) $) ;
+    \draw[black,line width=1] ($ (piecewise) - (0,0.1) $) to ($ (piecewise) + (0,0.1) $) ;
+    \draw[black,line width=1] ($ (sqerror) - (0.1,0) $) to ($ (sqerror) + (0.1,0) $) ;
+    \draw[black,line width=1] ($ (logloss) - (0.1,0) $) to ($ (logloss) + (0.1,0) $) ;
+    \draw[black,line width=1] ($ (hingeloss) - (0.1,0) $) to ($ (hingeloss) + (0.1,0) $) ;
+    \draw[black,line width=1] ($ (regret) - (0.1,0) $) to ($ (regret) + (0.1,0) $) ;
     \draw[->,black,line width=1] ($ (a) - (1,0) $) to (b);
     \draw[->,black,line width=1] ($ (a) - (0,0.4) $) to (c);
-%\draw[blue,thin,dashed] (OR) -- (b.160);
-%\draw[blue,thin,dashed] (OR) -- (b.210);
-%\draw[red,thin,dashed] (OR) -- (a.-150);
-%\draw[red,thin,dashed] (OR) -- (a.-30);   
-%\node[punkt] (data) {observations};
-%\node[red,below=0.5cm of data] (data1) {data};
-%\node[above=of data] (dummy) {};
-%\node[punkt,above=1cm of dummy] (hypothesis) {hypothesis};
-%\node[right=1.4cm of dummy] (t) {make prediction} ; 
-%\node[left=1.4cm of dummy] (g) {validate/adapt} ;
-%\node[blue,below=0.5cm of g,anchor=east] (g1) {loss} ; 
-%\node[black!30!blue,below=1cm of t,anchor=west] (g6) {inference} ; 
-%\node[black!30!green,above=1cm of hypothesis,anchor=south] (g3) {model} ; 
-%\draw [->,line width=0.5mm] (hypothesis.east) to [out=0,in=90] (t.north);
-%\draw [->,line width=0.5mm] (t.south) to [out=270,in=0] (data.east);
-%\draw [->,line width=0.5mm] (data.west) to [out=180,in=270] (g.south);
-%\draw [->,line width=0.5mm] (g.north) to [out=90,in=180] (hypothesis.west);
-%\draw [thick] (-3,-3) rectangle (4,4) node [anchor=east,above] {$\featurespace$} ;
-%\draw [thick] (2,2) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(5)}$};
-%\draw [thick] (-2,1.6) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(4)}$};
-%\draw [thick] (-2,-1.7) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(3)}$};
-%\draw [thick] (2,-1.9) circle (0.1cm) node[anchor=west] {\hspace*{0mm}$\vx^{(2)}$};
-%\draw [thick] (.5,.5) rectangle ++(0.1cm,0.1cm) node[anchor=west,above] {\hspace*{0mm}$\vx^{(1)}$};
-%       \node[] (B) at (12,2) {$\labelspace$};
-%       \fill  (11.5,2.5)  circle (2pt) node[above] (D) {$y \in \labelspace$};    
-%      \draw [->,thick] (5,3)   --  (11.5,2.5) node[above,midway] {$h(\vx)$} ;
 \end{tikzpicture}
+	}
+\caption{ML methods fit a model to data by minimizing a loss function. Different ML 
+methods use different design choices for model, data and loss.}
 \end{figure}
 
 
 \section{Linear Regression} 
 \label{sec_lin_regression}
 
-Linear regression uses the feature space $\featurespace\!=\!\mathbb{R}^{\featuredim}$,  label space $\labelspace\!=\!\mathbb{R}$ and the linear hypothesis space 
+Linear regression uses the feature space $\featurespace\!=\!\mathbb{R}^{\featuredim}$, 
+label space $\labelspace\!=\!\mathbb{R}$ and the linear hypothesis space 
 \begin{align}
 \label{equ_lin_hypospace}
 \hypospace^{(\featuredim)} & = \{ h^{(\vw)}: \mathbb{R}^{\featuredim}\!\rightarrow\!\mathbb{R}: h^{(\vw)}(\vx)\!=\!\vw^{T} \vx \mbox{ with some} \nonumber \\ 
 & \mbox{ weight vector } \vw \in \mathbb{R}^{\featuredim} \}.
 \end{align}  
-The quality of a particular predictor $h^{(\vw)}$ is measured by the squared error loss \eqref{equ_squared_loss}. 
-Based on labeled training data $\dataset =\{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$, linear 
-regression aims at learning a predictor $\hat{h}$ which minimizes the average squared error loss (mean squared error) (see \eqref{equ_squared_loss})
+The quality of a particular predictor $h^{(\vw)}$ is measured by 
+the squared error loss \eqref{equ_squared_loss}. Using labeled 
+training data $\dataset =\{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$, 
+linear regression learns a predictor $\hat{h}$ which minimizes 
+the average squared error loss (mean squared error) (see \eqref{equ_squared_loss})
 \begin{align} 
 \label{equ_opt_pred_linreg}
 \hat{h} & = \argmin_{h \in \hypospace^{(\featuredim)}  }\emperror(h|\dataset)  \\ \nonumber 
 & \stackrel{\eqref{eq_def_emp_error_101}}{=} \argmin_{h \in \hypospace^{(\featuredim)}  }  (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - h(\vx^{(\sampleidx)}))^{2}.
 \end{align} 
 
-Since the hypothesis space $\hypospace^{(\featuredim)} $ is parametrized by the weight vector $\vw$ (see \eqref{equ_lin_hypospace}), 
-we can rewrite \eqref{equ_opt_pred_linreg} as an optimization problem directly over the weight vector $\vw$: 
+Since the hypothesis space $\hypospace^{(\featuredim)} $ is 
+parametrized by the weight vector $\vw$ (see \eqref{equ_lin_hypospace}), 
+we can rewrite \eqref{equ_opt_pred_linreg} as an optimization 
+problem directly over the weight vector $\vw$: 
 \begin{align} 
 \label{equ_opt_weight_vector_linreg_weight}
 \vw_{\rm opt} &  = \argmin_{\vw \in \mathbb{R}^{\featuredim}} (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - h^{(\vw)}(\vx^{(\sampleidx)}))^{2} \nonumber \\
 & \stackrel{h^{(\mathbf{w})}(\vx) = \vw^{T} \vx}{=} \argmin_{\vw \in \mathbb{R}^{\featuredim}} (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - \vw^{T} \vx^{(\sampleidx)})^{2}.
 \end{align} 
-The optimization problems \eqref{equ_opt_pred_linreg} and \eqref{equ_opt_weight_vector_linreg_weight} are equivalent in the following sense: 
-Any optimal weight vector $\vw_{\rm opt}$ which solves \eqref{equ_opt_weight_vector_linreg_weight}, can be used to construct an optimal predictor $\hat{h}$, 
-which solves \eqref{equ_opt_pred_linreg}, via $\hat{h}(\vx) = h^{(\vw_{\rm opt})}(\vx) = \vw_{\rm opt}^{T} \vx$. 
+The optimization problems \eqref{equ_opt_pred_linreg} and \eqref{equ_opt_weight_vector_linreg_weight} 
+are equivalent in the following sense: Any optimal weight vector $\vw_{\rm opt}$ which solves 
+\eqref{equ_opt_weight_vector_linreg_weight}, can be used to 
+construct an optimal predictor $\hat{h}$, which solves 
+\eqref{equ_opt_pred_linreg}, via $\hat{h}(\vx) = h^{(\vw_{\rm opt})}(\vx) = \vw_{\rm opt}^{T} \vx$. 
 
 
 \section{Polynomial Regression} 
@@ -4368,7 +4425,7 @@ periods.
 %optimal predictors can 
 %be adapted to obtain practical ML methods. 
 
-\section{Empirical Risk Approximates Expected Loss} 
+\section{Why Empirical Risk Minimization?} 
 \label{equ_sec_emp_risk_approximates_expected_loss}
 
 We assume that data points are i.i.d.\ realizations drawn from some fixed 

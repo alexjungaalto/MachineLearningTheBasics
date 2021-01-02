@@ -2268,12 +2268,14 @@ a good first choice for the loss function can be the {\bf squared error loss} (s
 \label{equ_squared_loss}
 \loss{(\vx,y)}{h} \defeq \big(y - \underbrace{h(\vx)}_{=\hat{y}} \big)^{2}. 
 \end{equation} 
-Note that the squared error loss \eqref{equ_squared_loss} depends 
-on the features $\vx$ only via the predicted label value $\hat{y}= h(\vx)$. 
+The squared error loss \eqref{equ_squared_loss} depends on the 
+features $\vx$ only via the predicted label value $\hat{y}= h(\vx)$. 
 We can evaluate the squared error loss solely using the prediction $h(\vx)$ 
 and the true label value $y$. Besides the prediction $h(\vx)$, no other 
-properties of the data point's features $\vx$ are required to 
-determine the squared error loss.  
+properties of the data point's features $\vx$ are required to determine 
+the squared error loss. We will use the shorthand $\loss{y}{\hat{y}}$ 
+for any loss function that depends on the features only via the 
+prediction $\hat{y}=h(\vx)$. 
 %We refer to ML problems involving a real-valued label (e.g., temperature or probabilities of an event) as {\bf regression problems}. 
 
 \begin{figure}[htbp]
@@ -2926,9 +2928,9 @@ methods.
     \node[draw,text width=3cm]  at  ($ (linpred) + (0,5.5) $)  {\bf LinUCB};
     \node[draw,text width=3cm]  at  ($ (linpred) + (0,7) $)  {\bf Na\"ive Bayes};
     \node[draw,text width=3cm,,align=left]  at  ($ (piecewise) + (0,7) $)  {\bf Decision Tree \\ Classifier};
-        \node[draw,text width=3cm,,align=left]  at  ($ (piecewise) + (0,1) $)  {\bf Decision Tree \\ Regression};
+    \node[draw,text width=3cm,,align=left]  at  ($ (piecewise) + (0,1) $)  {\bf Decision Tree \\ Regression};
     \node[draw,text width=3cm]  at  ($ (neuralnets) + (0,5.5) $)  {\bf DeepRL};
-    \node[draw,text width=3cm,align=left]  at  ($ (neuralnets) + (0,4) $)  {\bf CNN\\  Classifier};
+    \node[draw,text width=3cm,align=left]  at  ($ (neuralnets) + (0,2.5) $)  {\bf CNN\\  Classifier};
     \draw[black,line width=1] ($ (linpred) - (0,0.1) $) to ($ (linpred) + (0,0.1) $) ;
     \draw[black,line width=1] ($ (neuralnets) - (0,0.1) $) to ($ (neuralnets) + (0,0.1) $) ;
     \draw[black,line width=1] ($ (piecewise) - (0,0.1) $) to ($ (piecewise) + (0,0.1) $) ;
@@ -2936,6 +2938,7 @@ methods.
     \draw[black,line width=1] ($ (logloss) - (0.1,0) $) to ($ (logloss) + (0.1,0) $) ;
     \draw[black,line width=1] ($ (hingeloss) - (0.1,0) $) to ($ (hingeloss) + (0.1,0) $) ;
     \draw[black,line width=1] ($ (regret) - (0.1,0) $) to ($ (regret) + (0.1,0) $) ;
+    \draw[black,line width=1] ($ (zeroone) - (0.1,0) $) to ($ (zeroone) + (0.1,0) $) ;
     \draw[->,black,line width=1] ($ (a) - (1,0) $) to (b);
     \draw[->,black,line width=1] ($ (a) - (0,0.4) $) to (c);
 \end{tikzpicture}
@@ -2959,7 +2962,7 @@ The quality of a particular predictor $h^{(\vw)}$ is measured by
 the squared error loss \eqref{equ_squared_loss}. Using labeled 
 training data $\dataset =\{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$, 
 linear regression learns a predictor $\hat{h}$ which minimizes 
-the average squared error loss (mean squared error) (see \eqref{equ_squared_loss})
+the average squared error loss, or {\bf mean squared error}, (see \eqref{equ_squared_loss})
 \begin{align} 
 \label{equ_opt_pred_linreg}
 \hat{h} & = \argmin_{h \in \hypospace^{(\featuredim)}  }\emperror(h|\dataset)  \\ \nonumber 
@@ -3090,7 +3093,7 @@ Replacing the squared loss with a different loss function can
 make the learning robust against few outliers. One such robust 
 loss function is the {\bf Huber loss} \cite{HuberRobustBook}
 \begin{equation}
-\mathcal{L}(y,\hat{y}) = \begin{cases} (1/2) (y-\hat{y})^{2} & \mbox{ for } |y-\hat{y}| \leq   \varepsilon \\ 
+\loss{y}{\hat{y}} = \begin{cases} (1/2) (y-\hat{y})^{2} & \mbox{ for } |y-\hat{y}| \leq   \varepsilon \\ 
 \varepsilon(|y-\hat{y}| - \varepsilon/2) & \mbox{ else. }\end{cases}
 \end{equation}
 
@@ -3111,8 +3114,35 @@ very small (close to $0$) such that the condition $|y-\hat{y}| \leq \varepsilon$
 is never satisfied. In this case, the Huber loss is equivalent 
 to the absolute loss $|y - \hat{y}|$ scaled by a factor $\varepsilon$.
 
-\section{The Least Absolute Shrinkage and Selection Operator (LASSO)}
-\label{sec_lasoo}
+\section{The  Lasso}
+\label{sec_lasso}
+We will see in Chapter \ref{ch_validation_selection} that linear 
+regression (see Section \ref{sec_lin_regression}) does not work 
+well for data points having more features than the number of 
+training data points (this is the high-dimensional regime). 
+One approach to avoid overfitting is to modify the squared error 
+loss \eqref{equ_squared_loss} by taking into account the weight 
+vector of the linear predictor $h(\vx) = \vw^{T}\vw$. 
+
+The Least Absolute Shrinkage and Selection Operator (Lasso) is 
+obtained from linear regression by replacing the squarer error loss 
+with the regularized loss 
+\begin{equation}
+\loss{(\vx,y)}{h^{(\vw)}} = (y-\vw^{T}\vx)^{2} + \alpha \| \vw \|_{1}. 
+\end{equation}
+The choice for the tuning parameter $\alpha$ can be guided 
+by using a probabilistic model, 
+$$ y = \overline{\vw}^{T} \vx + \varepsilon.$$ 
+Here, $\overline{\vw}$ denotes some true underlying weight vector 
+and $\varepsilon$ is as a random variable. 
+
+Appropriate values for $\alpha$ can then be determined based 
+on the variance of the noise, the number of non-zero entries in 
+$\overline{\vw}$ and a lower bound on the non-zero values. 
+Another option for choosing the value $\alpha$ is to try out different 
+candidate values and pick the one resulting in smallest validation 
+loss (see Section \ref{sec_validate_predictor}). 
+
 
 \section{Gaussian Basis Regression}
 \label{sec_linbasreg}
@@ -4066,13 +4096,19 @@ on the application at hand; one notion of optimality is obtained from approximat
 data points are whose datasets; labels are correct partitioning/clustering; loss function is some notion of purity; 
 
 
-\section{Reinforcement Learning Methods}
+\section{Deep Reinforcement Learning}
 \label{sec_reinflearning_methods}
 data points are the states of some (AI) agent characterized by features (sensor readings); 
 labels are optimal actions; however we typically have no access to labeled 
 data as we cannot try out each and any sequence of actions and such to 
 find out the best action in each situation. instead we must construct the 
 loss function via a (negative) reward collected over time (e.g. over an episode); 
+
+\section{LinUCB}
+\label{sec_lin_ucb}
+data points are costumers characterized by feature vector; the label is 
+discrete and indicates which product out of a finite set of products should 
+be advertised to the costumer; 
 
  
 \section{Network Lasso} 
@@ -4388,11 +4424,12 @@ Roughly speaking, this estimator can be read of directly from the
 posterior probability distribution of the label given the features. 
 
 In practice we do not know the true underlying probability 
-distribution and have to estimate it from data. Therefore, we cannot 
-compute the Bayes' optimal estimator exactly. However, we can 
-approximately compute this estimator by replacing the exact probability 
-distribution with an estimate. Moreover, the risk of the Bayes' optimal 
-estimator provides a useful benchmark against we can compare the 
+distribution and have to estimate it from data. Therefore, 
+we cannot compute the Bayes' optimal estimator exactly. 
+However, we can approximately compute this estimator 
+by replacing the exact probability distribution with an 
+estimate. Moreover, the risk of the Bayes' optimal estimator 
+provides a useful benchmark against we can compare the 
 average loss of practical ML methods. 
 
 Using a simple probabilistic model for data points, we formally define 
@@ -4403,14 +4440,17 @@ The resulting ERM has appealing properties as it amounts to
 minimizing a differentiable (smooth) and convex function which 
 can be done efficiently using efficient gradient based methods (see Chapter \ref{ch_GD}). 
 
-We then discuss in Section \ref{sec_ERM_decision_tree} the ERM obtained for decision trees 
-which yields a discrete optimization problem and is therefore fundamentally different from the 
-smooth ERM obtained for linear regression. In particular, we cannot apply gradient based 
-methods (see Chapter \ref{ch_GD}) to solve them but have to rely on discrete search methods. 
+We then discuss in Section \ref{sec_ERM_decision_tree} the ERM 
+obtained for decision trees which yields a discrete optimization 
+problem and is therefore fundamentally different from the smooth 
+ERM obtained for linear regression. In particular, we cannot apply 
+gradient based methods (see Chapter \ref{ch_GD}) to solve them 
+but have to rely on discrete search methods. 
 
-Section \ref{sec_ERM_Bayes} discusses how Bayes' methods can be used to solve 
-the non-convex and non-differentiable ERM problem obtained for classification 
-problems with the $0/1$ loss \eqref{equ_def_0_1}. 
+Section \ref{sec_ERM_Bayes} discusses how Bayes' methods 
+can be used to solve the non-convex and non-differentiable 
+ERM problem obtained for classification problems with the 
+$0/1$ loss \eqref{equ_def_0_1}. 
 
 As explained in Section \ref{sec_training_inference}, many ML methods 
 use the ERM during a training period to learn a hypothesis which is 
@@ -4491,10 +4531,13 @@ domain being a function space!) as an optimization directly over the weight vect
 \label{eq_def_ERM_weight}
     \vw_{\rm opt} = \argmin_{\vw \in \mathbb{R}^{\featuredim}} f(\vw) \mbox{ with } f(\vw) \defeq \emperror\big(h^{(\vw)} |\dataset\big). 
 \end{equation}
-The objective function $f(\vw)$ in \eqref{eq_def_ERM_weight} is the empirical risk $\emperror\big(h^{(\vw)} |\dataset\big)$ achieved by $h^{(\vw)}$ 
-when applied to the data points in the dataset $\dataset$. Note that the two formulations \eqref{eq_def_ERM_weight} and \eqref{equ_def_ERM_funs} 
+The objective function $f(\vw)$ in \eqref{eq_def_ERM_weight} is 
+the empirical risk $\emperror\big(h^{(\vw)} |\dataset\big)$ achieved 
+by $h^{(\vw)}$ when applied to the data points in the dataset $\dataset$. 
+Note that the two formulations \eqref{eq_def_ERM_weight} and \eqref{equ_def_ERM_funs} 
 are fully equivalent. In particular, given the optimal weight vector $\vw_{\rm opt}$ solving 
-\eqref{eq_def_ERM_weight}, the predictor $h^{(\vw_{\rm opt})}$ is an optimal predictor solving \eqref{equ_def_ERM_funs}. 
+\eqref{eq_def_ERM_weight}, the predictor $h^{(\vw_{\rm opt})}$ is 
+an optimal predictor solving \eqref{equ_def_ERM_funs}. 
 
 Learning a hypothesis via ERM \eqref{equ_def_ERM_funs} is a form of 
 learning by ``trial and error''. An instructor (or supervisor) provides some 
@@ -4521,27 +4564,37 @@ hope of achieving a smaller training error $\emperror(h'|\dataset)$.
 %        \caption{A bunch of labeled images. The label $y$ of an image indicates if a tractor is shown ($y=1$) or not ($y=-1$).}
 %\end{figure}
 
-We highlight that the precise shape of the objective function $f(\vw)$ in \eqref{eq_def_ERM_weight} 
-depends heavily on the parametrization of the predictor functions, i.e., how does the predictor $h^{(\vw)}$ 
-vary with the weight vector $\vw$. Moreover, the shape of $f(\vw)$ depends also on the choice 
-for the loss function $\loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}$. As depicted in Figure \ref{fig_diff_types_bojec}, 
-the different combinations of predictor parametrisation and loss functions can result in objective 
-functions with fundamentally different properties such that their optimization is more or less difficult. 
+We highlight that the precise shape of the objective function 
+$f(\vw)$ in \eqref{eq_def_ERM_weight} depends heavily on the 
+parametrization of the predictor functions, i.e., how does the 
+predictor $h^{(\vw)}$ vary with the weight vector $\vw$. 
 
-The objective function $f(\vw)$ for the ERM obtained for linear regression (see Section \ref{sec_lin_regression}) 
-is differentiable and convex and can therefore be minimized using simple iterative gradient descent methods 
-(see Chapter \ref{ch_GD}). In contrast, the objective function $f(\vw)$ of ERM obtained for the SVM (see Section \ref{sec_SVM}) 
-is non-differentiable but still convex. The minimization of such functions is more challenging but still tractable 
-as there exist efficient convex optimization methods which do not require differentiability of the objective 
-function \cite{ProximalMethods}. 
+The shape of $f(\vw)$ depends also on the choice for the loss 
+function $\loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}$. As 
+depicted in Figure \ref{fig_diff_types_bojec}, the different combinations 
+of predictor parametrisation and loss functions can result in objective 
+functions with fundamentally different properties such that their 
+optimization is more or less difficult. 
 
-The objective function $f(\vw)$ obtained for ANN tends to be {\bf highly non-convex} 
-but still differentiable for particular activation functions. The optimization of non-convex 
-objective function is in general more difficult than optimizing convex objective functions. 
-However, it turns out that despite the non-convexity, iterative gradient based methods can 
-still be successfully applied to solve the ERM \cite{Goodfellow-et-al-2016}. Even more 
-challenging is the ERM obtained for decision trees or Bayes' classifiers. These ML problems 
-involve non-differentiable and non-convex objective functions. 
+The objective function $f(\vw)$ for the ERM obtained for linear 
+regression (see Section \ref{sec_lin_regression}) is differentiable 
+and convex and can therefore be minimized using simple iterative 
+gradient descent methods (see Chapter \ref{ch_GD}). In contrast, 
+the objective function $f(\vw)$ of ERM obtained for the SVM (see 
+Section \ref{sec_SVM}) is non-differentiable but still convex. The 
+minimization of such functions is more challenging but still tractable 
+as there exist efficient convex optimization methods which do not 
+require differentiability of the objective function \cite{ProximalMethods}. 
+
+The objective function $f(\vw)$ obtained for ANN are typically 
+{\bf highly non-convex} having many local minima. The optimization 
+of non-convex objective function is in general more difficult than 
+optimizing convex objective functions. However, it turns out that 
+despite the non-convexity, iterative gradient based methods can 
+still be successfully applied to solve the ERM \cite{Goodfellow-et-al-2016}. 
+Even more challenging is the ERM obtained for decision trees or 
+Bayes' classifiers. These ML problems involve non-differentiable 
+and non-convex objective functions. 
 
 
 	
@@ -5767,17 +5820,19 @@ of the feature matrix
 \mX = (\vx^{(1)},\ldots,\vx^{(\samplesize_{\rm t})})^{T} \in \mathbb{R}^{  \samplesize_{\rm t} \times \featuredim}. 
 \end{equation} 
 
-Let us now study how overfitting arises whenever the sample size $\samplesize$ is 
-smaller or equal to the length $\featuredim$ of the feature vectors $\vx$, i.e., whenever 
+ML methods using linear predictors overfit as soon as the 
+number of features is not smaller the sample size, i.e., whenever 
 \begin{equation} 
 \label{equ_condition_overfitting}
-\samplesize_{\rm t} \leq \featuredim. 
+\samplesize \leq \featuredim. 
 \end{equation} 
-In practice, a set of $\samplesize_{\rm t}$ feature vectors $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ is 
-typically linearly independent whenever \eqref{equ_condition_overfitting} is satisfied. In this case, the span of 
-the transposed feature matrix \eqref{equ_feature_matrix_overfit} coincides with $\mathbb{R}^{\samplesize}$ 
-which implies, in turn, $\mathbf{P} = \mathbf{I}$. Inserting $\mathbf{P} = \mathbf{I}$ into \eqref{equ_emp_risk_lin_proje} 
-yields 
+A set of $\samplesize$ feature vectors $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ 
+is typically linearly independent whenever \eqref{equ_condition_overfitting} is satisfied. 
+If the feature vectors of the training data points are linearly independent, 
+the span of the transposed feature matrix \eqref{equ_feature_matrix_overfit} 
+coincides with $\mathbb{R}^{\samplesize}$ which implies, in turn, $\mathbf{P} = \mathbf{I}$. 
+
+Inserting $\mathbf{P} = \mathbf{I}$ into \eqref{equ_emp_risk_lin_proje} yields 
 \begin{equation}
 \label{eq_zero_trianing_error}
 \emperror(h^{(\vw_{\rm opt})} \mid \dataset^{(\rm train)}) = 0.
@@ -5819,27 +5874,31 @@ Figure \ref{fig_polyn_training}.
 \section{Validation}
 \label{sec_validate_predictor}
 
-Consider an ML problem using a hypothesis space $\hypospace$. We have chosen a particular predictor 
-$\hat{h} \in \hypospace$ by ERM \eqref{equ_def_ERM_funs} using a labeled dataset (the training set). The 
-basic idea of validating the predictor $\hat{h}$ is simple: compute the empirical risk of $\hat{h}$ over another 
-set of data points $(\vx,y)$ which have not been already used for training. It is very important to validate the 
-predictor $\hat{h}$ using labeled data points which do not belong to the dataset which has been used to 
-learn $\hat{h}$ (e.g., via ERM \eqref{equ_def_ERM_funs}). This is reasonable since the predictor $\hat{h}$ 
-tends to ``look better'' on the training set than for other data points, since it is optimized precisely for the data 
-points in the training set. 
+Consider an ML method using some hypothesis space $\hypospace$. 
+We then learn a predictor $\hat{h} \in \hypospace$ by ERM \eqref{equ_def_ERM_funs} 
+using a labeled dataset (the training set). The basic idea of validating the 
+predictor $\hat{h}$ is simple: compute the empirical risk of $\hat{h}$ on a 
+new set of data points $(\vx,y)$ which have not been already used for training. 
+
+It is very important to validate the predictor $\hat{h}$ using labeled data 
+points which do not belong to the dataset which has been used to learn 
+$\hat{h}$ (e.g., via ERM \eqref{equ_def_ERM_funs}). The predictor $\hat{h}$ 
+tends to ``look better'' on the training set than for other data points, 
+since it is optimized precisely for the data points in the training set. 
 \vspace*{2mm}
 \begin{center}
 \framebox[0.96\textwidth]{
  \parbox{0.9\textwidth}{
 \begin{quote}
-A golden rule of ML practice: try always to use different data points for the training (see \eqref{equ_def_ERM_funs}) 
-and the validation of a predictor $\hat{h}$!
+A golden rule of ML practice: try always to use different data points 
+for the training (see \eqref{equ_def_ERM_funs}) and the validation 
+of a predictor $\hat{h}$!
 \end{quote}
 }}
 \end{center}
  
-A very simple recipe for implementing learning and validation of a predictor based on one single labeled dataset 
-$\dataset = \{(\vx^{(\sampleidx)},y^{(\sampleidx)})\}_{\sampleidx=1}^{\samplesize}$ is as follows (see Figure \ref{fig_split_train_val}): 
+A very simple recipe for implementing learning and validation of a 
+predictor based on one single labeled dataset $\dataset = \{(\vx^{(\sampleidx)},y^{(\sampleidx)})\}_{\sampleidx=1}^{\samplesize}$ is as follows (see Figure \ref{fig_split_train_val}): 
 \begin{enumerate} 
 \item randomly divide (``split'') the entire dataset $\dataset$ of labeled snapshots into two disjoint subsets 
 $\trainset$ (the ``training set'') and $\valset$ (the ``validation set''): 

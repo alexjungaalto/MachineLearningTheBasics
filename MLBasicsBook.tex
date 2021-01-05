@@ -5125,10 +5125,28 @@ in solving \eqref{equ_zero_grad_condition_putting_together_special_form_mtx} at 
 \section{Exercise} 
 \label{sec_exercise_chap_4} 
 
-\subsection{Linear Regression}
+\subsection{Uniqueness in Linear Regression}
 \label{ex_chap_5_lin_reg} 
-Consider linear regression with squared error loss. When is the optimal linear predictor 
-unique. Does there always exist an optimal linear predictor?
+Consider linear regression with squared error loss. When 
+is the optimal linear predictor unique. Does there always exist an optimal linear predictor?
+
+
+\subsection{A Simple Linear Regression Method}
+\label{ex_chap_5_bias}
+Consider data points characterized by single numeric feature $x$ 
+and label $y$. We learn a hypothesis map of the form $h(x) = x + b$ 
+with some bias $b \in \mathbb{R}$. Can you write down a formula 
+for the optimal $b$, that minimizes the average squared error on 
+training data $\big(x^{(1)},y^{(1)} \big),\ldots,\big(x^{(\samplesize)},y^{(\samplesize)}\big)$.   
+	
+\subsection{A Simple Least Absolute Deviation Method}
+\label{ex_chap_5_bias_absoluate_error}
+Consider data points characterized by single numeric feature $x$ 
+and label $y$. We learn a hypothesis map of the form $h(x) = x + b$ 
+with some bias $b \in \mathbb{R}$. Can you write down a formula 
+for the optimal $b$, that minimizes the average absolute error on 
+training data $\big(x^{(1)},y^{(1)} \big),\ldots,\big(x^{(\samplesize)},y^{(\samplesize)}\big)$.   
+		
 
 \subsection{Polynomial Regression} 
 \label{ex_chap_5_poly_reg} 
@@ -5248,27 +5266,36 @@ many state-of-the art ML methods, including deep learning methods.
 \section{The Basic GD Step}
 \label{sec_basic_GD_iteration}
 
-We now discuss a very simple, yet quite powerful, algorithm for finding the weight vector $\vw_{\rm opt}$ which 
-solves continuous optimization problems like \eqref{equ_def_ERM_continous}. Let us assume we have already some 
-guess (or approximation) $\vw^{(k)}$ for the optimal weight vector $\vw_{\rm opt}$ and would like to improve it to a 
-new guess $\vw^{(k+1)}$ which yields a smaller value of the objective function $f(\vw^{(k+1)}) < f(\vw^{(k)})$. 
-For a differentiable objective function $f(\vw)$, we can use the approximation 
-$f(\vw^{(k+1)})  \approx f(\vw^{(k)}) + (\vw^{(k+1)} - \vw^{(k)})^{T} \nabla f(\vw^{(k)})$ (cf. \eqref{equ_linear_approx_diff}) for $\vw^{(k+1)}$ 
-not too far away from $\vw^{(k)}$. %(cf. \eqref{equ_linear_approx_diff}). 
-Thus, we should be able to enforce $f(\vw^{(k+1)}) < f(\vw^{(k)})$ by choosing 
+We now discuss a very simple, yet quite powerful, algorithm for 
+finding the weight vector $\vw_{\rm opt}$ which solves continuous 
+optimization problems like \eqref{equ_def_ERM_continous}. 
+
+Let us assume we have already some guess (or approximation) 
+$\vw^{(k)}$ for the optimal weight vector $\vw_{\rm opt}$ and 
+would like to improve it to a new guess $\vw^{(k+1)}$ which yields 
+a smaller value of the objective function $f(\vw^{(k+1)}) < f(\vw^{(k)})$. 
+
+For a differentiable objective function $f(\vw)$, we can use the 
+approximation $f(\vw^{(k+1)})  \approx f(\vw^{(k)}) + (\vw^{(k+1)} - \vw^{(k)})^{T} \nabla f(\vw^{(k)})$ (cf. \eqref{equ_linear_approx_diff}) for $\vw^{(k+1)}$ not too far away from $\vw^{(k)}$. %(cf. \eqref{equ_linear_approx_diff}). 
+Thus, we should be able to enforce $f(\vw^{(k+1)}) < f(\vw^{(k)})$ 
+by choosing 
 \begin{equation} 
 \label{equ_def_GD_step}
 \vw^{(k+1)} = \vw^{(k)} - \alpha \nabla f(\vw^{(k)})
 \end{equation} 
-with a sufficiently small {\bf step size} $\alpha>0$ (a small $\alpha$ ensures that the linear approximation \eqref{equ_linear_approx_diff} is valid). 
+with a sufficiently small {\bf step size} $\alpha>0$ (a small $\alpha$ 
+ensures that the linear approximation \eqref{equ_linear_approx_diff} is valid). 
 Then, we repeat this procedure to obtain $\vw^{(k+2)} = \vw^{(k+1)} - \alpha \nabla f(\vw^{(k+1)})$ and so on. 
 
-The update \eqref{equ_def_GD_step} amounts to a {\bf gradient descent (GD) step}. It turns out that for a convex differentiable 
-objective function $f(\vw)$ and sufficiently small step size $\alpha$, the iterates $f(\vw^{(k)})$ obtained by repeating 
-the GD steps \eqref{equ_def_GD_step} converge to a minimum, i.e., $\lim_{k \rightarrow \infty} f(\vw^{(k)}) = f(\vw_{\rm opt})$ (see Figure \ref{fig_basic_GD_step}). 
-When the GD step is used within an ML method (see Section \ref{sec_lin_reg} and Section \ref{sec_LogReg}), the step size $\alpha$ is also referred to 
-as the {\bf learning rate}. 
+The update \eqref{equ_def_GD_step} amounts to a {\bf gradient descent (GD) step}. 
+For a convex differentiable objective function $f(\vw)$ 
+and sufficiently small step size $\alpha$, the iterates $f(\vw^{(k)})$ 
+obtained by repeating the GD steps \eqref{equ_def_GD_step} converge 
+to a minimum, i.e., $\lim_{k \rightarrow \infty} f(\vw^{(k)}) = f(\vw_{\rm opt})$ (see Figure \ref{fig_basic_GD_step}). 
 
+When the GD step is used within an ML method (see Section \ref{sec_lin_reg} 
+and Section \ref{sec_LogReg}), the step size $\alpha$ is also referred to 
+as the {\bf learning rate}. 
 \begin{figure}
 \begin{center}
   \begin{tikzpicture}[scale=0.9]
@@ -5290,18 +5317,22 @@ as the {\bf learning rate}.
 \label{fig_basic_GD_step}
 \end{figure}
 
-In order to implement the GD step \eqref{equ_def_GD_step} we need to choose the step size 
-$\alpha$ and we need to be able to compute the gradient $\nabla f(\vw^{(k)})$. Both tasks can 
-be very challenging for an ML problem. The success of deep learning methods, which represent 
-predictor maps using ANN (see Section \ref{sec_deep_learning}), can be partially attributed to 
-the ability of computing the gradient $\nabla f(\vw^{(k)})$ efficiently via a message passing protocol 
-known as back-propagation \cite{Goodfellow-et-al-2016}. 
+In order to implement the GD step \eqref{equ_def_GD_step} we need 
+to choose the step size $\alpha$ and we need to be able to compute 
+the gradient $\nabla f(\vw^{(k)})$. Both tasks can be very challenging 
+for an ML problem. 
 
-For the particular case of linear regression (see Section \ref{sec_lin_regression}) and logistic 
-regression (see Section \ref{sec_GD_logistic_regression}), we will present precise conditions 
-on the step size $\alpha$ which guarantee convergence of GD in Section \ref{sec_lin_reg} and 
-Section \ref{sec_GD_logistic_regression}. Moreover, the objective functions $f(\vw)$ arising 
-within linear and logistic regression allow for closed-form expressions of the gradient $\nabla f(\vw)$.
+The success of deep learning methods, which represent predictor maps 
+using ANN (see Section \ref{sec_deep_learning}), can be partially attributed to 
+the ability of computing the gradient $\nabla f(\vw^{(k)})$ efficiently 
+via a message passing protocol known as {\bf back-propagation} \cite{Goodfellow-et-al-2016}. 
+
+For the particular case of linear regression (see Section \ref{sec_lin_regression}) 
+and logistic regression (see Section \ref{sec_GD_logistic_regression}), we 
+will present precise conditions on the step size $\alpha$ which guarantee 
+convergence of GD in Section \ref{sec_lin_reg} and Section \ref{sec_GD_logistic_regression}. 
+Moreover, the objective functions $f(\vw)$ arising within linear and logistic 
+regression allow for closed-form expressions of the gradient $\nabla f(\vw)$.
 
 \section{Choosing Step Size} 
 
@@ -6256,7 +6287,11 @@ i.i.d.\ copies, we can replace exact computations (expectations)
 by empirical approximations (sample averages).  
 
 
-\section{Diagnosis} 
+\section{Diagnosing ML} 
+\emph{compare training, validation and benchmark error. benchmark can 
+be Bayes risk when using probabilistic model (such as i.i.d.), or human 
+performance or risk of some other ML methods ("experts" in regret framework)  }
+
 Consider a predictor $\hat{h}$ obtained from ERM \eqref{equ_def_ERM_funs} 
 with training error $\emperror(\hat{h}| \trainset)$ and validation 
 error $\emperror(\hat{h}| \dataset^{(\rm val)})$. By comparing 
@@ -7775,14 +7810,21 @@ data such that it does not reveal sensible information about data points.
 
 
 \subsection{Privacy-Preserving Feature Selection} 
-?? ignore features which are sensitive (name, social ID) but not very relevant for actual task (e.g. predicting income).    ???
+?? ignore features which are sensitive (name, social ID) 
+but not very relevant for actual task (e.g. predicting income).    ???
 
 \subsection{Privacy-Preserving Random Projections} 
-?? cheap form: random projections/compressed sensing. random projections blur features of individual 
-data points but still allow to learn a sparse linear model using e.g. Lasso ???
+?? cheap form: random projections/compressed sensing. 
+random projections blur features of individual data points 
+but still allow to learn a sparse linear model using e.g. Lasso ???
 
 
-
+\section{Exercises} 
+\subsection{Where are you?} 
+\label{ex_where_are_you} 
+Consider a ML method that uses FMI data for temperature forecasts. 
+The ML methods downloads the following sequence of daily temperatures: ??,???,???,??. 
+What is the most likely  nearest observation station to the ML user ? 
 
 
 

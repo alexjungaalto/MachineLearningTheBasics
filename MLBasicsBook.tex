@@ -2070,17 +2070,18 @@ its cardinality $|\hypospace|$ which is simply the number of
 its elements. 
 {\bf Example.} Consider data points represented by $100 \times 10\!=\!1000$ 
 black and white pixels (see Figure \ref{fig_snapshot_pixels}) and 
-characterized by a binary label. This amounts to a feature space 
-$\featurespace = \{0,1\}^{1000}$ and label space $\labelspace = \{0,1\}$. 
-The largest possible hypothesis space consists of maps from 
-$\featurespace$ to $\labelspace$. The cardinally of this space is 
-$|\hypospace| = 2^{1000}$.
+characterized by a binary label $y \in \{0,1\}$. We can model such 
+data points using the feature space $\featurespace = \{0,1\}^{1000}$ 
+and label space $\labelspace = \{0,1\}$. The largest possible hypothesis 
+space $\hypospace = \labelspace^\featurespace$ consists of all 
+maps from $\featurespace$ to $\labelspace$. The size or cardinality 
+of this space is $|\hypospace| = 2^{2^{1000}}$.
 
 Many ML methods use a hypothesis space which contains 
 infinitely many different predictor maps (see, e.g., \eqref{equ_def_hypo_linear_pred}). 
-For infinite hypothesis spaces, we cannot use its 
-cardinality as a measure for its size. Different concepts 
-have been studied for measuring the size of infinite 
+For an infinite hypothesis spaces, we cannot simply use the 
+number of its elements as a measure for its size. Different 
+concepts have been studied for measuring the size of infinite 
 hypothesis spaces with the {\bf Vapnik–Chervonenkis (VC) dimension} 
 being maybe the most famous one \cite{VapnikBook}. 
 
@@ -2091,27 +2092,24 @@ $\sizehypospace$ of arbitrary data points that can be perfectly fit
 with different features, we can always find a hypothesis $h \in \sizehypospace$ 
 such that $y=h(\vx)$ for all data points $(\vx,y) \in \dataset$. 
 
-Let us illustrate our definition for the size of a hypothesis space 
+Let us illustrate our concept for the size of a hypothesis space 
 with two examples: linear regression and polynomial regression. 
 Linear regression uses the hypothesis space 
-$$\hypospace^{(\featuredim)} = \{ h(\cdot): \mathbb{R}^{\featuredim} \rightarrow \mathbb{R}: h(\vx) = \vw^{T} \vx \mbox{ with some vector } \vw \in \mathbb{R}^{\featurelen}\}.$$ 
-Consider $\samplesize$ data points characterized by feature 
-vectors $\vx \in \mathbb{R}^{(\featuredim)}$ and a numeric label 
-$y \in \mathbb{R}$. We assume that data points are i.i.d.\ realizations 
-of a continuous random vector $\vx$. This implies that the matrix 
-obtained by stacking (column-wise) the feature vectors is full rank 
-with probability one. Basic linear algebra allows to show that 
+$$\hypospace^{(\featuredim)} = \{ h: \mathbb{R}^{\featuredim} \rightarrow \mathbb{R}: h(\vx) = \vw^{T} \vx \mbox{ with some vector } \vw \in \mathbb{R}^{\featurelen}\}.$$ 
+Consider $\samplesize$ data points, each characterized by a feature 
+vector $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and a numeric label 
+$y^{(\sampleidx)} \in \mathbb{R}$. We assume that data points are 
+realizations of i.i.d.\ continuous random variables with the same 
+probability density function. 
+Under this assumption, the matrix obtained by stacking (column-wise) the 
+feature vectors is full rank with probability one. Basic linear algebra allows to show that 
 such a set of data points can be perfectly fit by a linear map $h \in \hypospace^{(\featuredim)}$ 
 as long as $\samplesize \leq \featuredim$. The size of the linear 
 hypothesis space $\hypospace^{(\featuredim)}$ is therefore $\sizehypospace = \featuredim$. 
 
-As a second example, consider data points characterized 
-by a single numeric feature $x$ and numeric label $y$. 
-Polynomial regression learns a predictor map out of 
-the hypothesis space $\hypospace_{\rm poly}^{(\featuredim)}$. 
-This hypothesis space is constituted by the set of  
-polynomials with maximum degree $\featuredim$. 
-
+As a second example, consider the hypothesis space 
+$\hypospace_{\rm poly}^{(\featuredim)}$ which is constituted 
+by the set of polynomials with maximum degree $\featuredim$. 
 The fundamental theorem of algebra tells us that any set 
 of $\samplesize$ data points with different features can 
 be perfectly fit by a polynomial of degree $\featuredim$ 
@@ -3163,15 +3161,17 @@ with the scalar maps $\phi_{j}: \mathbb{R} \rightarrow \mathbb{R}$ which
 are referred to as {\bf basis functions}. The choice of basis functions 
 depends heavily on the particular application and the underlying relation 
 between features and labels of the observed data points. The basis 
-functions underlying polynomial regression are $\phi_{j}(x)= x^{j}$. Another 
-popular choice for the basis functions are ``Gaussians'' 
+functions underlying polynomial regression are $\phi_{j}(x)= x^{j}$. 
+
+Another popular choice for the basis functions are ``Gaussians'' 
 \begin{equation} 
 \label{equ_basis_Gaussian}
-\phi_{\sigma,\mu}(x) = \exp(-(1/(2\sigma^{2})) (x\!-\!\mu)^{2}) 
+\phi_{\sigma,\mu}(x) = \exp(-(1/(2\sigma^{2})) (x\!-\!\mu)^{2}). 
 \end{equation}
-which are parametrized by the variance $\sigma^{2}$ and the mean (shift) $\mu$. 
-
-We obtain Gaussian basis linear regression by combining the feature map 
+The family \eqref{equ_basis_Gaussian} of maps is parametrized by 
+the variance $\sigma^{2}$ and the mean (shift) $\mu$. We obtain 
+{\bf Gaussian basis linear regression} by combining 
+the feature map 
 \begin{equation} 
 \phi(x) = \big (\phi_{\sigma_{1},\mu_{1}}(x) ,\ldots,\phi_{\sigma_{\featuredim},\mu_{\featuredim}}(x) \big)^{T} 
 \end{equation}
@@ -3187,9 +3187,12 @@ different choices for the variance $\sigma^{2}$ and shifts $\mu_{j}$
 used for the Gaussian function in \eqref{equ_basis_Gaussian}. 
 These parameters have to be chosen suitably for the ML application 
 at hand (e.g., using model selection techniques discussed in Section \ref{sec_modsel}). 
+
 The hypothesis space \eqref{equ_def_Gauss_hypospace} is parameterized 
-by the weight vector $\vw \in \mathbb{R}^{\featuredim}$ since each element 
-of $\hypospace_{\rm Gauss}$ corresponds to a particular choice for the weight vector $\vw$. 
+by a weight vector $\vw \in \mathbb{R}^{\featuredim}$. Each element 
+of $\hypospace_{\rm Gauss}$ corresponds to a particular choice 
+for the weight vector $\vw$. Instead of searching over $\hypospace_{\rm Gauss}$ 
+to find a good hypothesis, we can search over $\mathbb{R}^{\featuredim}$.
 
 %Note that choosing the variance $\sigma^{2}$ of the Gaussian basis functions \eqref{equ_basis_Gaussian} small and using a large number of 
 %regular spaced Gaussian basis functions we can approximate well any sufficiently regular function (which is not changing too rapidly). 
@@ -5229,12 +5232,14 @@ many state-of-the art ML methods, including deep learning methods.
 \node [right] at (-4.1,1.7) {$f(\vw)$} ;
 \draw[ultra thick, domain=-4.1:4.1] plot (\x,  {(1/4)*\x*\x});
 \draw[dashed, thick, domain=1:3.6] plot (\x,  {\x - 1}) node[right] {$ f(\vw_{0})\!+\!(\vw\!-\!\vw_{0})^{T} \nabla f(\vw_{0})$};
-\draw [fill] (2,1) circle [radius=0.05] node[right] {$f(\vw_{0})$};
+\draw [fill] (2,1) circle [radius=0.1] node[right] {$f(\vw_{0})$};
 \draw[thick,->] (3,2) -- (3.5,1.5) node[right] {$\mathbf{n}$};
 \end{tikzpicture}
 \end{center}
-\caption{A smooth function $f(\vw)$ can be approximated locally around a point $\vw_{0}$ using a 
-hyperplane whose normal vector $\mathbf{n} = (\nabla f(\vw_{0}),-1)$ is determined by the gradient $\nabla f(\vw_{0})$.}
+\caption{A smooth function $f(\vw)$ can be approximated locally around 
+	a point $\vw_{0}$ using a hyperplane whose normal vector 
+	$\mathbf{n} = (\nabla f(\vw_{0}),-1)$ is determined by the 
+	gradient $\nabla f(\vw_{0})$.}
 \label{fig_smooth_function}
 \end{figure}
 

@@ -358,15 +358,17 @@ pace and scale.
 This book portrays ML as the combination of three basic components: 
 data, model and loss. ML methods combine these three components 
 within computationally efficient implementations of the basic scientific 
-principle ``trial and error''. This principle continuously adapts a hypothesis 
-about a phenomenon that generates observable data. 
+principle ``trial and error''. This principle consists of the continues 
+adaptation of a hypothesis about a phenomenon that generates data. 
 
 ML methods use a hypothesis to compute predictions for future events. 
-In general, ML methods have choose from a large set of different hypotheses. 
-We refer to this set as the model of a ML method. The adaptation or 
-improvement of the hypothesis is based on measuring the discrepancy 
+ML methods choose or learn a hypothesis from a (typically very) large set 
+of candidate hypotheses. We refer to this set as candidates as the model 
+of a ML method. 
+
+The adaptation or improvement of the hypothesis is based on the discrepancy 
 between predictions and observed data. ML methods use a loss function 
-to measure the discrepancy between predictions and data.
+to quantify this discrepancy.
 
 A plethora of different ML methods is obtained by combining different design 
 choices for the data representation, model and loss. ML methods also differ 
@@ -733,10 +735,10 @@ ML methods can contain billions of tunable or learnable parameters. To
 make ML methods computationally efficient we need to use suitable representations 
 for data and models. 
 
-Maybe the most important mathematical structure that provides such a 
-representation is the Euclidean space $\mathbb{R}^{n}$ with some dimension 
+Maybe the most widely used mathematical structure for representing data in 
+ML applications is the Euclidean space $\mathbb{R}^{n}$ with some dimension 
 $n$. The rich algebraic and geometric structure of $\mathbb{R}^{n}$ allows 
-for the design of ML algorithms that can process vast amounts of data to 
+to design of ML algorithms that can process vast amounts of data to 
 quickly update a model (parameters). 
 
 The scatter plot in Figure \ref{fig_scatterplot_temp_FMI} depicts 
@@ -747,9 +749,9 @@ and the maximum daytime temperature $y$ into a vector $\vz$ of
 length two. 
 
 We can use the Euclidean space $\mathbb{R}^{n}$ not only to represent 
-data points but also models for the data. One such class of models is 
-obtained by linear subsets of $\mathbb{R}^{n}$, such as those depicted 
-in Figure \ref{fig_three_maps_example}. We can then use the geometric 
+data points but also to represent models for the data. One such class of 
+models is obtained by linear subsets of $\mathbb{R}^{n}$, such as those 
+depicted in Figure \ref{fig_three_maps_example}. We can then use the geometric 
 structure of $\mathbb{R}^{n}$, defined by the Euclidean norm, to search 
 for the best model. As an example, we could search for the linear model, 
 represented by a straight line, such that the average distance to the data 
@@ -1029,12 +1031,13 @@ measured or computed easily. This is in contrast to features which
 are properties of data points that can be measured or computed 
 easily (see Chapter \ref{sec_the_data}). 
 
-Supervised ML methods aim at finding a (predictor or classifier) map 
-that reads in features of a data point and outputs a prediction. The 
+{\bf Supervised Learning.} Supervised learning methods learn 
+a (predictor or classifier) map that reads in features of a data point 
+and outputs a prediction for its label (quantity of interest). The 
 prediction should be an accurate approximation to the true label 
 (see Chapter \ref{ch_Elements_ML}). To find such a map, supervised 
-ML methods use historic data in order to try out different choices for 
-the map and picking the best one. 
+ML methods use labeled (training) data to try out different choices for 
+the map.  
 
 The basic idea of supervised ML methods, as illustrated in 
 Figure \ref{fig_curve_fitting}, is to fit a curve (representing 
@@ -5371,27 +5374,39 @@ might not converge at all (it might happen that $f(\vw^{(k+1)}) > f(\vw^{(k)})$!
 
 
 
-The choice of the step size $\alpha$ in the GD step \eqref{equ_def_GD_step} has a significant influence on the performance of 
-Algorithm \ref{alg:gd_linreg}. If we choose the step size $\alpha$ too large, the GD steps \eqref{equ_def_GD_step} diverge 
-(see Figure \ref{fig_small_large_alpha}-(b)) and in turn, Algorithm \ref{alg:gd_linreg} to fail in delivering an approximation of 
-the optimal weight vector $\vw_{\rm opt}$ (see \eqref{equ_def_cost_linreg}). If we choose the step size $\alpha$ too small 
-(see Figure \ref{fig_small_large_alpha}-(a)), the updates \eqref{equ_def_GD_step} make only very little progress towards 
-approximating the optimal weight vector $\vw_{\rm opt}$. In many applications it is possible to repeat the GD steps only for 
-a moderate number (e.g., when processing streaming data). Thus, if the GD step size is chosen to small, Algorithm \ref{alg:gd_linreg} 
-will fail to deliver a good approximation of $\vw_{\rm opt}$ within an acceptable amount of computation time. 
+The choice of the step size $\alpha$ in the GD step \eqref{equ_def_GD_step} 
+has a strong impact on the performance of Algorithm \ref{alg:gd_linreg}. If we 
+choose the step size $\alpha$ too large, the GD steps \eqref{equ_def_GD_step} 
+diverge (see Figure \ref{fig_small_large_alpha}-(b)) and, in turn, 
+Algorithm \ref{alg:gd_linreg} fails n delivering an approximation of 
+the optimal weight vector $\vw_{\rm opt}$ (see \eqref{equ_def_cost_linreg}). 
 
-The optimal choice of the step size $\alpha$ of GD can be a challenging task and many sophisticated approaches 
-have been proposed for its solution (see \cite[Chapter 8]{Goodfellow-et-al-2016}). We will restrict ourselves to a simple sufficient 
-condition on the step size which guarantees convergence of the GD iterations $\vw^{(k)}$ for $k=1,2,\ldots$. 
-If the objective function $f(\vw)$ is convex and smooth, the GD steps \eqref{equ_def_GD_step} converge 
-to an optimum $\vw_{\rm opt}$ if the step size $\alpha$ satisfies \cite{nestrov04}
+If we choose the step size $\alpha$ too small (see Figure \ref{fig_small_large_alpha}-(a)), 
+the updates \eqref{equ_def_GD_step} make only very little progress towards 
+approximating the optimal weight vector $\vw_{\rm opt}$. In applications that
+require real-time processing of data streams, it is possible to repeat the GD 
+steps only for a moderate number.. Thus, if the GD step size is chosen to 
+small, Algorithm \ref{alg:gd_linreg} will fail to deliver a good approximation 
+of $\vw_{\rm opt}$ within an acceptable amount of computation time. 
+
+The optimal choice of the step size $\alpha$ of GD can be a challenging 
+task and many sophisticated approaches have been proposed for its 
+solution (see \cite[Chapter 8]{Goodfellow-et-al-2016}). We will restrict 
+ourselves to a simple sufficient condition on the step size which guarantees 
+convergence of the GD iterations $\vw^{(k)}$ for $k=1,2,\ldots$. 
+
+If the objective function $f(\vw)$ is convex and smooth, the 
+GD steps \eqref{equ_def_GD_step} converge to an optimum 
+$\vw_{\rm opt}$ for any step size $\alpha$ satisfying \cite{nestrov04}
 \begin{equation} 
 \label{equ_GD_conv_guarantee}
 \alpha \leq \frac{1}{\lambda_{\rm max} \big( \nabla^{2} f(\vw) \big) }\mbox{ for all } \vw \in \mathbb{R}^{\featuredim}. 
 \end{equation} 
-Here, we use the Hessian matrix $ \nabla^{2} f(\vw) \in \mathbb{R}^{\featuredim \times \featuredim}$ of a smooth function $f(\vw)$ 
-whose entries are the second-order partial derivatives $\frac{\partial f(\vw)}{\partial w_{i} \partial w_{j}}$ of the function $f(\vw)$. 
-It is important to note that \eqref{equ_GD_conv_guarantee} guarantees convergence for every possible initialization $\vw^{(0)}$ 
+Here, we use the Hessian matrix $ \nabla^{2} f(\vw) \in \mathbb{R}^{\featuredim \times \featuredim}$ 
+of a smooth function $f(\vw)$ whose entries are the second-order 
+partial derivatives $\frac{\partial f(\vw)}{\partial w_{i} \partial w_{j}}$ 
+of the function $f(\vw)$. It is important to note that \eqref{equ_GD_conv_guarantee} 
+guarantees convergence for every possible initialization $\vw^{(0)}$ 
 of the GD iterations. 
 
 Note that while it might be computationally challenging to determine the maximum eigenvalue 
@@ -5731,14 +5746,16 @@ computing, for each time step $\timeidx$, the iteration
 \section{Exercises}
 
 \subsection{Use Knowledge About Problem Class} 
-Consider the space $\mathcal{P}$ of sequences $f = (f[0],f[1],\ldots)$ that have the following properties 
+Consider the space $\mathcal{P}$ of sequences $f = (f[0],f[1],\ldots)$ 
+that have the following properties 
 \begin{itemize} 
 	\item they are monotone increasing, $f[n] \geq f[m]$ for any $n \geq m$ and $f \in \mathcal{P}$
 	\item a change point $n$, where $f[n] \neq f[n+1]$ can only be at integer multiples of $100$, 
 	e.g., $n=100$ or $n=300$. 
 \end{itemize} 
-Given some unknown function $f \in \mathcal{P}$ and starting point $n_{0}$ the problem is to find 
-the minimum value of $f$ as quickly as possible. We consider iterative algorithms that can query
+Given some unknown function $f \in \mathcal{P}$ and starting 
+point $n_{0}$ the problem is to find the minimum value of $f$ as 
+quickly as possible. We consider iterative algorithms that can query
 the function at some point $n$ to obtain the values $f[n], f[n-1]$ and $f[n+1]$. 
 
 
@@ -5874,8 +5891,14 @@ Inserting $\mathbf{P} = \mathbf{I}$ into \eqref{equ_emp_risk_lin_proje} yields
 \emperror(h^{(\vw_{\rm opt})} \mid \dataset^{(\rm train)}) = 0.
 \end{equation} 
 To sum up: as soon as the number of training examples $\samplesize_{\rm t} = | \dataset_{\rm train}|$ is smaller 
-than the size $\featuredim$ of the feature vector $\vx$, there is a linear predictor $h^{(\vw_{\rm opt})}$ achieving 
-{\bf zero empirical risk} (see \eqref{eq_zero_trianing_error})on the training data. 
+than the size $\featuredim$ of the feature vector $\vx$, there 
+is a linear predictor $h^{(\vw_{\rm opt})}$ achieving {\bf zero empirical risk} 
+(see \eqref{eq_zero_trianing_error})on the training data. The result 
+\eqref{eq_zero_trianing_error} only applies if the feature vectors of 
+the training data points are linearly independent. It can be shown 
+that if the feature vectors $\vx^{(1)},\ldots,\vx^{(\samplesize)} \in \mathbb{R}^{\featuredim}$ 
+are realizations of i.i.d.\ RVs with a continuous probability distribution, 
+then with probability one they are linearly independent whenever \eqref{equ_condition_overfitting} holds. 
 
 While this ``optimal'' predictor $h^{(\vw_{\rm opt})}$ is perfectly accurate on the training 
 data (the training error is zero!), it will typically incur a non-zero average prediction error 
@@ -5986,23 +6009,34 @@ cross-validation.
 \section{Model Selection}
 \label{sec_modsel}
 
-We will now discuss how to use the validation principle of Section \ref{sec_validate_predictor} to perform model selection. 
-As discussed in Chapter \ref{ch_Elements_ML}, the choice of the hypothesis space from which 
-we select a predictor map (e.g., via solving the ERM \eqref{equ_def_ERM_funs}) is a design choice. 
-However, it is often not obvious what a good first choice for the hypothesis space is. Rather, we often try out 
-different choices $\hypospace_{1},\hypospace_{2},\ldots,\hypospace_{M}$ for the hypothesis space. 
+We will now discuss how to use the validation principle of 
+Section \ref{sec_validate_predictor} to perform model selection. 
+As discussed in Chapter \ref{ch_Elements_ML}, the choice of 
+the hypothesis space from which we select a predictor map 
+(e.g., via solving the ERM \eqref{equ_def_ERM_funs}) is a design choice. 
+However, it is often not obvious what a good first choice 
+for the hypothesis space is. We might try out different 
+choices $\hypospace_{1},\hypospace_{2},\ldots,\hypospace_{M}$ 
+for the hypothesis space. 
 
-Consider a prediction problem where the relation between feature $x$ and $y$ is non-linear (see, e.g., Figure \ref{fig_scatterplot}). 
-We might then use polynomial regression (see Section \ref{sec_polynomial_regression}) using the hypothesis 
-space $\hypospace_{\rm poly}^{(\featuredim)}$ with some maximum degree $\featuredim$. For each value of the 
-maximum degree $\featuredim$ we get a different hypothesis space: $\hypospace_{1} = \mathcal{H}_{\rm poly}^{(0)},\hypospace_{2} = \mathcal{H}_{\rm poly}^{(1)},\ldots,\hypospace_{M} = \hypospace_{\rm poly}^{(M-1)}$. 
-Or, instead of polynomial regression, we might use Gaussian basis regression (see Section \ref{sec_linbasreg}), 
-with different choices for the variance $\sigma$ and shifts $\mu$ of the Gaussian basis function \eqref{equ_basis_Gaussian}, 
+Consider data points with a non-linear relation between its 
+feature $x$ and label $y$. We might then use polynomial 
+regression (see Section \ref{sec_polynomial_regression}) 
+using the hypothesis space $\hypospace_{\rm poly}^{(\featuredim)}$ 
+with some maximum degree $\featuredim$. 
+
+Different choices for the maximum degree $\featuredim$ yield 
+a different hypothesis space: $\hypospace_{1} = \mathcal{H}_{\rm poly}^{(0)},\hypospace_{2} = \mathcal{H}_{\rm poly}^{(1)},\ldots,\hypospace_{M} = \hypospace_{\rm poly}^{(M-1)}$. 
+We might also mix polynomial maps using maps obtained from  
+Gaussian basis functions (see Section \ref{sec_linbasreg}), 
+with different choices for the variance $\sigma$ and shifts $\mu$ 
+of the Gaussian basis function \eqref{equ_basis_Gaussian}, 
 e.g., $\hypospace_{1} = \mathcal{H}^{(2)}_{\rm Gauss}$ with $\sigma=1$ and $\mu_{1}=1$ and $\mu_{2}=2$, 
 $\hypospace_{2} = \hypospace^{(2)}_{\rm Gauss}$ with $\sigma = 1/10$, $\mu_{1}=10$, $\mu_{2}= 20$.
 
-A principled approach for choosing a hypothesis space out of a given 
-a set of candidates $\hypospace_{1},\hypospace_{2},\ldots,\hypospace_{M}$ is as follows: 
+A principled approach for choosing a hypothesis space out of a  
+list of candidate spaces $\hypospace_{1},\hypospace_{2},\ldots,\hypospace_{M}$ 
+is as follows: 
 \begin{itemize} 
 \item randomly divide (split) the entire dataset $\dataset$ of labeled snapshots into two disjoint subsets 
 $\trainset$ (the ``training set'') and $\valset$ (the ''validation set''): 
@@ -7897,11 +7931,13 @@ a user.
 &\sampleidx  &\quad &\mbox{Generic index used to enumrate data points in a list of data points. } \nonumber \\
 &\samplesize  &\quad &\mbox{The number of different data points in the training set.} \nonumber \\ 
 &h(\cdot)  &\quad &\mbox{A predictor that maps a feature vector $\vx$ of a data point to a predicted label $\hat{y}=h(\vx)$.} \nonumber \\ 
-&y  &\quad &\mbox{Label of some data point.} \nonumber \\ 
-&y^{(\sampleidx)}  &\quad &\mbox{Label of the $i$th data point.} \nonumber \\ 
+&y  &\quad &\mbox{The label of some data point.} \nonumber \\ 
+&\big(\vx^{(\sampleidx)},y^{(\sampleidx)}\big)  &\quad &\mbox{The $\sampleidx$-th data point wihtin an indexed set of data points.} \nonumber \\ 
+&y^{(\sampleidx)}  &\quad &\mbox{The label of the $i$th data point.} \nonumber \\ 
 &\vx  &\quad &\mbox{Feature vector whose entries are the features of some data point.} \nonumber \\ 
 &\vx^{(\sampleidx)}  &\quad &\mbox{Feature vector whose entries are the features of the $i$th data point.} \nonumber \\ 
-&\featurelen &\quad &\mbox{The number of (real-valued) features of a single data point.} \nonumber
+&\featurelen &\quad &\mbox{The number of (real-valued) features of a single data point.} \nonumber  \\ 
+&x_{j} &\quad &\mbox{The $j$th entry of a vector $\vx=\big(x_{1},\ldots,x_{\featuredim}\big)^{T}$.} \nonumber
 \end{align} 
 
 

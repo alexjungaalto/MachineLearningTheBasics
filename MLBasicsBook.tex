@@ -358,7 +358,7 @@ pace and scale.
 This book portrays ML as the combination of three basic components: 
 data, model and loss. ML methods combine these three components 
 within computationally efficient implementations of the basic scientific 
-principle ``trial and error''. This principle consists of the continues 
+principle ``trial and error''. This principle consists of the continuous 
 adaptation of a hypothesis about a phenomenon that generates data. 
 
 ML methods use a hypothesis to compute predictions for future events. 
@@ -383,12 +383,12 @@ linear regression use the same principle of iteratively updating a model
 based on the discrepancy between model predictions and actual observed 
 data. 
 
-The three component picture of ML championed in this book allows a 
-unified treatment of a wide range of concepts and techniques 
-which seem quite unrelated at first sight. On a low-level, we discuss 
-the regularization effect of early stopping in terms of adjusting the effective 
-model space. On a higher-level, we can interpret privacy-preserving 
-and explainable ML as particular design choices for the model, data and loss. 
+Our three-component picture of ML allows a unified treatment of a 
+wide range of concepts and techniques which seem quite unrelated 
+at first sight. On a low-level, we discuss the regularization effect of 
+early stopping in terms of adjusting the effective model space. On a 
+higher-level, we can interpret privacy-preserving and explainable ML as 
+particular design choices for the model, data and loss. 
 
 To make good use of ML tools it is instrumental to understand 
 its underlying principles at different levels of detail. On a lower-level, 
@@ -517,7 +517,8 @@ temperature $x$ and the maximum daytime temperature $y$.
 	\end{center}
 	\caption{Each dot represents a day that is characterized 
 		by its minimum daytime temperature $x$ and its maximum 
-		daytime temperature $y$ measured at a weather stations in Finland.}
+		daytime temperature $y$ measured at some weather station in 
+		Finland.}
 	\label{fig_scatterplot_temp_FMI}
 	\vspace*{-3mm}
 \end{figure}
@@ -730,7 +731,7 @@ as the initial hypothesis.
 \subsection{Linear Algebra} 
 
 Modern ML methods are computationally efficient methods to fit high-dimensional 
-models to large amounts of data. The models underlying state-of-the art 
+models to large amounts of data. The models underlying state-of-the-art 
 ML methods can contain billions of tunable or learnable parameters. To 
 make ML methods computationally efficient we need to use suitable representations 
 for data and models. 
@@ -743,9 +744,9 @@ quickly update a model (parameters).
 
 The scatter plot in Figure \ref{fig_scatterplot_temp_FMI} depicts 
 data points (individual days) using vectors $\vz \in \mathbb{R}^{2}$. 
-We obtain the vector representation $\vz=(x,y)^{T}$ of a particular 
-day is obtained by stacking the minimum daytime temperature $x$ 
-and the maximum daytime temperature $y$ into a vector $\vz$ of 
+We obtain a vector representation $\vz=(x,y)^{T}$ of a particular 
+day by stacking the minimum daytime temperature $x$ and the 
+maximum daytime temperature $y$ into a vector $\vz$ of 
 length two. 
 
 We can use the Euclidean space $\mathbb{R}^{n}$ not only to represent 
@@ -815,7 +816,7 @@ data to some computer which executes a ML algorithm.
 The design of efficient ML systems also involves the design 
 of efficient communication between data source and ML algorithm. 
 The learning progress of an ML method will be slowed down 
-if it cannot be fed it with data at sufficiently large rate. Given 
+if it cannot be fed with data at sufficiently large rate. Given 
 limited memory or storage capacity, being too slow to process 
 data at their rate of arrival (in real-time) means that we need to 
 ``throw away'' data. The lost data might have carried relevant 
@@ -1084,10 +1085,11 @@ of non-linear maps via artificial neural networks \cite{Goodfellow-et-al-2016}).
 Some ML applications do not need the concept of labels 
 but require only to understand the intrinsic structure of data 
 points. We refer to such applications as {\bf unsupervised ML.} 
-Examples of an intrinsic structure is when the data points 
-can be grouped into few coherent subsets of cluster (see Chapter \ref{ch_Clustering}). 
-Another example for such an intrinsic structure is when the data points 
-are localized around a low-dimensional subspace (see Chapter \ref{ch_FeatureLearning}). 
+One important example for an intrinsic structure of a dataset is 
+when its data points can be grouped into a few coherent subsets 
+of cluster (see Chapter \ref{ch_Clustering}). Another example for 
+such an intrinsic structure is when the data points are localized 
+around a low-dimensional subspace (see Chapter \ref{ch_FeatureLearning}). 
 Unsupervised ML methods allow to determine such an intrinsic structure. 
 
 {\bf Reinforcement Learning.} 
@@ -1123,7 +1125,7 @@ and loss function. The aim of this chapter is to organize ML methods
 according to three dimensions representing data, model and loss. 
 
 Chapter \ref{ch_Optimization} explains how a simple probabilistic 
-model for data lends to the principle of {\bf empirical risk minimization (ERM)} . 
+model for data lends to the principle of {\bf empirical risk minimization (ERM)}. 
 This principle translates the problem of learning into an optimization problem. 
 ML methods based on the ERM are therefore a special class of 
 optimization methods. The ERM principle can be interpreted as 
@@ -1132,7 +1134,7 @@ a precise mathematical formulation of the ``learning by trial and error'' paradi
 Chapter \ref{ch_GD} discusses a powerful principle for learning 
 predictors with a good performance. This principle uses the concept 
 of gradients to locally approximate an objective function used 
-to score predictors. A basic implementation of gradient based 
+to score predictors. A basic implementation of gradient-based 
 optimization is the gradient descent (GD) algorithm. Variations 
 of GD are currently the de-facto standard method for training 
 deep neural networks \cite{Goodfellow-et-al-2016}. 
@@ -1152,10 +1154,14 @@ data. These methods group or partition data points into
 coherent groups which are referred to as clusters. 
 
 The efficiency of ML methods often depends crucially on the choice 
-of data representation. Ideally we would like to have few relevant 
-features to characterize data points. Chapter \ref{ch_FeatureLearning} 
-discusses {\bf feature learning} methods that can automatically 
-determine useful features of data points. 
+of data representation. Ideally we would like to have a small number 
+of highly relevant features to characterize data points. If we use too 
+many features we risk to waste computations on exploring irrelevant 
+features. If we use too few features we might not have enough information 
+to predict the label of a data point. Chapter \ref{ch_FeatureLearning} 
+discusses {\bf feature learning} methods that automatically determine 
+the most relevant features out of the ``raw features'' of a data point. 
+
 %These methods exploit 
 %intrinsic correlations and redundancy in the raw data to construct 
 %few relevant features for data points. These relevant features can 
@@ -4503,8 +4509,8 @@ cannot evaluate the expectation in \eqref{equ_def_risk}.
 %objective function \eqref{equ_def_risk}. 
 %A key idea underlying many ML methods is to find (learn) a predictor map with small empirical risk, 
 %which serves as a proxy for the average prediction error. The resulting ML methods are optimization 
- {\bf Empirical risk minimization (ERM)} replaces the expectation in 
- \eqref{equ_def_risk} with an average over a given set of labeled data points,  
+ {\bf ERM} replaces the expectation in  \eqref{equ_def_risk} with an average 
+ over a given set of labeled data points,  
 \begin{align}
 \label{equ_def_ERM_funs}
    \hat{h} & = \argmin_{h \in \hypospace} \emperror(h|\dataset) \nonumber \\ 
@@ -5245,7 +5251,7 @@ f(\vw) \approx f(\vw_{0}) + (\vw-\vw_{0})^{T} \nabla f(\vw_{0}) \mbox{ for  all 
 The approximation \eqref{equ_linear_approx_diff} lends naturally to an 
 iterative method for finding the minimum of the function $f(\vw)$. This 
 method is known as gradient descent (GD) and (variants of it) underlies 
-many state-of-the art ML methods, including deep learning methods. 
+many state-of-the-art ML methods, including deep learning methods. 
 
 \begin{figure}[htbp]
 \begin{center}
@@ -7928,11 +7934,11 @@ a user.
 \section{Machine Learning}
 \begin{align} 
 &\timeidx  &\quad &\mbox{A discrete time index.} \nonumber \\
-&\sampleidx  &\quad &\mbox{Generic index used to enumrate data points in a list of data points. } \nonumber \\
+&\sampleidx  &\quad &\mbox{Generic index used to enumerate data points in a list of data points. } \nonumber \\
 &\samplesize  &\quad &\mbox{The number of different data points in the training set.} \nonumber \\ 
 &h(\cdot)  &\quad &\mbox{A predictor that maps a feature vector $\vx$ of a data point to a predicted label $\hat{y}=h(\vx)$.} \nonumber \\ 
 &y  &\quad &\mbox{The label of some data point.} \nonumber \\ 
-&\big(\vx^{(\sampleidx)},y^{(\sampleidx)}\big)  &\quad &\mbox{The $\sampleidx$-th data point wihtin an indexed set of data points.} \nonumber \\ 
+&\big(\vx^{(\sampleidx)},y^{(\sampleidx)}\big)  &\quad &\mbox{The $\sampleidx$-th data point within an indexed set of data points.} \nonumber \\ 
 &y^{(\sampleidx)}  &\quad &\mbox{The label of the $i$th data point.} \nonumber \\ 
 &\vx  &\quad &\mbox{Feature vector whose entries are the features of some data point.} \nonumber \\ 
 &\vx^{(\sampleidx)}  &\quad &\mbox{Feature vector whose entries are the features of the $i$th data point.} \nonumber \\ 
@@ -7946,8 +7952,24 @@ a user.
 
 % \printglossaries 
 \begin{itemize}
-\item {\bf classification problem}: an ML problem involving a discrete label space $\labelspace$ 
-such as $\labelspace\!=\!\{-1,1\}$ for binary classification, or $\labelspace\!=\!\{1,2,\ldots,K\}$ 
+	
+\item {\bf i.i.d.}: independent and identically 
+distributed. We refer to a list $r^{(1)},\ldots,r^{(\samplesize)}$ 
+of RVs as i.i.d. if these RV are mutually independent and 
+each of them has the same marginal probability distribution $p(r)$.  
+	
+\item {\bf a sample}: a sequence of data points 
+$\vz^{(1)},\ldots,\vz^{(\sampleidx)}$ which are 
+interpreted as the realizations of $\sampleidx$ 
+i.i.d.\ random variables with the same probability 
+distribution $p(\vz)$. The length $\samplesize$ 
+of the list is also known as the {\bf sample size}.  
+
+
+
+\item {\bf classification problem}: an ML problem involving 
+a discrete label space $\labelspace$ such as $\labelspace\!=\!\{-1,1\}$ 
+for binary classification, or $\labelspace\!=\!\{1,2,\ldots,K\}$ 
 with $K\!>\!2$ for multi-class classification. 
 
 \item {\bf classifier}: a hypothesis map $h: \featurespace \rightarrow \labelspace$ with discrete 
@@ -7982,7 +8004,7 @@ the product $p(x)p(y)p(z)$ with the marginal probability distribution $p(\cdot)$
 for all three variables $x,y,z$. 
 
 \item {\bf label}: some property of a data point which is of interest, such as the fact if a webcam 
-snapshot shows a forest fire or not. In contrast to features, labels are properties of a data points 
+snapshot shows a forest fire or not. In contrast to features, labels are properties of data points 
 that cannot be measured or computed easily in an automated fashion. Instead, acquiring accurate 
 label information often involves human expert labor. Many ML methods aim at learning accurate 
 predictor maps that allow to guess or approximate the label of a data point based on its features. 

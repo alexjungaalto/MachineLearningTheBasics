@@ -417,9 +417,9 @@ Tomi Janhunen, Yu Tian, Natalia Vesselinova, Ekaterina Voskoboinik,
 Buse Atli, Stefan Mojsilovic for carefully reviewing early 
 drafts of this tutorial. Some of the figures have been 
 generated with the help of Eric Bach. The author is grateful 
-for the feedback received from Jukka Suomela, Oleg Vlasovetc, 
-Georgios Karakasidis, Joni P{\"a}{\"a}kk{\"o}, Harri Wallenius and 
-Satu Korhonen. 
+for the feedback received from Jukka Suomela, V{\"a}ini{\"o} Mehtola, 
+Oleg Vlasovetc, Anni Niskanen, Georgios Karakasidis, Joni P{\"a}{\"a}kk{\"o}, 
+Harri Wallenius and Satu Korhonen. 
 
 %\end{abstract}
 
@@ -1333,11 +1333,23 @@ A key parameter of a dataset is the number $\samplesize$ of individual
 datapoints it contains. Statistically, the larger the sample size $\samplesize$ 
 the better. However, there might be restrictions on computational 
 resources that limit the maximum sample size $\samplesize$ that can be 
-processed. ??? nice figure illustrating a dataset with $m$ data points????
+processed. 
 
-In general t is impossible to have full access to every single 
-microscopic property of a data point. Consider a data point 
-that represents a vaccine. A full characterization of such a 
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=7cm]{DataSet.jpg}
+	\caption{Two main parameters of a dataset are the number 
+		$\samplesize$ of data points it contains and the number 
+		$\featuredim$ of features used to characterize individual 
+		data points. Another important characteristic of a dataset 
+		is the ratio $\samplesize/\featuredim$. }
+	\label{fig:image}
+\end{figure}
+
+
+For most applications, it is impossible to have full access to 
+every single microscopic property of a data point. 
+Consider a data point that represents a vaccine. A full characterization of such a 
 data point would require to specify its chemical composition 
 down to level of molecules and atoms. Moreover, there are 
 properties of a vaccine that depend on the patient which 
@@ -4152,24 +4164,35 @@ if they are considered ``similar'' in an application-specific sense. The extend 
 connected nodes $i,j \in \nodes$ is encoded in the edge weights $W_{i,j} > 0$ which are collected 
 into the weight matrix $\mathbf{W} \in \mathbb{R}_{+}^{|\nodes| \times |\nodes|}$.  
 
-The notion of similarity between data points can be based on physical proximity (in time or space), 
-communication networks or probabilistic graphical models \cite{LauritzenGM,BishopBook,koller2009probabilistic}. 
-Besides the graph structure, datasets carry additional information in the form of labels associated 
-with individual data points. In a social network, we might define the personal preference for some 
-product as the label associated with a data point (which represents a user profile). Acquiring labels 
-is often costly and requires manual labor or experiment design. Therefore, we assume to have 
-access to the labels of only few data points which belong to a small ``training set''. 
+The notion of similarity between data points can be based on physical 
+proximity (in time or space), communication networks or probabilistic 
+graphical models \cite{LauritzenGM,BishopBook,koller2009probabilistic}. 
 
-The availability of accurate network models for datasets provides computational and statistical benefits. 
-Computationally, network models lend naturally to highly scalable ML methods which 
+Besides the graph structure, datasets carry additional information 
+in the form of labels associated with individual data points. In a 
+social network, we might define the personal preference for some 
+product as the label associated with a data point (which represents 
+a user profile). 
+
+Acquiring labels is often costly and requires manual labor or 
+experiment design. Therefore, we assume to have access to 
+the labels of only a few data points which belong to a small ``training set''. 
+
+The availability of accurate network models for datasets provides 
+computational and statistical benefits. Computationally, network 
+models lend naturally to highly scalable ML methods which 
 can be implemented as message passing over the empirical graph \cite{DistrOptStatistLearningADMM}. 
-Network models enable to borrow statistical strength between connected data points, which allows 
-semi-supervised learning (SSL) methods to capitalize on massive amounts of unlabeled data \cite{SemiSupervisedBook}. 
 
-The key idea behind many SSL methods is the assumption that labels of close-by data points are similar, 
-which allows to combine partially labeled data with its network structure in order to obtain predictors which generalize 
-well \cite{SemiSupervisedBook,belkin2004regularization}. While SSL methods on graphs have been 
-applied to many application domains, the precise understanding of which type of data allow for 
+Network models borrow statistical strength between connected data 
+points, which allows semi-supervised learning (SSL) methods to 
+capitalize on massive amounts of unlabeled data \cite{SemiSupervisedBook}. 
+
+The key idea behind many SSL methods is the assumption that labels 
+of close-by data points are similar, which allows to combine partially 
+labeled data with its network structure in order to obtain predictors 
+which generalize well \cite{SemiSupervisedBook,belkin2004regularization}. 
+While SSL methods on graphs have been applied to many application 
+domains, the precise understanding of which type of data allow for 
 accurate SSL is still in its infancy \cite{ijcai2017-450,NSZ09,elalaoui16}. 
 
 %Consider a network-structured dataset which we represent by a simple undirected weighted graph $\graph = (\nodes, \edges, \mathbf{W})$. 
@@ -4252,13 +4275,15 @@ accurate SSL is still in its infancy \cite{ijcai2017-450,NSZ09,elalaoui16}.
 \end{center}
 \end{minipage}
 \end{center}
-\caption{\label{fig_graph_signals} Examples for the empirical graph of networked data. (a) 
-Chain graph representing signal amplitudes of discrete time signals.  (b) Grid graph representing 
-pixels of 2D-images. (c) Empirical graph $\graph\!=\!(\nodes,\edges,\mW)$ for a dataset obtained 
-from the social relations between members of a Karate club \cite{Zachary77}. The empirical graph 
-contains $\samplesize$ nodes $i \!\in\!\nodes\!=\!\{1,\ldots,\samplesize \}$ which represent $\samplesize$ 
-individual club members. Two nodes $i,j\!\in\!\nodes$ are connected by an edge $\{i,j\}\!\in\!\edges$ if 
-the corresponding club members have interacted outside the club.}
+\caption{\label{fig_graph_signals} Examples for the empirical graph of 
+	networked data. (a) Chain graph representing signal amplitudes of 
+	discrete time signals.  (b) Grid graph representing pixels of 2D-images. 
+	(c) Empirical graph $\graph\!=\!(\nodes,\edges,\mW)$ for a dataset obtained 
+from the social relations between members of a Karate club \cite{Zachary77}. 
+The empirical graph with $\samplesize$ nodes $i \!\in\!\nodes\!=\!\{1,\ldots,\samplesize \}$ 
+represents $\samplesize$ individual club members. Two nodes $i,j\!\in\!\nodes$ 
+are connected by an edge $\{i,j\}\!\in\!\edges$ if the corresponding club members 
+have interacted outside the club.}
 \end{figure}
 
 
@@ -4289,21 +4314,26 @@ A graph signal $h[\cdot]$ is a map $\nodes \rightarrow \mathbb{R}$,
 which associates every node $i\!\in\!\nodes$ with the signal 
 value $h[i] \!\in\! \mathbb{R}$. 
 
-Most methods for processing graph signals rely on a signal model which are inspired by a cluster 
-assumption \cite{SemiSupervisedBook}. The cluster assumption requires similar signal values $h[i] \approx h[j]$ 
-at nodes $i,j \in \nodes$, which belong to the same well-connected subset of nodes (``cluster'') of the empirical graph. 
-The clusteredness of a graph signal $h[\cdot]$ can be measured by the total variation (TV): 
+Most methods for processing graph signals rely on a signal model 
+which are inspired by a cluster assumption \cite{SemiSupervisedBook}. 
+The cluster assumption requires similar signal values $h[i] \approx h[j]$ 
+at nodes $i,j \in \nodes$, which belong to the same well-connected 
+subset of nodes (``cluster'') of the empirical graph. The clusteredness 
+of a graph signal $h[\cdot]$ can be measured by the total variation (TV): 
 \begin{equation}
 \label{equ_def_TV}
  \| h \|_{\rm TV} = \sum_{\{i,j\} \in \edges} W_{i,j} |h(i) - h(j)|. 
 \end{equation} 
  
-Clustered graph signals arise in digital signal processing which studies graph signals 
-defined over the chain graph representing sampling time instants. Signal samples 
-at adjacent time instants are strongly correlated for sufficiently high sampling rate. 
-Image processing methods rely on close-by pixels tending to be coloured likely 
-which amounts to a clustered graph signal over a grid graph representing pixels 
-of a 2D image.  
+Clustered graph signals arise in digital signal processing which 
+studies graph signals defined over the chain graph representing 
+discrete time instants. 
+
+The signal values at adjacent time instants are correlated 
+for sufficiently high sampling rate. Image processing methods 
+use the tendency of close-by pixels to be coloured likely 
+which amounts to a clustered graph signal over a grid 
+graph representing pixels of a 2D image.  
 
 The recently introduced network Lasso (nLasso) amounts to a formal ML problem involving 
 network-structured data which can be represented by an empirical graph $\graph$. In particular, 
@@ -5789,10 +5819,11 @@ This chapter discusses few basic techniques to detect and avoid overfitting.
 %via ERM \eqref{equ_def_ERM_funs} based on some labeled dataset $\dataset = \{(\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$.
 To detect overfitting we need to monitor or {\bf to validate} the performance of 
 the predictor $h$ on new data point which are not contained in the training set. 
-We call the set of data points used for validation, as the validation set. The empirical 
-risk incurred by the predictor $h$ on the validation set is referred to as validation error. 
-If a method overfits, it will learn a predictor whose training error is much smaller than 
-the validation error. 
+We call the set of data points used for validation, the {\bf validation set}. 
+
+The empirical risk incurred by the predictor $h$ on the validation set is referred 
+to as validation error. If a ML method overfits, it will learn a predictor whose training 
+error is much smaller than the validation error. 
 %Indeed, the ultimate goal of ML methods is to find a predictor $\hat{h}$ which is accurate 
 %when applied to a new unlabeled data point for which we do not know the label $y$ but 
 %only the features $\vx$ (if we would know the label, then there is no point in learning 
@@ -6158,23 +6189,31 @@ $(\widehat{\vw}^{T},\mathbf{0})^{T}$. This allows us to write % the predictor $h
 h^{(\widehat{\vw})}(\vx) = \widehat{\vw}^{T} \vx. 
 \end{equation}
 
-We highlight that the formula \eqref{equ_optimal_weight_closed_form} for the optimal weight vector $\widehat{\vw}$ 
-is only valid if the matrix $\mX^{T}_{r} \mX_{r}$ is invertible. However, it can be shown that within our toy model 
-(see \eqref{equ_toy_model_iid}), this is true with probability one whenever $\samplesize_{\rm t} \geq r$. In what 
-follows, we will consider the case of having more training samples than the dimension of the hypothesis space, i.e., 
-$\samplesize_{\rm t} > r$ such that the formula \eqref{equ_optimal_weight_closed_form} is valid (with probability one). 
+We highlight that the formula \eqref{equ_optimal_weight_closed_form} 
+for the optimal weight vector $\widehat{\vw}$ is only valid if the matrix 
+$\mX^{T}_{r} \mX_{r}$ is invertible. However, it can be shown that within 
+our toy model (see \eqref{equ_toy_model_iid}), this is true with probability 
+one whenever $\samplesize_{\rm t} \geq r$. In what follows, we will consider 
+the case of having more training samples than the dimension of the 
+hypothesis space, i.e., $\samplesize_{\rm t} > r$ such that the formula 
+\eqref{equ_optimal_weight_closed_form} is valid (with probability one). 
 The case $\samplesize_{\rm t} \leq r$ will be studied in Chapter \ref{ch_overfitting_regularization}.
 
-The optimal weight vector $\widehat{\vw}$ (see \eqref{equ_optimal_weight_closed_form}) depends on the training 
-data $\trainset$ via the feature matrix $\mX_{r}$ and label vector $\vy$ (see \eqref{equ_def_feature_matrix_r}). 
-Therefore, since we model the training data as random, the weight vector $\widehat{\vw}$ \eqref{equ_optimal_weight_closed_form} 
-is a random quantity. For each different realization of the training dataset, we obtain a different realization of the 
+The optimal weight vector $\widehat{\vw}$ (see \eqref{equ_optimal_weight_closed_form}) 
+depends on the training data $\trainset$ via the feature matrix $\mX_{r}$ 
+and label vector $\vy$ (see \eqref{equ_def_feature_matrix_r}). Therefore, 
+since we model the training data as random, the weight vector $\widehat{\vw}$ 
+\eqref{equ_optimal_weight_closed_form} is a random quantity. For each different 
+realization of the training dataset, we obtain a different realization of the 
 optimal weight $\widehat{\vw}$. 
 
-Within our toy model, which relates the features $\vx$ of a data point to its label $y$ via \eqref{equ_linear_obs_model}, 
-the best case would be if $\widehat{\vw} = \vw_{\rm true}$. However, in general this will not happen since we have to 
-compute $\widehat{\vw}$ based on the features $\vx^{(\sampleidx)}$ and noisy labels $y^{(\sampleidx)}$ of the data 
-points in the training dataset $\dataset$. Thus, we typically have to face a non-zero {\bf estimation error}
+Within our toy model, which relates the features $\vx$ of a data point 
+to its label $y$ via \eqref{equ_linear_obs_model}, the best case would 
+be if $\widehat{\vw} = \vw_{\rm true}$. However, in general this will not 
+happen since we have to compute $\widehat{\vw}$ based on the features 
+$\vx^{(\sampleidx)}$ and noisy labels $y^{(\sampleidx)}$ of the data 
+points in the training dataset $\dataset$. Thus, we typically have to 
+face a non-zero {\bf estimation error}
 \begin{equation}
 \label{equ_def_est_error}
 \Delta \vw \defeq \widehat{\vw} - \vw_{\rm true}. 
@@ -6303,20 +6342,25 @@ Here, step (a) is due to the law of total expectation \cite{BillingsleyProbMeasu
 conditioned on the dataset $\dataset$, the feature vector $\vx$ of a new data point (not belonging to 
 $\dataset$) has zero mean and covariance matrix $\mathbf{I}$ (see \eqref{equ_toy_model_iid}). 
 
-Thus, as indicated by \eqref{equ_decomp_E_pred_toy_model}, the average (expected) prediction 
-error $\mathcal{E}_{\rm pred}$ is the sum of three contributions: (i) the bias $B^{2}$, (ii) the variance 
-$V$ and (iii) the noise variance $\sigma^{2}$. The bias and variance, whose sum is the estimation 
-error $\mathcal{E}_{\rm est}$, can be influenced by varying the model complexity $r$ (see Figure \ref{fig_bias_variance}) 
-which is a design parameter. The noise variance $\sigma^{2}$ is the intrinsic accuracy limit of our toy 
-model \eqref{equ_linear_obs_model} and is not under the control of the ML engineer. It is impossible for 
-any ML method (no matter how clever it is engineered) to achieve, on average, a small prediction error 
-than the noise variance $\sigma^{2}$. 
+According to \eqref{equ_decomp_E_pred_toy_model}, the average (expected) 
+prediction error $\mathcal{E}_{\rm pred}$ is the sum of three components: (i) 
+the bias $B^{2}$, (ii) the variance $V$ and (iii) the noise variance $\sigma^{2}$. 
 
-We finally highlight that our analysis of bias \eqref{equ_def_bias_term}, variance \eqref{equ_formulae_variance_toy_model} 
-and the average prediction error \eqref{equ_decomp_E_pred_toy_model} achieved by linear regression only 
-applies if the observed data points are well modelled as realizations of random vectors according to 
-\eqref{equ_linear_obs_model}, \eqref{equ_toy_model_iid} and \eqref{equ_labels_training_data}. The 
-usefulness of this model for the data arising in a particular application has to be verified in practice by 
+The bias and variance, whose sum is the estimation error $\mathcal{E}_{\rm est}$, 
+can be influenced by varying the model complexity $r$ (see Figure \ref{fig_bias_variance}) 
+which is a design parameter. The noise variance $\sigma^{2}$ is the 
+intrinsic accuracy limit of our toy model \eqref{equ_linear_obs_model} 
+and is not under the control of the ML engineer. It is impossible for 
+any ML method (no matter how advanced  it is) to achieve, 
+on average, a prediction error smaller than the noise variance $\sigma^{2}$. 
+
+We finally highlight that our analysis of bias \eqref{equ_def_bias_term}, 
+variance \eqref{equ_formulae_variance_toy_model} and the average prediction 
+error \eqref{equ_decomp_E_pred_toy_model} achieved by linear regression only 
+applies if the observed data points are well modelled as realizations of random 
+vectors according to \eqref{equ_linear_obs_model}, \eqref{equ_toy_model_iid} 
+and \eqref{equ_labels_training_data}. The usefulness of this model for the 
+data arising in a particular application has to be verified in practice by 
 some validation techniques \cite{Young93,Vasicek76}. 
 
 An alternative approach for analyzing bias, variance and average 

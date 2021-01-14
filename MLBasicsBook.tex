@@ -938,7 +938,7 @@ satellite images and local observations using sensors or ``crowd sensing''
 via some mobile application which allows humans to notify about 
 relevant events; actions amount to issuing warnings and bans of 
 open fire; return is the reduction of number of forest fires. 
-\item an {\bf control unit} for combustion engines: 
+\item a {\bf control unit} for combustion engines: 
 perceptions given by various measurements such as temperature, 
 fuel consistency; actions amount to varying fuel feed and timing 
 and the amount of recycled exhaust gas; return is measured in 
@@ -1096,16 +1096,15 @@ Unsupervised ML methods allow to determine such an intrinsic structure.
 Another main flavour of ML considers data points that are characterized 
 by labels but which cannot be determined easily beforehand. Reinforcement 
 learning studies applications where the label values can only be determined 
-in an indirect fashion. Consider the problem of choosing the optimum 
-steering direction for a car based on the snapshot of an on-board 
-camera. Data points represent a particular state of the car, its label 
-is the optimum steering direction. 
+in an indirect fashion. Consider the problem of predicting the next optimal 
+moving direction for a toy car given its current state. Data points represent 
+a particular state of the car, its label is the optimum steering direction. 
 
-It is typically impossible to get labeled 
-data points here since there are so many different driving scenarios that 
-each have different optimal steering directions. Instead, RL methods use 
-some predictor of the optimal steering direction and then evaluate the 
-quality of this prediction by some other sensor signals, e.g., which determine 
+It is typically impossible to get labeled data points here since there 
+are so many different driving scenarios that each have a different 
+optimal steering direction. Instead, RL methods use some predictor 
+of the optimal steering direction and then evaluate the quality of 
+this prediction by some other sensor signals, e.g., which determine 
 if the car stays in the lane. 
 
 \section{Organization of this Book}
@@ -1319,7 +1318,7 @@ very different types of objects. For an image processing
 application it might be useful to define datapoints as images. 
 
 A recommendation system might use data points to represent 
-costumers.  Data points might represent time periods, animals, 
+customers.  Data points might represent time periods, animals, 
 mountain hikes, proteins or humans. The meaning or definition 
 of what data points represent is nothing but a design choice. 
  
@@ -1348,9 +1347,9 @@ processed.
 
 
 For most applications, it is impossible to have full access to 
-every single microscopic property of a data point. 
-Consider a data point that represents a vaccine. A full characterization of such a 
-data point would require to specify its chemical composition 
+every single microscopic property of a data point. Consider a 
+data point that represents a vaccine. A full characterization of 
+such a data point would require to specify its chemical composition 
 down to level of molecules and atoms. Moreover, there are 
 properties of a vaccine that depend on the patient which 
 received the vaccine. 
@@ -1363,7 +1362,7 @@ distinction is somewhat blurry. The same property of a
 data point might be used as a feature in one application, 
 while it might be used as a label in another application. 
 
-As an example consider feature learning for data points 
+As an example, consider feature learning for data points 
 representing images. One approach to learn representative 
 features of an image is to use some of the image pixels as 
 the label or target pixels. We can then learn new features 
@@ -1377,10 +1376,11 @@ pixels.
 %features of a data point typ be automated and performed efficiently. 
 
 Similar to the definition of data points, also the choice of what properties 
-to be used as features is a design choice. We typically use as features any 
-quantity that can be computed or measured easily. Note that this is a highly 
-informal characterization since there is no formal measure for the difficulty 
-of measuring a specific property. 
+to be used as features is a design choice. As the features of a data point, 
+we typically use properties or quantities that can be computed or 
+measured easily. Note that this is a highly informal characterization 
+since there is no formal measure for the difficulty of measuring a 
+specific property. 
 
 If we develop a ML method that can use snapshots taken by a digital 
 camera, then these snapshots might be a useful choice for the features. 
@@ -1414,11 +1414,18 @@ Using too many irrelevant features might overwhelm or jam ML
 algorithms which should invest their computational resources 
 mainly in the processing of the most relevant features. It is difficult 
 to give a precise characterization on the maximum number of 
-features that should be used. Some guidance is offered by the 
-condition $\featurelen/\samplesize \gg 1$ which requires the number 
-of features to be much larger than the number of data points 
-available for an ML algorithm. In this high-dimensional regime, 
-there is a high risk of overwhelming ML algorithms by having 
+features that should be used to characterize the data points 
+arising in a given application. 
+
+As a rule of thumb, the number $\samplesize$ of (labeled) data points 
+provided to a ML method should be much larger than the number $\featurelen$ 
+of numeric features. The informal condition $\samplesize/\featurelen \gg 1$ 
+can be ensured by either collecting a sufficiently larger number $\samplesize$ 
+of data points or by using a sufficiently small number $\featurelen$ of features. 
+
+which requires the number of features to be much larger than the 
+number of data points available for an ML algorithm. This 
+high-dimensional regime risk of overwhelming ML algorithms by having 
 too many irrelevant features. To avoid this we could apply some 
 feature selection or model regularization techniques (see Chapter \ref{ch_FeatureLearning} 
 and Chapter \ref{ch_overfitting_regularization}). 
@@ -1554,7 +1561,7 @@ There are also online market places for human labelling
 workforce \cite{Mort2018}. In these market places, one 
 can upload data points, such as images, and then pay 
 some money to humans that label the data points, such 
-as marking images who show a cat. 
+as marking images which show a cat. 
 
 Many applications involve data points whose features can be 
 determined easily but whose labels are known for few data points 
@@ -1609,8 +1616,8 @@ We can obtain scatter plots for data points with more than two
 features using feature learning methods (see Chapter \ref{ch_FeatureLearning}). 
 These methods allow to transform high-dimensional data points, 
 having billions of raw features, to three or two new features. 
-These new features can then be used as the coordinates for the 
-data point in a scatter plot.
+These new features can then be used as the coordinates of 
+the data points in a scatter plot.
 
 %\begin{figure}[htbp]
 %\begin{center}
@@ -1653,11 +1660,13 @@ data points in ML is the {\bf ``independent and identically distributed'' (i.i.d
 assumption. This assumption interprets data points $x^{(1)},\ldots,x^{(\samplesize)}$ 
 as statistically independent realizations of one single random variable $x$.
 
-Interpreting data points as realizations of a random variable $x$, 
-allows to use the properties of the probability distribution $p(x)$ 
-to characterize the statistical properties of the data. The probability 
-distribution $p(x)$ is either assumed known or estimated from data 
-(see Section \ref{sec_max_iikelihood}). It is often enough to not 
+It might seem somewhat unusual to interpret data points as realizations 
+of random variables with some probability distribution $p(x)$. However, this 
+interpretation allows us to use the properties of the probability distribution  
+to characterize the statistical properties of collections of data points. 
+
+The probability distribution $p(x)$ is either assumed known or estimated 
+from data (see Section \ref{sec_max_iikelihood}). It is often enough to not 
 estimate the distribution $p(x)$ entirely but only some of its parameters. 
 
 Some of the most basic and widely used parameters of a probability 
@@ -1919,7 +1928,7 @@ and programming frameworks (numerical linear algebra libraries).
 The hypothesis space \eqref{equ_def_hypo_linear_pred} can also be 
 used for classification problems, e.g., with label space $\labelspace = \{-1,1\}$. 
 Indeed, given a linear predictor map $h^{(\vw)}$ we can classify data 
-points according to $\hat{y} = -1$ for $h^{(\vw)}(\vx) \geq 0$ and $\hat{y}=-1$ 
+points according to $\hat{y}\!=\!1$ for $h^{(\vw)}(\vx) \geq 0$ and $\hat{y}\!=\!-1$ 
 otherwise. The resulting classifier are referred to as a {\bf linear classifier}.  
 ML methods that use linear classifiers include logistic regression 
 (see Section \ref{sec_LogReg}), the SVM (see Section \ref{sec_SVM}) and naive 
@@ -2079,8 +2088,8 @@ can be evaluated (computed) efficiently \cite{Austin2018}. Another important
 reason for using a hypothesis space $\hypospace$ not too large is to 
 avoid {\bf overfitting} (see Chapter \ref{ch_overfitting_regularization}). 
 If the hypothesis space $\hypospace$ is too large, then just by luck we 
-might find a predictor which fits well the training dataset. Such a predictor 
-will perform poorly on data which is different from the training data 
+might find a predictor which fits the training dataset well. Such a predictor 
+might perform poorly on data which is different from the training data 
 (it will not generalize well). 
 \end{itemize}
 
@@ -2100,17 +2109,17 @@ of this space is $|\hypospace| = 2^{2^{1000}}$.
 
 Many ML methods use a hypothesis space which contains 
 infinitely many different predictor maps (see, e.g., \eqref{equ_def_hypo_linear_pred}). 
-For an infinite hypothesis spaces, we cannot simply use the 
-number of its elements as a measure for its size. Different 
-concepts have been studied for measuring the size of infinite 
-hypothesis spaces with the {\bf Vapnik–Chervonenkis (VC) dimension} 
+For an infinite hypothesis space, we cannot simply use the 
+number of its elements as a measure for its size (since this number 
+is not well-defined). Different concepts have been studied for 
+measuring the size of infinite hypothesis spaces with the {\bf Vapnik–Chervonenkis (VC) dimension} 
 being maybe the most famous one \cite{VapnikBook}. 
 
 We will use a simplified variant of the VC dimension and define the 
 size of a hypothesis space $\hypospace$ as the maximum number 
 $\sizehypospace$ of arbitrary data points that can be perfectly fit 
 (with probability one). For any set of $\sizehypospace$ data points 
-with different features, we can always find a hypothesis $h \in \sizehypospace$ 
+with different features, we can always find a hypothesis $h \in \hypospace$ 
 such that $y=h(\vx)$ for all data points $(\vx,y) \in \dataset$. 
 
 Let us illustrate our concept for the size of a hypothesis space 
@@ -2483,14 +2492,22 @@ of the loss with respect to $h$. In contrast, the hinge loss
 \eqref{equ_hinge_loss} is {\bf non-smooth} which makes it 
 more difficult to minimize. 
 
-ML methods based on the logistic loss function, such as 
-logistic regression in Section \ref{sec_LogReg}), can make 
-use of simple {\bf gradient descent methods} (see 
-Chapter \ref{ch_GD}) to minimize the average loss. 
+ML methods that use the logistic loss function, such 
+as logistic regression in Section \ref{sec_LogReg}, can 
+apply simple {\bf gradient descent methods} (see Chapter \ref{ch_GD}) 
+to minimize the average loss. 
+
 ML methods based on the hinge loss, such as support 
 vector machines \cite{hastie01statisticallearning}) must 
-use of more sophisticated optimization methods to learn 
+use more sophisticated optimization methods to learn 
 a predictor by minimizing the loss (see Chapter \ref{ch_Optimization}).  
+We cannot directly apply GD to minimize the hinge loss since 
+it is not differentiable. However, we can apply a generalization of 
+GD which is known as {\bf subgradient descent} \cite{CvxBubeck2015}. 
+Loosely speaking, subgradient descent is obtained from GD 
+by replacing the concept of a gradient with the concept 
+of a subgradient. 
+
 
 \begin{figure}[htbp]
 \begin{center}
@@ -2522,9 +2539,9 @@ a predictor by minimizing the loss (see Chapter \ref{ch_Optimization}).
      \vspace*{-10mm}
 \end{center}
 \caption{Some popular loss functions for binary classification problems with 
-	label space $\labelspace=\{-1,1\}$. Note that the more correct a decision, i.e, 
-	the more positive $h(x)$ is (when $y=1$), the smaller is the loss. In particular, 
-    all depicted loss functions tend to $0$ monotonically with increasing $h(x)$.}
+	label space $\labelspace=\{-1,1\}$. The more confident we are in a correct decision, 
+	i.e, the more positive $h(x)$ is for $y=1$, the smaller the loss. All depicted 
+	loss functions tend to $0$ monotonically with increasing $h(x)$.}
 \label{fig_class_loss}
 \end{figure}
 
@@ -2547,8 +2564,7 @@ hypothesis out of a given hypothesis space which yields the smallest
 (average) loss. The difficulty of the resulting optimization 
 problem (see Chapter \ref{ch_Optimization}) depends crucially 
 on the properties of the chosen loss function. Some loss functions 
-allow to use very simple but efficient iterative methods for solving 
-the optimization problem underlying an ML method (see Chapter \ref{ch_GD}). 
+can be minimized using efficient iterative methods (see Chapter \ref{ch_GD}). 
 }}
 \end{center}
 
@@ -2589,10 +2605,10 @@ This approach replaces the Bayes risk with the regret relative to
 given reference predictors (experts) as the benchmark. 
 
 {\bf Partial Feedback, ``Reward''.}  
-Some application involve data points whose labels are so 
+Some applications involve data points whose labels are so 
 difficult or costly to determine that we cannot assume to 
 have any labeled data available. Without any labeled data, 
-cannot use the concept of a loss function to measure the 
+we cannot use the concept of a loss function to measure the 
 quality of a prediction.\footnote{The evaluation of the loss function 
 requires that the label value is known!} Instead we must use 
 some other form of indirect feedback or ``reward'' that indicates 
@@ -2604,12 +2620,12 @@ state via a feature vector $\vx$ whose entries are pixel intensities of a
 snapshot. The goal is to learn a hypothesis map from the feature vector 
 $\vx$ to a guess $\hat{y} = h(vx)$ for the optimal steering direction $y$ (true label). 
 
-In some applications, we might have not access to the true label of any 
+In some applications, we might have no access to the true label of any 
 data point. This means that we cannot evaluate the quality of a particular 
 map based on the average loss on training data. Instead, we might have 
 only some indirect signal about the loss incurred by the prediction 
 $\hat{y}=h(\vx)$. Such a feedback signal, or reward, could be obtained 
-by a distance sensor who measures the change of the distance 
+by a distance sensor which measures the change in the distance 
 between the car and its goal such as the charging station. 
 
 \section{Putting Together the Pieces} 
@@ -2627,8 +2643,8 @@ for which we know the true label values $y^{(i)}$.
 The assumption of knowing the exact true label values $y^{(i)}$ 
 for any data point is an idealization. We might often face labelling 
 or measurement errors such that the observed labels are noisy 
-versions of the true label. We discuss techniques that allow ML 
-methods to cope with noisy labels (see Chapter \ref{ch_overfitting_regularization}). 
+versions of the true label. Later on, we will discuss techniques that allow ML 
+methods to cope with noisy labels in Chapter \ref{ch_overfitting_regularization}. 
 
 Our goal is to learn a predictor map $h(x)$ such that $h(x) \approx y$ 
 for any data point. We require the predictor map to belong to 
@@ -2672,8 +2688,8 @@ $f(\vw)$ is $\nabla f(\vw') = \mathbf{0}$ \cite[Sec.\ 4.2.3]{BoydConvexBook}.}
 \label{equ_zero_grad_condition_putting_together}
 \frac{\partial f(w'_{0},w'_{1})}{\partial w_{0}} = 0 \mbox{, and }\frac{\partial f(w'_{0},w'_{1})}{\partial w_{1}} = 0. 
 \end{equation} 
-Inserting \eqref{equ_def_cost_fun_putting_togheter} into \eqref{equ_zero_grad_condition_putting_together}, 
-using basic rules for calculating derivatives, we obtain the 
+Inserting \eqref{equ_def_cost_fun_putting_togheter} into \eqref{equ_zero_grad_condition_putting_together} and 
+by using basic rules for calculating derivatives, we obtain the 
 following optimality conditions 
 \begin{equation}
 \label{equ_zero_grad_condition_putting_together_special_form}
@@ -2725,13 +2741,13 @@ The entries of any weight vector $\vw' = \big(w_{0}',w_{1}'\big)$ that satisfies
 \subsection{ How Many Features?} 
 \label{ex_compML_shazaam}
 Consider the ML problem underlying a music information retrieval smartphone 
-app \cite{ShazamPaper}. Such an app aims at identifying the song-title based 
+app \cite{ShazamPaper}. Such an app aims at identifying the song title based 
 on a short audio recording of (an interpretation of) the song obtained via the 
 microphone of a smartphone. Here, the feature vector $\vx$ represents the 
 sampled audio signal and the label $y$ is a particular song title out of a huge 
 music database. What is the length $\featuredim$ of the feature vector 
 $\vx \in \mathbb{R}^{\featuredim}$ if its entries are the signal amplitudes of 
-a $20$ second long recording which is sampled at a rate of $44$ kHz?
+a $20$-second long recording which is sampled at a rate of $44$ kHz?
 
 
 \subsection{Multilabel Prediction} 
@@ -2755,9 +2771,9 @@ How many different linear predictors \eqref{equ_lin_predictor_multilabel} are th
 Consider linear hypothesis space consisting of linear maps parameterized by 
 weights $\mathbf{w}$. We try to find the best linear map by minimizing the average 
 squared error loss (empirical risk) incurred on some labeled training data points 
-$(\vx^{(1)},y^{(1)}),(\vx^{(2)},y^{(2)}),\ldots,(\vx^{(\samplesize)},y^{(\samplesize)})$ 
+$(\vx^{(1)},y^{(1)}),(\vx^{(2)},y^{(2)}),\ldots,(\vx^{(\samplesize)},y^{(\samplesize)})$.  
 Is it possible to write the resulting empirical risk, viewed as a function $f(\vw)$ as 
-a convex quadratic form $f(\vw) = \vw^{T} \mathbf{C} \vw + \vb \vw + c$. If this 
+a convex quadratic form $f(\vw) = \vw^{T} \mathbf{C} \vw + \vb \vw + c$? If this 
 is possible, how are the matrix $\mathbf{C}$, vector $\vb$ and constant $c$ related 
 to the feature vectors and labels of the training data ? 
 
@@ -2768,7 +2784,7 @@ Consider linear hypothesis space consisting of linear maps parameterized by
 weights $\mathbf{w}$. We try to find the best linear map by minimizing the average 
 squared error loss (empirical risk) incurred on some labeled training data points. 
 Assume we know the shape of the empirical risk as a function of the weight. 
-Can you reconstruct the labeled training data that resulted in that empirical risk 
+Can you reconstruct the labeled training data that resulted in this empirical risk 
 function? Is the resulting labeled training data unique or are there different training sets 
 that could have resulted in the same empirical risk function? 
 %% write down empirical risk as quadratic form f(w) = w^{T} X' X w + y^*y + 2*y'*X*w %%%% 
@@ -2809,14 +2825,14 @@ of $x$. Which of the following predictor maps belong to $\hypospace_{1}$?
  
   \subsection{A Lot of Features}
  \label{ex_2_toomanyfeatures}
-In many application domains, we have access too a large number of features for 
+In many application domains, we have access to a large number of features for 
 each individual data point. Consider healthcare, where data points represent 
 human patients. We could use all the measurements and diagnosis stored in 
 the patient health record as features. When we use ML algorithms to 
 analyse these data points, is it in general a good idea to use as much 
 features as possible for data points ? 
  
-  \subsection{Over parametrization}
+  \subsection{Over-Parametrization}
  \label{ex_2_overparm}
 Consider data points characterized by feature vectors $\vx \in \mathbb{R}^{2}$ and 
 a numeric label $y \in \mathbb{R}$. We want to learn the best predictor out of the hypothesis space 
@@ -2854,11 +2870,12 @@ does $\mathcal{H}$ contain?
  
  \subsection{Picture Classification} 
  \label{ex_2_6}
-Assume you want to sort a huge number of outdoor 
-pictures you have taken during your last adventure 
-trip to into three categories (or classes) \emph{dog}, 
-\emph{bird} and \emph{fish}. How could we formalize 
-this sorting problem as a ML problem? 
+Consider a huge collection of outdoor pictures 
+you have taken during your last adventure 
+trip. You want to organize these pictures as 
+three categories (or classes) \emph{dog}, 
+\emph{bird} and \emph{fish}. How could you  
+formalize this task as a ML problem? 
 
  \subsection{Maximum Hypothesis Space} 
 \label{ex_2_7}
@@ -2872,8 +2889,8 @@ deliver a real-valued prediction $\hat{y}=h(x)$ ?
 \label{ex_2_8}
 Consider data points whose features are $10 \times 10$ black and white pixel images. 
 Each data point is also characterized by a binary label $y \in \{0,1\}$. Consider the 
-hypothesis space constitute by all maps that take the bw image as input and deliver 
-a prediction for the label. How large is this hypothesis space? 
+hypothesis space which is constituted by all maps that take the bw image as 
+input and deliver a prediction for the label. How large is this hypothesis space? 
 
 \subsection{Size of Linear Hypothesis Space} 
 \label{ex_size_lin_hypospace} 
@@ -3284,14 +3301,19 @@ we use the sign of the predictor map $h(\vx)$ to determine the final prediction 
 The absolute value $|h(\vx)|$ is then used to quantify the reliability of (or confidence in) the 
 classification $\hat{y}$. 
 
-Consider two data points with features $\vx^{(1)}, \vx^{(2)}$ and a linear classifier map $h$ yielding 
-the function values $h(\vx^{(1)}) = 1/10$ and $h(\vx^{(2)}) = 100$. Whereas both yields the same 
-classifications $\hat{y}^{(1)}\!=\!\hat{y}^{(2)}\!=\!1$, the classification of the data point with feature 
-vector $\vx^{(2)}$ seems to be much more reliable. In general it is beneficial to complement a particular 
-prediction (or classification) result by some reliability information. 
+Consider two data points with features $\vx^{(1)}, \vx^{(2)}$ and 
+a linear classifier map $h$ yielding the function values $h(\vx^{(1)}) = 1/10$ 
+and $h(\vx^{(2)}) = 100$. Whereas both yields the same classifications 
+$\hat{y}^{(1)}\!=\!\hat{y}^{(2)}\!=\!1$, the classification of the data point 
+with feature vector $\vx^{(2)}$ seems to be much more reliable. In 
+general, it is beneficial to complement a particular prediction (or classification) 
+result by some quantification of its reliability. 
 
-Within logistic regression, we assess the quality of a particular classifier $h^{(\vw)} \in \hypospace^{(\featuredim)}$ 
-using the logistic loss \eqref{equ_log_loss} Given some labeled training data $\dataset =\{ \vx^{(\sampleidx)},y^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$, logistic regression amounts to minimizing the empirical risk (average logistic loss) 
+Within logistic regression, we assess the quality of a particular 
+classifier $h^{(\vw)} \in \hypospace^{(\featuredim)}$ using the 
+logistic loss \eqref{equ_log_loss} Given some labeled training data 
+$\dataset =\{ \vx^{(\sampleidx)},y^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$, 
+logistic regression amounts to minimizing the empirical risk (average logistic loss) 
 \begin{align} 
 \label{equ_def_emp_risk_logreg}
 \emperror ( \vw | \dataset ) & = (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize}  \log( 1+ \exp ( - y^{(\sampleidx)} h^{(\vw)}(\vx^{(\sampleidx)}))) \nonumber \\
@@ -3417,17 +3439,19 @@ We highlight that both, the SVM and logistic regression amount to linear
 classifiers $h^{(\vw)} \in \hypospace^{(\featuredim)}$ (see \eqref{equ_lin_hypospace}) 
 whose decision boundary is a hyperplane in the feature space $\featurespace = \mathbb{R}^{\featuredim}$ (see Figure \ref{fig_lin_dec_boundary}). The difference between SVM and logistic regression is the loss function used for 
 evaluating the quality of a particular classifier $h^{(\vw)} \in \hypospace^{(\featuredim)}$. 
-The SVM uses the hinge loss \eqref{equ_hinge_loss} which is the best convex approximation 
-to the $0/1$ loss \eqref{equ_def_0_1}. Thus, we expect the classifier obtained by the SVM to 
-yield a smaller classification error probability $\prob{ \hat{y} \neq y }$ (with $\hat{y} =1$ 
-if $h(\vx) >0$ and $\hat{y}=-1$ otherwise) compared to logistic regression which uses 
+The SVM uses the hinge loss \eqref{equ_hinge_loss} which is the best 
+convex approximation to the $0/1$ loss \eqref{equ_def_0_1}. Thus, we 
+expect the classifier obtained by the SVM to yield a smaller classification 
+error probability $\prob{ \hat{y} \neq y }$ (with $\hat{y} =1$ if $h(\vx)\geq0$ and 
+$\hat{y}=-1$ otherwise) compared to logistic regression which uses 
 the logistic loss \eqref{equ_log_loss}. 
 
-The statistical superiority of the SVM comes at the cost of increased computational 
-complexity. In particular, the hinge loss \eqref{equ_hinge_loss} is non-differentiable 
-which prevents the use of  simple gradient-based methods (see Chapter \ref{ch_GD}) 
-and requires more advanced optimization methods. In contrast, the logistic loss \eqref{equ_log_loss} 
-is convex and differentiable which allows to apply simple iterative methods for minimization 
+The statistical superiority of the SVM comes at the cost of increased 
+computational complexity. In particular, the hinge loss \eqref{equ_hinge_loss} 
+is non-differentiable which prevents the use of  simple gradient-based 
+methods (see Chapter \ref{ch_GD}) and requires more advanced optimization 
+methods. In contrast, the logistic loss \eqref{equ_log_loss} is convex and 
+differentiable which allows to apply simple iterative methods for minimization 
 of the loss (see Chapter \ref{ch_GD}). 
 
 
@@ -4132,7 +4156,7 @@ loss function via a (negative) reward collected over time (e.g. over an episode)
 \label{sec_lin_ucb}
 data points are costumers characterized by feature vector; the label is 
 discrete and indicates which product out of a finite set of products should 
-be advertised to the costumer; 
+be advertised to the customer; 
 
  
 \section{Network Lasso} 
@@ -6606,7 +6630,8 @@ under the name {\bf ridge regression} \cite{hastie01statisticallearning}.
 %MAYBE discuss online learning interpretation of ridge regression in a new section "Online Learning" which comes after Chapter 7 
 %??????
 
-Using the feature matrix $\mX=\big(\vx^{(1)},\ldots,\vx^{(\samplesize_{\rm t})}\big)^{T}$ and label vector $\vy=(y^{(1)},\ldots,y^{(\samplesize_{\rm t})})^{T}$, 
+Using the feature matrix $\mX=\big(\vx^{(1)},\ldots,\vx^{(\samplesize_{\rm t})}\big)^{T}$ 
+and label vector $\vy=(y^{(1)},\ldots,y^{(\samplesize_{\rm t})})^{T}$, 
 we can rewrite \eqref{equ_reg_lin_reg_opt_weight} more compactly as 
 \begin{equation} 
 \label{equ_def_rlr_w_opt}
@@ -6836,12 +6861,12 @@ weights $\mathbf{w}$. We try to find the best linear map by minimizing the regul
 squared error loss (empirical risk) incurred on some labeled training data points 
 $(\vx^{(1)},y^{(1)}),(\vx^{(2)},y^{(2)}),\ldots,(\vx^{(\samplesize)},y^{(\samplesize)})$. 
 As regularizer we use $\| \mathbf{w} \|^{2}$, yielding the following learning problem 
-$$ \min_{\vw} f(\vw) = \sum_{i=1}^{\samplesize}\ldots + \| \mathbf{w} \|^{2}_{2}$$
+$$ \min_{\vw} f(\vw) = \sum_{i=1}^{\samplesize}\ldots + \| \mathbf{w} \|^{2}_{2}.$$
 
-Is it possible to write the objective function $f(\vw)$ as 
-a convex quadratic form $f(\vw) = \vw^{T} \mathbf{C} \vw + \vb \vw + c$? If this 
-is possible, how are the matrix $\mathbf{C}$, vector $\vb$ and constant $c$ related 
-to the feature vectors and labels of the training data ? 
+Is it possible to write the objective function $f(\vw)$ as a convex quadratic form 
+$f(\vw) = \vw^{T} \mathbf{C} \vw + \vb \vw + c$? If this is possible, how are the 
+matrix $\mathbf{C}$, vector $\vb$ and constant $c$ related to the feature vectors 
+and labels of the training data ? 
 
 
 
@@ -7751,11 +7776,13 @@ error $\emperror^{(\rm PCA)}$ is reasonably small (see Figure \ref{fig_ellbow_PC
 If we use PCA with $\featuredim=2$ PC, we obtain feature vectors 
 $\vx^{(\sampleidx)} = \mathbf{W} \vz^{(\sampleidx)}$ (see \eqref{equ_feat_learning_matrix}) 
 which can be depicted as points in a scatter plot (see Section \ref{equ_subsection_scatterplot}). 
-As an example we consider data points $\vz^{(\sampleidx)}$ obtained  from historic recordings of 
-Bitcoin statistics. Each data point $\vz^{(\sampleidx)} \in \mathbb{R}^{6}$ 
-is a vector of length $D=6$. It is difficult to visualise points in an Euclidean space $\mathbb{R}^{D}$ of dimension $D > 2$. 
-It is then helpful to apply PCA with $\featuredim=2$ which results in feature vectors $\vx^{(\sampleidx)} \in \mathbb{R}^{2}$ 
-which can be depicted conveniently as a scatter plot (see Figure \ref{fig_scatterplot_visualization}). 
+As an example, consider data points $\vz^{(\sampleidx)}$ obtained 
+from historic recordings of Bitcoin statistics. Each data point $\vz^{(\sampleidx)} \in \mathbb{R}^{6}$ 
+is a vector of length $D=6$. It is difficult to visualise points in 
+an Euclidean space $\mathbb{R}^{D}$ of dimension $D > 2$. We 
+apply PCA with $\featuredim=2$ which results in 
+feature vectors $\vx^{(\sampleidx)} \in \mathbb{R}^{2}$. Such feature 
+vectors can be depicted conveniently as a scatter plot (see Figure \ref{fig_scatterplot_visualization}). 
 
 \begin{figure}[htbp]
 \begin{center}
@@ -7997,10 +8024,10 @@ a user.
 % \printglossaries 
 \begin{itemize}
 	
-\item {\bf i.i.d.}: independent and identically 
-distributed. We refer to a list $r^{(1)},\ldots,r^{(\samplesize)}$ 
-of RVs as i.i.d. if these RV are mutually independent and 
-each of them has the same marginal probability distribution $p(r)$.  
+%\item {\bf i.i.d.}: independent and identically 
+%distributed. We refer to a list $r^{(1)},\ldots,r^{(\samplesize)}$ 
+%of RVs as i.i.d. if these RV are mutually independent and 
+%each of them has the same marginal probability distribution $p(r)$.  
 	
 \item {\bf a sample}: a sequence of data points 
 $\vz^{(1)},\ldots,\vz^{(\sampleidx)}$ which are 
@@ -8009,49 +8036,62 @@ i.i.d.\ random variables with the same probability
 distribution $p(\vz)$. The length $\samplesize$ 
 of the list is also known as the {\bf sample size}.  
 
-
-
-\item {\bf classification problem}: an ML problem involving 
+\item {\bf classification problem}: A ML problem involving 
 a discrete label space $\labelspace$ such as $\labelspace\!=\!\{-1,1\}$ 
 for binary classification, or $\labelspace\!=\!\{1,2,\ldots,K\}$ 
 with $K\!>\!2$ for multi-class classification. 
 
-\item {\bf classifier}: a hypothesis map $h: \featurespace \rightarrow \labelspace$ with discrete 
-label space (e.g., $\labelspace=\{-1,1\}$). 
+\item {\bf classifier}. a hypothesis map $h: \featurespace \rightarrow \labelspace$ 
+with discrete label space (e.g., $\labelspace=\{-1,1\}$). 
 
-\item {\bf condition number } $\kappa(\mathbf{Q})$ of a matrix $\mathbf{Q}$: the ratio of largest 
-to smallest eigenvalue of a psd matrix $\mathbf{Q}$.
+\item {\bf condition number}. $\kappa(\mathbf{Q})$ of a matrix $\mathbf{Q}$: 
+the ratio of largest to smallest eigenvalue of a psd matrix $\mathbf{Q}$.
 
-\item {\bf data point}: an elementary unit of information such as a single pixel, a single image, 
-a particular audio recording, a letter, a text document or an entire social network user profile. 
-\item {\bf dataset}: a collection of data points. 
+\item {\bf data point}: an elementary unit of information such 
+as a single pixel, a single image, a particular audio recording, 
+a letter, a text document or an entire social network user profile. 
+
+\item {\bf labeled data point}. a data point for which we know the 
+value of its label. 
+
+\item {\bf dataset}: a collection (set or list) of data points. 
 
 \item {\bf eigenvalue/eigenvector}: for a square matrix $\mathbf{A} \in \mathbb{R}^{\featuredim \times \featuredim}$ 
-we call a non-zero vector $\vx \in \mathbb{R}^{\featuredim}$ an eigenvector of $\mathbf{A}$ if $\mathbf{A} \vx = \lambda \vx$ 
-with some $\lambda \in \mathbb{R}$, which we call an eigenvalue of $\mA$. 
+we call a non-zero vector $\vx \in \mathbb{R}^{\featuredim}$ 
+an eigenvector of $\mathbf{A}$ if $\mathbf{A} \vx = \lambda \vx$ 
+with some $\lambda \in \mathbb{R}$, which we call an eigenvalue 
+of $\mA$. 
 
-\item {\bf features}: any measurements (or quantities) used to characterize a data point (e.g., the 
-maximum amplitude of a sound recoding or the greenness of an RGB image). In principle, we 
-can use as a feature any quantity which can be measured or computed easily in an automated fashion.  
+\item {\bf features}: any measurements (or quantities) used to 
+characterize a data point (e.g., the maximum amplitude of a 
+sound recoding or the greenness of an RGB image). In principle, 
+we can use as a feature any quantity which can be measured or 
+computed easily in an automated fashion.  
 
 \item {\bf hypothesis map}: a map (or function) $h: \featurespace \rightarrow \labelspace$ from the 
-feature space $\featurespace$ to the label space $\labelspace$. Given a data point with features 
-$\vx$ we use a hypothesis map to estimate (or approximate) the label $y$ using the predicted 
-label $\hat{y} = h(\vx)$. ML is about automating the search for a good hypothesis 
-map such that the error $y - h(\vx)$ is small. 
+feature space $\featurespace$ to the label space $\labelspace$. 
+Given a data point with features $\vx$ we use a hypothesis map 
+to estimate (or approximate) the label $y$ using the predicted 
+label $\hat{y} = h(\vx)$. ML is about automating the search for 
+a good hypothesis map such that the error $y - h(\vx)$ is small. 
 
-\item {\bf hypothesis space}: a set of computationally feasible (predictor) maps $h: \featurespace \rightarrow \labelspace$. 
+\item {\bf hypothesis space}: a set of computationally feasible 
+(predictor) maps $h: \featurespace \rightarrow \labelspace$. 
 
-\item {\bf i.i.d.}: independent and identically distributed; e.g., ``$x,y,z$ are i.i.d. random variables'' 
-means that the joint probability distribution $p(x,y,z)$ of the random variables $x,y,z$ factors into 
-the product $p(x)p(y)p(z)$ with the marginal probability distribution $p(\cdot)$ which is the same 
-for all three variables $x,y,z$. 
+\item {\bf i.i.d.}: independent and identically distributed; e.g., 
+``$x,y,z$ are i.i.d. random variables'' means that the joint 
+probability distribution $p(x,y,z)$ of the random variables 
+$x,y,z$ factors into the product $p(x)p(y)p(z)$ of the marginal 
+probability distributions of the variables $x,y,z$ which are 
+identical.
 
-\item {\bf label}: some property of a data point which is of interest, such as the fact if a webcam 
-snapshot shows a forest fire or not. In contrast to features, labels are properties of data points 
-that cannot be measured or computed easily in an automated fashion. Instead, acquiring accurate 
-label information often involves human expert labor. Many ML methods aim at learning accurate 
-predictor maps that allow to guess or approximate the label of a data point based on its features. 
+\item {\bf label}: some property of a data point which is of interest, 
+such as the fact if a webcam snapshot shows a forest fire or not. In 
+contrast to features, labels are properties of data points that cannot 
+be measured or computed easily in an automated fashion. Instead, 
+acquiring accurate label information often involves human expert labour. 
+Many ML methods aim at learning accurate predictor maps that allow 
+to guess or approximate the label of a data point based on its features. 
 
 \item {\bf loss function}: a function which associates a given data point $(\vx,y)$ with features $\vx$ 
 and label $y$ and hypothesis map $h$ a number that quantifies the prediction error $y-h(\vx)$. 

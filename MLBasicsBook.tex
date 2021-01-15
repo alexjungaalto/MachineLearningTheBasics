@@ -1378,16 +1378,16 @@ pixels.
 Similar to the definition of data points, also the choice of what properties 
 to be used as features is a design choice. As the features of a data point, 
 we typically use properties or quantities that can be computed or 
-measured easily. Note that this is a highly informal characterization 
-since there is no formal measure for the difficulty of measuring a 
-specific property. 
+measured easily. This is only an informal characterization since there 
+is no widely-applicable measure for the difficulty in measuring a specific 
+property. 
 
-If we develop a ML method that can use snapshots taken by a digital 
-camera, then these snapshots might be a useful choice for the features. 
-However, if we only have a thermometer at our disposal then we might 
-only use the measured temperature as the feature. In what follows we 
-will denote the total number of features used to describe a data point 
-by the letter $\featurelen$. 
+%If we develop a ML method that can use snapshots taken by a digital 
+%camera, then these snapshots might be a useful choice for the features. 
+%However, if we only have a thermometer at our disposal then we might 
+%only use the measured temperature as the feature. In what follows we 
+%will denote the total number of features used to describe a data point 
+%by the letter $\featurelen$. 
 
 The ability of ML methods has been boosted by modern information-technology 
 which allows to measure a huge number of properties about datapoints 
@@ -1415,35 +1415,53 @@ algorithms which should invest their computational resources
 mainly in the processing of the most relevant features. It is difficult 
 to give a precise characterization on the maximum number of 
 features that should be used to characterize the data points 
-arising in a given application. 
+arising in a given application. As a rule of thumb, the number $\samplesize$ 
+of (labeled) data points provided to a ML method should be 
+much larger than the number $\featurelen$ of numeric features.
 
-As a rule of thumb, the number $\samplesize$ of (labeled) data points 
-provided to a ML method should be much larger than the number $\featurelen$ 
-of numeric features. The informal condition $\samplesize/\featurelen \gg 1$ 
-can be ensured by either collecting a sufficiently larger number $\samplesize$ 
-of data points or by using a sufficiently small number $\featurelen$ of features. 
+The informal condition $\samplesize/\featurelen \gg 1$ can be ensured 
+by either collecting a sufficiently large number $\samplesize$ of data points 
+or by using a sufficiently small number $\featurelen$ of features. In what 
+follows, we discuss how each of these two complementary approaches 
+can be implemented. 
 
-which requires the number of features to be much larger than the 
-number of data points available for an ML algorithm. This 
-high-dimensional regime risk of overwhelming ML algorithms by having 
-too many irrelevant features. To avoid this we could apply some 
-feature selection or model regularization techniques (see Chapter \ref{ch_FeatureLearning} 
-and Chapter \ref{ch_overfitting_regularization}). 
+The acquisition of (labeled) data points might be costly, requiring human 
+experts labour. Instead of collecting more raw data, it might 
+be possible to generate synthetic data. Section \ref{sec_data_augmentation} 
+discusses how intrinsic symmetries of datasets can be used to augment 
+the raw data with synthetic data. 
 
-Choosing ``good'' features of the datapoints arising within a given ML application 
-is far from trivial and might be the most difficult task within the overall ML application. 
-The family of ML methods known as {\bf kernel methods} \cite{LampertNowKernel} 
-is based on constructing efficient features by applying high-dimensional {\bf feature maps}. 
+As an example for an intrinsic symmetry of data, consider data points 
+representing an image. We assign each image the label $y=1$ if it shows 
+a cat and $y=-1$ otherwise. For each image with known label we can 
+generate several other images with the same label. This other images 
+are simply obtained by image transformation such as rotations or 
+re-scaling (zoom-in or zoom-out) that do not change the depicted 
+objects. We will see in Chapter \ref{ch_overfitting_regularization} 
+that regularization techniques can be interpreted as an implicit 
+form of data augmentation.  
 
-A recent breakthrough achieved by modern ML methods, which are known as 
-{\bf deep learning methods} (see Section \ref{sec_deep_learning}), is their ability 
-to automatically learn good features without requiring too much manual engineering 
-(``tuning'') \cite{Goodfellow-et-al-2016}. We will discuss the very basic ideas behind 
-such {\bf feature learning} methods in Chapter \ref{ch_FeatureLearning} but for now 
-assume the task of selecting good features is already solved. 
+Instead of collecting more data points to ensure the condition $\samplesize/\featurelen$, 
+we can use try to reduce the number $\featurelen$ of features used to 
+characterize data points. In some applications, we might use some domain 
+knowledge to choose the most relevant features. For other applications, 
+it might be difficult to tell which quantities are the best choice for features. 
+Chapter \ref{ch_FeatureLearning} will discuss some data-driven methods 
+for extracting a small number of relevant features of data points. 
+%Choosing ``good'' features of the datapoints arising within a given ML application 
+%is far from trivial and might be the most difficult task within the overall ML application. 
+%The family of ML methods known as {\bf kernel methods} \cite{LampertNowKernel} 
+%is based on constructing efficient features by applying high-dimensional {\bf feature maps}. 
 
-A datapoint is typically characterized by many individual features  $x_{1},\ldots,x_{\featuredim}$. 
-It is convenient to stack the individual features into a single feature vector 
+%Instead of explicitly learning a small set of relevant features, {\bf deep learning methods} 
+%(see Section \ref{sec_deep_learning}), 
+%(``tuning'') \cite{Goodfellow-et-al-2016}. We will discuss the very basic ideas behind 
+%such {\bf feature learning} methods in Chapter \ref{ch_FeatureLearning} but for now 
+%assume the task of selecting good features is already solved. 
+
+A data point is typically characterized by several individual features 
+$x_{1},\ldots,x_{\featuredim}$. It is convenient to stack the individual 
+features into a single feature vector 
 \begin{equation}
 \nonumber 
 \vx=\big(x_{1},\ldots,x_{\featuredim}\big)^{T} \in \mathbb{R}^{\featuredim}. 

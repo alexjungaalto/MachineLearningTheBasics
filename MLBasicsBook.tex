@@ -1448,43 +1448,80 @@ It is convenient to stack the individual features into a single feature vector
 \nonumber 
 \vx=\big(x_{1},\ldots,x_{\featuredim}\big)^{T} \in \mathbb{R}^{\featuredim}. 
 \end{equation}
-Each datapoint is then characterized by such a feature vector $\vx$. The set of 
-all possible values that the feature vector can take on is sometimes referred to 
-as {\bf feature space}, which we denote as $\featurespace$. Note that we 
-allow the feature space to be finite. This can be useful for {\bf network-structured datasets} 
-where the data points can be compared with each other by some application-specific 
-notion of similarity \cite{WhenIsNLASSO,NNSPFrontiers2018,LogisticNLasso,JungTVMin2019}. 
-These approaches use as a feature space the node set of an ``empirical graph'' whose 
-nodes represent individual datapoints. The edges in the empirical graph encode 
-similarities between individual datapoints. 
+Each data point is then characterized by such a feature vector $\vx$. 
+The feature vectors of data points take on values out of some {\bf feature space}, 
+which we denote as $\featurespace$. 
 
-The feature space $\featurespace$ is a design choice for the ML engineer facing a 
-particular ML application and computational infrastructure. If the computational 
-infrastructure allows for efficient numerical linear algebra, then using $\featurespace = \mathbb{R}^{\featurelen}$ 
-might be a good choice. In general, to obtain computationally efficient ML methods 
-one typically uses feature spaces $\featurespace$ with a rich mathematical structure.
+The feature space is a design choice as it depends on what properties of a 
+data point we use as its features. This design choice should take into account 
+the statistical properties of the data as well as the available computational infrastructure. 
+If the computational infrastructure allows for efficient numerical linear algebra, 
+then using $\featurespace = \mathbb{R}^{\featurelen}$ might be a good choice.
+For a computational infrastructure that allows to efficiently process networks 
+or graphs, we could use the nodes of a graph as the feature space (see Section \ref{sec_network_lasso}). 
+
+%In general, to obtain computationally efficient ML methods one typically uses 
+%feature spaces $\featurespace$ with a rich mathematical structure.
+
+%Another choice for the feature space is discussed in Section \ref{}. 
+%This can be useful for {\bf network-structured datasets} where the data points can be 
+%compared with each other by some application-specific notion of similarity %\cite{WhenIsNLASSO,NNSPFrontiers2018,LogisticNLasso,JungTVMin2019}. 
+%These approaches use as a feature space the node set of an ``empirical graph'' 
+%whose nodes represent individual datapoints. The edges in the empirical graph 
+%encode similarities between individual datapoints. 
  
-The Euclidean space $\mathbb{R}^{\featuredim}$ is a prime example of a feature space 
-with a rich geometric and algebraic structure \cite{RudinBookPrinciplesMatheAnalysis}. 
-The algebraic structure of $\mathbb{R}^{\featuredim}$ is defined by linear algebra of vector 
-addition and multiplication with scalars. A geometric structure is obtained by defining 
-distances between two elements of $\mathbb{R}^{\featuredim}$ via the Euclidean norm. 
-The interplay between these two structures allows us then to efficiently search 
-over subsets of $\mathbb{R}^{\featuredim}$ to find an element that is closest to 
-some other given element of $\mathbb{R}^{\featurelen}$. 
+The Euclidean space $\mathbb{R}^{\featuredim}$ is an example 
+of a feature space with a rich geometric and algebraic structure \cite{RudinBookPrinciplesMatheAnalysis}. 
+The algebraic structure of $\mathbb{R}^{\featuredim}$ is defined 
+by vector addition and multiplication of vectors with scalars. 
 
-Throughout this book we will mainly use feature spaces $\featurespace \subseteq \mathbb{R}^{\featuredim}$ 
-which are subsets of the Euclidean space $\mathbb{R}^{\featuredim}$ with some fixed dimension $\featuredim$. 
-Using RGB intensities (modelled as real numbers) of the pixels within a (rather small) $512 \times 512$ pixel bitmap, 
-we end up with a feature space $\featurespace=\mathbb{R}^{\featuredim}$ of (rather large) dimension 
-$\featuredim = 3 \cdot 512^2$. Indeed, for each of the $512 \times 512$ pixels we obtain $3$ numbers which 
-encode the red, green and blue colour intensity of the respective pixel (see Figure \ref{fig_snapshot_pixels}). 
+The geometric structure of $\mathbb{R}^{\featuredim}$ is obtained 
+by the Euclidean norm as a measure for the distance between two 
+elements of $\mathbb{R}^{\featuredim}$. 
 
-Consider data points representing images. A natural construction for the feature vector of such data points 
-is to stack the red, green and blue intensities for all image pixels (see Figure \ref{fig_snapshot_pixels}). For other 
-types of data points it is less obvious how to represent the datapoints by a numeric feature vector in $\mathbb{R}^{\featurelen}$. 
-Feature learning methods are ML methods that aim at automatically determining useful feature vectors. For 
-natural language processing, some successful feature learning methods have been proposed recently \cite{Mikolov2013}. 
+The algebraic and geometric structure of  $\mathbb{R}^{\featuredim}$ 
+often enables an efficient search over $\mathbb{R}^{\featuredim}$ to 
+find elements with desired properties. Chapter \ref{sec_ERM_lin_reg} 
+discusses examples of such search problems in the context of learning 
+an optimal hypothesis. 
+
+Beside the computational infrastructure, also the statistical properties 
+of the data should be taken into account for the choice of feature space. 
+The linear algebraic structure of $\mathbb{R}^{\featuredim}$ allows to 
+efficiently represent and approximate datasets that are well aligned 
+along linear subspaces. Section \ref{sec_pca} discusses methods that learn 
+such approximations. The geometric structure of $\mathbb{R}^{\featuredim}$ 
+is used in Chapter \ref{ch_Clustering} to organize data sets into few coherent groups 
+or cluster. 
+
+Throughout this book we will mainly use the feature space $\mathbb{R}^{\featuredim}$ 
+with dimension $\featuredim$ being the number of features of a data point. This 
+feature space has proven useful in many ML applications due to availability 
+of efficient soft- and hardware for numerical linear algebra. Moreover, the 
+algebraic and geometric structure of $\mathbb{R}^{\featuredim}$ seems to 
+reflect the intrinsic structure of the data generated in many important 
+application domains.\footnote{This should not be too surprising as the 
+Euclidean space has evolved as a mathematical abstraction of physical phenomena.}
+
+%Using RGB intensities (modelled as real numbers) of the pixels within a (rather small) $512 \times 512$ pixel bitmap, 
+
+
+Consider data points representing images with $512$ by $512$ pixels. 
+A natural construction for the feature vector of such data points is to 
+stack the red, green and blue intensities for all image pixels (see Figure \ref{fig_snapshot_pixels}). 
+We end up with a feature vectors belonging to the feature space 
+$\featurespace=\mathbb{R}^{\featuredim}$ of (rather large) dimension 
+$\featuredim = 3 \cdot 512^2$. Indeed, for each of the $512 \times 512$ 
+pixels we obtain $3$ numbers which encode the red, green and blue colour 
+intensity of the respective pixel (see Figure \ref{fig_snapshot_pixels}). 
+
+In some applications, it is less obvious how to represent data points 
+by a numeric feature vector in $\mathbb{R}^{\featurelen}$. The subfield 
+of feature learning studies methods that map non-numeric data to numeric 
+feature vectors in $\mathbb{R}^{\featuredim}$. These methods aim to 
+structures in datasets that resemble the algebraic and geometric structure 
+of $\mathbb{R}^{\featurelen}$. A quite impressive example for such methods 
+have been developed for textual data \cite{Mikolov2013}. 
 
 
 
@@ -1660,7 +1697,7 @@ data points in ML is the {\bf ``independent and identically distributed'' (i.i.d
 assumption. This assumption interprets data points $x^{(1)},\ldots,x^{(\samplesize)}$ 
 as statistically independent realizations of one single random variable $x$.
 
-It might seem somewhat unusual to interpret data points as realizations 
+It might seem somewhat awkward to interpret data points as realizations 
 of random variables with some probability distribution $p(x)$. However, this 
 interpretation allows us to use the properties of the probability distribution  
 to characterize the statistical properties of collections of data points. 
@@ -1848,9 +1885,9 @@ a popular choice for the hypothesis space is
 
 The hypothesis space \eqref{equ_def_hypo_linear_pred} is constituted 
 by the linear maps (functions) $h^{(\vw)}: \mathbb{R}^{\featuredim} \rightarrow \mathbb{R}$. 
-The function $h^{(vw)}$ maps the feature vector $\vx \in \mathbb{R}^{\featuredim}$ 
+The function $h^{(\vw)}$ maps the feature vector $\vx \in \mathbb{R}^{\featuredim}$ 
 to the predicted label (or output) $h^{(\vw)}(\vx) = \vx^{T} \vw \in \mathbb{R}$. 
-For $\featuredim\!=\!1$ the feature vector reduces to one single feature $x$ and 
+For $\featuredim\!=\!1$ the feature vector reduces a single feature $x$ and 
 the hypothesis space \eqref{equ_def_hypo_linear_pred} consists of all maps 
 $h^{(w)}(x) = w x$ with some weight $w \in \mathbb{R}$ (see Figure \ref{scalar_lin_space}). 
 
@@ -1929,12 +1966,14 @@ The hypothesis space \eqref{equ_def_hypo_linear_pred} can also be
 used for classification problems, e.g., with label space $\labelspace = \{-1,1\}$. 
 Indeed, given a linear predictor map $h^{(\vw)}$ we can classify data 
 points according to $\hat{y}\!=\!1$ for $h^{(\vw)}(\vx) \geq 0$ and $\hat{y}\!=\!-1$ 
-otherwise. The resulting classifier are referred to as a {\bf linear classifier}.  
+otherwise. The resulting classifier is an example of a {\bf linear classifier}. 
+The decision regions \eqref{equ_decision_region} of a linear classifier are 
+half-spaces and their decision boundary is a hyperplane $\{ \vx: \vw^{T} \vx = b \}$ 
+(see Figure \ref{fig_lin_dec_boundary}).
+
 ML methods that use linear classifiers include logistic regression 
 (see Section \ref{sec_LogReg}), the SVM (see Section \ref{sec_SVM}) and naive 
-Bayes' classifiers (see Section \ref{sec_NaiveBayes}). The decision regions \eqref{equ_decision_region} 
-of a linear classifier are half-spaces and their decision boundary is 
-a hyperplane $\{ \vx: \vw^{T} \vx = b \}$ (see Figure \ref{fig_lin_dec_boundary}).
+Bayes' classifiers (see Section \ref{sec_NaiveBayes}).
 \begin{figure} 
 	\begin{center}
 		\begin{tikzpicture}[allow upside down, scale=1]
@@ -2887,10 +2926,12 @@ deliver a real-valued prediction $\hat{y}=h(x)$ ?
 
  \subsection{A Large but Finite Hypothesis Space} 
 \label{ex_2_8}
-Consider data points whose features are $10 \times 10$ black and white pixel images. 
-Each data point is also characterized by a binary label $y \in \{0,1\}$. Consider the 
-hypothesis space which is constituted by all maps that take the bw image as 
-input and deliver a prediction for the label. How large is this hypothesis space? 
+Consider data points whose features are $10 \times 10$ 
+black-and-white (bw) pixel images. Each data point is also 
+characterized by a binary label $y \in \{0,1\}$. Consider the 
+hypothesis space which is constituted by all maps that take 
+a bw image as input and deliver a prediction for the label. 
+How large is this hypothesis space? 
 
 \subsection{Size of Linear Hypothesis Space} 
 \label{ex_size_lin_hypospace} 
@@ -3278,38 +3319,43 @@ using $\sigma=1/10$, $\featuredim=10$ and $\mu_{j} = -1 + (2j/10)$.
 \section{Logistic Regression} 
 \label{sec_LogReg}
 
-Logistic regression is a method for classifying data points which are characterized by 
-feature vectors $\mathbf{x} \in \mathbb{R}^{\featuredim}$ (feature space $\featurespace=\mathbb{R}^{\featuredim}$) 
-according to two categories which are encoded by a label $y$. It will be convenient to 
-use the label space $\labelspace = \mathbb{R}$ and encode the two label values 
-as $y=1$ and $y=-1$. Logistic regression learns a predictor out of the hypothesis space 
-$\hypospace^{(\featuredim)}$ (see \eqref{equ_lin_hypospace}).\footnote{It is important to 
-	note that logistic regression can be used with an arbitrary label space which contains 
-	two different elements. Another popular choice for the label space is $\labelspace=\{0,1\}$.} 
+Logistic regression is a method for classifying data points which 
+are characterized by feature vectors $\mathbf{x} \in \mathbb{R}^{\featuredim}$ 
+(feature space $\featurespace=\mathbb{R}^{\featuredim}$) 
+according to two categories which are encoded by a label $y$. 
+
+It will be convenient to use the label space $\labelspace = \mathbb{R}$ 
+and encode the two label values as $y=1$ and $y=-1$. Logistic regression 
+learns a predictor out of the hypothesis space $\hypospace^{(\featuredim)}$ 
+(see \eqref{equ_lin_hypospace}).\footnote{It is important to note that logistic 
+regression can be used with an arbitrary label space which contains 
+two different elements. Another popular choice for the label space is $\labelspace=\{0,1\}$.} 
 Note that the hypothesis space is the same as used in linear regression (see Section \ref{sec_lin_regression}). 
 
-At first sight, using predictor maps $h \in \hypospace^{(\featuredim)}$ might seem wasteful. 
-Indeed, a linear map $h(\vx) = \vw^T \vx$, with some weight vector $\vw \in \mathbb{R}^{\featuredim}$, 
-can take on any real number, while the label $y \in \{-1,1\}$ takes on only one of the two 
-real numbers $1$ and $-1$. It turns out to be quite useful to use classifier maps 
-$h$ which can take on arbitrary real numbers. 
+At first sight, it seems wasteful to use a linear hypothesis $h(\vx) = \vw^T \vx$, 
+with some weight vector $\vw \in \mathbb{R}^{\featuredim}$, to predict a 
+binary label $y$. Indeed, while the prediction $h(\vx)$ can take any real number, 
+the label $y \in \{-1,1\}$ takes on only one of the two real numbers $1$ and $-1$. 
+We will shortly that even for binary labels it is quite useful to use a hypothesis 
+map $h$ which can take on arbitrary real numbers. 
 
-We can always threshold the value $h(\vx)$ to obtain a predicted label $\hat{y} \in \{-1,1\}$. 
-In what follows we implicitly assume that the predicted label is obtained by thresholding the 
-predictor map at $0$, $\hat{y}$ is $1$ if $h(\vx)\geq 0$ and $\hat{y}=-1$ otherwise. Thus, 
-we use the sign of the predictor map $h(\vx)$ to determine the final prediction for the label. 
-The absolute value $|h(\vx)|$ is then used to quantify the reliability of (or confidence in) the 
-classification $\hat{y}$. 
+Note that we can always threshold the prediction $h(\vx)$ to obtain a 
+predicted label $\hat{y} \in \{-1,1\}$. In what follows we implicitly assume 
+that the predicted label is obtained by thresholding the predictor map 
+at $0$, $\hat{y}$ is $1$ if $h(\vx)\geq 0$ and $\hat{y}=-1$ otherwise. 
+Thus, we use the sign of the predictor map $h(\vx)$ to determine the 
+final prediction for the label. The absolute value $|h(\vx)|$ is then used 
+to quantify the reliability of (or confidence in) the classification $\hat{y}$. 
 
 Consider two data points with features $\vx^{(1)}, \vx^{(2)}$ and 
 a linear classifier map $h$ yielding the function values $h(\vx^{(1)}) = 1/10$ 
-and $h(\vx^{(2)}) = 100$. Whereas both yields the same classifications 
-$\hat{y}^{(1)}\!=\!\hat{y}^{(2)}\!=\!1$, the classification of the data point 
-with feature vector $\vx^{(2)}$ seems to be much more reliable. In 
-general, it is beneficial to complement a particular prediction (or classification) 
-result by some quantification of its reliability. 
+and $h(\vx^{(2)}) = 100$. Whereas the predictions for both data points result 
+in the same label predictions $\hat{y}^{(1)}\!=\!\hat{y}^{(2)}\!=\!1$, the classification 
+of the data point with feature vector $\vx^{(2)}$ seems to be much more reliable. 
+%In general, it is useful to complement a particular prediction (or classification) 
+%result by some quantification of its reliability. 
 
-Within logistic regression, we assess the quality of a particular 
+In logistic regression, we assess the quality of a particular 
 classifier $h^{(\vw)} \in \hypospace^{(\featuredim)}$ using the 
 logistic loss \eqref{equ_log_loss} Given some labeled training data 
 $\dataset =\{ \vx^{(\sampleidx)},y^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$, 
@@ -3319,31 +3365,40 @@ logistic regression amounts to minimizing the empirical risk (average logistic l
 \emperror ( \vw | \dataset ) & = (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize}  \log( 1+ \exp ( - y^{(\sampleidx)} h^{(\vw)}(\vx^{(\sampleidx)}))) \nonumber \\
 & \stackrel{h^{(\vw)}(\vx)=\vw^{T} \vx}{=}  (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \log( 1+ \exp ( - y^{(\sampleidx)} \vw^{T} \vx^{(\sampleidx)})).
 \end{align} 
-Once we have found the optimal weight vector $\widehat{\vw}$ which minimizes \eqref{equ_def_emp_risk_logreg}, 
-we can classify a data point based on its features $\vx$ according to 
+Once we have found the optimal weight vector $\widehat{\vw}$ which 
+minimizes \eqref{equ_def_emp_risk_logreg}, we can classify a data point 
+based on its features $\vx$ according to 
 \begin{equation}
 \label{equ_class_logreg}
 \hat{y} =  \begin{cases} 1 & \mbox{ if } h^{(\widehat{\vw})}(\vx) \geq 0 \\ -1 & \mbox{ otherwise.} \end{cases}
 \end{equation} 
 Since $h^{(\widehat{\vw})}(\vx) = \big(\widehat{\vw}\big)^{T} \vx$ (see \eqref{equ_lin_hypospace}), 
 the classifier \eqref{equ_class_logreg} amounts to testing whether $\big(\widehat{\vw}\big)^{T} \vx \geq 0$ 
-or not. Thus, the classifier \eqref{equ_class_logreg} partitions the feature space $\featurespace\!=\!\mathbb{R}^{\featuredim}$ 
+or not. 
+
+The classifier \eqref{equ_class_logreg} partitions the feature space $\featurespace\!=\!\mathbb{R}^{\featuredim}$ 
 into two half-spaces $\mathcal{R}_{1}\!=\!\big\{ \vx: \big(\widehat{\vw}\big)^{T} \vx\!\geq\!0 \big\}$ and 
 $\mathcal{R}_{-1}\!=\!\big\{ \vx: \big(\widehat{\vw}\big)^{T} \vx\!<\!0 \big\}$ which are separated by the 
 hyperplane $\big(\widehat{\vw}\big)^{T} \vx =0$ (see Figure \ref{fig_lin_dec_boundary}). Any data point 
 with features $\vx \in \mathcal{R}_{1}$ ($\vx \in \mathcal{R}_{-1}$) is classified as $\hat{y}\!=\!1$ ($\hat{y}\!=\!-1$). 
 
-Logistic regression can be interpreted as a particular probabilistic inference method. This interpretation is 
-based on modelling the labels $y \in \{-1,1\}$ as i.i.d.\ random variables with some probability $\prob{y\!=\!1}$ 
-which is parameterized by a linear predictor $h^{(\vw)}(\vx)\!=\!\vw^{T} \vx$ via  
-\begin{equation}
-\log \prob {y=1}/(1 - \prob{y=1}) = \vw^{T} \vx, 
-\end{equation} 
-or, equivalently, 
+Logistic regression can be interpreted as learning a particular probabilistic 
+model for the data points. This interpretation is based on modelling the label 
+$y \in \{-1,1\}$ of a data point as random variables with the probability %\prob{y\!=\!1}$  
 \begin{equation}
 \label{equ_prob_model_logistic_model}
- \prob{y=1}= 1/(1 + \exp(- \vw^{T} \vx) ). 
+\prob{y=1}= 1/(1 + \exp(- \vw^{T} \vx) ). 
 \end{equation} 
+Note that the probability \eqref{equ_prob_model_logistic_model} is parametrized 
+by the linear map $h^{(\vw)}(\vx)\!=\!\vw^{T} \vx$. 
+
+%In particular, 
+%we define the probabilitstic 
+%\begin{equation}
+%\log \prob {y=1}/(1 - \prob{y=1}) = \vw^{T} \vx, 
+%\end{equation} 
+%or, equivalently, 
+
 Since $\prob{y=1} + \prob{y=-1}=1$, 
 \begin{align}
 \label{equ_prob_model_logistic_model_minus_1}
@@ -5001,9 +5056,11 @@ This prevents us from using standard gradient based optimization methods
 We will now approach the ERM \eqref{equ_approx_bayes_class} via a different 
 route by interpreting the data points $(\vx^{(\sampleidx)},y^{(\sampleidx)})$ as 
 realizations of i.i.d.\ random variables which are distributed according to some 
-probability distribution $p(\vx,y)$. As discussed in Section \ref{sec_lossfct}, the 
-empirical risk obtained using $0/1$ loss approximates the error probability $\prob { \hat{y} \neq y }$ 
-with the predicted label $\hat{y} = 1$ for $h(\vx) > 0$ and $\hat{y} = -1$ otherwise (see \eqref{equ_0_1_approx_prob}). 
+probability distribution $p(\vx,y)$. 
+
+As discussed in Section \ref{sec_lossfct}, the empirical risk obtained using $0/1$ 
+loss approximates the error probability $\prob { \hat{y} \neq y }$ with the predicted 
+label $\hat{y} = 1$ for $h(\vx) > 0$ and $\hat{y} = -1$ otherwise (see \eqref{equ_0_1_approx_prob}). 
 Thus, we can approximate the ERM \eqref{equ_approx_bayes_class} as 
 \begin{align}
 \label{equ_approx_bayes_class_approx}
@@ -5994,6 +6051,29 @@ Figure \ref{fig_polyn_training}.
 \section{Validation}
 \label{sec_validate_predictor}
 
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}[scale=0.4]
+		\draw [thick] \boundellipse{0,0}{10}{5} node[right]  {${\bm \mu^{(1)}}$};
+		\fill (0,0) circle (2pt) ; 
+		\node [right] at (0,5.5) {$ {\bm \Sigma}^{(1)}$} ; 
+		\draw [thick] \boundellipse{11,1}{-2}{4} node[right]  {${\bm \mu^{(2)}}$};
+		\fill (11,1) circle (2pt) ; 
+		\node [right] at (11,5.5) {$ {\bm \Sigma}^{(2)}$} ; 
+		\draw [thick] \boundellipse{-9,4}{2}{3} node[left,xshift=3mm,yshift=3mm]  {$\,\,{\bm \mu^{(3)}}$}; 
+		\fill (-9,4) circle (2pt) ; 
+		\node [right] at (-9,8) {$ {\bm \Sigma}^{(3)}$} ; 
+		\end{tikzpicture}
+	\end{center}
+	\label{fig_GMM_elippses}
+	\caption{The GMM \eqref{equ_def_GMM} yields a probability 
+		density function which is a weighted sum of multivariate 
+		normal distributions $\mathcal{N}({\bm \mu}^{(\clusteridx)}, {\bm \Sigma}^{(\clusteridx)})$. 
+		The weight of the $c$-th component is the cluster probability 
+		$ \prob{c^{(\sampleidx)}=\clusteridx}$.}
+\end{figure}
+%\end{document}
+
 Consider an ML method using some hypothesis space $\hypospace$. 
 We then learn a predictor $\hat{h} \in \hypospace$ by ERM \eqref{equ_def_ERM_funs} 
 using a labeled dataset (the training set). The basic idea of validating the 
@@ -6826,31 +6906,42 @@ to learn some subspace of features that are most relevant ? (relation to feature
 
 \section{Multitask Learning} 
 %%%% use different tasks to construct regularizers ????
-Remember that a formal ML problem is specified by identifying data points, their features and labels, 
-a model (hypothesis space) and loss function. Note that we can use the very same raw data, model 
-and loss function and still define many different ML problems by using different choices for the label. 
-Multitask learning aims at exploiting relations between similar ML problems or tasks. 
+Remember that a formal ML problem is specified by identifying 
+data points, their features and labels, a model (hypothesis space)
+and loss function. Note that we can use the very same raw data, model 
+and loss function and still define many different ML problems by 
+using different choices for the label. Multitask learning aims at 
+exploiting relations between similar ML problems or tasks. 
 
-Consider the ML problem (task) of predicting the confidence level of a hand-drawing showing an apple. 
-To learn such a predictor we might have a collecting of hand-drawings at our disposal. We might now 
-for each hand-drawing certain higher-level information such as the object it is showing. This allows us 
-to use different choices for the label. We could also use the confidence level of a hand-drawing showing 
-an orange. Clearly this problem is related to the problem of predicting the apple confidence. 
+Consider the ML problem (task) of predicting the confidence level 
+of a hand-drawing showing an apple. To learn such a predictor we 
+use a collection of hand-drawings. We then annotate each hand-drawing 
+by the object that it depicts. These annotations can be used to define 
+different labels of the hand-drawings. One choice for the label could 
+be to define the label $y=1$ if a hand-drawing shows an apple and 
+$y=0$ if it does not show a hand-drawing. Another definition for 
+the label could be based on the fact that the hand-drawing shows 
+an apple or not. 
 
 
-The definition (design choice) of the labels corresponds to formulating a particular question we want to 
-have answered by an ML method. Some questions (label choices) are more difficult to answer while 
-others are easier to answer. 
+Different choices for the label result in different ML problems. These 
+different ML problems are related since they are based on the same data 
+points, the hand-drawings. Some ML problems (label choices) are more 
+difficult to answer while others are easier to answer, e.g., if there no single 
+hand-drawing of an orange but many drawings of an apple. 
 
-Consider the ML problem arising from guiding the operation of a mower robot. For a mowing robot, it is 
-important to determine if it is currently on grassland or not. Let us assume the mower robot is equipped 
-with an on-board camera which allows to take snapshots which are characterized by a feature vector 
-$\mathbf{x}$ (see Figure \ref{fig_snapshot_pixels}). We could then define the label as either $y=1$ 
-if the snapshot suggests that the mower is on grassland and $y=-1$ if not. However, we might be 
-interested in a finer-grained information about the floor type and define the label as $y=1$ for grassland, 
-$y=0$ for soil and $y=-1$ for when the mower is on tiles. The latter problem is more difficult 
-since we have to distinguish between three different types of floor (``grass'' vs. ``soil'' vs. ``tiles'') 
-whereas for the former problem we only have to distinguish between two types of floor (``grass'' vs. ``no grass''). 
+Consider the ML problem arising from guiding the operation of a mower robot. 
+For a mowing robot, it is important to determine if it is currently on grassland 
+or not. Let us assume the mower robot is equipped with an on-board camera 
+which allows to take snapshots which are characterized by a feature vector 
+$\mathbf{x}$ (see Figure \ref{fig_snapshot_pixels}). We could then define the 
+label as either $y=1$ if the snapshot suggests that the mower is on grassland 
+and $y=-1$ if not. However, we might be interested in a finer-grained information 
+about the floor type and define the label as $y=1$ for grassland, 
+$y=0$ for soil and $y=-1$ for when the mower is on tiles. The latter problem is 
+more difficult since we have to distinguish between three different types of 
+floor (``grass'' vs. ``soil'' vs. ``tiles'') whereas for the former problem we only 
+have to distinguish between two types of floor (``grass'' vs. ``no grass''). 
 
 
 \section{Exercises} 
@@ -7347,9 +7438,9 @@ data points $\mathbf{x}^{(\sampleidx)}$ which are i.i.d.\ realizations of the GM
 \label{fig_GMM_elippses}
 \caption{The GMM \eqref{equ_def_GMM} yields a probability 
 	density function which is a weighted sum of multivariate 
-	normal distributions $\mathcal{N}({\bm \mu}^{(c)}, {\bm \Sigma}^{(c)})$. 
+	normal distributions $\mathcal{N}({\bm \mu}^{(\clusteridx)}, {\bm \Sigma}^{(\clusteridx)})$. 
     The weight of the $c$-th component is the cluster probability 
-    $ \prob{c^{(\sampleidx)}=c}$.}
+    $ \prob{c^{(\sampleidx)}=\clusteridx}$.}
 \end{figure}
 %\end{document}
 

@@ -1109,10 +1109,11 @@ a particular state of the car, its label is the optimum steering direction.
 
 It is typically impossible to get labeled data points here since there 
 are so many different driving scenarios that each have a different 
-optimal steering direction. Instead, RL methods use some predictor 
-of the optimal steering direction and then evaluate the quality of 
-this prediction by some other sensor signals, e.g., which determine 
-if the car stays in the lane. 
+optimal steering direction. Instead, RL methods must try out 
+some predictor of the optimal steering direction and then 
+evaluate the quality of this prediction by some feedback signal. 
+Such a feedback signal might be obtained from GPS sensors that 
+allow to determine if the car stays in the lane. 
 
 \section{Organization of this Book}
 
@@ -1893,8 +1894,9 @@ refer to a power like $2^5$.
 The hypothesis space  $\hypospace = \labelspace^{\featurespace}$ 
 is rarely used in practice since it is simply too large to work 
 within a reasonable amount of computational resources.  
-ML methods typically use a hypothesis space $\hypospace$ 
-that is a very small subset of $\labelspace^{\featurespace}$ (see Figure \ref{fig_hypo_space}). 
+As depicted in Figure \ref{fig_hypo_space}, ML methods 
+typically use a hypothesis space $\hypospace$ that is a tiny 
+subset of $\labelspace^{\featurespace}$.  
 
 The preference for a particular hypothesis space often depends 
 on the available computational infrastructure available to a ML method. 
@@ -2547,33 +2549,43 @@ A particular snapshot is characterized by the features $\vx$ and
 the label $y \in \labelspace=\{-1,1\}$ with $y=1$ if the snapshot 
 shows a forest fire and $y=-1$ if there is no forest fire. We would 
 like to find or learn a classifier $h(\vx)$ which takes the features $\vx$ 
-as input and provides a classification according to $\hat{y} = 1$ 
-if $h(\vx) >0$ and $\hat{y}=-1$ if $h(\vx) \leq 0$. Ideally we 
-would like to have $\hat{y} = y$ for any data point. This suggests 
-to use the {\bf $0/1$ loss} (see Figure \ref{fig_class_loss})
+as input and provides a classification according to 
+\begin{equation} 
+\label{equ_def_classification}
+\hat{y} =  \begin{cases} 1 & \mbox{ if } h(\vx) \geq 0 \\ 
+-1 & \mbox{ if } h(\vx) \leq 0. \end{cases} 
+\end{equation} 
+
+Ideally we would like to have $\hat{y} = y$ for any data point. 
+This suggests to learn a hypothesis $h(\vx)$ by minimizing 
+the $0/1$ loss
 \begin{equation}
 \label{equ_def_0_1}
 \loss{(\vx,y)}{h} \defeq \begin{cases} 1 &\mbox{ if } y h(\vx) < 0 \\ 0 & \mbox{ else.} \end{cases}
 \end{equation} 
- 
-The $0/1$ loss is appealing from a statistical perspective as 
-it can be interpreted as approximating the misclassification (error) probability 
-$\prob{ y \neq \hat{y} }$ with $\hat{y} = {\rm sign } \{ h(\vx) \}$. 
-If we interpret the data points $\dataset = \big\{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \big\}_{\sampleidx=1}^{\samplesize}$ 
-as i.i.d.\ realizations of a pair of random feature vector 
-$\vx \in \featurespace$ and random label $y \in \{-1,1\}$, then 
+Figure \ref{fig_class_loss} illustrates the $0/1$ loss \eqref{equ_def_0_1} 
+for a data point with features $\vx$ and label $y=1$ as a function of 
+the hypothesis $h$. For a given data point $(\vx,y)$ and hypothesis 
+$h$, the $0/1$ loss is equal to zero if $\hat{y}=y$ (see \eqref{equ_def_classification}) 
+and equal to one otherwise. 
+
+The $0/1$ loss \eqref{equ_def_0_1} is conceptually appealing when 
+data points are interpreted as realizations of i.i.d.\ random variables 
+with underlying probability distribution $p(\vx,y)$. Given 
+$\samplesize$ realizations $(\vx^{(\sampleidx)},y^{(\sampleidx)}) \big\}_{\sampleidx=1}^{\samplesize}$ 
+of such i.i.d.\ random variables,
 \begin{equation} 
 \label{equ_0_1_approx_prob}
 (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h} \approx \prob{ y \neq \hat{y} }
 \end{equation} 
 with high probability for sufficiently large sample size $\samplesize$. 
-
-The approximation \eqref{equ_0_1_approx_prob} is based on the fact 
-that the average of a large number of independent realizations of a 
-random variable can be well approximated by its mean or expectation 
-(``law of large numbers'') \cite{BillingsleyProbMeasure}.  
-?? Indeed, the values $\loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}$ are i.i.d.\ realizations of the random variable 
-$\loss{(\vx,y)}{h}$.??
+%The approximation \eqref{equ_0_1_approx_prob} is based on the fact 
+%that the average of a large number of realizations of i.i.d.\ random 
+%variables can be well approximated by their (common) mean or expectation. 
+The precise formulation of the approximation \eqref{equ_0_1_approx_prob} 
+is known as the ``law of large numbers'' \cite[Section 1]{BillingsleyProbMeasure}. 
+We can apply the law of large numbers since the loss values $\loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}$ 
+are realizations of i.i.d.\ random variables. 
 
 In view of \eqref{equ_0_1_approx_prob}, the $0/1$ loss seems 
 a very natural choice for assessing the quality of a classifier 
@@ -2659,10 +2671,11 @@ of a subgradient.
      \end{tikzpicture}
      \vspace*{-10mm}
 \end{center}
-\caption{Some popular loss functions for binary classification problems with 
-	label space $\labelspace=\{-1,1\}$. The more confident we are in a correct decision, 
-	i.e, the more positive $h(x)$ is for $y=1$, the smaller the loss. All depicted 
-	loss functions tend to $0$ monotonically with increasing $h(x)$.}
+\caption{Three loss functions for assessing the quality of a hypothesis $h$ which 
+	is used to classify a data point with label $y=1$ according to \eqref{equ_def_classification}. 
+	The more confident we are in a correct decision, i.e, the more positive $h(x)$, 
+	the smaller the loss. Each of the three loss functions tends monotonically to $0$ 
+	for increasing $h(x)$.}
 \label{fig_class_loss}
 \end{figure}
 

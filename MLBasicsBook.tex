@@ -37,6 +37,7 @@
 \usetikzlibrary{shapes.misc}
 \usepackage{booktabs}
 \usepackage{hyperref}
+ \newcommand\Square[1]{+(-#1,-#1) rectangle +(#1,#1)}
 %\usepackage[demo]{graphicx}
 \pdfminorversion=5 
 \pdfcompresslevel=9
@@ -728,19 +729,21 @@ as the initial hypothesis.
 
 \section{Relation to Other Fields}
 
+ML builds on concepts from several other scientific fields. 
+
 \subsection{Linear Algebra} 
 
-Modern ML methods are computationally efficient methods to fit high-dimensional 
-models to large amounts of data. The models underlying state-of-the-art 
-ML methods can contain billions of tunable or learnable parameters. To 
-make ML methods computationally efficient we need to use suitable representations 
-for data and models. 
+Modern ML methods are computationally efficient methods to fit 
+high-dimensional models to large amounts of data. The models 
+underlying state-of-the-art ML methods can contain billions of 
+tunable or learnable parameters. To make ML methods computationally 
+efficient we need to use suitable representations for data and models. 
 
-Maybe the most widely used mathematical structure for representing data in 
-ML applications is the Euclidean space $\mathbb{R}^{n}$ with some dimension 
-$n$. The rich algebraic and geometric structure of $\mathbb{R}^{n}$ allows 
-to design of ML algorithms that can process vast amounts of data to 
-quickly update a model (parameters). 
+Maybe the most widely used mathematical structure to represent 
+data is the Euclidean space $\mathbb{R}^{n}$ with some dimension 
+$n$. The rich algebraic and geometric structure of $\mathbb{R}^{n}$ 
+allows to design of ML algorithms that can process vast amounts 
+of data to quickly update a model (parameters). 
 
 The scatter plot in Figure \ref{fig_scatterplot_temp_FMI} depicts 
 data points (individual days) using vectors $\vz \in \mathbb{R}^{2}$. 
@@ -797,12 +800,16 @@ resources such as time, memory or communication bandwidth.
 
 %A main design principle within ML is to formulate learning tasks as an optimization problem. 
 %ML methods are then obtained by applying optimization methods to these learning problems. 
-Therefore, engineering efficient ML methods requires a good understanding of algorithm 
-design and their implementation on physical hardware. A huge algorithmic toolbox is provided 
-by numerical linear algebra \cite{StrangLinAlg2016,Strang2007}. One of the key factors for the 
-recent success of ML methods is that they use vectors and matrices to represent data and 
-models. Using this representation allows to implement the resulting ML methods using highly 
-efficient hard- and software implementations for numerical linear algebra. 
+Therefore, engineering efficient ML methods requires a good 
+understanding of algorithm design and their implementation 
+on physical hardware. A huge algorithmic toolbox is provided 
+by numerical linear algebra \cite{StrangLinAlg2016,Strang2007}. 
+
+The recent success of ML methods in several application domains 
+might be attributed to their use of vectors and matrices to represent 
+data and models. Using this representation allows to implement the 
+resulting ML methods using highly efficient hard- and software 
+implementations for numerical linear algebra. 
 
 
 \subsection{Communication} 
@@ -1340,7 +1347,7 @@ processed.
 	\caption{Two main parameters of a dataset are the number 
 		$\samplesize$ of data points it contains and the number 
 		$\featuredim$ of features used to characterize individual 
-		data points. Another important characteristic of a dataset 
+		data points. A very important characteristic of a dataset 
 		is the ratio $\samplesize/\featuredim$. }
 	\label{fig:image}
 \end{figure}
@@ -1357,10 +1364,13 @@ received the vaccine.
 It is useful to distinguish between two different groups of 
 properties of a data point. The first group of properties is 
 referred to as {\bf features}  and the second group of properties 
-is referred to as ``label'', or ``target'' or ``output''. This 
-distinction is somewhat blurry. The same property of a 
-data point might be used as a feature in one application, 
-while it might be used as a label in another application. 
+is referred to as {\bf label} (some authors refer to labels also 
+as {\bf target} or {\bf output}). 
+
+The distinction between features and labels is somewhat 
+blurry. The same property of a data point might be used 
+as a feature in one application, while it might be used as 
+a label in another application. 
 
 As an example, consider feature learning for data points 
 representing images. One approach to learn representative 
@@ -1590,8 +1600,8 @@ snapshot. Alternatively, we could define the label $y$ as
 the water temperature of the lake visible in the snapshot. 
 
 The label space $\labelspace$ of an ML problem contains all 
-possible label values of data points. For the choice $\labelspace = \mathbb{R}$, 
-We refer to such a ML problem as a {\bf regression problem}. 
+possible label values of data points. We refer to ML problems involving 
+the $\labelspace = \mathbb{R}$ as a {\bf regression problem}. 
 It is also common to refer to ML problems involving a discrete 
 (finite or countably infinite) label space as {\bf classification problems}. 
 
@@ -1601,6 +1611,14 @@ problems are: detecting the presence of a tumour in a tissue,
 classifying persons according to their age group or detecting 
 the current floor conditions ( ``grass'', ``tiles'' or ``soil'') for 
 a mower robot. 
+
+The distinction between regression and classification problems is 
+somewhat blurry. Consider a binary classification problem based 
+on data points whose label $y$ takes on values $-1$ or $1$. We 
+could turn this into a regression problem by using a new label 
+$y'$ which is defined as the confidence in the label $y$ being 
+equal to $1$. Given $y'$ we can obtain $y$ by thresholding, 
+$y=1$ if $y'\geq0$ whereas $y=-1$ if $y' <0$. 
 
 
 A data point is called \emph{labeled} if, besides its features $\vx$, 
@@ -2436,25 +2454,53 @@ classes perfectly, is smaller than the squared error loss incurred
 by classifier $h_{2}$ which perfectly separates the two classes. 
 The squared error loss is a bad choice for classification problems 
 with a discrete label space $\labelspace$. 
+%\begin{figure}[htbp]
+%\begin{center}
+%\begin{tikzpicture}[auto,scale=0.8]
+%\draw [thick] (5,2) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(5)}$};
+%\draw [thick] (4,2) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(4)}$};
+%\draw [thick] (3,1.5) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(3)}$};
+%\draw [thick] (1,2) circle (0.1cm) node[anchor=west] {\hspace*{0mm}$\vx^{(2)}$};
+%\draw [thick] (-0.5,1.7) -- (6,1.7)  node[right] {$h_{1}$};
+%\draw [thick,dashed] (0.5,0) -- (0.5,2.5)  node[right] {$h_{2}$};
+%\draw [thick] (0,1.5) rectangle ++(0.1cm,0.1cm) node[anchor=west,below] {\hspace*{0mm}$\vx^{(1)}$};
+% %       \node[] (B) at (12,2) {$\labelspace$};
+%  %       \fill  (11.5,2.5)  circle (2pt) node[above] (D) {$y \in \labelspace$};    
+%   %      \draw [->,thick] (5,3)   --  (11.5,2.5) node[above,midway] {$h(\vx)$} ;
+%\end{tikzpicture}
+%\caption{Minimizing the squared error loss would prefer the (poor) classifier $h_{1}$ 
+%	over the (reasonable) classifier $h_2$.}
+%\label{fig_squarederrornotgoodclass}
+%\end{center}
+%\end{figure}
+
 \begin{figure}[htbp]
-\begin{center}
-\begin{tikzpicture}[auto,scale=0.8]
-\draw [thick] (5,2) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(5)}$};
-\draw [thick] (4,2) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(4)}$};
-\draw [thick] (3,1.5) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(3)}$};
-\draw [thick] (1,2) circle (0.1cm) node[anchor=west] {\hspace*{0mm}$\vx^{(2)}$};
-\draw [thick] (-0.5,1.7) -- (6,1.7)  node[right] {$h_{1}$};
-\draw [thick,dashed] (0.5,0) -- (0.5,2.5)  node[right] {$h_{2}$};
-\draw [thick] (0,1.5) rectangle ++(0.1cm,0.1cm) node[anchor=west,below] {\hspace*{0mm}$\vx^{(1)}$};
- %       \node[] (B) at (12,2) {$\labelspace$};
-  %       \fill  (11.5,2.5)  circle (2pt) node[above] (D) {$y \in \labelspace$};    
-   %      \draw [->,thick] (5,3)   --  (11.5,2.5) node[above,midway] {$h(\vx)$} ;
-\end{tikzpicture}
-\caption{Minimizing the squared error loss would prefer the (poor) classifier $h_{1}$ 
-	over the (reasonable) classifier $h_2$.}
+	\begin{center}
+		\begin{tikzpicture}[auto,scale=1]
+		%\draw [thick] (5,2.5) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(3)}$};
+		%\draw [thick] (4,2) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(4)}$}0.5
+		%\draw [thick] (5,1) circle (0.1cm)node[anchor=west,above] {\hspace*{0mm}$\vx^{(2)}$};
+		\draw  [line width=0.4mm]  (1,0) circle (0.1cm)   node[anchor=south]  {$(1,-1)$};
+		\draw  [line width=0.4mm]  (2,0) circle (0.1cm)  node[anchor=west]  {$(2,-1)$};
+	%	\draw [thick] (1,0) circle ++(0.1cm,0.1cm) ;%node[anchor=west,above] {\hspace*{0mm}$\vx^{(1)}$};
+		\draw [thick] (4,2) rectangle ++(0.2cm,0.2cm) node[anchor=north]  {$(4,1)$}; %node[anchor=west,above] {\hspace*{0mm}$\vx^{(5)}$};
+		\draw [thick] (5,2) rectangle ++(0.2cm,0.2cm) node[label={[xshift=0.6cm, yshift=-0.3cm]$(x\!=\!5,y\!=\!1)$}] {};%node[anchor=west,above] {\hspace*{0mm}$\vx^{(6)}$};
+	%	\draw [thick] (2,1) rectangle ++(0.1cm,0.1cm) node[anchor=west] {\hspace*{0mm}$(x^{(1)},y^{(1)})$};
+		\draw[->] (-0.5,1) -- (10,1) node[right] {feature $x$};
+		\draw[dashed,line width=1pt] (2,-1) -- (5,5) node[anchor=west] {predictor $h^{(2)}(x)=2(x\!-\!3)$} ;
+		\draw[line width=1pt] (2,2) -- (8,2) node[anchor=west] {predictor $h^{(1)}(x)=1$} ;
+		\draw[->] (0,-0.5) -- (0,3.5) node[above] {label $y$};
+		%\foreach \y/\ytext in { 1/1,2/2,3/3,4/4,5/5} \draw[shift={(0,\y)}] (2pt,0pt) -- (-2pt,0pt) node[left] {$\ytext/5$};  
+		%\foreach \x/\xtext in{ 1/1,2/2,3/3,4/4,5/5}\draw[shift={(\x,0)}] (0pt,2pt) -- (0pt,-2pt) node[below] {$\xtext/5$};  
+		\end{tikzpicture}
+	\end{center}
+	\caption{Minimizing the squared error loss would prefer the (poor) classifier $h^{(1)}$ 
+		over the (reasonable) classifier $h^{(2)}$.}
 \label{fig_squarederrornotgoodclass}
-\end{center}
 \end{figure}
+
+
+
 
 ??? use a different example to illustrate that squared error loss is not a good 
 idea to learn a linear classifier. e.g., using single feature and showing the graph 
@@ -4148,7 +4194,7 @@ Note that the expressions \eqref{equ_ML_mean_cov_Gauss}
 are valid only when the probability distribution of the data points is 
 modelled as a multivariate normal distribution. 
 
-\section{$k$-Nearest Neighbours} 
+\section{Nearest Neighbour Methods} 
 The class of $k$-nearest neighbour (k-NN) predictors (for continuous label space) or 
 classifiers (for discrete label space) is defined for feature spaces $\featurespace$ equipped 
 with an intrinsic notion of distance between its elements. Mathematically, such spaces are 
@@ -5500,10 +5546,13 @@ regression allow for closed-form expressions of the gradient $\nabla f(\vw)$.
 \end{tikzpicture}
 \end{minipage}
 \end{center}
-\caption{Effect of choosing learning rate $\alpha$ in GD step \eqref{equ_def_GD_step} too small (a) or too large (b). 
-If the steps size $\alpha$ in the GD step \eqref{equ_def_GD_step} is chosen too small, the iterations make 
-only very little progress towards the optimum. If the learning rate $\alpha$ is chosen too large, the iterates $\vw^{(k)}$ 
-might not converge at all (it might happen that $f(\vw^{(k+1)}) > f(\vw^{(k)})$!). }
+\caption{Effect of choosing learning rate $\alpha$ in GD step 
+	\eqref{equ_def_GD_step} too small (a) or too large (b). If the 
+	steps size $\alpha$ in the GD step \eqref{equ_def_GD_step} is 
+	chosen too small, the iterations make very little progress 
+	towards the optimum or even fail to reach the optimum at all. 
+	If the learning rate $\alpha$ is chosen too large, the iterates $\vw^{(\itercntr)}$ 
+    might not converge at all (it might happen that $f(\vw^{(\itercntr\!+\!1)}) > f(\vw^{(\itercntr)})$!). }
 \label{fig_small_large_alpha}
 \end{figure}
 
@@ -5514,7 +5563,7 @@ has a strong impact on the performance of Algorithm \ref{alg:gd_linreg}. If we
 choose the step size $\alpha$ too large, the GD steps \eqref{equ_def_GD_step} 
 diverge (see Figure \ref{fig_small_large_alpha}-(b)) and, in turn, 
 Algorithm \ref{alg:gd_linreg} fails n delivering an approximation of 
-the optimal weight vector $\vw_{\rm opt}$ (see \eqref{equ_def_cost_linreg}). 
+the optimal weight vector $\vw^{(\rm opt)}$ (see \eqref{equ_def_cost_linreg}). 
 
 If we choose the step size $\alpha$ too small (see Figure \ref{fig_small_large_alpha}-(a)), 
 the updates \eqref{equ_def_GD_step} make only very little progress towards 

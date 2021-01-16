@@ -37,7 +37,7 @@
 \usetikzlibrary{shapes.misc}
 \usepackage{booktabs}
 \usepackage{hyperref}
- \newcommand\Square[1]{+(-#1,-#1) rectangle +(#1,#1)}
+\newcommand\Square[1]{+(-#1,-#1) rectangle +(#1,#1)}
 %\usepackage[demo]{graphicx}
 \pdfminorversion=5 
 \pdfcompresslevel=9
@@ -1884,8 +1884,11 @@ a ML method.
 The largest possible hypothesis space $\hypospace$ is the set 
 $\labelspace^{\featurespace}$ constituted by all maps from the 
 feature space $\featurespace$ to the label space $\labelspace$.
-The elements of $\labelspace^{\featurespace}$ are all the maps 
-$h: \featurespace \rightarrow \labelspace$.  
+The notation $\labelspace^{\featurespace}$ has to be understood 
+a symbol denoting the set of all maps from $\labelspace$ to $\labelspace$. 
+Despite its appearance, $\labelspace^{\featurespace}$ does not 
+refer to a power like $2^5$. 
+
 
 The hypothesis space  $\hypospace = \labelspace^{\featurespace}$ 
 is rarely used in practice since it is simply too large to work 
@@ -2412,8 +2415,8 @@ prediction $\hat{y}=h(\vx)$.
 \end{center}
 \caption{A widely used choice for the loss function in regression problems 
 	(with label space $\labelspace=\mathbb{R}$) is the squared error loss $\loss{(\vx,y)}{h} \defeq (y - h(\vx))^{2}$. 
-Note that in order to evaluate the loss function for a given hypothesis $h$, so that 
-we can tell if $h$ is any good, we need to know the feature $\vx$ and the label $y$ of the data point.}
+To evaluate the loss function for a given hypothesis $h$ we need to 
+know the feature $\vx$ and the label $y$ of the data point.}
 \label{fig_squarederror_loss}
 \end{figure}
 
@@ -2447,13 +2450,29 @@ exactly this unwanted result would happen for the squared error
 loss. 
 
 Figure \ref{fig_squarederrornotgoodclass} depicts a dataset 
-consisting of $5$ labeled data points with binary labels represented 
-by circles (for $y=1$) and squares (for $y=-1$). The squared error loss 
-incurred by the classifier $h_{1}$, which does not separate the two 
-classes perfectly, is smaller than the squared error loss incurred 
-by classifier $h_{2}$ which perfectly separates the two classes. 
-The squared error loss is a bad choice for classification problems 
-with a discrete label space $\labelspace$. 
+consisting of $4$ data points with binary labels. Data points 
+with label $y=1$ are depicted by squares, while those with label 
+$y=-1$ are depicted by circles. We could use these four data points 
+to learn a linear hypothesis $h(x) = w_{1} x + w_{0}$ to classify 
+data points according to $\hat{y} = 1$ for $h(x) \geq 0$ and 
+$\hat{y}=-1$ for $h(x) < 0$. 
+
+Figure \ref{fig_squarederrornotgoodclass} depicts two examples, 
+denoted $h^{(1)}(x)$ and $h^{(2)}(x)$, of such a linear hypothesis. 
+The classifications $\hat{y}$ obtained by thresholding $h^{(2)}(x)$ would 
+perfectly match the labels of the four training data points. In 
+contrast, the classifications $\hat{y}$ obtained by thresholding 
+$h^{(1)}(x)$ disagree with the true labels for the data points 
+with $y=-1$. 
+
+Based on the training data, we should prefer using $h^{(2)}(x)$ 
+over $h^{(1)}$ to classify data points. However, the squared error 
+loss incurred by the (reasonable) classifier $h^{(1)}$ is much larger 
+than the squared error loss incurred by the (poor) classifier $h^{(2)}$. 
+The squared error loss is typically a bad choice for assessing 
+the quality of a hypothesis map that is used for classifying data points 
+into different categories. 
+
 %\begin{figure}[htbp]
 %\begin{center}
 %\begin{tikzpicture}[auto,scale=0.8]
@@ -2483,12 +2502,13 @@ with a discrete label space $\labelspace$.
 		\draw  [line width=0.4mm]  (1,0) circle (0.1cm)   node[anchor=south]  {$(1,-1)$};
 		\draw  [line width=0.4mm]  (2,0) circle (0.1cm)  node[anchor=west]  {$(2,-1)$};
 	%	\draw [thick] (1,0) circle ++(0.1cm,0.1cm) ;%node[anchor=west,above] {\hspace*{0mm}$\vx^{(1)}$};
-		\draw [thick] (4,2) rectangle ++(0.2cm,0.2cm) node[anchor=north]  {$(4,1)$}; %node[anchor=west,above] {\hspace*{0mm}$\vx^{(5)}$};
-		\draw [thick] (5,2) rectangle ++(0.2cm,0.2cm) node[label={[xshift=0.6cm, yshift=-0.3cm]$(x\!=\!5,y\!=\!1)$}] {};%node[anchor=west,above] {\hspace*{0mm}$\vx^{(6)}$};
+   	    \draw [thick] (5,2) \Square{3pt}  node[label={[xshift=0.2cm, yshift=-0.3cm]$(5,1)$}] {};
+	%	\draw [thick] (4,2) rectangle ++(0.2cm,0.2cm) node[anchor=north]  {$(4,1)$}; %node[anchor=west,above] {\hspace*{0mm}$\vx^{(5)}$};
+		\draw [thick] (7,2) \Square{3pt} node[label={[xshift=0.6cm, yshift=-0.3cm]$(x\!=\!7,y\!=\!1)$}] {};%node[anchor=west,above] {\hspace*{0mm}$\vx^{(6)}$};
 	%	\draw [thick] (2,1) rectangle ++(0.1cm,0.1cm) node[anchor=west] {\hspace*{0mm}$(x^{(1)},y^{(1)})$};
 		\draw[->] (-0.5,1) -- (10,1) node[right] {feature $x$};
 		\draw[dashed,line width=1pt] (2,-1) -- (5,5) node[anchor=west] {predictor $h^{(2)}(x)=2(x\!-\!3)$} ;
-		\draw[line width=1pt] (2,2) -- (8,2) node[anchor=west] {predictor $h^{(1)}(x)=1$} ;
+		\draw[line width=1pt] (2,2) -- (10,2) node[anchor=west] {predictor $h^{(1)}(x)=1$} ;
 		\draw[->] (0,-0.5) -- (0,3.5) node[above] {label $y$};
 		%\foreach \y/\ytext in { 1/1,2/2,3/3,4/4,5/5} \draw[shift={(0,\y)}] (2pt,0pt) -- (-2pt,0pt) node[left] {$\ytext/5$};  
 		%\foreach \x/\xtext in{ 1/1,2/2,3/3,4/4,5/5}\draw[shift={(\x,0)}] (0pt,2pt) -- (0pt,-2pt) node[below] {$\xtext/5$};  
@@ -2499,22 +2519,20 @@ with a discrete label space $\labelspace$.
 \label{fig_squarederrornotgoodclass}
 \end{figure}
 
+%??? use a different example to illustrate that squared error loss is not a good 
+%idea to learn a linear classifier. e.g., using single feature and showing the graph 
+%of the predictor instead of the decision boundary obtained from a linear predictor 
+%(which) might be confusing ??? 
 
-
-
-??? use a different example to illustrate that squared error loss is not a good 
-idea to learn a linear classifier. e.g., using single feature and showing the graph 
-of the predictor instead of the decision boundary obtained from a linear predictor 
-(which) might be confusing ??? 
-
-We now discuss some popular choices for the loss function 
-suitable for ML problems with binary labels. While the representation 
-of the label values is completely irrelevant, it will be convenient to 
-encode the two label values by the real numbers $-1$ and $1$. 
+We now discuss some loss functions which are suitable for 
+assessing the quality of a hypothesis map that is 
+used to classify data points according to their binary labels. 
+It will be convenient to encode the two label values by the real 
+numbers $-1$ and $1$. 
 %As label space we use $\labelspace=\mathbb{R}$ 
 The formulas for the loss functions we present only apply to 
 this encoding. The modification of these formulas to a different 
-encoding, such as label values $0$ and $1$, is not very difficult. 
+encoding, such as label values $0$ and $1$, is not difficult. 
 
 Consider the problem of detecting forest fires as early as possible 
 using webcam snapshots such as the one depicted in Figure \ref{fig:webcam_forestfire}. 
@@ -6420,21 +6438,25 @@ B^{2} = \| \vw_{\rm true} - \expect \{ \widehat{\vw} \} \|^{2}_{2} = \sum_{l=r+1
 measures the distance between the ``true predictor'' $h^{(\vw_{\rm true})}(\vx)=\vw_{\rm true}^{T} \vx$ and the 
 hypothesis space $\hypospace^{(r)}$ (see \eqref{equ_generalization_hypospace_r}) of the linear regression problem. 
 The bias is zero if $w_{{\rm true},l}=0$ for any index $l=r+1,\ldots,\featuredim$, or equivalently if $h^{(\vw_{\rm true})} \in \hypospace^{(r)}$. 
-We can guarantee $h^{(\vw_{\rm true})} \in \hypospace^{(r)}$ only if we use the largest possible hypothesis 
-space $\hypospace^{(r)}$ with $r=\featuredim$. For $r < \featuredim$, we cannot guarantee a zero bias term since we 
-have no access to the true underlying weight vector $\vw_{\rm true}$ in \eqref{equ_linear_obs_model}. In general, the 
-bias term decreases for increasing model size $r$ (see Figure \ref{fig_bias_variance}). We also highlight that the bias 
-term does not depend on the variance $\sigma^{2}$ of the noise $\varepsilon$ in our toy model \eqref{equ_linear_obs_model}. 
+We can guarantee $h^{(\vw_{\rm true})} \in \hypospace^{(r)}$ only if we 
+use the hypothesis space $\hypospace^{(r)}$ with $r=\featuredim$. 
+For $r < \featuredim$, we cannot guarantee a zero bias term since we 
+have no access to the true underlying weight vector $\vw_{\rm true}$ 
+in \eqref{equ_linear_obs_model}. In general, the bias term decreases for 
+increasing model size $r$ (see Figure \ref{fig_bias_variance}). We 
+highlight that the bias term does not depend on the variance 
+$\sigma^{2}$ of the noise $\varepsilon$ in our toy model \eqref{equ_linear_obs_model}. 
 
-Let us now consider the variance term in \eqref{equ_bias_var_decomp}. Using the properties of our toy model 
-(see \eqref{equ_linear_obs_model}, \eqref{equ_toy_model_iid} and \eqref{equ_labels_training_data})
+Let us now consider the variance term in \eqref{equ_bias_var_decomp}. 
+Using the properties of our toy model (see \eqref{equ_linear_obs_model}, 
+\eqref{equ_toy_model_iid} and \eqref{equ_labels_training_data})
 \begin{equation}
 \label{equ_variance_term_toy_model}
 V = \expect \{ \| \widehat{\vw} - \expect\{ \widehat{\vw} \} \|^{2}_{2} \} = \sigma^{2} \mbox{trace} \big\{ \expect\{(\mX_{r}^{T} \mX_{r})^{-1} \} \big\}.
 \end{equation} 
-By \eqref{equ_toy_model_iid}, the matrix $(\mX_{r}^{T} \mX_{r})^{-1}$ is random and distributed according to an 
-{\bf inverse Wishart distribution} \cite{Mardia1979}. In particular, for $\samplesize_{\rm t} > r +1$, its expectation 
-is obtained as 
+By \eqref{equ_toy_model_iid}, the matrix $(\mX_{r}^{T} \mX_{r})^{-1}$ is 
+random and distributed according to an {\bf inverse Wishart distribution} \cite{Mardia1979}. 
+For $\samplesize_{\rm t} > r +1$, its expectation is given as 
 \begin{equation} 
 \label{equ_expr_expect_inv-wishart}
 \expect\{(\mX_{r}^{T} \mX_{r})^{-1} \} = 1/(\samplesize_{\rm t}-r-1) \mathbf{I}_{r \times r}.
@@ -6449,14 +6471,14 @@ variance term increases with increasing model complexity $r$
 (see Figure \ref{fig_bias_variance}). This behaviour is in stark 
 contrast to the bias term which decreases with increasing $r$. 
 The opposite dependency of bias and variance on the model 
-complexity is known as the {\bf bias-variance tradeoff}. Thus, 
+complexity is known as the {\bf bias-variance trade-off}. Thus, 
 the choice of model complexity $r$ (see \eqref{equ_generalization_hypospace_r}) 
 has to balance between small variance and small bias term. 
 
 \begin{figure}
 \begin{center}
     \begin{tikzpicture}
-              \draw [thick, <->] (1,3.5) -- (1,0) -- (10.2,0);
+              \draw [thick, <->] (1,3.5) -- (1,0) -- (10.2,0);<
              \draw[red, ultra thick, domain=1:10] plot (\x,  {3*\x^-1});
                  \draw[blue, ultra thick, domain=1:10] plot (\x,  {3*\x/10});
                    \draw[ultra thick, domain=1:10,dashed] plot (\x,  {3*\x^(-1)+3*\x/10});
@@ -6466,10 +6488,11 @@ has to balance between small variance and small bias term.
                  \node [above] at (5,2.2) {$\mathcal{E}_{\rm est}$};
      \end{tikzpicture}
 \end{center}
-\caption{The estimation error $\mathcal{E}_{\rm est}$ incurred by linear regression can be decomposed 
-into a bias term $B^{2}$ and a variance term $V$ (see \eqref{equ_bias_var_decomp}). These two 
-components depend on the model complexity $r$ in an opposite manner resulting in a bias-variance 
-tradeoff.}
+\caption{The estimation error $\mathcal{E}_{\rm est}$ incurred by linear 
+	regression can be decomposed into a bias term $B^{2}$ and a variance 
+	term $V$ (see \eqref{equ_bias_var_decomp}). These two components 
+	depend on the model complexity $r$ in an opposite manner resulting in 
+	a bias-variance trade-off.}
 \label{fig_bias_variance}
 \end{figure}
 

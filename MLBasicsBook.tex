@@ -4291,7 +4291,8 @@ on the application at hand; one notion of optimality is obtained from approximat
 
 \section{Clustering Methods} 
 \label{sec_clustering_methods} 
-data points are whose datasets; labels are correct partitioning/clustering; loss function is some notion of purity; 
+data points are whose datasets; labels are correct partitioning/clustering; loss function is some notion of purity of 
+clustering error; discuss partitional vs. hierarchical clustering (different choice for hypospace?)
 
 
 \section{Deep Reinforcement Learning}
@@ -7086,8 +7087,9 @@ and labels of the training data ?
 %\foreach \x/\xtext in{ 1/1,2/2,3/3,4/4,5/5}\draw[shift={(\x,0)}] (0pt,2pt) -- (0pt,-2pt) node[below] {$\xtext/5$};  
 \end{tikzpicture}
 \end{center}
-\caption{A scatterplot obtained from the features $\vx^{(\sampleidx)}=(x^{(\sampleidx)}_{\rm r},x^{(\sampleidx)}_{\rm g})^{T}$, 
-	given by the redness $x_{\rm r}^{(\sampleidx)}$ and greenness $x_{\rm g}^{(\sampleidx)}$, of some snapshots. 
+\caption{A scatterplot depicting some images. The $\sampleidx$-th image is 
+	represented by the feature vector $\vx^{(\sampleidx)}=(x^{(\sampleidx)}_{\rm r},x^{(\sampleidx)}_{\rm g})^{T}$ 
+	with the average redness $x_{\rm r}^{(\sampleidx)}$ and average greenness $x_{\rm g}^{(\sampleidx)}$ of the image. 
 } 
 \label{fig_scatterplot_clustering}
 \end{figure}
@@ -7172,7 +7174,7 @@ the number $k$ of clusters prescribed.
 
 A simple method for hard clustering is  the ``$k$-means'' algorithm 
 which requires the number $k$ of clusters to specified before-hand. 
-The idea underlying $k$-means is quite simple: First, given a current 
+The idea underlying $k$-means is quite simple. First, given a current 
 guess for the cluster assignments $y^{(\sampleidx)}$, determine the 
 cluster means $\vm^{(c)} = \frac{1}{|\{i: y^{(\sampleidx)}= c\}|} \sum\limits_{i: y^{(\sampleidx)}=c} \vx^{(\sampleidx)}$ 
 for each cluster. Then, in a second step, update the cluster assignments $y^{(\sampleidx)} \in \{1,\ldots,k\}$ 
@@ -7371,24 +7373,24 @@ It is therefore possible for $k$-means to get trapped around a local minimum.} \
 
 Up till now, we have assumed the number $k$ of clusters 
 to be given before hand. In some applications it is unclear
-what a good choice for $k$ is. One approach to choosing 
-the value of$k$ is if the clustering method acts as a sub-module 
-within an overall supervised ML system, which allows to 
-implement some sort of validation. We could then try out 
-different values of the number $k$ and determine validation 
-errors for each choice. Then, we pick the choice of $k$ which 
-results in the smallest validation error. 
+what a good choice for $k$ is. The choice for the number 
+$k$ of clusters depends on how the clustering methods is 
+used within an overall ML application. If the clustering method 
+serves as a pre-processing for a supervised ML problem, we 
+could try out different values of the number $k$ and determine 
+validation errors for each choice. Then, we pick value of $k$ 
+which results in the smallest validation error. 
 
 Another approach to choosing $k$ is the so-called ``elbow-method''. 
-This approach amounts to running $k$-means Algorithm \ref{alg:kmeansimpl} 
-for different values of $k$ resulting in the (approximate) optimum 
-empirical error$\mathcal{E}^{(k)} = \emperror \big( \{\vm^{(c)}\}_{c=1}^{k},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize} \mid \dataset \big)$. 
+We run the $k$-means Algorithm \ref{alg:kmeansimpl} for different choice 
+for $k$. For each choice of $k$, Algorithm \ref{alg:kmeansimpl} delivers a 
+different (approximate) optimum empirical error $$\mathcal{E}^{(k)} = \emperror \big( \{\vm^{(c)}\}_{c=1}^{k},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize} \mid \dataset \big).$$ 
 We then plot the minimum empirical error $\mathcal{E}^{(k)}$ as a 
-function of the number $k$ of clusters. This plot typically looks 
-like Figure \ref{fig_ellbow}, i.e., a steep decrease for small values 
-of $k$ and then flattening out for larger values of $k$. Finally, the 
-choice of $k$ might be guided by some probabilistic model which 
-penalizes larger values of $k$. 
+function of the number $k$ of clusters. Figure \ref{fig_ellbow} depicts 
+an example for such a plot which typically starts with a steep decrease 
+for increasing $k$ and then flattening out for larger values of $k$. 
+Finally, the choice of $k$ might be guided by some probabilistic 
+model which specifies a prior distribution of the values for $k$. 
 
 
 \begin{figure}

@@ -1315,7 +1315,7 @@ Here, data points could represent different hiking tours.
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=7cm]{BergSee1.jpg}
-	\caption{Photo taken at the beginning of a mountain hike.}
+	\caption{Snapshot taken at the beginning of a mountain hike.}
 	\label{fig:image}
 \end{figure}
 
@@ -1337,10 +1337,16 @@ over data points. These estimates are often more accurate the more
 data points are used for the averaging. 
 
 A key parameter of a dataset is the number $\samplesize$ of individual 
-datapoints it contains. Statistically, the larger the sample size $\samplesize$ 
+datapoints it contains. The number of data points within a dataset is 
+also referred to as the sample size. Statistically, the larger the sample size $\samplesize$ 
 the better. However, there might be restrictions on computational 
 resources that limit the maximum sample size $\samplesize$ that can be 
 processed. 
+
+Figure \ref{fig:two_main_parameters} illustrates two key 
+parameters of a dataset. Beside the sample size $\samplesize$, a second 
+key parameter of a dataset is the number of features used to characterize 
+individual data points. 
 
 \begin{figure}[htbp]
 	\centering
@@ -1350,7 +1356,7 @@ processed.
 		$\featuredim$ of features used to characterize individual 
 		data points. A very important characteristic of a dataset 
 		is the ratio $\samplesize/\featuredim$. }
-	\label{fig:image}
+	\label{fig:two_main_parameters}
 \end{figure}
 
 
@@ -1793,7 +1799,8 @@ incurred by a given hypothesis map $h$. Second, we need to make precise
 what we actually mean by requiring \eqref{equ_approx_label_pred} to hold 
 for ``any data point''. We solve the first issue by the concept of a loss 
 function in Section \ref{sec_lossfct}. The second issue is then solved 
-in Chapter \ref{ch_Optimization}. 
+in Chapter \ref{ch_Optimization} by using a simple probabilistic model 
+for data. 
 
  %also those not contained in the training set \eqref{eq_def_training_set}. 
 
@@ -1996,12 +2003,17 @@ Each map $h^{(\vw)} \in \hypospace$ is fully specified by the weight
 vector $\vw$. Instead of searching over the function space $\hypospace$ 
 (its elements are functions!), we can equivalently search over all 
 possible weight vectors $\vw \in \mathbb{R}^{\featuredim}$. 
+
 The search space $\mathbb{R}^{\featuredim}$ is still (unaccountably) 
 infinite but it has a rich geometric and algebraic structure that 
-allows to efficiently search over this space. The hypothesis 
-space \eqref{equ_def_hypo_linear_pred} is also appealing because 
-of the broad availability of computing hardware (graphic processing units) 
-and programming frameworks (numerical linear algebra libraries). 
+allows to efficiently search over this space. Chapter \ref{ch_GD} 
+discusses methods that use the concept of gradients to implement  
+an efficient search for good weights $\vw \in \mathbb{R}^{\featurelen}$. 
+
+The hypothesis space \eqref{equ_def_hypo_linear_pred} is also appealing because 
+of the broad availability of computing hardware such as graphic processing units. 
+Another factor boosting the widespread use of \eqref{equ_def_hypo_linear_pred} 
+might be the offer for optimized software libraries for numerical linear algebra. 
 
 The hypothesis space \eqref{equ_def_hypo_linear_pred} can also be 
 used for classification problems, e.g., with label space $\labelspace = \{-1,1\}$. 
@@ -2039,6 +2051,30 @@ Bayes' classifiers (see Section \ref{sec_NaiveBayes}).
 		$\vw \in \mathbb{R}^{\featuredim}$), we refer to the map $h$ as a {\bf linear classifier}. }
 	\label{fig_lin_dec_boundary}
 \end{figure}
+
+Despite all the above mentioned benefits of the hypothesis space \eqref{equ_def_hypo_linear_pred} 
+it might seem too restrictive to consider only hypotheses that are linear functions 
+of the features. Indeed, in most applications the relation between features $\vx$ 
+and label $y$ of a data point is highly non-linear. We can then upgrade the 
+linear hypothesis space by replacing the original features $\vx$ of a data 
+point with some new features $\vz = {\bf \Phi} (\vx)$. The new features $\vz$ 
+are obtained by applying some feature map $\phi$. If we apply a  
+linear hypothesis to the new features $\vz$, we obtain a non-linear 
+map from the original features $\vx$ to the predicted label $\hat{y}$, 
+\begin{equation}
+\label{equ_conc_featuremap_linear}
+\hat{y} = \vw^{T} \vz = \vw^{T} {\bf \Phi} (\vx). 
+\end{equation} 
+Section \ref{sec_kernel_methods} discusses the family of 
+kernel methods which are based on the concatenation \eqref{equ_conc_featuremap_linear} of 
+(high-dimensional) feature maps ${\bf \Phi}(\cdot)$ 
+with a linear hypothesis map. 
+
+
+%Consider data points being images of animals with features $\vx$ 
+%being the RGB values of pixels and the label $y$ being the confidence (on a scale $0,\ldots,100$) 
+%that the image shows a cat. The relation between features and label is typically 
+%a highly non-linear function. 
 
 The hypothesis space \eqref{equ_def_hypo_linear_pred} can 
 only be used for data points whose features are numeric 
@@ -3222,10 +3258,11 @@ minimizing the average squared error loss (mean squared error) (see \eqref{equ_s
 \min_{h \in \hypospace_{\rm poly}^{(\featuredim)} } (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - h^{(\mathbf{w})}(x^{(\sampleidx)}))^{2}.
 \end{equation} 
 
-It is useful to interpret polynomial regression as a combination of a feature map (transformation) 
-(see Section \ref{sec_feature_space}) and linear regression (see Section \ref{sec_lin_regression}). 
-Indeed, any polynomial predictor $h^{(\vw)} \in \hypospace_{\rm poly}^{(\featuredim)}$ is obtained as 
-a concatenation of the feature map  
+It is useful to interpret polynomial regression as a combination 
+of a feature map (transformation) (see Section \ref{sec_feature_space}) 
+and linear regression (see Section \ref{sec_lin_regression}). Indeed, 
+any polynomial predictor $h^{(\vw)} \in \hypospace_{\rm poly}^{(\featuredim)}$ 
+is obtained as a concatenation of the feature map  
 \begin{equation}
 \label{equ_poly_feature_map} 
 \phi(x) \mapsto (1,x,\ldots,x^{\featuredim})^{T} \in \mathbb{R}^{\featuredim+1}
@@ -3236,11 +3273,13 @@ with some linear map $g^{(\vw)}: \mathbb{R}^{\featuredim+1} \rightarrow \mathbb{
 h^{(\vw)}(x) = g^{(\vw)}(\phi(x)). 
 \end{equation}
 
-Thus, we can implement polynomial regression by first applying the feature map $\phi$ (see \eqref{equ_poly_feature_map}) 
-to the scalar features $x^{(\sampleidx)}$, resulting in the transformed feature vectors 
+Thus, we can implement polynomial regression by first applying 
+the feature map $\featuremap$ (see \eqref{equ_poly_feature_map}) to 
+the scalar features $x^{(\sampleidx)}$, resulting in the transformed 
+feature vectors 
 \begin{equation} 
 \label{equ_def_poly_feature_vectors}
-\vx^{(\sampleidx)} = \phi(x^{(i)}) = \big(1,x^{(i)},\ldots,\big( x^{(i)} \big)^{\featuredim} \big)^{T} \in \mathbb{R}^{\featuredim+1}, 
+\vx^{(\sampleidx)} = \featuremap \big(x^{(\sampleidx)}\big) = \big(1,x^{(\sampleidx)},\ldots,\big( x^{(\sampleidx)} \big)^{\featuredim} \big)^{T} \in \mathbb{R}^{\featuredim+1}, 
 \end{equation} 
 and then applying linear regression  (see Section \ref{sec_lin_regression}) 
 to these new feature vectors. By inserting \eqref{equ_concact_phi_g_poly} 
@@ -3329,13 +3368,13 @@ It is possible to use other functions, different from polynomials,
 to construct the feature map $\phi$. We can extend linear regression 
 using an arbitrary feature map 
 \begin{equation} 
-\phi(x) = (\phi_{1}(x),\ldots,\phi_{\featuredim}(x))^{T}  
+\featuremap(x) = (\basisfunc_{1}(x),\ldots,\basisfunc_{\featuredim}(x))^{T}  
 \end{equation} 
-with the scalar maps $\phi_{j}: \mathbb{R} \rightarrow \mathbb{R}$ which 
+with the scalar maps $\basisfunc_{j}: \mathbb{R} \rightarrow \mathbb{R}$ which 
 are referred to as {\bf basis functions}. The choice of basis functions 
 depends heavily on the particular application and the underlying relation 
 between features and labels of the observed data points. The basis 
-functions underlying polynomial regression are $\phi_{j}(x)= x^{j}$. 
+functions underlying polynomial regression are $\basisfunc_{j}(x)= x^{j}$. 
 
 Another popular choice for the basis functions are ``Gaussians'' 
 \begin{equation} 

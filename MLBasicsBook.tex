@@ -1597,12 +1597,14 @@ characterizes a person.
 Consider a data point that represents some hike, at the 
 start of which the snapshot in Figure \ref{fig:image} has
  been taken. The features of this data point could be the 
- red, green and blue intensities of each pixel in the snapshot 
- in Figure \ref{fig:image}. We can stack these values into a 
-vector $\vx \in \mathbb{R}^{\featurelen}$ whose length $\featurelen$ 
-is given by three times the number of pixels in the image. 
-The label $y$ associated with this data point could be 
-the expected hiking time to reach the mountain in the 
+ red, green and blue (RGB) intensities of each pixel in the 
+ snapshot in Figure \ref{fig:image}. We stack these RGB 
+ values into a vector $\vx \in \mathbb{R}^{\featurelen}$ 
+ whose length $\featurelen$ is three times the number 
+ of pixels in the image. 
+ 
+ The label $y$ associated with a data point (which represents 
+ a hike) could be the expected hiking time to reach the mountain in the 
 snapshot. Alternatively, we could define the label $y$ as 
 the water temperature of the lake visible in the snapshot. 
 
@@ -3325,7 +3327,7 @@ very small (close to $0$) such that the condition $|y-\hat{y}| \leq \varepsilon$
 is never satisfied. In this case, the Huber loss is equivalent 
 to the absolute loss $|y - \hat{y}|$ scaled by a factor $\varepsilon$.
 
-\section{The  Lasso}
+\section{The Lasso}
 \label{sec_lasso}
 We will see in Chapter \ref{ch_validation_selection} that linear 
 regression (see Section \ref{sec_lin_regression}) does not work 
@@ -3474,9 +3476,8 @@ We will shortly that even for binary labels it is quite useful to use a hypothes
 map $h$ which can take on arbitrary real numbers. 
 
 Note that we can always threshold the prediction $h(\vx)$ to obtain a 
-predicted label $\hat{y} \in \{-1,1\}$. In what follows we implicitly assume 
-that the predicted label is obtained by thresholding the predictor map 
-at $0$, $\hat{y}$ is $1$ if $h(\vx)\geq 0$ and $\hat{y}=-1$ otherwise. 
+predicted label $\hat{y} \in \{-1,1\}$. A data point with features $\vx$, 
+is classified as $\hat{y}=1$ if $h(\vx)\geq 0$ and $\hat{y}=-1$ for $h(\vx)< 0$. 
 Thus, we use the sign of the predictor map $h(\vx)$ to determine the 
 final prediction for the label. The absolute value $|h(\vx)|$ is then used 
 to quantify the reliability of (or confidence in) the classification $\hat{y}$. 
@@ -3499,8 +3500,9 @@ logistic regression amounts to minimizing the empirical risk (average logistic l
 \emperror ( \vw | \dataset ) & = (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize}  \log( 1+ \exp ( - y^{(\sampleidx)} h^{(\vw)}(\vx^{(\sampleidx)}))) \nonumber \\
 & \stackrel{h^{(\vw)}(\vx)=\vw^{T} \vx}{=}  (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \log( 1+ \exp ( - y^{(\sampleidx)} \vw^{T} \vx^{(\sampleidx)})).
 \end{align} 
+
 Once we have found the optimal weight vector $\widehat{\vw}$ which 
-minimizes \eqref{equ_def_emp_risk_logreg}, we can classify a data point 
+minimizes \eqref{equ_def_emp_risk_logreg}, we classify a data point 
 based on its features $\vx$ according to 
 \begin{equation}
 \label{equ_class_logreg}
@@ -3510,21 +3512,29 @@ Since $h^{(\widehat{\vw})}(\vx) = \big(\widehat{\vw}\big)^{T} \vx$ (see \eqref{e
 the classifier \eqref{equ_class_logreg} amounts to testing whether $\big(\widehat{\vw}\big)^{T} \vx \geq 0$ 
 or not. 
 
-The classifier \eqref{equ_class_logreg} partitions the feature space $\featurespace\!=\!\mathbb{R}^{\featuredim}$ 
-into two half-spaces $\mathcal{R}_{1}\!=\!\big\{ \vx: \big(\widehat{\vw}\big)^{T} \vx\!\geq\!0 \big\}$ and 
-$\mathcal{R}_{-1}\!=\!\big\{ \vx: \big(\widehat{\vw}\big)^{T} \vx\!<\!0 \big\}$ which are separated by the 
-hyperplane $\big(\widehat{\vw}\big)^{T} \vx =0$ (see Figure \ref{fig_lin_dec_boundary}). Any data point 
-with features $\vx \in \mathcal{R}_{1}$ ($\vx \in \mathcal{R}_{-1}$) is classified as $\hat{y}\!=\!1$ ($\hat{y}\!=\!-1$). 
+The classifier \eqref{equ_class_logreg} partitions the feature 
+space $\featurespace\!=\!\mathbb{R}^{\featuredim}$ into two 
+half-spaces $\mathcal{R}_{1}\!=\!\big\{ \vx: \big(\widehat{\vw}\big)^{T} \vx\!\geq\!0 \big\}$ and 
+$\mathcal{R}_{-1}\!=\!\big\{ \vx: \big(\widehat{\vw}\big)^{T} \vx\!<\!0 \big\}$ 
+which are separated by the hyperplane $\big(\widehat{\vw}\big)^{T} \vx =0$ 
+(see Figure \ref{fig_lin_dec_boundary}). Any data point with features 
+$\vx \in \mathcal{R}_{1}$ ($\vx \in \mathcal{R}_{-1}$) is classified as 
+$\hat{y}\!=\!1$ ($\hat{y}\!=\!-1$). 
 
-Logistic regression can be interpreted as learning a particular probabilistic 
-model for the data points. This interpretation is based on modelling the label 
-$y \in \{-1,1\}$ of a data point as random variables with the probability %\prob{y\!=\!1}$  
-\begin{equation}
+Logistic regression can be interpreted as a maximum likelihood 
+estimator within a particular probabilistic model for the data points. 
+This interpretation is based on modelling the label $y \in \{-1,1\}$ of a 
+data point as random variables with the probability %\prob{y\!=\!1}$  
+\begin{align}
 \label{equ_prob_model_logistic_model}
-\prob{y=1}= 1/(1 + \exp(- \vw^{T} \vx) ). 
-\end{equation} 
-Note that the probability \eqref{equ_prob_model_logistic_model} is parametrized 
-by the linear map $h^{(\vw)}(\vx)\!=\!\vw^{T} \vx$. 
+\prob{y=1;\vw}& = 1/(1 + \exp(- \vw^{T} \vx) )  \nonumber \\
+& \stackrel{h^{(\vw)}(\vx)\!=\!\vw^{T} \vx}{=} 1/(1 + \exp(- h^{(\vw)}(\vx))) )  . 
+\end{align} 
+As the notation indicates, the probability \eqref{equ_prob_model_logistic_model} 
+is parametrized by the weight vector $\vw$ of the linear hypothesis $h^{(\vw)}(\vx)\!=\!\vw^{T} \vx$. 
+Given the probabilistic model \eqref{equ_prob_model_logistic_model}, we 
+can interpret the classification \eqref{equ_class_logreg} as choosing $\hat{y}$ 
+to maximize the probability $\prob{y=\hat{y};\vw}$. 
 
 %In particular, 
 %we define the probabilitstic 
@@ -3545,10 +3555,13 @@ Since $\prob{y=1} + \prob{y=-1}=1$,
  %& =  1/(1 + \exp(\vw^{T} \vx) ). 
  %\end{align} 
  
-Given the probabilistic model \eqref{equ_prob_model_logistic_model}, a principled approach to 
-choosing the weight vector $\vw$ is based on maximizing the probability (or likelihood) of the 
-observed dataset $\dataset=\{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$ 
-under the probabilistic model \eqref{equ_prob_model_logistic_model}. This yields the maximum 
+In practice we do not know the weight vector in \eqref{equ_prob_model_logistic_model}. 
+Rather, we have to estimate the weight vector $\vw$ in \eqref{equ_prob_model_logistic_model} 
+from observed data points. A principled approach to estimate the weight 
+vector is to maximize the probability (or likelihood) of actually obtaining the 
+dataset $\dataset=\{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$ 
+as realizations of i.i.d.\ data points whose labels are distributed 
+according to \eqref{equ_prob_model_logistic_model}. This yields the maximum 
 likelihood estimator 
 \begin{align}
 \label{equ_deriv_prog_logreg}
@@ -3556,29 +3569,33 @@ likelihood estimator
 & \stackrel{y^{(\sampleidx)}\mbox{ i.i.d.}}{=} \argmax_{\vw \in \mathbb{R}^{\featuredim}} \prod_{\sampleidx=1}^{\samplesize} \prob { y^{(\sampleidx)}}\nonumber \\
 & \stackrel{\eqref{equ_prob_model_logistic_model},\eqref{equ_prob_model_logistic_model_minus_1}}{=} \argmax_{\vw \in \mathbb{R}^{\featuredim}} \prod_{\sampleidx=1}^{\samplesize} 1/(1 + \exp(- y^{(\sampleidx)} \vw^{T} \vx^{(\sampleidx)}) ). 
 \end{align}
-The maximizer of a positive function $f(\vw)>0$ is not affected by replacing $f(\vw)$ with $\log f(x)$, i.e., 
-$\argmax\limits_{\vw \in \mathbb{R}^{\featuredim}} h(\vw)\!=\!\argmax\limits_{\vw \in \mathbb{R}^{\featuredim}}\log h(\vw)$. 
+Note that the last expression \eqref{equ_deriv_prog_logreg} is only valid 
+if we encode the binary labels using the values $1$ and $-1$. Using different 
+label values results in a different expression. 
+
+Maximizing a positive function $f(\vw)>0$ is equivalent to maximizing $\log f(x)$, $$\argmax\limits_{\vw \in \mathbb{R}^{\featuredim}} f(\vw)\!=\!\argmax\limits_{\vw \in \mathbb{R}^{\featuredim}}\log f(\vw).$$ 
 Therefore, \eqref{equ_deriv_prog_logreg} can be further developed as 
 \begin{align}
 \label{equ_deriv_prog_logreg_2}
 \hat{\vw} & \stackrel{\eqref{equ_deriv_prog_logreg}}{=} \argmax_{\vw \in \mathbb{R}^{\featuredim}} \sum_{\sampleidx=1}^{\samplesize} - \log\big(1\!+\!\exp(- y^{(\sampleidx)} \vw^{T} \vx^{(\sampleidx)}) \big)  \nonumber \\
 & = \argmin_{\vw \in \mathbb{R}^{\featuredim}} (1/\samplesize)\sum_{\sampleidx=1}^{\samplesize} \log\big(1\!+\!\exp(- y^{(\sampleidx)}\vw^{T} \vx^{(\sampleidx)}) \big). 
 \end{align}
-Comparing \eqref{equ_deriv_prog_logreg_2} with \eqref{equ_def_emp_risk_logreg} reveals 
-that logistic regression is nothing but maximum likelihood estimation of the weight 
-vector $\vw$ in the probabilistic model \eqref{equ_prob_model_logistic_model}. 
+Comparing \eqref{equ_deriv_prog_logreg_2} with \eqref{equ_def_emp_risk_logreg} 
+reveals that logistic regression is nothing but maximum likelihood estimation of 
+the weight vector $\vw$ in the probabilistic model \eqref{equ_prob_model_logistic_model}. 
 
 
 
 \section{Support Vector Machines} 
 \label{sec_SVM} 
-Support vector machines (SVM) are classification methods which use the 
-hinge loss \eqref{equ_hinge_loss} to evaluate the quality of a given classifier 
-$h \in \hypospace$. The most basic variant of SVM applies to ML problems 
-with feature space $\featurespace=\mathbb{R}^{\featuredim}$, label space $\labelspace = \{-1,1\}$ 
-and the hypothesis space $\hypospace^{(\featuredim)}$ \eqref{equ_lin_hypospace}, 
-which is also underlying linear regression (see Section \ref{sec_lin_regression}) 
-and logistic regression (see Section \ref{sec_LogReg}). 
+Support vector machines (SVM) use the hinge loss \eqref{equ_hinge_loss} to 
+assess the usefulness of a hypothesis map $h \in \hypospace$ for classifying data points. 
+The most basic variant of SVM applies to ML problems with feature space 
+$\featurespace=\mathbb{R}^{\featuredim}$, label space $\labelspace = \{-1,1\}$ 
+and the hypothesis space $\hypospace^{(\featuredim)}$ \eqref{equ_lin_hypospace}. 
+Note that this is the same hypothesis space as used by linear and logistic regression 
+which we have discussed in Section \ref{sec_lin_regression} and Section \ref{sec_LogReg}), 
+respectively. 
 
 The {\bf soft-margin} SVM \cite[Chapter 2]{LampertNowKernel} uses the loss  
 \begin{align}
@@ -3587,20 +3604,27 @@ The {\bf soft-margin} SVM \cite[Chapter 2]{LampertNowKernel} uses the loss
 \end{align}
 with a tuning parameter $\lambda >0$. According to \cite[Chapter 2]{LampertNowKernel}, a classifier $h^{(\vw_{\rm SVM})}$ 
 minimizing the loss \eqref{equ_loss_svm}, averaged over some labeled data points $\dataset = \{ ( \vx^{(\sampleidx)}, y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$, 
-is equivalent to maximizing the distance (margin) $\xi$ between the decision boundary, given by 
-the set of points $\vx$ satisfying $\vw_{\rm SVM}^{T} \vx=0$, and each of the two classes 
+is equivalent to maximizing the distance (margin) $\xi$ between 
+the decision boundary, given by the set of points $\vx$ satisfying 
+$\vw_{\rm SVM}^{T} \vx=0$, and each of the two classes 
 $\mathcal{C}_{1}\!=\!\{ \vx^{(\sampleidx)} : y^{(\sampleidx)}\!=\!1\}$ and 
-$\mathcal{C}_{2}\!=\!\{ \vx^{(\sampleidx)} : y^{(\sampleidx)}\!=\!-1 \}$. Maximizing this margin is 
-sensible as it ensures that the resulting classifications are robust against small (relative to the margin) 
-perturbations of the features (see Section \ref{sec_robustness}). 
+$\mathcal{C}_{2}\!=\!\{ \vx^{(\sampleidx)} : y^{(\sampleidx)}\!=\!-1 \}$. 
 
-As depicted in Figure \ref{fig_svm}, the margin between the decision boundary and 
-the classes $\mathcal{C}_{1}$ and $\mathcal{C}_{2}$ is typically determined by few 
-data points (such as $\vx^{(6)}$ in Figure \ref{fig_svm}) which are closest to the 
-decision boundary. Such data points are referred to as {\bf support vectors} and 
-entirely determine the resulting classifier $h^{(\vw_{\rm SVM})}$. In other words, once 
-the support vectors are identified the remaining data points become irrelevant for 
-learning the classifier $h^{(\vw_{\rm SVM})}$. 
+Making the margin as large as possible is reasonable as it ensures 
+that the resulting classifications are robust against small (relative 
+to the margin) perturbations of the features (see Section \ref{sec_robustness}). 
+
+As depicted in Figure \ref{fig_svm}, the margin between the decision 
+boundary and the classes $\mathcal{C}_{1}$ and $\mathcal{C}_{2}$ 
+is typically determined by few data points (such as $\vx^{(6)}$ in 
+Figure \ref{fig_svm}) which are closest to the decision boundary. 
+These data points have minimum distance to the decision boundary 
+and are referred to as {\bf support vectors}. 
+
+%These support vectors 
+%fully determine the resulting classifier $h^{(\vw_{\rm SVM})}$ and 
+%its decision boundary. Once the support vectors have been identified, 
+%the remaining data points become irrelevant for learning the classifier $h^{(\vw_{\rm SVM})}$. 
 
 \begin{figure}[htbp]
 \begin{center}
@@ -3617,9 +3641,10 @@ learning the classifier $h^{(\vw_{\rm SVM})}$.
 \draw [thick] (3,-1.9) rectangle ++(0.1cm,0.1cm) node[anchor=west,above]  {\hspace*{0mm}$\vx^{(2)}$};
 \draw [thick] (4,.-1) rectangle ++(0.1cm,0.1cm) node[anchor=west,above] {\hspace*{0mm}$\vx^{(1)}$};
 \end{tikzpicture}
-\caption{The SVM aims at a classifier $h^{(\vw)}$ with small hinge loss. Minimizing hinge loss of a 
- classifier is the same as maximizing the margin $\xi$ between the decision boundary (of the classifier) 
- and each class of the training set.}
+\caption{The SVM aims at a classifier $h^{(\vw)}$ with small hinge loss. 
+	Minimizing hinge loss of a classifier is the same as maximizing the 
+	margin $\xi$ between the decision boundary (of the classifier) and 
+	each class of the training set.}
 \label{fig_svm}
 \end{center}
 \end{figure}
@@ -3802,17 +3827,18 @@ about the feature vector $\vx$ (e.g., ``is the norm of $\vx$ larger than $10$?''
 The particular decision tree depicted in Figure \ref{fig_decision_tree} consists 
 of two decision nodes (including the root node) and three leaf nodes. 
 
-Given limited computational resources, we need to restrict ourselves to decision 
-trees which are not too large. We can define a particular hypothesis space by 
-collecting all decision trees which uses the tests ``$\| \vx - \vu \| \leq r$'' and  
-``$\| \vx - \vu \| \leq r$''  (for fixed vectors $\vu$ and $\vv$ and fixed radius $r >0$) 
+Given limited computational resources, we can only use decision 
+trees which are not too deep. Consider the hypothesis 
+space consisting of all decision trees which uses the tests ``$\| \vx - \vu \| \leq r$'' and  
+``$\| \vx - \vv \| \leq r$'' , with some vectors $\vu$ and $\vv$ and radius $r >0$. 
 and depth not larger than $2$.\footnote{The depth of a decision tree is the maximum 
 	number of hops it takes to reach a leaf node starting from the root and following 
 	the arrows. The decision tree depicted in Figure \ref{fig_decision_tree} has depth $2$.} 
+
 To assess the quality of different decision trees we need to use some loss function. 
 Examples of loss functions used to measure the quality of a decision tree are the 
-squared error loss (for numeric labels)or the impurity of individual decision 
-regressions (for categorical labels). 
+squared error loss (for numeric labels) or the impurity of individual decision 
+regressions (for discrete labels). 
 
 In general, we are not interested in one particular decision tree only but 
 in a large set of different decision trees from which we choose the most 

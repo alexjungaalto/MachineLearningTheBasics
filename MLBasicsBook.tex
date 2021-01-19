@@ -3488,11 +3488,11 @@ At first sight, it seems wasteful to use a linear hypothesis $h(\vx) = \vw^T \vx
 with some weight vector $\vw \in \mathbb{R}^{\featuredim}$, to predict a 
 binary label $y$. Indeed, while the prediction $h(\vx)$ can take any real number, 
 the label $y \in \{-1,1\}$ takes on only one of the two real numbers $1$ and $-1$. 
-We will shortly that even for binary labels it is quite useful to use a hypothesis 
-map $h$ which can take on arbitrary real numbers. 
 
-Note that we can always threshold the prediction $h(\vx)$ to obtain a 
-predicted label $\hat{y} \in \{-1,1\}$. A datapoint with features $\vx$, 
+It turns out that even for binary labels it is quite useful to use 
+a hypothesis map $h$ which can take on arbitrary real numbers. 
+We can always obtain a predicted label $\hat{y} \in \{-1,1\}$ by comparing 
+hypothesis value $h(\vx)$ with a threshold. A datapoint with features $\vx$, 
 is classified as $\hat{y}=1$ if $h(\vx)\geq 0$ and $\hat{y}=-1$ for $h(\vx)< 0$. 
 Thus, we use the sign of the predictor map $h(\vx)$ to determine the 
 final prediction for the label. The absolute value $|h(\vx)|$ is then used 
@@ -3501,8 +3501,9 @@ to quantify the reliability of (or confidence in) the classification $\hat{y}$.
 Consider two datapoints with features $\vx^{(1)}, \vx^{(2)}$ and 
 a linear classifier map $h$ yielding the function values $h(\vx^{(1)}) = 1/10$ 
 and $h(\vx^{(2)}) = 100$. Whereas the predictions for both datapoints result 
-in the same label predictions $\hat{y}^{(1)}\!=\!\hat{y}^{(2)}\!=\!1$, the classification 
-of the datapoint with feature vector $\vx^{(2)}$ seems to be much more reliable. 
+in the same label predictions, i.e., $\hat{y}^{(1)}\!=\!\hat{y}^{(2)}\!=\!1$, the 
+classification of the datapoint with feature vector $\vx^{(2)}$ seems to be 
+much more reliable. 
 %In general, it is useful to complement a particular prediction (or classification) 
 %result by some quantification of its reliability. 
 
@@ -4979,8 +4980,9 @@ some $\vw_{0}$ to satisfy $f(\vw_{0})\!=\!\min_{\vw \in \mathbb{R}^{\featuredim}
 \label{equ_zero_gradient}
  \nabla f(\vw_{\rm opt}) = \mathbf{0}.
 \end{equation} 
-Combining \eqref{equ_quadr_form_linreg} with \eqref{equ_zero_gradient}, yields the following sufficient 
-and necessary condition for a weight vector $\vw_{\rm opt}$ to solve the ERM \eqref{equ_def_cost_MSE}: 
+Combining \eqref{equ_quadr_form_linreg} with \eqref{equ_zero_gradient}, 
+yields the following sufficient and necessary condition for a weight vector 
+$\vw_{\rm opt}$ to solve the ERM \eqref{equ_def_cost_MSE}: 
 \begin{equation}
 \label{equ_zero_gradient_lin_reg}
 (1/\samplesize) \mX^{T} \mX \vw_{\rm opt} = (1/\samplesize) \mX^{T} \vy.  

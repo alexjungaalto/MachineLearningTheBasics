@@ -418,7 +418,7 @@ Tomi Janhunen, Yu Tian, Natalia Vesselinova, Ekaterina Voskoboinik,
 Buse Atli, Stefan Mojsilovic for carefully reviewing early 
 drafts of this tutorial. Some of the figures have been 
 generated with the help of Eric Bach. The author is grateful 
-for the feedback received from Jukka Suomela, V{\"a}ini{\"o} Mehtola, 
+for the feedback received from Jukka Suomela, V{\"a}in{\"o} Mehtola, 
 Oleg Vlasovetc, Anni Niskanen, Georgios Karakasidis, Joni P{\"a}{\"a}kk{\"o}, 
 Harri Wallenius and Satu Korhonen. 
 
@@ -1773,10 +1773,14 @@ $$\sigma_{x}^{2} \defeq \expect\big\{\big(x-\expect\{x\}\big)^{2}\big\}.$$
 These parameters can be estimated using the sample mean 
 (average) and sample variance, 
 \begin{equation} 
+\label{equ_sample_mean_var}
 \hat{\mu}_{x} \defeq (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} x^{(\sampleidx)}\mbox{ , and } \widehat{\sigma^{2}_{x}} \defeq (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \big( x^{(\sampleidx)} - \hat{\mu}_{x} \big)^{2}.  
 \end{equation} 
-A widely used estimator for the square root of the variance is the 
-(sample) standard deviation $\hat{s}_{x} \defeq  \sqrt{(1/(\samplesize-1)) \sum_{\sampleidx=1}^{\samplesize} \big( x^{(\sampleidx)} - \hat{\mu}_{x} \big)^{2}}$. 
+The sample mean and variance \eqref{equ_sample_mean_var} 
+can be shown to be maximum likelihood estimators of the mean 
+and variance of a normal (Gaussian) distribution $p(x)$ (see \cite[Chapter 2.3.4]{BishopBook}. 
+%A widely used estimator for the square root of the variance is the 
+%(sample) standard deviation $\hat{s}_{x} \defeq  \sqrt{(1/\samplesize-1) \sum_{\sampleidx=1}^{\samplesize} \big( x^{(\sampleidx)} - \hat{\mu}_{x} \big)^{2}}$. Using the feactor 
 
 
 
@@ -3333,14 +3337,15 @@ $y - \hat{y}$ are not squared. Outliers have a smaller effect
 on the average Huber loss over the entire dataset. 
 
 The Huber loss contains two important special cases. 
-The first special case occurs when a very large value of $\varepsilon$ 
-is chosen, such that the condition $|y-\hat{y}| \leq \varepsilon$ is 
-always satisfied. In this case, the Huber loss is equivalent to the 
-squared error loss $(y-\hat{y})^{2}$ (up to a scaling factor $1/2$). 
+The first special case occurs when $\varepsilon$ 
+is chosen to be very large, such that the condition 
+$|y-\hat{y}| \leq \varepsilon$ is satisfied for most 
+datapoints. In this case, the Huber loss resembles 
+the squared error loss $(y-\hat{y})^{2}$ (up to a scaling factor $1/2$). 
 
 The second special case occurs when $\varepsilon$ is chosen 
-very small (close to $0$) such that the condition $|y-\hat{y}| \leq \varepsilon$ 
-is never satisfied. In this case, the Huber loss is equivalent 
+to be very small (close to $0$) such that the condition $|y-\hat{y}| \leq \varepsilon$ 
+is almost never satisfied. In this case, the Huber loss is equivalent 
 to the absolute loss $|y - \hat{y}|$ scaled by a factor $\varepsilon$.
 
 \section{The Lasso}
@@ -3351,7 +3356,7 @@ well for datapoints having more features than the number of
 training datapoints (this is the high-dimensional regime). 
 One approach to avoid overfitting is to modify the squared error 
 loss \eqref{equ_squared_loss} by taking into account the weight 
-vector of the linear predictor $h(\vx) = \vw^{T}\vw$. 
+vector of the linear predictor $h(\vx) = \vw^{T}\vx$. 
 
 The Least Absolute Shrinkage and Selection Operator (Lasso) is 
 obtained from linear regression by replacing the squarer error loss 
@@ -3413,16 +3418,16 @@ with linear regression (see Figure \ref{fig_lin_bas_expansion}). The resulting h
 & \mbox{ with weights } \vw=(w_{1},\ldots,w_{\featuredim})^{T} \in \mathbb{R}^{\featuredim}\}.
 \end{align}
 
-We different hypothesis spaces $\hypospace_{\rm Gauss}$ for  
-different choices for the variance $\sigma^{2}$ and shifts $\mu_{j}$ 
-used for the Gaussian function in \eqref{equ_basis_Gaussian}. 
-These parameters have to be chosen suitably for the ML application 
-at hand (e.g., using model selection techniques discussed in Section \ref{sec_modsel}). 
+Different choices for the variance $\sigma^{2}$ and shifts $\mu_{j}$ 
+of the Gaussian function in \eqref{equ_basis_Gaussian} results in 
+different hypothesis spaces $\hypospace_{\rm Gauss}$. Chapter \ref{sec_modsel} 
+will discuss model selection techniques that allow to find useful values 
+for these parameters.
 
-The hypothesis space \eqref{equ_def_Gauss_hypospace} is parameterized 
-by a weight vector $\vw \in \mathbb{R}^{\featuredim}$. Each element 
-of $\hypospace_{\rm Gauss}$ corresponds to a particular choice 
-for the weight vector $\vw$. Instead of searching over $\hypospace_{\rm Gauss}$ 
+The hypotheses of \eqref{equ_def_Gauss_hypospace} are parameterized 
+by a weight vector $\vw \in \mathbb{R}^{\featuredim}$. Each hypothesis 
+ in $\hypospace_{\rm Gauss}$ corresponds to a particular choice 
+for the weight vector $\vw$. Thus, instead of searching over $\hypospace_{\rm Gauss}$ 
 to find a good hypothesis, we can search over $\mathbb{R}^{\featuredim}$.
 
 %Note that choosing the variance $\sigma^{2}$ of the Gaussian basis functions \eqref{equ_basis_Gaussian} small and using a large number of 
@@ -3610,8 +3615,8 @@ assess the usefulness of a hypothesis map $h \in \hypospace$ for classifying dat
 The most basic variant of SVM applies to ML problems with feature space 
 $\featurespace=\mathbb{R}^{\featuredim}$, label space $\labelspace = \{-1,1\}$ 
 and the hypothesis space $\hypospace^{(\featuredim)}$ \eqref{equ_lin_hypospace}. 
-Note that this is the same hypothesis space as used by linear and logistic regression 
-which we have discussed in Section \ref{sec_lin_regression} and Section \ref{sec_LogReg}), 
+This is the same hypothesis space as used by linear and logistic regression 
+which we have discussed in Section \ref{sec_lin_regression} and Section \ref{sec_LogReg}, 
 respectively. 
 
 The {\bf soft-margin} SVM \cite[Chapter 2]{LampertNowKernel} uses the loss  
@@ -3720,7 +3725,7 @@ $P_{\rm err} = \prob{ y \neq h(\vx) }$.
 An important subclass of Bayes' classifiers uses the hypothesis 
 space \eqref{equ_lin_hypospace} which is also underlying logistic 
 regression (see Section \ref{sec_LogReg}) and the SVM (see Section 
-\ref{sec_SVM}. Logistic regression, the SVM and Bayes' 
+\ref{sec_SVM}). Logistic regression, the SVM and Bayes' 
 classifiers are different instances of linear classifiers (see Figure \ref{fig_lin_dec_boundary}). 
 
 Linear classifiers partition the feature space $\featurespace$ into two half-spaces. 
@@ -3826,15 +3831,19 @@ and label space $\labelspace=\mathbb{R}$. %Here, a decision tree describes
 %how a feature vector $\vx=(x_{1},x_{2})^{T}$ is mapped to a predicted label $h(\vx)$. 
 
 We have depicted an example of a decision tree in Figure \ref{fig_decision_tree}. 
-The decision tree consists of nodes which are connected by directed edges. We 
-can of a decision tree as a step-by-step instruction, or a ``recipe'', for how to 
-compute the predictor value $h(\vx)$ given the input feature $\vx \in \featurespace$. 
-This computation starts at the {\bf root node} and ends at one of the {\bf leaf nodes}. 
+The decision tree consists of nodes which are connected by directed edges. 
+We might think of a decision tree as a step-by-step instruction, 
+or a ``recipe'', for how to compute the function value $h(\vx)$ 
+given the features $\vx \in \featurespace$ of a datapoint. This 
+computation starts at the {\bf root node} and ends at one of 
+the {\bf leaf nodes} of the decision tree. 
 
-A leaf node $m$, which does not have any outgoing edges, corresponds to a certain 
-subset or ``region'' $\mathcal{R}_{m} \subseteq \featurespace$ of the feature space. 
-The hypothesis $h$ associated with a decision tree is constant over the regions $\mathcal{R}_{m}$, 
-such that $h(\vx) = h_{m}$ for all $\vx \in \mathcal{R}_{m}$ and some fixed number $h_{m} \in \mathbb{R}$. 
+A leaf node $m$, which does not have any outgoing edges, 
+represents a decision region $\mathcal{R}_{m} \subseteq \featurespace$ in 
+the feature space. The hypothesis $h$ associated with a decision tree 
+is constant over the regions $\mathcal{R}_{m}$, such that $h(\vx) = h_{m}$ 
+for all $\vx \in \mathcal{R}_{m}$ and some fixed number $h_{m} \in \mathbb{R}$. 
+
 In general, there are two types of nodes in a decision tree: 
 \begin{itemize} 
 \item decision (or test) nodes, which represent particular ``tests'' 
@@ -3845,17 +3854,17 @@ The particular decision tree depicted in Figure \ref{fig_decision_tree} consists
 of two decision nodes (including the root node) and three leaf nodes. 
 
 Given limited computational resources, we can only use decision 
-trees which are not too deep. Consider the hypothesis 
-space consisting of all decision trees which uses the tests ``$\| \vx - \vu \| \leq r$'' and  
-``$\| \vx - \vv \| \leq r$'' , with some vectors $\vu$ and $\vv$ and radius $r >0$. 
-and depth not larger than $2$.\footnote{The depth of a decision tree is the maximum 
-	number of hops it takes to reach a leaf node starting from the root and following 
-	the arrows. The decision tree depicted in Figure \ref{fig_decision_tree} has depth $2$.} 
+trees which are not too deep. Consider the hypothesis space consisting 
+of all decision trees which uses the tests ``$\| \vx - \vu \| \leq r$'' and  
+``$\| \vx - \vv \| \leq r$'' , with some vectors $\vu$ and $\vv$, some positive 
+radius $r >0$ and depth no larger than $2$.\footnote{The depth of a decision tree 
+	is the maximum number of hops it takes to reach a leaf node starting 
+	from the root and following the arrows. The decision tree depicted in Figure \ref{fig_decision_tree} has depth $2$.} 
 
-To assess the quality of different decision trees we need to use some loss function. 
-Examples of loss functions used to measure the quality of a decision tree are the 
-squared error loss (for numeric labels) or the impurity of individual decision 
-regressions (for discrete labels). 
+To assess the quality of different decision trees we need to use some 
+loss function. Examples of loss functions used to measure the quality 
+of a decision tree are the squared error loss (for numeric labels) or the 
+impurity of individual decision regressions (for discrete labels). 
 
 In general, we are not interested in one particular decision tree only but 
 in a large set of different decision trees from which we choose the most 
@@ -3865,9 +3874,10 @@ by a set of decision trees (such as depicted in Figure \ref{fig_hypospace_DT_dep
 
 A collection of decision trees can be constructed based on a fixed set of 
 ``elementary tests'' on the input feature vector, e.g., $\| \vx \| > 3$, $x_{3} < 1$ 
-or a continuous ensemble of test such as $\{ x_{2} > \eta \}_ {\eta \in [0,10]}$. We then 
-build a hypothesis space by considering all decision trees not exceeding a maximum 
-depth and whose decision nodes implement elementary tests. 
+or a continuous ensemble of parametrized tests such as $\{ x_{2} > \eta \}_ {\eta \in [0,10]}$. 
+We then build a hypothesis space by considering all decision trees not 
+exceeding a maximum depth and whose decision nodes carry out 
+elementary tests. 
 
 \begin{figure}[htbp]
 \begin{minipage}{.45\textwidth} %
@@ -3952,7 +3962,7 @@ child {node  [env] {$\| \vx-\vv \| \leq r$?}    child {node  [env] {$h(\vx) =10$
  \end{center}
  \caption{A hypothesis space $\hypospace$ consisting of two decision trees 
  	with depth at most $2$ and using the tests $\| \vx\!-\!\vu \|\!\leq\!r$ and $\|\vx\!-\!\vv \|\!\leq\!r$ 
- 	with a fixed radius $r$ and points $\vu$ and $\vv$. }
+ 	with a fixed radius $r$ and vectors $\vu,\vv \in \mathbb{R}^{\featurelen}$. }
  \label{fig_hypospace_DT_depth_2}
 \end{figure}
 
@@ -3965,10 +3975,15 @@ that resemble any given labeled dataset (see Figure \ref{fig_decisiontree_overfi
 
 This is quite different from ML methods using the linear hypothesis space \eqref{equ_lin_hypospace}, 
 such as linear regression, logistic regression or SVM. Such linear maps have a rather 
-simple geometry, since a linear map is constant along hyperplanes. In particular, linear 
-classifiers partition the feature-space into two half-spaces (see Figure \ref{fig_lin_dec_boundary}). 
-In contrast, the geometry of the map represented by a decision tree maps 
-can be arbitrary complicated if the decision tree is sufficiently large (deep). % we can construct a sufficiently complex 
+simple geometry. Indeed, a linear map is constant along hyperplanes. Moreover, the 
+decision regions obtained from linear classifiers are always entire half-spaces (see Figure \ref{fig_lin_dec_boundary}). 
+
+In contrast, the shape of a map represented by a decision tree can be highly 
+complicated. Using a sufficiently large (deep) decision tree, we can obtain a 
+map that closely resembles almost any given non-linear map. The decision 
+regions obtained from a deep decision tree can be highly irregular. 
+
+%can be arbitrary complicated if the decision tree is sufficiently large (deep). % we can construct a sufficiently complex 
 %decision tree which partitions the feature space such that each datapoint belongs to a separate cluster (corresponding to a particular leaf node). 
 
 \begin{figure}[htbp]
@@ -4291,11 +4306,14 @@ the covariance matrix are obtained via
 \hat{\bm \mu}, \widehat{\bf \Sigma} = \argmin_{{\bm \mu} \in \mathbb{R}^{\featurelen},{\bf \Sigma} \in \mathbb{S}^{\featurelen}_{+}} (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} - \log {\rm P} (\vz^{(\sampleidx)}; ({\bm \mu},{\bf \Sigma})). 
 \end{equation} 
 
-The optimization in \eqref{equ_max_likeli} is over all pairs given be some mean 
-vector ${\bm \mu} \in \mathbb{R}^{\featurelen}$ and some covariance matrix ${\bf \Sigma} \in \mathbb{S}^{\featurelen}_{+}$. Here, $\mathbb{S}^{\featurelen}_{+}$ denotes the set of all psd Hermitian $\featurelen \times \featurelen$ matrices. 
-Note that this maximum likelihood problem \eqref{equ_max_likeli} can be 
+The optimization in \eqref{equ_max_likeli} is over choices for the mean 
+vector ${\bm \mu} \in \mathbb{R}^{\featurelen}$ and covariance matrix 
+${\bf \Sigma} \in \mathbb{S}^{\featurelen}_{+}$. Here, $\mathbb{S}^{\featurelen}_{+}$ 
+denotes the set of all psd Hermitian $\featurelen \times \featurelen$ matrices. 
+
+The maximum likelihood problem \eqref{equ_max_likeli} can be 
 interpreted as an instance of ERM \eqref{equ_def_ERM_funs} using the 
-particular loss function \eqref{equ_loss_ML}.The resulting estimates are 
+particular loss function \eqref{equ_loss_ML}. The resulting estimates are 
 given explicitly as 
 \begin{equation}
 \label{equ_ML_mean_cov_Gauss} 
@@ -4310,7 +4328,7 @@ modelled as a multivariate normal distribution.
 The class of $k$-nearest neighbour (k-NN) predictors (for continuous label space) or 
 classifiers (for discrete label space) is defined for feature spaces $\featurespace$ equipped 
 with an intrinsic notion of distance between its elements. Mathematically, such spaces are 
-referred to as metric spaces \cite{RudinBookPrinciplesMatheAnalysis}). A prime example of a 
+referred to as metric spaces \cite{RudinBookPrinciplesMatheAnalysis}. A prime example of a 
 metric space is $\mathbb{R}^{\featuredim}$ with the Euclidean metric induced by the distance 
 measure $\| \vx\!-\!\vy \|$ between two vectors $\vx, \vy \in \mathbb{R}^{\featuredim}$. 
 
@@ -4421,9 +4439,9 @@ such as those depicted in Figure \ref{fig_graph_signals}.
 
 The nodes $\nodes$ of the empirical graph represent individual datapoints. 
 Datapoints are connected by edges $\edges$ if they are considered ``similar'' 
-in an application-specific sense. The extend of similarity between 
-connected nodes $i,j \in \nodes$ is encoded in the edge weights $W_{i,j} > 0$ 
-which are collected into the weight matrix $\mathbf{W} \in \mathbb{R}_{+}^{|\nodes| \times |\nodes|}$.  
+in an application-specific sense. We encode the extent of similarity between 
+connected nodes $i,j \in \nodes$ using the edge weight $W_{i,j} > 0$. The 
+edge weights are the entries of weight matrix $\mathbf{W} \in \mathbb{R}_{+}^{|\nodes| \times |\nodes|}$.  
 
 The notion of similarity between datapoints can be based on physical 
 proximity (in time or space), communication networks or probabilistic 
@@ -4575,8 +4593,8 @@ A graph signal $h[\cdot]$ is a map $\nodes \rightarrow \mathbb{R}$,
 which associates every node $i\!\in\!\nodes$ with the signal 
 value $h[i] \!\in\! \mathbb{R}$. 
 
-Most methods for processing graph signals rely on a signal model 
-which are inspired by a cluster assumption \cite{SemiSupervisedBook}. 
+The graph signals arising in several important application domains can 
+be well modelled using a cluster assumption \cite{SemiSupervisedBook}. 
 The cluster assumption requires similar signal values $h[i] \approx h[j]$ 
 at nodes $i,j \in \nodes$, which belong to the same well-connected 
 subset of nodes (``cluster'') of the empirical graph. The clusteredness 
@@ -4645,8 +4663,8 @@ discussed in this chapter aim at learning a linear classifier?
 
 \subsection{Data Dependent Hypothesis Space} 
 \label{exercise_data_dep_hypospace} 
-Which of the following ML methods uses a hypothesis space that depends on  
-training datapoint. 
+Which of the following ML methods uses a hypothesis space that 
+depends on the training data. 
 \begin{itemize} 
 	\item logistic regression 
 	\item linear regression 
@@ -5955,7 +5973,7 @@ It is therefore often beneficial to pre-process the feature vectors using a {\bf
  \nonumber
  \vx^{(\sampleidx)} \defeq \vx^{(\sampleidx)} - \bar{\vx} \mbox{ for  }  \sampleidx=1,\ldots,\samplesize
  \end{equation} 
-\State normalise features to have unit variance, i.e.,  
+\State normalise features to have unit variance,  
  \begin{equation} 
  \nonumber
  \hat{x}^{(\sampleidx)}_{j} \defeq x^{(\sampleidx)}_{j}/ \hat{\sigma}   \mbox{ for  } j=1,\ldots,\featuredim \mbox{ and } \sampleidx=1,\ldots,\samplesize
@@ -6524,8 +6542,9 @@ face a non-zero {\bf estimation error}
 \label{equ_def_est_error}
 \Delta \vw \defeq \widehat{\vw} - \vw_{\rm true}. 
 \end{equation} 
-Note that this estimation error is a random quantity since the learnt weight vector $\widehat{\vw}$ 
-(see \eqref{equ_optimal_weight_closed_form}) is random.
+Note that the estimation error is a random quantity since the 
+learnt weight vector $\widehat{\vw}$ (see \eqref{equ_optimal_weight_closed_form}) 
+is itself a random quantity.
 
 {\bf Bias and Variance.} 
 As we will see below, the prediction quality achieved by $h^{(\widehat{\vw})}$ depends crucially on the 
@@ -8396,11 +8415,15 @@ to guess or approximate the label of a datapoint based on its features.
 \item {\bf loss function}: a function which associates a given datapoint $(\vx,y)$ with features $\vx$ 
 and label $y$ and hypothesis map $h$ a number that quantifies the prediction error $y-h(\vx)$. 
 
-\item {\bf positive semi-definite (psd) matrix}: a positive semidefinite matrix $\mQ$, i.e., a symmetric 
-matrix $\mQ = \mQ^{T}$ such that $\vx^{T} \mQ \vx \geq 0$ holds for every vector $\vx$. 
+\item {\bf positive semi-definite}: a positive semi-definite matrix $\mQ$ is 
+a symmetric matrix $\mQ = \mQ^{T}$ such that $\vx^{T} \mQ \vx \geq 0$ 
+for every vector $\vx$. 
 
 \item {\bf predictor}: a hypothesis map $h: \featurespace \rightarrow \labelspace$ with continuous 
 label space (e.g., $\labelspace = \mathbb{R}$). 
+
+\item {\bf psd}: positive semi-definite. %We refer to a square matrix $\mathbf{M}$ as psd if, 
+%for every vector $\vx$, $\vx^{T} \mathbf{M} \vx> 0$ 
 
 \item {\bf regression problem}: an ML problem involving a continuous label space $\labelspace$ 
 (such as $\labelspace = \mathbb{R}$). 

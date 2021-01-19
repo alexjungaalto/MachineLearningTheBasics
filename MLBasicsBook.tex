@@ -4256,11 +4256,10 @@ The recent success of ML methods based on ANN with many hidden layers
 representation of hypothesis maps is beneficial for the computational 
 implementation of ML methods. First, we can evaluate a map $h^{(\vw)}$ represented 
 by an ANN efficiently using modern parallel and distributed computing 
-infrastructure via message passing over the network. Second, the ANN 
-representation also allows to efficiently how the loss function changes with small 
-modifications of the weights $\vw$. The gradient of the overall loss or empirical risk 
-(see Chapter \ref{ch_GD}) can be obtained via a message passing procedure known 
-as {\bf back-propagation} \cite{Goodfellow-et-al-2016}.
+infrastructure via message passing over the network. Second, the 
+graphical ANN representation of hypotheses allows to efficiently
+compute the gradient of the loss function via a message passing 
+procedure known as {\bf back-propagation} \cite{Goodfellow-et-al-2016}.
 
 \section{Maximum Likelihood Methods}
 \label{sec_max_iikelihood}
@@ -4373,8 +4372,10 @@ on the application at hand; one notion of optimality is obtained from approximat
 
 \section{Clustering Methods} 
 \label{sec_clustering_methods} 
-datapoints are whose datasets; labels are correct partitioning/clustering; loss function is some notion of purity of 
-clustering error; discuss partitional vs. hierarchical clustering (different choice for hypospace?)
+each datapoint is an entire dataset of lower-level datapoints; 
+labels are correct partitioning/clustering; loss function is some 
+notion of purity of clustering error; discuss partitional vs. hierarchical 
+clustering (different choice for hypospace?)
 
 
 \section{Deep Reinforcement Learning}
@@ -4411,15 +4412,18 @@ to use as a feature space a graph whose nodes represent individual datapoints.
 Similar datapoints are connected by an edge. 
 
 
-An particular class of ML problems involve partially labeled network-structured data arising in many 
-important application domains including signal processing \cite{ChenVarma,Chen2015}, image 
+Partially labeled network-structured data arises in many important application 
+domains including signal processing \cite{ChenVarma,Chen2015}, image 
 processing \cite{LempKohli2009,ShiMalik2000}, social networks, internet and bioinformatics 
-\cite{NewmannBook,SemiSupervisedBook,Fergus2009}. Such network-structured data 
-(see Figure \ref{fig_graph_signals} ) can be described by an ``empirical graph'' $\graph=(\nodes,\edges,\mathbf{W})$,  
-whose nodes $\nodes$ represent individual datapoints which are connected by edges $\edges$ 
-if they are considered ``similar'' in an application-specific sense. The extend of similarity between 
-connected nodes $i,j \in \nodes$ is encoded in the edge weights $W_{i,j} > 0$ which are collected 
-into the weight matrix $\mathbf{W} \in \mathbb{R}_{+}^{|\nodes| \times |\nodes|}$.  
+\cite{NewmannBook,SemiSupervisedBook,Fergus2009}. Networked data 
+can be described by an ``empirical graph'' $\graph=(\nodes,\edges,\mathbf{W})$ 
+such as those depicted in Figure \ref{fig_graph_signals}.   
+
+The nodes $\nodes$ of the empirical graph represent individual datapoints. 
+Datapoints are connected by edges $\edges$ if they are considered ``similar'' 
+in an application-specific sense. The extend of similarity between 
+connected nodes $i,j \in \nodes$ is encoded in the edge weights $W_{i,j} > 0$ 
+which are collected into the weight matrix $\mathbf{W} \in \mathbb{R}_{+}^{|\nodes| \times |\nodes|}$.  
 
 The notion of similarity between datapoints can be based on physical 
 proximity (in time or space), communication networks or probabilistic 

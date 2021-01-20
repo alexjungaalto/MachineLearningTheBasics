@@ -2659,11 +2659,13 @@ methods for solving the resulting learning problem (see Section \ref{sec_NaiveBa
 
 In order to ``cure'' the non-convexity of the $0/1$ loss we 
 approximate it by a convex loss function. This convex 
-approximation results in the {\bf hinge loss} (see Figure \ref{fig_class_loss}) 
+approximation results in the {\bf hinge loss}
 \begin{equation} 
 \label{equ_hinge_loss}
 \loss{(\vx,y)}{h} \defeq \max \{ 0 , 1 - y\cdot h(\vx) \}. 
 \end{equation}
+Figure \ref{fig_class_loss} depicts the hinge loss \eqref{equ_hinge_loss} 
+as a function of the hypothesis $h(\vx)$. 
 While the hinge loss avoids the non-convexity of the $0/1$ 
 loss it still is a non-differentiable function of the classifier $h$. 
 
@@ -2701,9 +2703,11 @@ by replacing the concept of a gradient with the concept
 of a subgradient. 
 
 
-\begin{figure}[htbp]
+\hspace*{10mm}
 \begin{center}
+\begin{figure}[htbp]
     \begin{tikzpicture}
+    	 \hspace*{-10mm}
           \begin{axis}
           [ylabel=$h(x)$,
               xlabel=$x$,grid, 
@@ -2715,28 +2719,32 @@ of a subgradient.
   ylabel={loss $\mathcal{L}$},
   xlabel style={below right},
   ylabel style={above left},
-  xmin=-3,
-  xmax=3,
+  xmin=-4,
+  xscale = 1.4, 
+  xmax=4,
   ymin=-0.5,
   ymax=2.5
   ]
                \addplot [smooth, color=red, ultra thick] table [x=a, y=b, col sep=comma] {logloss.csv};    
                    \addplot [color=blue, ultra thick] table [x=a, y=b, col sep=comma] {hingeloss.csv};     
-                   \addplot [color=black, ultra thick] table [x=a, y=b, col sep=comma] {zerooneloss.csv};      
-          \end{axis}
-          \node [right,color=red] at (5,1.5) {logistic loss (for $y\!=\!1$)};
-           \node [right,color=blue] at (2.7,4) {hinge loss (for $y\!=\!1)$};
-           \node [left] at (1.5,3) {$0/1$ loss (for $y\!=\!1)$};
+                   \addplot [color=black, ultra thick] table [x=a, y=b, col sep=comma] {zerooneloss.csv};     
+       \end{axis}
+          
+     \node [right] at (10,5) { very confident in $\hat{y}\!=\!1 \Rightarrow$}; 
+     \node [right,color=red] at (7,1.5) {logistic loss (for $y\!=\!1$)};
+      \node [right,color=blue] at (4,4) {hinge loss (for $y\!=\!1)$};
+      \node [left] at (2.5,3) {\bf $0/1$ loss (for $y\!=\!1)$};
+     \node [left] at (2,5) {$\Leftarrow$ very confident in $\hat{y}\!=\!-1$};
      \end{tikzpicture}
      \vspace*{-10mm}
-\end{center}
-\caption{Three loss functions for assessing the quality of a hypothesis $h$ which 
-	is used to classify a datapoint with label $y=1$ according to \eqref{equ_def_classification}. 
-	The more confident we are in a correct decision, i.e, the more positive $h(x)$, 
-	the smaller the loss. Each of the three loss functions tends monotonically to $0$ 
-	for increasing $h(x)$.}
+\caption{Three loss functions for assessing the quality of a hypothesis $h$ 
+	which is used to classify a datapoint with true label $y=1$ according to \eqref{equ_def_classification}. 
+	The more confident we are in a correct classification ($\hat{y}=1$), i.e, 
+	the more positive $h(x)$, the smaller the loss. Each of the three loss 
+	functions tends monotonically to $0$ for increasing $h(x)$.}
 \label{fig_class_loss}
 \end{figure}
+\end{center}
 
 Let us emphasize that, very much like the choice of features 
 and hypothesis space, the question of which particular loss 
@@ -2777,10 +2785,11 @@ we use $\emperror(h)$.
 {\bf Regret.} In some application, we might have access to the 
 predictions obtained from some reference methods or {\bf experts}. 
 The quality of a hypothesis $h$ can then be measured via the 
-difference between the loss incurred between its predictions 
-$h(\vx)$ and loss incurred by the predictions of the experts 
-\cite{HazanOCO}. This difference is referred to as the {\bf regret} 
-in using the prediction $h(\vx)$ instead of the expert. 
+difference between the loss incurred by its predictions 
+$h(\vx)$ and the loss incurred by the predictions of the experts 
+\cite{HazanOCO}. This difference is referred to as the {\bf regret}. 
+This different measures how much we regret to have used the 
+prediction $h(\vx)$ instead of having followed the prediction of the expert. 
 The goal of regret minimization is to learn a hypothesis 
 with small regret compared to all considered experts. 
 

@@ -1842,7 +1842,7 @@ for data.
 %A hypothesis is a map or function, which maps the feature vector 
 %$\vx^{(\sampleidx)}$ of a datapoints to a predicted label $\hat{y} = h(\vx)$. 
 
-The main goal of ML is to learn a good hypothesis $h$ from data. 
+The main goal of ML is to learn a good hypothesis $h$ from some training data. 
 Given a good hypothesis map $h$, such that \eqref{equ_approx_label_pred} 
 is satisfied, ML methods use it to predict the label of any datapoint. 
 The prediction $\hat{y}=h(\vx)$ is obtained by evaluating the hypothesis 
@@ -2237,8 +2237,9 @@ too large can be made precise in different ways. The size of
 a finite hypothesis space $\hypospace$ can be defined as 
 its cardinality $|\hypospace|$ which is simply the number of 
 its elements. 
+
 {\bf Example.} Consider datapoints represented by $100 \times 10\!=\!1000$ 
-black and white pixels (see Figure \ref{fig_snapshot_pixels}) and 
+black-and-white pixels (see Figure \ref{fig_snapshot_pixels}) and 
 characterized by a binary label $y \in \{0,1\}$. We can model such 
 datapoints using the feature space $\featurespace = \{0,1\}^{1000}$ 
 and label space $\labelspace = \{0,1\}$. The largest possible hypothesis 
@@ -2728,10 +2729,12 @@ of a subgradient.
                \addplot [smooth, color=red, ultra thick] table [x=a, y=b, col sep=comma] {logloss.csv};    
                    \addplot [color=blue, ultra thick] table [x=a, y=b, col sep=comma] {hingeloss.csv};     
                    \addplot [color=black, ultra thick] table [x=a, y=b, col sep=comma] {zerooneloss.csv};     
+                     \addplot[domain=-1:4, thin,dashed] {(x-1)^2};
        \end{axis}
           
      \node [right] at (10,5) { very confident in $\hat{y}\!=\!1 \Rightarrow$}; 
      \node [right,color=red] at (7,1.5) {logistic loss (for $y\!=\!1$)};
+         \node [right] at (7,3) {squared error (for $y\!=\!1$)};
       \node [right,color=blue] at (4,4) {hinge loss (for $y\!=\!1)$};
       \node [left] at (2.5,3) {\bf $0/1$ loss (for $y\!=\!1)$};
      \node [left] at (2,5) {$\Leftarrow$ very confident in $\hat{y}\!=\!-1$};
@@ -3757,12 +3760,12 @@ selected out of some hypothesis space $\hypospace$. Let
 us assume that the available computational infrastructure only 
 allows to use a linear hypothesis space $\hypospace^{(\featuredim)}$ (see \eqref{equ_lin_hypospace}).
 
-For some applications using only linear predictor maps in 
-$\hypospace^{(\featuredim)}$ is not sufficient to model the 
-relation between features and labels (see Figure \ref{fig_scatterplot_poly} 
-for a data set which suggests a non-linear relation between 
-features and labels). In such cases it is beneficial to add a 
-pre-processing step before applying a predictor $h$. 
+For some applications, using a linear hypothesis $h(\vx)=\vw^{T}\vx$ 
+is not suitable since the relation between features $\vx$ and label $y$ 
+might be highly non-linear. %(see Figure \ref{fig_scatterplot_poly} 
+One approach to extend the capabilities of linear hypotheses 
+is to transform the raw features of a data point before applying a 
+linear hypothesis $h$. 
 
 The family of kernel methods is based on transforming the 
 features $\vx$ to new features $\hat{\vx} \in \featurespace'$ 
@@ -4415,7 +4418,7 @@ loss function via a (negative) reward collected over time (e.g. over an episode)
 
 \section{LinUCB}
 \label{sec_lin_ucb}
-datapoints are costumers characterized by feature vector; the label is 
+datapoints are customers characterized by feature vector; the label is 
 discrete and indicates which product out of a finite set of products should 
 be advertised to the customer; 
 
@@ -4750,7 +4753,7 @@ characterized by a probability distribution.
 If the probability distribution underlying the datapoints is known, 
 minimizing the expected loss or risk amounts to computing the 
 Bayes' estimator for the label given the feature vector. 
-Roughly speaking, this estimator can be read of directly from the 
+Roughly speaking, this estimator can be read directly from the 
 posterior probability distribution of the label given the features. 
 
 In practice we do not know the true underlying probability 
@@ -4759,8 +4762,8 @@ we cannot compute the Bayes' optimal estimator exactly.
 However, we can approximately compute this estimator 
 by replacing the exact probability distribution with an 
 estimate. Moreover, the risk of the Bayes' optimal estimator 
-provides a useful benchmark against we can compare the 
-average loss of practical ML methods. 
+provides a useful benchmark against which we can compare 
+the average loss of practical ML methods. 
 
 Using a simple probabilistic model for datapoints, we formally define 
 empirical risk minimization (ERM) in Section \eqref{equ_sec_emp_risk_approximates_expected_loss}. 
@@ -4785,10 +4788,10 @@ $0/1$ loss \eqref{equ_def_0_1}.
 As explained in Section \ref{sec_training_inference}, many ML methods 
 use the ERM during a training period to learn a hypothesis which is 
 then applied to new datapoints during the inference period. 
-Section \ref{sec_online_learning} discusses how to obtain online 
-learning by solving the ERM sequentially as new datapoints come in. 
-Online learning can be interpreted as interleaving training and inference 
-periods. 
+Section \ref{sec_online_learning} demonstrates how an online 
+learning method can be obtained by solving the ERM sequentially 
+as new datapoints come in. Online learning methods continuously 
+alternate between training and inference periods. 
 
 
 %Let us now see how the construction of Bayes' 
@@ -4860,11 +4863,16 @@ when applied to new datapoints which are not contained in $\dataset$.
 
 %????I would like that the "equivalent to find optimum weight vertoc w0" from slide Optimal Linear Regression would be explained again. The mathematical notation used there isn't that familiar for me.?????
 %Consider, e.g., the hypothesis space $\hypospace$ of linear predictors is based on a parametrization of the hypothesis $h(\vx^{(\timeidx)})$. 
-Given a parameterization $h^{(\vw)}(\vx)$ of the predictor maps in the 
-hypothesis space $\hypospace$, such as within linear regression 
-\eqref{equ_def_hypo_linear_pred} or for ANNs (see Figure \ref{fig_ANN}), % within a liner regression model, i.e., $h(\vx^{(\timeidx)}) = \vw^{T}\vx^{(\timeidx)}$, 
-we can reformulate the optimization problem \eqref{equ_def_ERM_funs} (with optimization 
-domain being a function space!) as an optimization directly over the weight vector:
+Many important ML methods use hypotheses that are parametrized by 
+weight vector $\vw$. For each possible weight vector, we obtain a 
+hypothesis $h^{(\vw)}(\vx)$. Such a parametrization is used in linear 
+regression which learns a linear hypotheses $h(\vx) = \vw^{T} \vx$ with 
+some weight vector $\vw$. Another example for such a parametrization 
+are ANNs with the weights assigned to inputs of individual neurons (see Figure \ref{fig_ANN}). 
+
+For ML methods that use a parameterized hypothesis $h^{(\vw)}(\vx)$, 
+we can reformulate the optimization problem \eqref{equ_def_ERM_funs} 
+as an optimization of the weight vector, 
 \begin{equation}
 \label{eq_def_ERM_weight}
     \vw_{\rm opt} = \argmin_{\vw \in \mathbb{R}^{\featuredim}} f(\vw) \mbox{ with } f(\vw) \defeq \emperror\big(h^{(\vw)} |\dataset\big). 
@@ -4872,8 +4880,9 @@ domain being a function space!) as an optimization directly over the weight vect
 The objective function $f(\vw)$ in \eqref{eq_def_ERM_weight} is 
 the empirical risk $\emperror\big(h^{(\vw)} |\dataset\big)$ achieved 
 by $h^{(\vw)}$ when applied to the datapoints in the dataset $\dataset$. 
-Note that the two formulations \eqref{eq_def_ERM_weight} and \eqref{equ_def_ERM_funs} 
-are fully equivalent. In particular, given the optimal weight vector $\vw_{\rm opt}$ solving 
+
+The optimization problems \eqref{eq_def_ERM_weight} and \eqref{equ_def_ERM_funs} 
+are fully equivalent. Given the optimal weight vector $\vw_{\rm opt}$ solving 
 \eqref{eq_def_ERM_weight}, the predictor $h^{(\vw_{\rm opt})}$ is 
 an optimal predictor solving \eqref{equ_def_ERM_funs}. 
 
@@ -4882,11 +4891,13 @@ learning by ``trial and error''. An instructor (or supervisor) provides some
 snapshots $\vz^{(\sampleidx)}$ which are characterized by features 
 $\vx^{(\sampleidx)}$ and associated with known labels $y^{(\sampleidx)}$. 
 
-The learner then tries out some hypothesis $h$ to tell the label $y^{(\sampleidx)}$ 
-only from the snapshot features $\vx^{(\sampleidx)}$ and determine the (training) 
-error $\emperror(h|\dataset)$ incurred. If the error $\emperror(h|\dataset)$ 
-is too large we try out another predictor map $h'$ instead of $h$ with the 
-hope of achieving a smaller training error $\emperror(h'|\dataset)$. 
+The learner then uses a hypothesis $h$ to guess the labels $y^{(\sampleidx)}$ 
+only from the features $\vx^{(\sampleidx)}$ of all training data points. We then 
+determine average loss or training error $\emperror(h|\dataset)$ that is incurred 
+by the predictions $\hat{y}^{(\sampleidx)} = h\big( \vx^{(\sampleidx)} \big)$. 
+If the error $\emperror(h|\dataset)$ is too large, we should try out another  
+hypothesis map $h'$ different from $h$ with the hope of achieving a smaller 
+training error $\emperror(h'|\dataset)$. 
 
 %This principle of learning by supervision, using labeled datapoints (``training examples''), 
 %could also be used to model the development of language in human brains (``concept learning''). Consider a 
@@ -4970,23 +4981,23 @@ and non-convex objective functions.
 \section{ERM for Linear Regression}
 \label{sec_ERM_lin_reg}
 
-Let us now focus on linear regression problem (see Section \ref{sec_lin_regression}) which arises from using the 
-squared error loss \eqref{equ_squared_loss} and linear predictor maps $h^{(\vw)}(\vx) = \vx^{T} \vw$. 
-Here, we can rewrite the ERM problem \eqref{eq_def_ERM_weight} as 
+As discussed in Section \ref{sec_lin_regression}, linear regression methods 
+learn a linear hypothesis $h^{(\vw)}(\vx) = \vx^{T} \vw$ with minimum squared 
+error loss \eqref{equ_squared_loss}. The resulting ERM problem \eqref{eq_def_ERM_weight} 
+is  
 \begin{align}
 \label{equ_def_cost_MSE}
 \vw_{\rm opt} & = \argmin_{\vw \in \mathbb{R}^{\featuredim}} f(\vw) \nonumber \\ 
-& \mbox{ with } f(\vw)\!\defeq\!(1/|\dataset|) \sum_{(\vx,y)\!\in\!\dataset} (y \!-\! \vx^{T} \vw )^2.
+& \mbox{ with } f(\vw)\!\defeq\!(1/\samplesize) \sum_{(\vx,y)\!\in\!\dataset} (y \!-\! \vx^{T} \vw )^2.
 \end{align} 
-Here, $|\dataset|$ denotes the cardinality (number of elements) of the set $\dataset$. 
-The objective function $f(\vw)$ in \eqref{equ_def_cost_MSE} has some computationally 
-appealing properties, since it is convex and smooth (see Chapter \ref{ch_GD}). 
+Here, $\samplesize=|\dataset|$ denotes the (sample) size of the training set $\dataset$. 
+The objective function $f(\vw)$ in \eqref{equ_def_cost_MSE} is computationally 
+appealing since it is a convex and smooth function. Such a function can be minimized 
+efficiently using the gradient based methods of Chapter \ref{ch_GD}. 
 
-It will be useful to rewrite the ERM problem \eqref{equ_def_cost_MSE} using matrix 
-and vector representations of the feature vectors $\vx^{(\sampleidx)}$ and labels 
-$y^{(\sampleidx)}$ contained in the dataset $\dataset$. To this end, we stack the 
-labels $y^{(\sampleidx)}$ and the feature vectors $\vx^{(\sampleidx)}$, for 
-$\sampleidx=1,\ldots,\samplesize$, into a ``label vector'' $\vy$ and ``feature matrix'' $\mX$ as follows
+The ERM problem \eqref{equ_def_cost_MSE} can rewritten in a more compact form 
+by stacking the labels $y^{(\sampleidx)}$ and feature vectors $\vx^{(\sampleidx)}$, for 
+$\sampleidx=1,\ldots,\samplesize$, into a ``label vector'' $\vy$ and ``feature matrix'' $\mX$, 
 \begin{align}
 \label{equ_def_vec_matrix}
 \mathbf{y} & = ( y^{(1)},\ldots, y^{(\samplesize)})^{T} \in \mathbb{R}^{\samplesize} \mbox{, and } \nonumber \\ 
@@ -4998,32 +5009,45 @@ This allows to rewrite the objective function in \eqref{equ_def_cost_MSE} as
 f(\vw) = (1/\samplesize) \| \vy - \mX\vw \|^{2}_{2}.
 \end{equation} 
 
-Inserting \eqref{equ_min_lin_pred_vec_mat} into \eqref{equ_def_cost_MSE} we obtain the quadratic problem 
+Inserting \eqref{equ_min_lin_pred_vec_mat} into \eqref{equ_def_cost_MSE}, 
+we obtain the quadratic problem 
 \begin{align}
 \label{equ_quadr_form_linreg}
 & \min_{\vw \in \mathbb{R}^{\featuredim}} \underbrace{(1/2) \vw^{T} \mathbf{Q} \vw - \vq^{T}  \vw}_{= f(\vw)} \nonumber \\
 & \mbox{ with } \mathbf{Q}= (1/\samplesize) \mathbf{X}^{T} \mathbf{X}, \mathbf{q} =(1/\samplesize) \mathbf{X}^{T} \mathbf{y}. 
 \end{align} 
-Since $f(\vw)$ is a differentiable and convex function, a necessary and sufficient condition for 
-some $\vw_{0}$ to satisfy $f(\vw_{0})\!=\!\min_{\vw \in \mathbb{R}^{\featuredim}} f(\vw)$ is the 
+Since $f(\vw)$ is a differentiable and convex, a necessary and sufficient condition for 
+$\vw_{\rm opt}$ to be a minimizer $f(\vw_{\rm opt})\!=\!\min_{\vw \in \mathbb{R}^{\featuredim}} f(\vw)$ is the 
 {\bf zero-gradient condition} \cite[Sec. 4.2.3]{BoydConvexBook}
 \begin{equation}
 \label{equ_zero_gradient}
  \nabla f(\vw_{\rm opt}) = \mathbf{0}.
 \end{equation} 
+
 Combining \eqref{equ_quadr_form_linreg} with \eqref{equ_zero_gradient}, 
 yields the following sufficient and necessary condition for a weight vector 
-$\vw_{\rm opt}$ to solve the ERM \eqref{equ_def_cost_MSE}: 
+$\vw_{\rm opt}$ to solve the ERM \eqref{equ_def_cost_MSE},
 \begin{equation}
 \label{equ_zero_gradient_lin_reg}
 (1/\samplesize) \mX^{T} \mX \vw_{\rm opt} = (1/\samplesize) \mX^{T} \vy.  
 \end{equation} 
+This condition can be rewritten as 
+\begin{equation}
+\label{equ_zero_gradient_lin_reg_normal_condition}
+(1/\samplesize) \mX^{T} \big( \vy - \mX \vw_{\rm opt} \big) = \mathbf{0}.  
+\end{equation} 
+We might refer to this condition as ``normal equations'' as they 
+require the vector $$\big( \vy - \mX \vw_{\rm opt} \big) = \big(\big(y^{(1)}-\hat{y}^{(1)}\big),\ldots,\big(y^{(\samplesize)}-\hat{y}^{(\samplesize)}\big)  \big)^{T},$$
+whose entries are the prediction errors for the training datapoints, to 
+be orthogonal (or normal) to the subspace spanned by the columns 
+of the feature matrix $\mathbf{X}$. 
+
 
 It can be shown that, for any given feature matrix $\mX$ and label vector $\vy$, there always 
 exists at least one optimal weight vector $\vw_{\rm opt}$ which solves \eqref{equ_zero_gradient_lin_reg}. 
 The optimal weight vector might not be unique, such that there are several different vectors 
-which achieve the minimum in \eqref{equ_def_cost_MSE}. However, any optimal solution $\vw_{\rm opt}$, 
-which solves \eqref{equ_zero_gradient_lin_reg}, achieves the same minimum empirical risk 
+which achieve the minimum in \eqref{equ_def_cost_MSE}. However, any optimal solution $\vw_{\rm opt}$ 
+which solves \eqref{equ_zero_gradient_lin_reg} achieves the same minimum empirical risk 
 \begin{equation}
 \label{equ_emp_risk_lin_proje}
 \emperror(h^{(\vw_{\rm opt})} \mid \dataset) = \min_{\vw \in \mathbb{R}^{\featuredim}} \emperror(h^{(\vw)} \mid \dataset) = \|  (\mathbf{I}- \mathbf{P}) \vy \|^{2}.
@@ -5046,11 +5070,14 @@ Moreover, the solution of \eqref{equ_zero_gradient_lin_reg} is then unique and g
 \end{equation}
 The closed-form solution \eqref{equ_close_form_lin_reg} requires 
 the inversion of the $\featuredim \times \featuredim$ matrix $\mX^{T} \mX$. 
-Computing the inverse can be computationally challenging for 
-large feature length $\featuredim$ (see Figure \ref{fig_snapshot_pixels} 
-for a simple ML problem where the feature length is almost a million). 
-Moreover, inverting a matrix which is close to singular typically 
-introduces numerical errors. 
+
+Computing the inverse of $\mX^{T} \mX$ can be computationally challenging 
+for large number $\featuredim$ of features. Figure \ref{fig_snapshot_pixels} 
+depicts a simple ML problem where the number of features is already 
+in the millions. The inversion of the matrix $\mX^{T} \mX$ is particularly 
+challenging if this matrix is ill conditioned. In general, we do not have 
+any control on this condition number as we face datapoints with arbitrary 
+feature vectors. 
 
 Section \ref{sec_lin_reg} discusses a method for computing the optimal weight vector 
 $\vw_{\rm opt}$ which does not require any matrix inversion. This method, 
@@ -5318,15 +5345,20 @@ p(\vx|y) = \mathcal{N}(\vx;{\bm \mu}_{y},{\bf \Sigma}).\footnote{We use the shor
 probability density function $$p(\vx) = \frac{1}{\sqrt{{\rm det} (2 \pi {\bf \Sigma})}} \exp\big(- (1/2) (\vx\!-\!{\bm \mu})^{T}{\bf \Sigma}^{-1}(\vx\!-\!{\bm \mu}) \big)$$ of 
 a Gaussian random vector $\vx$ with mean ${\bm \mu} = \expect \{ \vx \}$ and covariance matrix ${\bf \Sigma} = \expect \big\{(\vx\!-\!{\bm \mu})  (\vx\!-\!{\bm \mu})^{T} \big\}$.}
 \end{equation} 
-Note that the mean vector of $\vx$ depends on the label such that for $y=1$ the mean of $\vx$ is 
-${\bm \mu}_{1}$, while for datapoints with label $y=-1$ the mean of $\vx$ is ${\bm \mu}_{-1}$. In 
-contrast, the covariance matrix ${\bf \Sigma} = \expect\{ (\vx-{\bm \mu}_{y})(\vx-{\bm \mu}_{y})^{T}|y \}$ 
-of $\vx$ is the same for both values of the label $y \in \{-1,1\}$. Note that, while conditioned on $y$ 
-the random vector $\vx$ is Gaussian, the marginal distribution of $\vx$ is a Gaussian mixture model 
-(see Section \ref{sec_soft_clustering}).
+
+Given (conditioned on) the label $y$ of a data point, the conditional mean 
+of the features  $\vx$ of this data point is ${\bm \mu}_{1}$ if $y=1$, while 
+for $y=-1$ the conditional mean of $\vx$ is ${\bm \mu}_{-1}$. In contrast, the 
+conditional covariance matrix ${\bf \Sigma} = \expect\{ (\vx-{\bm \mu}_{y})(\vx-{\bm \mu}_{y})^{T}|y \}$ 
+of $\vx$ is the same for both values of the label $y \in \{-1,1\}$. 
+The conditional probability distribution $p(\vx|y)$ of the feature vector, 
+given the label $y$, is multivariate normal. In contrast, the marginal distribution 
+of the features $\vx$ is a Gaussian mixture model (see Section \ref{sec_soft_clustering}).
+
 %A ``naive'' Bayes' classifier is obtained by modelling the distribution of the features $\vx \in \mathbb{R}^{\featuredim}$, conditioned on the label $y \in \{-1,1\}$, 
 %as a Gaussien random vector $\vx | y \sim \mathcal{N}({\bm \mu}_{y},{\bf \Sigma})$ with mean ${\bm \mu}_{y} \in \mathbb{R}^{\featuredim}$ and diagonal covariance 
 %${\bf \Sigma} = {\rm diag} (\sigma_{1}^{2}, \ldots, \sigma_{\featuredim}^{2}) \in \mathbb{R}^{\featuredim \times \featuredim}$. 
+
 For this probabilistic model of features and labels, the optimal classifier minimizing the 
 error probability $\prob{\hat{y} \neq y}$ is $\hat{y}\!=\!1$ for $h(\vx)\!>\!0$ and $\hat{y}\!=\!-1$ 
 for $h(\vx)\!\leq\!0$ using the classifier map 
@@ -5340,8 +5372,8 @@ invertible.
 We cannot implement the classifier \eqref{equ_classif_Bayes} directly, since we do not know the 
 true values of the class-specific mean vectors ${\bm \mu}_{1}$, ${\bm \mu}_{-1}$ and covariance 
 matrix ${\bf \Sigma}$. Therefore, we have to replace those unknown parameters with some 
-estimates $\hat{\bm \mu}_{1}$, $\hat{\bm \mu}_{-1}$ and $\widehat{\bf \Sigma}$, like the maximum 
-likelihood estimates which are given by (see \eqref{equ_ML_mean_cov_Gauss}) 
+estimates $\hat{\bm \mu}_{1}$, $\hat{\bm \mu}_{-1}$ and $\widehat{\bf \Sigma}$. A principled 
+approach is to use the maximum likelihood estimates (see \eqref{equ_ML_mean_cov_Gauss}) 
 \begin{align}
 \hat{\bm \mu}_{1}  & = (1/\samplesize_{1}) \sum_{\sampleidx=1}^{\samplesize} \mathcal{I}(y^{(\sampleidx)}=1) \vx^{(\sampleidx)}, \nonumber \\
 \hat{\bm \mu}_{-1}  & = (1/\samplesize_{-1}) \sum_{\sampleidx=1}^{\samplesize} \mathcal{I}(y^{(\sampleidx)}=-1) \vx^{(\sampleidx)}, \nonumber \\
@@ -5360,15 +5392,21 @@ We highlight that the classifier \eqref{equ_classif_Bayes_impl} is only well-def
 covariance matrix $\widehat{\bf \Sigma}$ \eqref{ML_est_naive_Bayes} is invertible. This requires 
 to use a sufficiently large number of training datapoints such that $\samplesize \geq \featuredim$. 
 
-Using the route via maximum likelihood estimation, we arrived at \eqref{equ_classif_Bayes_impl} 
-as an approximate solution to the ERM \eqref{equ_approx_bayes_class}. The final classifier 
-\eqref{equ_classif_Bayes_impl} turns out to be a linear classifier very much like logistic regression 
-and SVM. In particular, the classifier \eqref{equ_classif_Bayes_impl} partitions the feature space 
-$\mathbb{R}^{\featuredim}$ into two halfspaces: one for $\hat{y}=1$ and one for $\hat{y}=-1$ 
-(see Figure \ref{fig_lin_dec_boundary}). Thus, the Bayes' classifier \eqref{equ_classif_Bayes_impl} 
-belongs to the same family (of linear classifiers) as logistic regression and the SVM. 
-These three classification methods differ only in the way of choosing the decision boundary 
-(see Figure \ref{fig_lin_dec_boundary}) separating the two half-spaces in the feature space. 
+We can have derived the classifier \eqref{equ_classif_Bayes_impl} as an approximate solution 
+to the ERM \eqref{equ_approx_bayes_class}. The classifier \eqref{equ_classif_Bayes_impl} partitions 
+the feature space $\mathbb{R}^{\featuredim}$ into two half spaces. One half space 
+consists of feature vectors $\vx$ for which \eqref{equ_classif_Bayes_impl} is non-negative and, 
+in turn, $\hat{y}=1$. The other half space is constituted by feature vectors $\vx$ for which 
+\eqref{equ_classif_Bayes_impl} is negative and, in turn, $\hat{y}=-1$ (see Figure \ref{fig_lin_dec_boundary}). 
+
+The Bayes' classifier \eqref{equ_classif_Bayes_impl} is another instance of a linear 
+classifier like logistic regression and the SVM. Each of these methods learns a 
+linear hypothesis $h(\vx)=\vw^{T} \vx$, whose decision boundary (vectors $\vx$ with $h(\vx)=0$) 
+is a hyperplane (see Figure \ref{fig_lin_dec_boundary}). However, these methods 
+use different loss functions for assessing the quality of a particular linear hypothesis 
+$h(\vx)=\vw \vx$ (which defined the decision boundary via $h(\vx)=0$). 
+Therefore, these three methods typically learn classifiers with different decision 
+boundaries. 
 
 For the estimator $\widehat{\bf \Sigma}$ \eqref{equ_ML_mean_cov_Gauss} 
 to be accurate (close to the unknown covariance matrix) we need a number 
@@ -5762,28 +5800,37 @@ Fixed number of iteration; use gradient as indicator for distance to optimum;
 \section{GD for Linear Regression} 
 \label{sec_lin_reg}
 
-We can now formulate a full-fledged ML algorithm for solving a linear regression problem (see Section \ref{sec_lin_regression}). 
-This algorithm amounts to finding the optimal weight vector $\vw_{\rm opt}$ for a linear predictor (see \eqref{equ_lin_hypospace}) 
-of the form 
+We will now formulate a complete ML algorithm. This algorithm is based on 
+applying GD to the linear regression problem discussed in Section \ref{sec_lin_regression}. 
+This algorithm learns the weight vector 
+for a linear hypothesis (see \eqref{equ_lin_hypospace}) 
 \begin{equation} 
 \label{equ_def_lin_pred_GD}
 h^{(\vw)}(\vx) = \vw^{T} \vx.
 \end{equation}
-The optimal weight vector $\vw_{\rm opt}$ for \eqref{equ_def_lin_pred_GD} should minimize the empirical risk (under squared error loss \eqref{equ_squared_loss}) 
+The weight vector is chosen to minimize average 
+squared error loss \eqref{equ_squared_loss}
 \begin{equation} 
 \label{equ_def_cost_linreg}
 %f(\vw_{\rm opt})= \min_{\vw \in \mathbb{R}^{\featuredim}} 
 \emperror(h^{(\vw)}| \dataset) \stackrel{\eqref{eq_def_ERM_weight}}{=} (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - \vw^{T} \vx^{(\sampleidx)})^{2}, 
 \end{equation}
-incurred by the predictor $h^{(\vw)}(\vx)$ when applied to the labeled dataset $\dataset=\{ (\vx^{(\sampleidx)}, y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$. 
-Thus, $\vw_{\rm opt}$ is obtained as the solution of a particular smooth optimization problem \eqref{equ_generic_smooth_problem}, i.e., 
+incurred by the predictor $h^{(\vw)}(\vx)$ when applied to 
+the labeled dataset $\dataset=\{ (\vx^{(\sampleidx)}, y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$. 
+The optimal weight vector $\vw_{\rm opt}$ for \eqref{equ_def_lin_pred_GD} is 
+characterized as
 \begin{equation} 
 \label{equ_smooth_problem_linreg}
 \vw_{\rm opt} = \argmin_{\vw \in \mathbb{R}^{\featuredim}} f(\vw) \mbox{ with } f(\vw) = (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - \vw^{T} \vx^{(\sampleidx)})^{2}. 
 \end{equation} 
 
-In order to apply GD \eqref{equ_def_GD_step} to solve \eqref{equ_smooth_problem_linreg}, and to find the optima weight vector $\vw_{\rm opt}$, 
-we need to compute the gradient $\nabla f(\vw)$. The gradient of the objective function in \eqref{equ_smooth_problem_linreg} is given by 
+The optimization problem \eqref{equ_smooth_problem_linreg} is an instance of the smooth 
+optimization problem \eqref{equ_generic_smooth_problem}.  
+We can therefore use GD \eqref{equ_def_GD_step} to solve \eqref{equ_smooth_problem_linreg}, 
+to obtain the optimal weight vector $\vw_{\rm opt}$. To implement GD, we need to compute 
+the gradient $\nabla f(\vw)$. 
+
+The gradient of the objective function in \eqref{equ_smooth_problem_linreg} is given by 
 \begin{equation}
 \label{equ_gradient_linear_regression}
 \nabla f(\vw) = -(2/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - \vw^{T} \vx^{(\sampleidx)}) \vx^{(\sampleidx)}.
@@ -5870,18 +5917,19 @@ choosing the step size $\alpha =1$.
 \label{sec_GD_logistic_regression}
 
 %We can now formulate a full-fledged ML algorithm for solving a linear regression problem (see Section \ref{sec_lin_regression}). 
-As discussed in Section \ref{sec_LogReg}, the classification method logistic regression amounts to 
-constructing a classifier $h^{(\vw_{\rm opt})}$ by minimizing the empirical risk \eqref{equ_def_emp_risk_logreg} 
-obtained for a labeled dataset $\dataset= \{ (\vx^{(\sampleidx)}, y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$, 
-with features $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and binary labels $y^{(\sampleidx)} \in \{-1,1\}$. 
-Thus, logistic regression amounts to an instance of the smooth optimization problem \eqref{equ_generic_smooth_problem}, i.e., 
+As discussed in Section \ref{sec_LogReg}, logistic regression learns 
+a linear hypothesis $h^{(\vw_{\rm opt})}$ by minimizing the average logistic loss 
+\eqref{equ_def_emp_risk_logreg} obtained for a dataset $\dataset= \{ (\vx^{(\sampleidx)}, y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$, with features $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ 
+and binary labels $y^{(\sampleidx)} \in \{-1,1\}$. This minimization problem is an instance 
+of the smooth optimization problem \eqref{equ_generic_smooth_problem},
 \begin{align} 
 \label{equ_smooth_problem_logeg}
 \vw_{\rm opt} & = \argmin_{\vw \in \mathbb{R}^{\featuredim}} f(\vw) \nonumber \\ 
  \mbox{ with } f(\vw) & = (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \log( 1\!+\!\exp ( - y^{(\sampleidx)} \vw^{T} \vx^{(\sampleidx)})). 
 \end{align} 
 
-In order to apply GD \eqref{equ_def_GD_step} to solve \eqref{equ_smooth_problem_logeg}, we need to compute the gradient $\nabla f(\vw)$. 
+In order to apply GD \eqref{equ_def_GD_step} to solve \eqref{equ_smooth_problem_logeg}, 
+we need to compute the gradient $\nabla f(\vw)$. 
 The gradient of the objective function in \eqref{equ_smooth_problem_logeg} is given by 
 \begin{equation}
 \label{equ_gradient_logistic_regression}
@@ -6107,11 +6155,16 @@ the function at some point $n$ to obtain the values $f[n], f[n-1]$ and $f[n+1]$.
 % \begin{quote} 
  %``There are known knowns ... But there are also unknown unknowns'' (D. Rumsfeld)
 % \end{quote}
-The idea of ERM is to learn a hypothesis out of $\hypospace$ that incurs 
-minimum average loss (empirical error) on a set of labelled datapoints, 
-which is used as training set. For ML methods using high-dimensional 
-hypothesis spaces, such as linear maps with a large number of features 
-or deep neural networks, this approach bears the risk of overfitting. 
+As discussed in Chapter \ref{ch_Optimization}, a principled approach to learn a 
+good hypothesis is ERM. The idea of ERM is to learn a hypothesis $\hat{h} \in \hypospace$ that incurs 
+minimum average loss on a set of labeled datapoints (the training set). The minimum 
+average loss achieved by the solution of ERM is referred to as the training error. 
+
+The training error is often not a good estimate for the average performance 
+of the learnt hypothesis $\hat{h}$. For ML methods using high-dimensional 
+hypothesis spaces, such as linear maps with a large number of features or 
+deep neural networks, the training error can be much smaller than the 
+average loss. This happens if the training algorithm overfits the training data. 
 
 A method overfits if it learns a predictor $h \in \hypospace$ that, 
 merely by luck, fits well the training data but does a poor job on 
@@ -6290,12 +6343,8 @@ Figure \ref{fig_polyn_training}.
 		\node [right] at (-9,8) {$ {\bm \Sigma}^{(3)}$} ; 
 		\end{tikzpicture}
 	\end{center}
-	\label{fig_GMM_elippses}
-	\caption{The GMM \eqref{equ_def_GMM} yields a probability 
-		density function which is a weighted sum of multivariate 
-		normal distributions $\mathcal{N}({\bm \mu}^{(\clusteridx)}, {\bm \Sigma}^{(\clusteridx)})$. 
-		The weight of the $c$-th component is the cluster probability 
-		$ \prob{c^{(\sampleidx)}=\clusteridx}$.}
+	\label{fig_valdiation_idea}
+	\caption{The idea of validation is to split the datapoints into a training set and a validation set.}
 \end{figure}
 %\end{document}
 
@@ -6355,16 +6404,14 @@ which applies broadly to different ML problems \cite{Larsen1999}.
  \begin{figure}[htbp]
     \centering
    \includegraphics[width=0.7\textwidth]{TrainValSmall.jpg}  
-    \caption{If we only have one single labeled dataset $\dataset$, we 
-    	split it into a {\bf training set} $\dataset^{(\rm train)}$ and a {\bf validation set} 
+    \caption{We split the available dataset $\dataset$ into a 
+    	{\bf training set} $\dataset^{(\rm train)}$ and a {\bf validation set} 
     	$\dataset^{(\rm val)}$. We use the training set in order to 
-    	learn (find) a good predictor $\hat{h}(\vx)$ by minimizing the 
-    	empirical risk $\emperror(h| \dataset^{(\rm train)})$ (see \eqref{equ_def_ERM_funs}). 
-    In order to validate the performance of the predictor $\hat{h}$ on 
-    new data, we compute the empirical risk $\emperror(h| \dataset^{(\rm val)})$ 
-    incurred by $\hat{h}(\vx)$ for the validation set $\dataset^{(\rm val)}$. 
-    We refer to the empirical risk $\emperror(h| \dataset^{(\rm val)})$ obtained 
-    for the validation set as the {\bf validation error}.}
+    	learn (find) a good predictor $\hat{h}$ with minimum 
+    	empirical risk $\emperror(\hat{h}| \dataset^{(\rm train)})$ on the training set \eqref{equ_def_ERM_funs}. 
+        We then validate $\hat{h}$ by computing its empirical risk $\emperror(h| \dataset^{(\rm val)})$  
+        on the validation set $\dataset^{(\rm val)}$. The empirical risk $\emperror(h| \dataset^{(\rm val)})$ 
+        obtained on the validation set is the {\bf validation error}.}
     \label{fig_split_train_val}
 \end{figure}
 
@@ -6502,8 +6549,8 @@ y^{(\sampleidx)} = \vw_{\rm true}^{T}  \vx^{(\sampleidx)} + \varepsilon^{(\sampl
 \end{equation}  
 with i.i.d.\ noise $\varepsilon, \varepsilon^{(\sampleidx)} \sim \mathcal{N}(0,\sigma^{2})$. 
 
-As discussed in Chapter \ref{ch_Optimization}, the training error $\emperror (h^{(\vw)} \mid \trainset)$ is minimized by the predictor 
-$h^{(\hat{\vw})}(\vx) =  \hat{\vw}^{T} \mathbf{I}_{r \times \featuredim} \vx$, 
+As discussed in Chapter \ref{ch_Optimization}, the training error $\emperror (h^{(\vw)} \mid \trainset)$ 
+is minimized by the predictor $h^{(\hat{\vw})}(\vx) =  \hat{\vw}^{T} \mathbf{I}_{r \times \featuredim} \vx$, 
 with weight vector 
 \begin{equation}
 \label{equ_optimal_weight_closed_form}
@@ -6515,9 +6562,11 @@ with feature matrix $\mX_{r}$ and label vector $\vy$ defined as
 \mX_{r}& \!=\!(\vx^{(1)},\ldots,\vx^{(\samplesize_{\rm t})})^{T} \mathbf{I}_{\featuredim \times r}\!\in\!\mathbb{R}^{\samplesize_{\rm t} \times r} \mbox{, and }  \nonumber \\
 \vy& \!=\!\big(y^{(1)},\ldots,y^{(\samplesize_{\rm t})}\big)^{T}\!\in\!\mathbb{R}^{\samplesize_{\rm t}}.
 \end{align} 
-It will be convenient to tolerate a slight abuse of notation and denote by $\widehat{\vw}$ both, the length-$r$ vector 
-\eqref{equ_optimal_weight_closed_form} as well as the zero padded length-$\featuredim$ vector 
-$(\widehat{\vw}^{T},\mathbf{0})^{T}$. This allows us to write % the predictor $h^{(\hat{\vw})}(\vx)$ as 
+
+It will be convenient to tolerate a slight abuse of notation and denote by $\widehat{\vw}$ 
+both, the length-$r$ vector \eqref{equ_optimal_weight_closed_form} as well as the zero 
+padded length-$\featuredim$ vector $(\widehat{\vw}^{T},\mathbf{0})^{T}$. 
+This allows us to write % the predictor $h^{(\hat{\vw})}(\vx)$ as 
 \begin{equation} 
 h^{(\widehat{\vw})}(\vx) = \widehat{\vw}^{T} \vx. 
 \end{equation}
@@ -6562,12 +6611,17 @@ As we will see below, the prediction quality achieved by $h^{(\widehat{\vw})}$ d
 \label{equ_def_est_err}
 \mathcal{E}_{\rm est} \defeq \expect \{  \| \Delta \vw \|^{2}_{2} \} =  \expect \big\{ \big \| \widehat{\vw} - \vw_{\rm true} \big\|^{2}_{2} \big \}. 
 \end{equation}
-It is useful to characterize the MSE $\mathcal{E}_{\rm est}$ by 
-decomposing it into two components, one component (the ``bias'') 
-which depends on the choice $r$ for the hypothesis space and 
-another component (the ``variance'') which only depends on the 
-distribution of the observed feature vectors $\vx^{(\sampleidx)}$ 
-and labels $y^{(\sampleidx)}$. It is then not too hard to show that 
+The MSE $\mathcal{E}_{\rm est}$ can be decomposed into two components. 
+One component (the ``bias'') characterizes the properties of the average 
+hypothesis. The second component is the ``variance'' which quantities 
+the amount of random fluctuations of the hypothesis obtained from ERM 
+applied to different training sets. Both components depend on the model 
+complexity parameter $r$. 
+%depends on the 
+%distribution of the observed feature vectors $\vx^{(\sampleidx)}$ 
+%and labels $y^{(\sampleidx)}$. 
+
+It is not too difficult to show that 
 \vspace*{-1mm}
 \begin{align}
 \label{equ_bias_var_decomp}
@@ -6597,7 +6651,7 @@ Using the properties of our toy model (see \eqref{equ_linear_obs_model},
 \eqref{equ_toy_model_iid} and \eqref{equ_labels_training_data})
 \begin{equation}
 \label{equ_variance_term_toy_model}
-V = \expect \{ \| \widehat{\vw} - \expect\{ \widehat{\vw} \} \|^{2}_{2} \} = \sigma^{2} \mbox{trace} \big\{ \expect\{(\mX_{r}^{T} \mX_{r})^{-1} \} \big\}.
+V = \expect \{ \| \widehat{\vw} - \expect\{ \widehat{\vw} \} \|^{2}_{2} \} = \sigma^{2} \mbox{tr} \big\{ \expect\{(\mX_{r}^{T} \mX_{r})^{-1} \} \big\}.
 \end{equation} 
 By \eqref{equ_toy_model_iid}, the matrix $(\mX_{r}^{T} \mX_{r})^{-1}$ is 
 random and distributed according to an {\bf inverse Wishart distribution} \cite{Mardia1979}. 
@@ -6606,7 +6660,7 @@ For $\samplesize_{\rm t} > r +1$, its expectation is given as
 \label{equ_expr_expect_inv-wishart}
 \expect\{(\mX_{r}^{T} \mX_{r})^{-1} \} = 1/(\samplesize_{\rm t}-r-1) \mathbf{I}_{r \times r}.
 \end{equation} 
-By inserting \eqref{equ_expr_expect_inv-wishart} and $\mbox{trace} \{ \mathbf{I}_{r \times r} \} = r$ into \eqref{equ_variance_term_toy_model}, 
+By inserting \eqref{equ_expr_expect_inv-wishart} and $\mbox{tr} \{ \mathbf{I}_{r \times r} \} = r$ into \eqref{equ_variance_term_toy_model}, 
 \begin{equation} 
 \label{equ_formulae_variance_toy_model}
 V= \expect \{ \| \widehat{\vw} - \expect\{ \widehat{\vw} \} \|^{2}_{2} \} = \sigma^{2} r/(\samplesize_{\rm t}-r-1). 
@@ -6623,8 +6677,8 @@ has to balance between small variance and small bias term.
 \begin{figure}
 \begin{center}
     \begin{tikzpicture}
-              \draw [thick, <->] (1,3.5) -- (1,0) -- (10.2,0);<
-             \draw[red, ultra thick, domain=1:10] plot (\x,  {3*\x^-1});
+       \draw [thick, <->] (1,3.5) -- (1,0) -- (10.2,0);<
+       \draw[red, ultra thick, domain=1:10] plot (\x,  {3*\x^-1});
                  \draw[blue, ultra thick, domain=1:10] plot (\x,  {3*\x/10});
                    \draw[ultra thick, domain=1:10,dashed] plot (\x,  {3*\x^(-1)+3*\x/10});
            \node [right, color=red] at (10.2,0.3) {bias};
@@ -6643,18 +6697,23 @@ has to balance between small variance and small bias term.
 
 
 {\bf Generalization.}
-In most ML applications, we are primarily interested in how well a predictor $h^{(\hat{\vw})}$, which has been 
-learnt from some training data $\dataset$ (see \eqref{equ_def_ERM_funs}), predicts the label $y$ of a new 
-datapoint (which is not contained in the training data $\dataset$) with features $\vx$. Within our linear regression 
-model, the prediction (approximation guess or estimate) $\hat{y}$ of the label $y$ is obtained using the learnt 
+In most ML applications, we are primarily interested in how well a 
+predictor $h^{(\hat{\vw})}$, which has been learnt from some 
+training data $\dataset$ (see \eqref{equ_def_ERM_funs}), predicts 
+the label $y$ of a new datapoint (which is not contained in the training data $\dataset$) 
+with features $\vx$. The prediction (approximation guess or estimate) 
+$\hat{y}$ of the label $y$ is obtained using the learnt 
 predictor $h^{(\hat{\vw})}$ via  
 \begin{equation}
 \label{equ_def_pred_simple_toy_model}
 \hat{y} = \widehat{\vw}^{T} \vx. 
 \end{equation} 
-Note that the prediction $\hat{y}$ is a random variable since (i) the feature vector $\vx$ is modelled as a 
-random vector (see \eqref{equ_toy_model_iid}) and (ii) the optimal weight vector $\widehat{\vw}$ (see \eqref{equ_optimal_weight_closed_form}) 
-is random. In general, we cannot hope for a perfect prediction but have to face a non-zero prediction error 
+
+The prediction $\hat{y}$ is a random variable since (i) the feature vector 
+$\vx$ is modelled as a random vector (see \eqref{equ_toy_model_iid}) 
+and (ii) the optimal weight vector $\widehat{\vw}$ (see \eqref{equ_optimal_weight_closed_form}) 
+is random. In general, we cannot hope for a perfect prediction 
+but have to face a non-zero prediction error 
 \begin{align}
 \label{equ_def_pred_error}
 e_{\rm pred} & \defeq \hat{y} - y \nonumber \\ 
@@ -6662,9 +6721,11 @@ e_{\rm pred} & \defeq \hat{y} - y \nonumber \\
 & \stackrel{\eqref{equ_linear_obs_model}}{=} \widehat{\vw}^{T} \vx - (\vw_{\rm true}^{T}  \vx + \varepsilon) \nonumber \\ 
 & = \Delta \vw^{T}  \vx - \varepsilon.
 \end{align} 
-Note that, within our toy model (see \eqref{equ_linear_obs_model}, \eqref{equ_toy_model_iid} and \eqref{equ_labels_training_data}), 
-the prediction error $e_{\rm pred} $ is a random variable since (i) the label $y$ is modelled as a random 
-variable (see \eqref{equ_linear_obs_model}) and (ii) the prediction $\hat{y}$ is random. 
+%Within our toy model (see \eqref{equ_linear_obs_model}, \eqref{equ_toy_model_iid} 
+%and \eqref{equ_labels_training_data}), 
+The prediction error $e_{\rm pred}$ is a random variable since (i) the 
+label $y$ is modelled as a random variable (see \eqref{equ_linear_obs_model}) 
+and (ii) the prediction $\hat{y}$ is random. 
 
 Since, within our toy model \eqref{equ_labels_training_data}, $\varepsilon$ is zero-mean and independent of 
 $\vx$ and $\widehat{\vw} - \vw_{\rm true}$, we obtain the {\bf average predictor error} as 
@@ -6677,30 +6738,30 @@ $\vx$ and $\widehat{\vw} - \vw_{\rm true}$, we obtain the {\bf average predictor
 & \stackrel{\eqref{equ_def_est_error},\eqref{equ_def_est_err}}{=} \mathcal{E}_{\rm est} + \sigma^{2} \nonumber \\
 & \stackrel{\eqref{equ_bias_var_decomp}}{=} B^{2} + V + \sigma^{2}. 
 \end{align} 
-Here, step (a) is due to the law of total expectation \cite{BillingsleyProbMeasure} and step (b) uses that, 
-conditioned on the dataset $\dataset$, the feature vector $\vx$ of a new datapoint (not belonging to 
-$\dataset$) has zero mean and covariance matrix $\mathbf{I}$ (see \eqref{equ_toy_model_iid}). 
+Step (a) uses the law of total expectation \cite{BillingsleyProbMeasure} and 
+step (b) uses that, conditioned on the dataset $\dataset$, the feature vector 
+$\vx$ of a random datapoint has zero mean and covariance matrix $\expect \{ \vx \vx^{T}\}=\mathbf{I}$ (see \eqref{equ_toy_model_iid}). 
 
 According to \eqref{equ_decomp_E_pred_toy_model}, the average (expected) 
 prediction error $\mathcal{E}_{\rm pred}$ is the sum of three components: (i) 
 the bias $B^{2}$, (ii) the variance $V$ and (iii) the noise variance $\sigma^{2}$. 
+Figure \ref{fig_bias_variance} illustrates the typical dependency of the bias and 
+variance on the model, which is parametrized by $r$. 
 
 The bias and variance, whose sum is the estimation error $\mathcal{E}_{\rm est}$, 
-can be influenced by varying the model complexity $r$ (see Figure \ref{fig_bias_variance}) 
-which is a design parameter. The noise variance $\sigma^{2}$ is the 
-intrinsic accuracy limit of our toy model \eqref{equ_linear_obs_model} 
+can be influenced by varying the model complexity $r$ which is a design parameter. 
+The noise variance $\sigma^{2}$ is the intrinsic accuracy limit of our toy model \eqref{equ_linear_obs_model} 
 and is not under the control of the ML engineer. It is impossible for 
-any ML method (no matter how advanced  it is) to achieve, 
+any ML method - no matter how advanced it is - to achieve, 
 on average, a prediction error smaller than the noise variance $\sigma^{2}$. 
 
 We finally highlight that our analysis of bias \eqref{equ_def_bias_term}, 
 variance \eqref{equ_formulae_variance_toy_model} and the average prediction 
-error \eqref{equ_decomp_E_pred_toy_model} achieved by linear regression only 
-applies if the observed datapoints are well modelled as realizations of random 
-vectors according to \eqref{equ_linear_obs_model}, \eqref{equ_toy_model_iid} 
-and \eqref{equ_labels_training_data}. The usefulness of this model for the 
-data arising in a particular application has to be verified in practice by 
-some validation techniques \cite{Young93,Vasicek76}. 
+error \eqref{equ_decomp_E_pred_toy_model} only applies if the observed 
+datapoints are well modelled as realizations of random vectors according 
+to \eqref{equ_linear_obs_model}, \eqref{equ_toy_model_iid} and \eqref{equ_labels_training_data}. 
+The usefulness of this model for the data arising in a particular application 
+has to be verified in practice by some validation techniques \cite{Young93,Vasicek76}. 
 
 An alternative approach for analyzing bias, variance and average 
 prediction error of linear regression is to use simulations. Here, we 
@@ -6761,18 +6822,19 @@ does not deviate by more than $20$ percent from the average MSE is larger than $
 %???? discuss oferfitting in detail for linear regression; the fundamental limit (phase transition) is ``nr of features >= sample size'' ????
 %%??????????
 
-A main reason for validating predictors is to detect {\bf overfitting}. The 
-phenomenon of overfitting is one of the key obstacles for the successful 
-application of ML methods. In case of overfitting, the ERM approach can 
-be highly misleading. 
+A main reason to validate a hypothesis is to detect {\bf overfitting}.
+Overfitting is one of the key pitfalls in the application of modern 
+ML methods. Many of these methods are based on ERM. They learn 
+a hypothesis out of a large hypothesis space, such as deep neural 
+networks, by minimizing the average loss (training error) on a set 
+of labeled datapoints (training set). 
 
-The ERM principle only makes sense if the empirical risk (training error), 
-(see \eqref{equ_def_emp_error}) incurred by a predictor when applied to 
-some labeled datapoints (training data) $\dataset= \{ \vz^{(\sampleidx)} = (\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$, 
-is a good indicator for the average prediction error (see \eqref{equ_decomp_E_pred_toy_model}) 
-incurred by that predictor on new datapoints which are different 
-from the training data. 
-
+This ERM principle only makes sense if the training error  
+%ncurred by a predictor when applied to 
+%some labeled datapoints (training data) $\dataset= \{ \vz^{(\sampleidx)} = (\vx^{(\sampleidx)},y^{(\sampleidx)}) %\}_{\sampleidx=1}^{\samplesize}$, 
+is a good indicator for the general or average prediction performance of a hypothesis. % prediction error (see \eqref{equ_decomp_E_pred_toy_model}) 
+%incurred by that predictor on new datapoints which are different 
+%from the training data. 
 One main pitfall for ERM is the phenomenon of overfitting. 
 A predictor $h: \mathbb{R}^{\featuredim} \rightarrow \mathbb{R}$ 
 obtained by the ERM is said to {\bf overfit} the training set if it 
@@ -6996,29 +7058,38 @@ such that \eqref{equ_bias_reg_lin_reg} can be approximated as
 B^{2} & \approx \big \| (\mathbf{I}\!-\!(\mathbf{I}\!+\!\lambda \mathbf{I})^{-1} ) \vw_{\rm true} \big  \|^{2}_{2} \nonumber \\
 & =  \sum_{l=1}^{\featuredim} \frac{\lambda}{1+\lambda} w_{{\rm true},l}^2 .
 \end{align} 
-By comparing the (approximate) bias term \eqref{equ_bias_reg_lin_reg_approx} 
+Compare the (approximate) bias term \eqref{equ_bias_reg_lin_reg_approx} 
 of regularized linear regression with the bias term \eqref{equ_def_bias_term} of 
-ordinary linear regression, we see that introducing regularization typically 
-increases the bias. The bias increases with larger values of the regularization 
-parameter $\lambda$. 
+ordinary linear regression. Using regularization typically increases the bias. 
+The bias increases with increasing regularization parameter $\lambda$. 
 
 The variance of regularized linear regression \eqref{equ_reg_lin_reg_opt_weight} satisfies 
 \begin{align}
 \label{equ_variance_reglinreg}
 V & =( \sigma^{2}/\samplesize^{2}_{\rm t}) \times \nonumber \\ 
-& \hspace*{-7mm} {\rm trace} \expect \{  ( (1/\samplesize_{\rm t}) \mX^{T} \mX\!+\!\lambda \mathbf{I} )^{-1} \mX^{T} \mX ( (1/\samplesize_{\rm t}) \mX^{T} \mX\!+\!\lambda \mathbf{I} )^{-1}   \}.
+& \hspace*{-7mm} {\rm tr} \big\{  \expect \{  ( (1/\samplesize_{\rm t}) \mX^{T} \mX\!+\!\lambda \mathbf{I} )^{-1} \mX^{T} \mX ( (1/\samplesize_{\rm t}) \mX^{T} \mX\!+\!\lambda \mathbf{I} )^{-1}   \} \big\}.
 \end{align}
-Using the approximation \eqref{equ_approx_Gram_large_N}, which is reasonable for sufficiently 
-large sample size $\samplesize_{\rm t}$, we can in turn approximate \eqref{equ_variance_reglinreg} as 
+%The approximation \eqref{equ_approx_Gram_large_N} becomes more accurate with 
+%increasing sample size $\samplesize_{\rm t}$. 
+Inserting the approximation \eqref{equ_approx_Gram_large_N} into \eqref{equ_variance_reglinreg},  
 \begin{equation}
 \label{equ_variance_reglinreg_approx}
 V \approx \sigma^{2} (\featuredim/\samplesize_{\rm t}) (1/(1+ \lambda)).
 \end{equation} 
-According to \eqref{equ_variance_reglinreg_approx}, the variance of regularized linear regression decreases with 
-increasing regularization $\lambda$. Thus, as illustrated in Figure \ref{fig_bias_variance_lambda}, the choice of 
-$\lambda$ has to balance between the bias $B^{2}$ \eqref{equ_bias_reg_lin_reg_approx} (which increases with 
-increasing $\lambda$) and the variance $V$ \eqref{equ_variance_reglinreg_approx} (which decreases with 
-increasing $\lambda$). This is another instance of the bias-variance tradeoff (see Figure \ref{fig_bias_variance}). 
+According to \eqref{equ_variance_reglinreg_approx}, the variance of regularized linear 
+regression decreases with increasing regularization parameter $\lambda$. This is the 
+opposite behaviour as for the bias \eqref{equ_bias_reg_lin_reg_approx}, which increases 
+with increasing $\lambda$. 
+
+As illustrated in Figure \ref{fig_bias_variance_lambda}, the choice for $\lambda$ has 
+to balance between the bias $B^{2}$ \eqref{equ_bias_reg_lin_reg_approx} 
+(which increases with increasing $\lambda$) and the variance $V$ \eqref{equ_variance_reglinreg_approx} 
+(which decreases with increasing $\lambda$). This results in bias-variance trade 
+off for the choice of $\lambda$. We have discussed a similar a bias-variance tradeoff 
+already in Section \ref{sec_gen_linreg}. However, in contrast to the trade-off 
+obtained from the discrete model complexity $r$ in \eqref{equ_generalization_hypospace_r}, 
+here we obtain a continuous trade-off via the real-valued parameter $\lambda$. 
+
 
 \begin{figure}
 \begin{center}
@@ -7038,27 +7109,31 @@ $\lambda$ in an opposite manner resulting in a bias-variance tradeoff.}
 %Choice of lambda can be guided by validation error 
 %???????
 
-So far, we only have discussed the statistical effect of 
-regularization on the resulting ML method (how regularization 
-influences bias, variance, average prediction error). However, 
-regularization has also an effect on the computational properties 
-of the resulting ML method. Note that the objective function 
-in \eqref{equ_def_rlr_w_opt} is a smooth (infinitely often differentiable) 
-convex function. 
+So far, we only have discussed the statistical effect of regularization on the 
+resulting ML method. Regularizations allows to trade off bias against variance 
+in order to reduce the risk of the learnt hypothesis. 
 
-Similar to linear regression, we can solve the regularization 
+There is also a computational aspect of regularization. Adding a regularization 
+term to the ERM changes the shape of the objective function that is minimized 
+by a learning method. The shape of the objective function determines the difficulty 
+in finding a (approximate) minimizer. Thus, regularization influences the computational
+complexity of the resulting ML method.  
+
+Note that the objective function in \eqref{equ_def_rlr_w_opt} is a smooth (infinitely often differentiable) 
+convex function. Similar to linear regression, we can solve the regularization 
 linear regression problem using GD \eqref{equ_squared_loss} 
-(see Algorithm \ref{alg:gd_reglinreg}). The effect of adding the 
-regularization term $\lambda \| \vw \|^{2}_{2}$ to the objective 
-function within linear regression is a {\bf speed up of GD}. Indeed, 
-we can rewrite \eqref{equ_def_rlr_w_opt} as the quadratic problem 
+(see Algorithm \ref{alg:gd_reglinreg}). 
+
+Adding the regularization term $\lambda \| \vw \|^{2}_{2}$ to the objective 
+function of linear regression {\bf speeds up GD}. To verify this claim, we first 
+rewrite \eqref{equ_def_rlr_w_opt} as the quadratic problem 
 \begin{align} 
 \label{equ_quadr_form_reglinreg}
 \min_{\vw \in \mathbb{R}^{\featuredim}} & \underbrace{(1/2) \vw^{T} \mQ \vw - \vq^{T}  \vw}_{= f(\vw)} \nonumber \\ 
  & \mbox{ with } \mathbf{Q}= (1/\samplesize) \mX^{T} \mX + \lambda \mathbf{I}, \vq =(1/\samplesize) \mX^{T} \vy. %\mathbf{X}^{T} 
 %\min_{\mathbf{w} \in \mathbb{R}^{\featuredim}} \mathbf{w}^{T} \mathbf{Q} \mathbf{w}  \mbox{, with } \mathbf{Q} = \mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I}.
 \end{align} 
-This is similar to the quadratic problem \eqref{equ_quadr_form_linreg} 
+This is similar to the quadratic optimization problem \eqref{equ_quadr_form_linreg} 
 underlying linear regression but with different matrix $\mQ$. It turns out 
 that the convergence speed of GD (see \eqref{equ_def_GD_step}) applied 
 to solving a quadratic problem of the form \eqref{equ_quadr_form_reglinreg} 
@@ -7594,15 +7669,17 @@ as a random variable with probability distribution
 \label{equ_def_cluster_prob}
 p_{\clusteridx} \defeq \prob{c^{(\sampleidx)}=\clusteridx} \mbox{ for } \clusteridx=1,\ldots,\nrcluster.
 \end{equation}  
-The (prior) probabilities $p_{c}$ are unknown and therefore have 
-to be estimated somehow by the soft-clustering method. The random 
-cluster assignment $\clusteridx^{(\sampleidx)}$ selects the cluster-specific 
+The (prior) probabilities $p_{\clusteridx}$, for $\clusteridx=1,\ldots,\nrcluster$, 
+are either assumed to be known or estimated from data, e.g., using a maximum 
+likelihood method. 
+
+The random cluster assignment $\clusteridx^{(\sampleidx)}$ selects the cluster-specific 
 distribution \eqref{equ_def_mvn_distribution} of the random datapoint $\vx^{(\sampleidx)}$, 
 \begin{equation}
 \label{equ_cond_dist_GMM}
  \prob{\vx^{(\sampleidx)} | \clusteridx^{(\sampleidx)} } = \mathcal{N} (\vx; {\bm \mu}^{(\clusteridx^{(\sampleidx)})}, {\bm \Sigma}^{(\clusteridx^{(\sampleidx)})})
 \end{equation} 
-with mean vector ${\bm \mu}^{(c)}$ and covariance matrix ${\bm \Sigma}^{(c)}$. 
+with mean vector ${\bm \mu}^{(\clusteridx)}$ and covariance matrix ${\bm \Sigma}^{(\clusteridx)}$. 
 %The probability distribution of the random vector depends on the (hidden) cluster index $c^{(\sampleidx)}\in \{1,\ldots,k\}$, 
 %such that 
 %with some (unknown!) cluster-specific mean vector ${\bm \mu}^{(c)}$ and covariance matrix ${\bm \Sigma}^{(c)}$ associated with cluster $c$. 
@@ -7610,14 +7687,12 @@ with mean vector ${\bm \mu}^{(c)}$ and covariance matrix ${\bm \Sigma}^{(c)}$.
 %corresponds to a multivariate Gaussian distribution with mean ${\bm \mu}^{(c^)}$ and covariance matrix ${\bm \Sigma}^{(c)}$. 
 
 The modelling of cluster assignments $\clusteridx^{(\sampleidx)}$ as 
-(unobserved) random variables suggests naturally a precise definition 
-for the notion of the degree $y^{(\sampleidx)}_{c}$ by which datapoint 
-$\vx^{(\sampleidx)}$ belongs to cluster $c$. 
-
-We define the degree $y^{(\sampleidx)}_{c}$ of datapoint $\vx^{(\sampleidx)}$ 
-belonging to cluster $c$ as the ``a-posteriori'' probability of the cluster 
-assignment $\clusteridx^{(\sampleidx)}$ being equal to a particular
-cluster index $\clusteridx \in \{1,\ldots,\nrcluster\}$: 
+(unobserved) random variables suggests a natural definition for degree 
+$y^{(\sampleidx)}_{\clusteridx}$ by which datapoint $\vx^{(\sampleidx)}$ 
+belongs to cluster $\clusteridx$. We define the degree $y^{(\sampleidx)}_{\clusteridx}$ 
+of datapoint $\vx^{(\sampleidx)}$ belonging to cluster $c$ as 
+the ``a-posteriori'' probability of the cluster assignment $\clusteridx^{(\sampleidx)}$ 
+being equal to $\clusteridx \in \{1,\ldots,\nrcluster\}$: 
 \begin{equation}
 \label{equ_def_deg_belonging_prob}
 y^{(\sampleidx)}_{\clusteridx} \defeq \prob{ \clusteridx^{(\sampleidx)} = \clusteridx | \dataset}.
@@ -7630,20 +7705,21 @@ sum to one,
 \label{equ_dob_sum_to_one}
 \sum_{\clusteridx=1}^{\nrcluster} y^{(\sampleidx)}_{\clusteridx}=1 \mbox{ for each } \sampleidx=1,\ldots,\samplesize.
 \end{equation}  
+
 It is important to note that we use the conditional cluster 
 probability \eqref{equ_def_deg_belonging_prob}, conditioned 
-on the dataset, for defining the degree of belonging $y^{(\sampleidx)}_{\clusteridx}$. 
+on the dataset $\dataset$, for defining the degree of belonging $y^{(\sampleidx)}_{\clusteridx}$. 
 This is reasonable since the degree of belonging $y^{(\sampleidx)}_{\clusteridx}$ 
 depends on the overall (cluster) geometry of the data set $\dataset$.
 
 A probabilistic model for the observed datapoints $\vx^{(\sampleidx)}$ 
-is obtained by considering each datapoint $\vx^{(\sampleidx)}$ being 
-the result of a random draw from the distribution $\mathcal{N} (\vx ; {\bm \mu}^{(c^{(\sampleidx)})}, {\bm \Sigma}^{(c^{(\sampleidx)})})$ 
-with some cluster $c^{(\sampleidx)}$. Since the cluster indices $c^{(\sampleidx)}$ 
-are unknown,\footnote{After all, the goal of soft-clustering is to estimate the 
-cluster indices $c^{(\sampleidx)}$.} we model them as random variables. 
-In particular, we model the cluster indices $c^{(\sampleidx)}$ as i.i.d.\ with 
-probabilities$p_{\clusteridx} = \prob{ c^{(\sampleidx)} = \clusteridx}.$ 
+is obtained by considering each datapoint $\vx^{(\sampleidx)}$ as a 
+random draw from the distribution $\mathcal{N} (\vx ; {\bm \mu}^{(\clusteridx^{(\sampleidx)})}, {\bm \Sigma}^{(\clusteridx^{(\sampleidx)})})$ with some cluster $c^{(\sampleidx)}$. 
+
+Since the cluster indices $\clusteridx^{(\sampleidx)}$ are unknown,\footnote{After all, the goal 
+of soft-clustering is to estimate the cluster indices $\clusteridx^{(\sampleidx)}$.} 
+we model them as random variables. In particular, we model the cluster indices 
+$\clusteridx^{(\sampleidx)}$ as i.i.d.\ with probabilities$p_{\clusteridx} = \prob{ c^{(\sampleidx)} = \clusteridx}.$ 
 
 The overall probabilistic model \eqref{equ_cond_dist_GMM}, \eqref{equ_def_cluster_prob} 
 amounts to a {\bf Gaussian mixture model} (GMM). The marginal distribution $\prob{\vx^{(\sampleidx)}}$, 
@@ -7651,9 +7727,9 @@ which is the same for all datapoints $\vx^{(\sampleidx)}$, is a (additive) mixtu
 multivariate Gaussian distributions, 
 \begin{equation} 
 \label{equ_def_GMM}
- \prob{\vx^{(\sampleidx)}} = \sum_{c=1}^{k} \underbrace{\prob{c^{(\sampleidx)}=c}}_{p_{c}}  \underbrace{\prob{\vx^{(\sampleidx)} | c^{(\sampleidx)}=c}}_{\mathcal{N}(\vx^{(\sampleidx)};{\bm \mu}^{(c)}, {\bm \Sigma}^{(c)})}. 
+ \prob{\vx^{(\sampleidx)}} = \sum_{\clusteridx=1}^{\nrcluster} \underbrace{\prob{\clusteridx^{(\sampleidx)}=\clusteridx}}_{p_{\clusteridx}}  \underbrace{\prob{\vx^{(\sampleidx)} | \clusteridx^{(\sampleidx)}=\clusteridx}}_{\mathcal{N}(\vx^{(\sampleidx)};{\bm \mu}^{(\clusteridx)}, {\bm \Sigma}^{(\clusteridx)})}. 
 \end{equation} 
-The cluster assignments $c^{(\sampleidx)}$ are hidden (unobserved) random 
+The cluster assignments $\clusteridx^{(\sampleidx)}$ are hidden (unobserved) random 
 variables. We thus have to infer or estimate these variables from the observed 
 datapoints $\mathbf{x}^{(\sampleidx)}$ which are i.i.d.\ realizations of the GMM \eqref{equ_def_GMM}. 
 
@@ -7899,7 +7975,7 @@ subspace which is spanned by all possible low-dimensional feature vectors???
 \section{Dimensionality Reduction} 
 \label{sec_dim_red}
 
-Consider a ML method that aims at predicting the label $y$  of a datapoint $\vz$ 
+Consider a ML method that aims at predicting the label $y$ of a datapoint $\vz$ 
 based on some features $\vx$ which characterize the datapoint $\vz$. Intuitively, it 
 should be beneficial to use as many features as possible. Indeed, the more features 
 of a datapoint we know, the more we should know about its label $y$. 
@@ -8328,6 +8404,11 @@ a user.
 \begin{align} 
 &\mathbb{R}  &\quad &\mbox{Set of real numbers $x$.} \nonumber \\
 &\mathbb{R}_{+}  &\quad &\mbox{Set of non-negative real numbers $x\geq0$.} \nonumber \\ \nonumber
+\end{align} 
+
+\section{Matrices and Vectors} 
+\begin{align} 
+&\mathbf{I}  &\quad &\mbox{The identity matrix having ones on the main diagonal and zeros off diagonal.} \nonumber 
 \end{align} 
 
 \section{Machine Learning}

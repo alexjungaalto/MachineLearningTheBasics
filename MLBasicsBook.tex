@@ -6181,31 +6181,41 @@ plot coordinates{(5,5)};
 As discussed in Chapter \ref{ch_Optimization}, a principled approach to learn a 
 good hypothesis is ERM. The idea of ERM is to learn a hypothesis $\hat{h} \in \hypospace$ that incurs 
 minimum average loss on a set of labeled datapoints (the training set). The minimum 
-average loss achieved by a hypothesis that solves the ERM is referred to as the training error. 
+average loss achieved by a hypothesis that solves the ERM is referred to as 
+the training error. ERM makes sense if the training error of a hypothesis 
+is also a good indicator for the typical loss incurred on datapoints outside 
+the training set. If the training error has can serve as such an indicator for 
+general performance depends on the statistical properties of 
+the datapoints and on the hypothesis space used by the ML method.  
 
-The training error is often not a good estimate for the average performance 
-of the learnt hypothesis $\hat{h}$. For ML methods using high-dimensional 
-hypothesis spaces, such as linear maps with a large number of features or 
-deep neural networks, the training error can be much smaller than the 
-average loss. This happens if the training algorithm overfits the training data. 
+%The training error is often not a good estimate for the average performance 
+%of the learnt hypothesis $\hat{h}$. 
+Modern ML methods often use high-dimensional hypothesis spaces. 
+One example is linear regression with datapoints having a vast number 
+of features. This results in a high-dimensional space of 
+linear maps. Another example are deep learning methods that use 
+high-dimensional hypotheses spaces constituted by maps represented 
+by deep neural networks with billions of tunable weights. For such vast 
+hypothesis spaces, it is quite easy to find some hypothesis that fits well the 
+training data and has small training error. However, such a hypothesis might overfit 
+the training data and does a poor job on datapoints outside the training data. 
+%can be much smaller than the average loss. This happens if the training algorithm 
+%overfits the training data. 
 
-A method overfits if it learns a predictor $h \in \hypospace$ that, 
+A ML method overfits if it learns a predictor $h \in \hypospace$ that, 
 merely by luck, fits well the training data but does a poor job on 
 other data. Such a predictor will fail to {\bf generalize} well to new 
 data for which we do not know the label $y$ but only the features 
-$\vx$ (if we would know the label, then there is no point in learning 
-predictors which estimate the label). 
+$\vx$. Section \ref{sec_overfitting_sec_6} analyzes overfitting of 
+linear regression by using a probabilistic model for datapoints. 
 
-This chapter discusses few basic techniques to detect and avoid overfitting. 
-%Consider some ML algorithm (such as Algorithm \ref{alg:gd_linreg}), which learns a predictor $\hat{h}$ 
-%via ERM \eqref{equ_def_ERM_funs} based on some labeled dataset $\dataset = \{(\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$.
-To detect overfitting we need to monitor or {\bf to validate} the performance of 
-the predictor $h$ on new datapoint which are not contained in the training set. 
-We call the set of datapoints used for validation, the {\bf validation set}. 
-
-The empirical risk incurred by the predictor $h$ on the validation set is referred 
-to as validation error. If a ML method overfits, it will learn a predictor whose training 
-error is much smaller than the validation error. 
+This chapter discusses how a simple procedure known as 
+validation can detect and avoid overfitting. Section \ref{sec_validate_predictor} 
+will discuss how {\bf to validate} a learnt hypothesis by computing its average loss on 
+datapoints which are different from the training set. The datapoints 
+used to validate the hypothesis are referred to as the {\bf validation set}. 
+If a ML method overfits, it will learn a hypothesis whose training error is 
+much smaller than the validation error. 
 %Indeed, the ultimate goal of ML methods is to find a predictor $\hat{h}$ which is accurate 
 %when applied to a new unlabeled datapoint for which we do not know the label $y$ but 
 %only the features $\vx$ (if we would know the label, then there is no point in learning 
@@ -6219,31 +6229,63 @@ error is much smaller than the validation error.
 %is unacceptably large. This situation is referred to as {\bf overfitting} and the reasons 
 %for this to happen will be discussed in Section \ref{sec_overfitting_sec_6}. 
 
-Validation is useful not only for verifying if the predictor generalises well to 
-new data (in particular detecting overfitting) but also for guiding model selection. 
-In what follows, we mean by model selection the problem of selecting a 
-particular hypothesis space out of a whole ensemble of potential hypothesis spaces $\hypospace_{1},\hypospace_{2},\ldots$.
+We can use validation not only to detect if a ML method overfits. 
+The validation error can also be used as a performance measure 
+for the hypothesis space or model that is used by that method. 
+This is similar in spirit to the the concept of a loss function that 
+allows to evaluate the quality of a hypothesis $h \in \hypospace$. 
 
-We first study the phenomenon of overfitting within a simple probabilistic model for 
-the datapoints in Section \ref{sec_overfitting_sec_6}. Then, in Section \ref{sec_validate_predictor}, 
-we analyze a simple validation technique that allows to detect overfitting. 
+The validation error allows to evaluate the quality of the entire hypothesis 
+space $\hypospace$. Similar to ERM, which chooses between different 
+hypotheses based on (average) loss on the training set, we can choose 
+between different hypothesis spaces based on their validation errors. 
+The resulting model selection strategy is detailed in Section \ref{sec_modsel}. 
+
+Section \ref{sec_gen_linreg} uses a simple probabilistic model for the 
+data to study the relation between training error and the expected loss 
+or risk of a hypothesis. This analysis sheds some light on the interplay 
+between the properties of the hypothesis space used in a ML method 
+with the resulting training and validation error.
+
+Computing validation errors not only allows to detect overfitting and 
+select between different models (hypothesis spaces). Section \ref{equ_diagnosis_ML} 
+will show how we can debug and diagnose ML methods merely by 
+comparing its training and validation error. The comparison of these 
+two errors informs possible improvements of ML methods by 
+collecting more data or change the model (hypothesis space). 
+
+
+
+
+%between different hypothesis spaces. erifying if the predictor generalises well to 
+%new data (in particular detecting overfitting) but also for guiding model selection. 
+%In what follows, we mean by model selection the problem of selecting a 
+%particular hypothesis space out of a whole ensemble of potential hypothesis spaces $\hypospace_{1},\hypospace_{2},\ldots$.
+
+%We first study the phenomenon of overfitting within a simple probabilistic model for 
+%the datapoints in Section \ref{sec_overfitting_sec_6}. Then, in Section \ref{sec_validate_predictor}, 
+%we analyze a simple validation technique that allows to detect overfitting. 
 
 
 \section{Overfitting}
 \label{sec_overfitting_sec_6}
 
-Let us illustrate the phenomenon of overfitting using a simplified model 
-for how a human child learns the concept ``tractor''. In particular, this 
-learning task amounts to finding an association (or predictor) between 
-an image and the fact if the image shows a tractor or not. To teach this 
-association to a child, we show it many pictures and tell for each picture 
-if there is a ``tractor'' or if there is ``no tractor'' depicted. 
+We illustrate the phenomenon of overfitting by considering 
+a human child that learns the concept ``tractor''. This 
+learning task amounts to finding an association between 
+an image and the fact if the image shows a tractor or not. 
+The association can be modelled as a hypothesis $h(\vx)$ 
+that reads in the features of the image and outputs a value 
+that indicates if the image shows a tractor or not. 
+%We show it many pictures and tell for each picture 
+%f there is a ``tractor'' or if there is ``no tractor'' depicted. 
 
-Consider that we have taught the child using the image collection $\trainset$ 
-depicted in Figure \ref{fig_misleading_data_set}. For some reason, one of 
-the images is labeled erroneously as ``tractor'' but actually shows an ocean 
-wave. As a consequence, if the child is good in memorizing images, it might 
-predict the presence of tractors whenever looking at a wave (Figure \ref{equ_wave_as_tractor}). 
+Assume that we have taught the child using the image collection 
+$\trainset$ depicted in Figure \ref{fig_misleading_data_set}. For some 
+reason, one of the images is labeled erroneously as ``tractor'' 
+but actually shows an ocean wave. As a consequence, if the child is 
+good in memorizing images, it might predict the presence of tractors 
+whenever looking at a wave (Figure \ref{equ_wave_as_tractor}). 
 
 \begin{figure}[htbp]
 	\centering
@@ -6268,9 +6310,8 @@ predict the presence of tractors whenever looking at a wave (Figure \ref{equ_wav
 For the sake of the argument, we assume that the child uses a linear predictor 
 $h^{(\vw)}(\vx) = \vx^{T} \vw$, using the features $\vx$ of the image, and encodes 
 the fact of showing a tractor by $y=1$ and if it is not showing a tractor by $y=-1$. 
-In order to learn the weight vector, we use ERM with squared error loss over the 
-training dataset, i.e., its learning process amounts to solving the ERM problem 
-\eqref{equ_def_cost_MSE} using the labeled training dataset $ \dataset^{(\rm train)}$. 
+We learn the weight vector by minimizing the squared error loss \eqref{equ_def_cost_MSE} 
+on the training dataset $\dataset^{(\rm train)}$.
 
 If we stack the feature vectors $\vx^{(\sampleidx)}$ and labels $y^{(\sampleidx)}$ into 
 the feature matrix $\mX=(\vx^{(1)},\ldots,\vx^{(\samplesize_{\rm t})})^{T}$ and label 
@@ -6293,11 +6334,12 @@ of the feature matrix
 \end{equation} 
 
 ML methods using linear predictors overfit as soon as the 
-number of features is not smaller the sample size, i.e., whenever 
+number $\featuredim$ of features exceeds the sample size $\samplesize$,
 \begin{equation} 
 \label{equ_condition_overfitting}
-\samplesize \leq \featuredim. 
+\featuredim  \geq \samplesize. 
 \end{equation} 
+
 A set of $\samplesize$ feature vectors $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ 
 is typically linearly independent whenever \eqref{equ_condition_overfitting} is satisfied. 
 If the feature vectors of the training datapoints are linearly independent, 
@@ -6354,34 +6396,76 @@ Figure \ref{fig_polyn_training}.
 
 \begin{figure}
 	\begin{center}
-		\begin{tikzpicture}[scale=0.4]
-		\draw [thick] \boundellipse{0,0}{10}{5} node[right]  {${\bm \mu^{(1)}}$};
-		\fill (0,0) circle (2pt) ; 
-		\node [right] at (0,5.5) {$ {\bm \Sigma}^{(1)}$} ; 
-		\draw [thick] \boundellipse{11,1}{-2}{4} node[right]  {${\bm \mu^{(2)}}$};
-		\fill (11,1) circle (2pt) ; 
-		\node [right] at (11,5.5) {$ {\bm \Sigma}^{(2)}$} ; 
-		\draw [thick] \boundellipse{-9,4}{2}{3} node[left,xshift=3mm,yshift=3mm]  {$\,\,{\bm \mu^{(3)}}$}; 
-		\fill (-9,4) circle (2pt) ; 
-		\node [right] at (-9,8) {$ {\bm \Sigma}^{(3)}$} ; 
+		\begin{tikzpicture}[scale=0.9]
+		
+	%	\draw [thick] (5,2.5) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(3)}$};
+	%	\draw [thick] (4,2) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(4)}$};
+	%	\draw [thick] (5,1) circle (0.1cm)node[anchor=west,above] {\hspace*{0mm}$\vx^{(2)}$};
+		\draw [thick] (-1,5) rectangle ++(0.1cm,0.1cm) node[anchor=west,above] {\hspace*{0mm}$\big(\vx^{(1)},y^{(1)}\big)$};
+		\draw [thick] (1,3.5) rectangle ++(0.1cm,0.1cm) node[anchor=west,above] {\hspace*{0mm}$\big(\vx^{(2)},y^{(2)}\big)$};
+		\draw [thick] (3,2.5) rectangle ++(0.1cm,0.1cm) node[anchor=west,above] {\hspace*{0mm}$\big(\vx^{(3)},y^{(3)}\big)$};
+		 \draw [dashed] {[rounded corners] (0,7) -- (6,2)  -- (2,0) -- (-3,5) -- (0,7) };
+		\node[anchor=east,above] at (2,1) {$\trainset$};
+		\draw [thick] (7,4) rectangle ++(0.1cm,0.1cm) node[anchor=west,above] {\hspace*{0mm}$\big(\vx^{(4)},y^{(4)}\big)$};
+		\draw [thick] (6,6) rectangle ++(0.1cm,0.1cm) node[anchor=west,above] {\hspace*{0mm}$\big(\vx^{(5)},y^{(5)}\big)$};
+	    \node[anchor=east,above] at (5,5) {$\valset$};
+		 \draw [dashed] {[rounded corners] (4,5) -- (5,8)  -- (7,8) -- (9,3) -- (4,5) };
+	%	\draw [thick] \boundellipse{5,5}{3}{5} node[right]  {${\bm \mu^{(1)}}$};
+	%	\fill (0,0) circle (2pt) ; 
+	%	\node [right] at (0,5.5) {$ {\bm \Sigma}^{(1)}$} ; 
+	%	\draw [thick] \boundellipse{11,1}{-2}{4} node[right]  {${\bm \mu^{(2)}}$};
+	%	\fill (11,1) circle (2pt) ; 
+	%	\node [right] at (11,5.5) {$ {\bm \Sigma}^{(2)}$} ; 
+	%	\draw [thick] \boundellipse{-9,4}{2}{3} node[left,xshift=3mm,yshift=3mm]  {$\,\,{\bm \mu^{(3)}}$}; 
+	%	\fill (-9,4) circle (2pt) ; 
+	%	\node [right] at (-9,8) {$ {\bm \Sigma}^{(3)}$} ; 
 		\end{tikzpicture}
 	\end{center}
-	\label{fig_valdiation_idea}
-	\caption{The idea of validation is to split the datapoints into a training set and a validation set.}
+	\caption{We split the entire dataset $\dataset$, constituted by datapoints with features $\vx^{(\sampleidx)}$ 
+		and label $y^{(\sampleidx)}$, into a {\bf training set} $\trainset$ and a {\bf validation set} 
+		$\valset$. We use the training set to learn (find) the hypothesis $\hat{h}$ with minimum 
+		empirical risk $\emperror(\hat{h}| \trainset)$ on the training set \eqref{equ_def_ERM_funs}. 
+		We then validate $\hat{h}$ by computing its average loss $\emperror(\hat{h}| \dataset^{(\rm val)})$  
+		on the validation set $\valset$. The average loss $\emperror(\hat{h}| \valset)$ obtained on the validation 
+		set is the {\bf validation error}. Note that $\hat{h}$ depends on the training set $\trainset$ but is completely 
+		independent of the validation set $\valset$.}
+		\label{fig_split_train_val}
 \end{figure}
 %\end{document}
 
-Consider an ML method using some hypothesis space $\hypospace$. 
-We then learn a predictor $\hat{h} \in \hypospace$ by ERM \eqref{equ_def_ERM_funs} 
-using a labeled dataset (the training set). The basic idea of validating the 
-predictor $\hat{h}$ is simple: compute the empirical risk of $\hat{h}$ on a 
-new set of datapoints $(\vx,y)$ which have not been already used for training. 
+%   \caption{}
+%\label{fig_split_train_val}
+
+%\begin{figure}[htbp]
+%	\begin{center}
+%		\begin{tikzpicture}[auto,scale=0.8]
+%
+%		\draw[->] (-0.5,0) -- (6.5,0) node[right] {$x_{\rm g}$};
+%		\draw[->] (0,-0.5) -- (0,6.5) node[above] {$x_{\rm r}$};
+%		%\foreach \y/\ytext in { 1/1,2/2,3/3,4/4,5/5} \draw[shift={(0,\y)}] (2pt,0pt) -- (-2pt,0pt) node[left] {$\ytext/5$};  
+%		%\foreach \x/\xtext in{ 1/1,2/2,3/3,4/4,5/5}\draw[shift={(\x,0)}] (0pt,2pt) -- (0pt,-2pt) node[below] {$\xtext/5$};  
+%		\end{tikzpicture}
+%	\end{center}
+%	\caption{A scatterplot depicting some images. The $\sampleidx$-th image is 
+%		represented by the feature vector $\vx^{(\sampleidx)}=(x^{(\sampleidx)}_{\rm r},x^{(\sampleidx)}_{\rm g})^{T}$ 
+%		with the average redness $x_{\rm r}^{(\sampleidx)}$ and average greenness $x_{\rm g}^{(\sampleidx)}$ of the image. 
+%	} 
+%	\label{fig_scatterplot_clustering}
+%\end{figure}
+
+Consider an ML method using the hypothesis space $\hypospace$ that  
+learns a hypothesis $\hat{h} \in \hypospace$ by ERM \eqref{equ_def_ERM_funs}. 
+The hypothesis $\hat{h}$ has minimum average loss (training error) on the 
+labeled dataset $\dataset$. The basic idea of validating the predictor $\hat{h}$ 
+is simple: compute the empirical risk of $\hat{h}$ on a new set of datapoints $(\vx,y)$ 
+which have not been already used for training. 
 
 It is very important to validate the predictor $\hat{h}$ using labeled data 
 points which do not belong to the dataset which has been used to learn 
-$\hat{h}$ (e.g., via ERM \eqref{equ_def_ERM_funs}). The predictor $\hat{h}$ 
-tends to ``look better'' on the training set than for other datapoints, 
-since it is optimized precisely for the datapoints in the training set. 
+$\hat{h}$ (e.g., via ERM \eqref{equ_def_ERM_funs}). The hypothesis 
+$\hat{h}$ tends to ``look better'' on the training set than for other 
+datapoints, since it is optimized precisely for the datapoints in the 
+training set. 
 \vspace*{2mm}
 \begin{center}
 \framebox[0.96\textwidth]{
@@ -6394,13 +6478,14 @@ of a predictor $\hat{h}$!
 }}
 \end{center}
  
-A very simple recipe for implementing learning and validation of a 
-predictor based on one single labeled dataset $\dataset = \{(\vx^{(\sampleidx)},y^{(\sampleidx)})\}_{\sampleidx=1}^{\samplesize}$ is as follows (see Figure \ref{fig_split_train_val}): 
+A very simple recipe for validating a ML method is as follows (see Figure \ref{fig_split_train_val}): 
 \begin{enumerate} 
-\item randomly divide (``split'') the entire dataset $\dataset$ of labeled snapshots into two disjoint subsets 
-$\trainset$ (the ``training set'') and $\valset$ (the ``validation set''): 
-$\dataset = \trainset \cup \valset$ (see Figure \ref{fig_split_train_val}). 
-\item learn a predictor $\hat{h}$ via ERM using the training data $\trainset$, i.e., compute (cf.\ \eqref{equ_def_ERM_funs}) 
+\item randomly divide (``split'') the entire set $\dataset$ of labeled datapoints into 
+two disjoint subsets $\dataset = \trainset \cup \valset$ (see Figure \ref{fig_split_train_val}). 
+The first subset $\trainset$ is referred to as the {\bf training set}. The second subset $\valset$ 
+is referred to as {\bf validation set}.  
+\item learn a hypothesis $\hat{h}$ via ERM using the training data $\trainset$, i.e., 
+compute (cf.\ \eqref{equ_def_ERM_funs}) 
 \begin{align} 
 \label{equ_def_hat_h_fitting}
 \hat{h} & = \argmin_{h \in \hypospace} \emperror(h| \trainset) \nonumber \\
@@ -6411,7 +6496,7 @@ with corresponding {\bf training error}
 \label{equ_def_training_error_val}
 \emperror(\hat{h}|\trainset)=  (1/\samplesize_{\rm t}) \sum_{\sampleidx=1}^{\samplesize_{\rm t}} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})} {\hat{h}}  %( y- \hat{h}(\vx))^2.
 \end{equation}  
-\item validate the predictor $\hat{h}$ obtained from \eqref{equ_def_hat_h_fitting} by computing the empirical risk 
+\item validate the hypothesis $\hat{h}$ obtained from \eqref{equ_def_hat_h_fitting} by computing the empirical risk 
 \begin{equation} 
 \label{equ_def_training_val_val}
 \emperror(\hat{h}|\valset) = (1/\samplesize_{\rm v})  \sum_{(\vx,y) \in \valset} \loss{(\vx,y)} {\hat{h}}  % ( y- \hat{h}(\vx))^2, 
@@ -6424,19 +6509,19 @@ large should the training set be relative to the validation set is often based o
 tuning. It seems difficult to make a precise statement on how to choose the split ratio 
 which applies broadly to different ML problems \cite{Larsen1999}.
  
- \begin{figure}[htbp]
-    \centering
-   \includegraphics[width=0.7\textwidth]{TrainValSmall.jpg}  
-    \caption{We split the available dataset $\dataset$ into a 
-    	{\bf training set} $\dataset^{(\rm train)}$ and a {\bf validation set} 
-    	$\dataset^{(\rm val)}$. We use the training set in order to 
-    	learn (find) a good predictor $\hat{h}$ with minimum 
-    	empirical risk $\emperror(\hat{h}| \dataset^{(\rm train)})$ on the training set \eqref{equ_def_ERM_funs}. 
-        We then validate $\hat{h}$ by computing its empirical risk $\emperror(h| \dataset^{(\rm val)})$  
-        on the validation set $\dataset^{(\rm val)}$. The empirical risk $\emperror(h| \dataset^{(\rm val)})$ 
-        obtained on the validation set is the {\bf validation error}.}
-    \label{fig_split_train_val}
-\end{figure}
+% \begin{figure}[htbp]
+%    \centering
+%   \includegraphics[width=0.7\textwidth]{TrainValSmall.jpg}  
+%    \caption{We split the available dataset $\dataset$ into a 
+%    	{\bf training set} $\dataset^{(\rm train)}$ and a {\bf validation set} 
+%    	$\dataset^{(\rm val)}$. We use the training set in order to 
+%    	learn (find) a good predictor $\hat{h}$ with minimum 
+%    	empirical risk $\emperror(\hat{h}| \dataset^{(\rm train)})$ on the training set \eqref{equ_def_ERM_funs}. 
+%        We then validate $\hat{h}$ by computing its empirical risk $\emperror(h| \dataset^{(\rm val)})$  
+%        on the validation set $\dataset^{(\rm val)}$. The empirical risk $\emperror(h| \dataset^{(\rm val)})$ 
+%        obtained on the validation set is the {\bf validation error}.}
+%    \label{fig_split_train_val}
+%\end{figure}
 
 The basic idea of randomly splitting the available labeled data into training and 
 validation sets is underlying many validation techniques. A popular extension 
@@ -6498,7 +6583,7 @@ obtained when applying the predictor $\hat{h}_{l}$ to the {\bf validation datase
 
 
 
-\section{Bias, Variance and Generalization within Linear Regression} 
+\section{A Probabilistic Model of Generalization} 
 \label{sec_gen_linreg}
 \emph{More Data Beats Clever Algorithms ?; More Data Beats Clever Feature Selection?}
 
@@ -6795,6 +6880,7 @@ by empirical approximations (sample averages).
 
 
 \section{Diagnosing ML} 
+\label{equ_diagnosis_ML}
 \emph{compare training, validation and benchmark error. benchmark can 
 be Bayes risk when using probabilistic model (such as i.i.d.), or human 
 performance or risk of some other ML methods ("experts" in regret framework)  }
@@ -6803,25 +6889,25 @@ Consider a predictor $\hat{h}$ obtained from ERM \eqref{equ_def_ERM_funs}
 with training error $\emperror(\hat{h}| \trainset)$ and validation 
 error $\emperror(\hat{h}| \dataset^{(\rm val)})$. By comparing 
 the two numbers $\emperror(\hat{h}| \trainset)$ and $\emperror(\hat{h}| \dataset^{(\rm val)})$ 
-with some desired or tolerated error $E_{0}$, we can get 
-some idea of how to adapt the current ERM approach 
-(see \eqref{equ_def_ERM_funs}) to improve performance: 
+with some benchmark error level $E_{0}$, we can get 
+some idea of how to adapt components 
+of the ML method to improve performance: 
 \begin{itemize} 
-\item $\emperror(h| \trainset) \approx \emperror(h| \valset) \approx E_{0}$: 
+\item $\emperror(\hat{h}| \trainset) \approx \emperror(\hat{h}| \valset) \approx E_{0}$: 
 There is not much to improve regarding prediction accuracy since we 
 achieve the desired error on both training and validation set.
-\item $\emperror(h| \valset) \gg \emperror(h| \trainset) \approx E_{0}$: 
+\item $\emperror(\hat{h}| \valset) \gg \emperror(\hat{h}| \trainset) \approx E_{0}$: 
 The ERM \eqref{equ_def_ERM_funs} results in a hypothesis $\hat{h}$ 
 with sufficiently small training error but when applied to new (validation) 
 data the performance of $\hat{h}$ is significantly worse. This is an 
 indicator of overfitting which can be addressed by regularization 
 techniques (see Section \ref{sec_regularization}). 
-\item $\emperror(h| \trainset) \gg \emperror(h| \valset)$: 
+\item $\emperror(\hat{h}| \trainset) \gg \emperror(\hat{h}| \valset)$: 
 This indicates that the method for solving the ERM \eqref{equ_def_ERM_funs} 
 is not working properly. The training error obtained by solving the 
 ERM \eqref{equ_def_ERM_funs} should always be smaller than the 
 validation error. When using GD for solving ERM, one particular 
-reason for $\emperror(h| \trainset) \gg \emperror(h| \valset)$ 
+reason for $\emperror(\hat{h}| \trainset) \gg \emperror(\hat{h}| \valset)$ 
 could be that the step size $\alpha$ in the GD step \eqref{equ_def_GD_step} 
 is chosen too large (see Figure \ref{fig_small_large_alpha}-(b)). 
 \end{itemize}

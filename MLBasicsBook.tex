@@ -5795,7 +5795,9 @@ upper bound $U$ for the maximum eigenvalue. If we know an upper bound $U \geq \l
 the step size $\alpha =1/U$ still ensures convergence of the GD iteration.
 
 \section{When To Stop} 
-Fixed number of iteration; use gradient as indicator for distance to optimum; 
+Fixed number of iteration (for this we might use convergence analysis of GD methods); 
+use gradient as indicator for distance to optimum; monitor decrease in objective function; 
+monitor decrease in validation error
 
 \section{GD for Linear Regression} 
 \label{sec_lin_reg}
@@ -6155,10 +6157,31 @@ the function at some point $n$ to obtain the values $f[n], f[n-1]$ and $f[n+1]$.
 % \begin{quote} 
  %``There are known knowns ... But there are also unknown unknowns'' (D. Rumsfeld)
 % \end{quote}
+
+\begin{figure}[htbp]
+\begin{center}
+\begin{tikzpicture}[ycomb]
+\draw[color=green,line width=26pt]
+plot coordinates{(0,3)};
+\node [below] at (0,0) {training error} ; 
+\draw[color=red,line width=26pt]
+plot coordinates{(5,5)};
+\node [below] at (5,0) {validation error} ; 
+\draw[dashed] (-1,2) -- (7,2) node[right,text width=5cm]{some benchmark \\ (Bayes' risk, human performance,$\ldots$)};
+\end{tikzpicture}
+\end{center}
+\label{fig_bars_val_sel}
+\caption{The diagnosis of ML methods is often based on comparing the training 
+	with validation error. Sometimes we also have some benchmark against which 
+	we can compare these errors.}
+\end{figure}
+
+
+
 As discussed in Chapter \ref{ch_Optimization}, a principled approach to learn a 
 good hypothesis is ERM. The idea of ERM is to learn a hypothesis $\hat{h} \in \hypospace$ that incurs 
 minimum average loss on a set of labeled datapoints (the training set). The minimum 
-average loss achieved by the solution of ERM is referred to as the training error. 
+average loss achieved by a hypothesis that solves the ERM is referred to as the training error. 
 
 The training error is often not a good estimate for the average performance 
 of the learnt hypothesis $\hat{h}$. For ML methods using high-dimensional 

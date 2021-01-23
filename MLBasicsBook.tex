@@ -1059,11 +1059,11 @@ single datapoint characterized by a potentially vast number
 of features. Consider datapoints representing social network 
 users, whose features include all media that has been posted (videos, images, text). 
 
-Besides the size of datasets, another computational challenge 
-for modern ML methods is that they must be able to fit highly 
-non-linear predictor maps. Deep learning methods address this 
-challenge by using a computationally convenient representation 
-of non-linear maps via artificial neural networks \cite{Goodfellow-et-al-2016}). 
+Besides the sheer size of datasets, another challenge 
+in modern ML methods is that they must be able to fit 
+highly non-linear predictor maps. Deep learning methods 
+address this challenge by using a computationally convenient 
+representation of non-linear maps via artificial neural networks \cite{Goodfellow-et-al-2016}. 
 
 
 \begin{figure}[htbp]
@@ -6925,50 +6925,133 @@ does not deviate by more than $20$ percent from the average MSE is larger than $
 \newpage 
 \chapter{Regularization}
 \label{ch_overfitting_regularization}
+\vspace*{-10mm}
+\begin{figure}[htbp]
+	\begin{center}
+		\begin{tikzpicture}[auto,scale=1.3]
+		%\draw [thick] (5,2.5) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(3)}$};
+		%\draw [thick] (4,2) circle (0.1cm)node[anchor=west] {\hspace*{0mm}$\vx^{(4)}$};
+		%\draw [thick] (5,1) circle (0.1cm)node[anchor=west,above] {\hspace*{0mm}$\vx^{(2)}$};
+		\draw[line width=0.4mm,->] (0,-0.5) -- (0,3.5) node[above] {label $y$};
+		\draw[line width=0.4mm,->] (-0.5,0) -- (5,0) node[right] {feature $x$};
+		\draw [thick] (1,2) rectangle ++(0.05cm,0.05cm) ;%node[anchor=west,above] {\hspace*{0mm}$\vx^{(1)}$};
+		\draw [thick] (2,3) rectangle ++(0.05cm,0.05cm) node[anchor=west,above] {\hspace*{0mm}$(x^{(\sampleidx)},y^{(\sampleidx)})$};
+		\draw [thick] (3,2) rectangle ++(0.05cm,0.05cm); %node[anchor=wes {\hspace*{0mm}$(x^{(2)},y^{(2)})$};%node[anchor=west,above] 
+		\draw [thick] (4,2.5) rectangle ++(0.05cm,0.05cm) ;%node[anchor=west] {\hspace*{0mm}$(x^{(1)},y^{(1)})$};
+		\draw [red,line width=0.4mm,dashed] (0,0) -- (0.95,0) -- (0.95,2) -- (1.05,2) -- (1.05,0) --  (1.95,0) -- 
+		(1.95,3) -- (2.05,3) -- (2.05,0) --  (2.95,0) -- (2.95,2) -- (3.05,2) -- (3.05,0)-- (3.95,0) -- (3.95,2.5) -- (4.05,2.5) -- (4.05,0) --  (4.5,0) ; 
+	   \node [anchor=west] at (4.1,1) {$\hat{h}(x)$}; 
+	%	\draw[dashed,line width=1pt] (0,0) -- (3,3) node[anchor=west] {predictor $h(x)$} ; 
+
+		%\foreach \y/\ytext in { 1/1,2/2,3/3,4/4,5/5} \draw[shift={(0,\y)}] (2pt,0pt) -- (-2pt,0pt) node[left] {$\ytext/5$};  
+		%\foreach \x/\xtext in{ 1/1,2/2,3/3,4/4,5/5}\draw[shift={(\x,0)}] (0pt,2pt) -- (0pt,-2pt) node[below] {$\xtext/5$};  
+		\end{tikzpicture}
+	\end{center}
+	\caption{Many ML methods learn a hypothesis $\hat{h}$ by minimizing the 
+		average loss incurred by the predictions $\hat{h}(x^{(\sampleidx)})$ on a 
+		training set $\big(x^{(\sampleidx)},y^{(\sampleidx)}\big)$, for $\sampleidx=1,\ldots,\samplesize$. 
+		Regularization techniques try to estimate (or to anticipate) how the performance 
+		of a hypothesis $\hat{h}$ differs between the training set and other datapoints. The average loss incurred 
+		by $\hat{h}$ on arbitrary datapoints is typically larger than the average loss on 
+		the training set. 
+	} 
+	\label{fig_regular}
+\end{figure}
 
 %??????????
 %???  maybe Gradient descent method could be explained in slightly details, which is a very important optimization method. also you can add some content of regularized least squares.????
 %???? discuss oferfitting in detail for linear regression; the fundamental limit (phase transition) is ``nr of features >= sample size'' ????
 %%??????????
 
-A main reason to validate a hypothesis is to detect {\bf overfitting}.
-Overfitting is one of the key pitfalls in the application of modern 
-ML methods. Many of these methods are based on ERM. They learn 
-a hypothesis out of a large hypothesis space, such as deep neural 
-networks, by minimizing the average loss (training error) on a set 
-of labeled datapoints (training set). 
+%A main reason to validate a learnt hypothesis, by measuring its loss on 
+%a validation set which is different from the training set, is to detect {\bf overfitting}.
+%Overfitting is one of the key pitfalls in the application of modern ML methods 
+%which use high-dimensional hypothesis spaces. 
+Many ML methods use the principle of ERM (see Chapter \ref{ch_Optimization}) 
+to learn a hypothesis out of a hypothesis space by minimizing the average loss 
+(training error) on a set of labeled datapoints (training set). 
 
-This ERM principle only makes sense if the training error  
-%ncurred by a predictor when applied to 
-%some labeled datapoints (training data) $\dataset= \{ \vz^{(\sampleidx)} = (\vx^{(\sampleidx)},y^{(\sampleidx)}) %\}_{\sampleidx=1}^{\samplesize}$, 
-is a good indicator for the general or average prediction performance of a hypothesis. % prediction error (see \eqref{equ_decomp_E_pred_toy_model}) 
+Using ERM as a guiding principle for ML methods makes sense only if the 
+training error is a good indicator for the loss it incurs on other datapoints 
+which are different from the training set. % the general or average prediction performance of 
+%a hypothesis. % prediction error (see \eqref{equ_decomp_E_pred_toy_model}) 
 %incurred by that predictor on new datapoints which are different 
 %from the training data. 
-One main pitfall for ERM is the phenomenon of overfitting. 
-A predictor $h: \mathbb{R}^{\featuredim} \rightarrow \mathbb{R}$ 
-obtained by the ERM is said to {\bf overfit} the training set if it 
-has a {\bf small training error} but a {\bf large average prediction error} 
-on other datapoints outside the training set. 
+%One main pitfall for ERM is the phenomenon of overfitting. 
 
-A main cause for overfitting is that the hypothesis space 
-$\hypospace$ is chosen too large. If the hypothesis space is 
-too large, ML methods based on solving the ERM \eqref{equ_def_ERM_funs} 
-can choose from so many different maps $h \in \hypospace$ 
-(from features $\vx$ to label $y$) that just ``by luck'' it will find 
-a good one for a given training dataset. However, the resulting 
-small empirical risk on the training dataset is highly misleading 
-since if a predictor was good for the training dataset just 
-``by accident'', we can not expect hat it will be any good for 
-other datapoints.
+Chapter \ref{ch_validation_selection} discussed how validation techniques 
+can be used to verify if the hypothesis performs also well on datapoints 
+outside the training set. This is achieved by measuring the validation error 
+as the average loss on a validation set which is different from the training set. 
+The validation error serves as an estimate for the expected loss or risk of a 
+hypothesis. 
 
-Section \ref{sec_robustness} discusses the relation between 
-the tendency of a method to overfit training data and its robustness. 
-A ML method is robust if it tolerates small perturbations (errors) 
-in the training data. Intuitively, forcing a method to tolerate small 
-perturbations in the training error should counteract the tendency 
-of the method to overfit the training data. 
+Regularization techniques replace the computation of a validation error of a 
+hypothesis by constructing an estimate for the loss of the hypothesis incurred 
+on arbitrary datapoints. In particular, regularization aims at estimating by how 
+much the loss incurred on arbitrary datapoints exceeds the (optimistic) 
+training error. This increase is estimated by adding different regularizations 
+terms to the average loss in ERM. We discuss the resulting regularized ERM 
+in Section \ref{sec_reg_ERM}. 
+
+Section \ref{sec_prob_mod_regularization} analyzes the effect of regularization 
+for linear regression using a simple probabilistic model for data points. This 
+analysis parallels the analysis of model validation in Section \ref{sec_gen_linreg}. 
+In particular, we will obtain another instance of a bias-variance tradeoff. While 
+this trade off was traced out by a discrete model complexity parameter 
+in Section \ref{sec_gen_linreg}, here it is traced out by a continuous 
+regularization parameter. 
+
+
+
+%  of computing a validation error to estimate the average loss of a 
+%hypothesis we can also use intrinsic properties of datasets and hypothesis spaces 
+%to estimate the deviation of the average loss from the training error.
+%If a ML method can choose from high-dimensional hypothesis space, it might 
+%easily find a hypothesis that fits well the trainingset. However, such a hypothesis 
+%might have result in a large loss for datapoints outside the training set. 
+%We say that a hypothesis $h: \mathbb{R}^{\featuredim} \rightarrow \mathbb{R}$ 
+%obtained by the ERM {\bf overfits} the training set if it has a {\bf small training error} 
+%but a {\bf large average prediction error} on other datapoints outside the training set. 
+
+%A main cause for overfitting is that the hypothesis space $\hypospace$ is chosen 
+%too large. If the hypothesis space is too large, ML methods based on solving the 
+%ERM \eqref{equ_def_ERM_funs} can choose from so many different maps $h \in \hypospace$ 
+%(from features $\vx$ to label $y$) that just ``by luck'' it will find a good one for 
+%a given training dataset. However, the resulting small empirical risk on the training 
+%dataset is highly misleading since if a predictor was good for the training dataset just 
+%``by accident'', we can not expect hat it will be any good for other datapoints. We 
+
+The regularization terms used in regularized ERM can be obtained in different ways. 
+Section \ref{sec_robustness} discusses the construction of regularization terms 
+by requiring the ML method to be robust against (small) random perturbations in 
+the training data. Conceptually we replace each training data point by a random 
+variable that fluctuates around it. 
+
+Section \ref{sec_data_augmentation} discusses data augmentation methods as 
+a simulation-based variant of the techniques discussed in Section \ref{sec_robustness}. 
+Data augmentation adds for each training data points a certain number of perturbed 
+copies. One such copy of a training data point can be obtained by adding the 
+realizations of random numbers to its features. 
+
+Semi-supervised learning problems refer to ML problems that involve a mix of 
+labeled and unlabeled data points. Section \ref{sec_ssl_regularization} shows 
+how to use the statistical properties of unlabeled data point to construct 
+regularization terms which are used for regularized ERM on the (typically small) 
+subset of labeled datapoints. 
+
+Multitask learning methods exploit similarities between different ML problems. 
+As an example consider ML problem that use the same datapoints and their 
+features but different labels. The similarity between ML problems could mean 
+that the same subset of features is relevant for all ML problems. 
+Section \ref{sec_mtl_regularization} designs regularization terms for individual 
+ML problems by using their similarities. 
+
+
 
 \section{Regularized ERM} 
+\label{sec_reg_ERM}
+
 It seems reasonable to avoid overfitting by pruning the 
 hypothesis space $\hypospace$, i.e., removing some of 
 its elements. In particular, instead of solving \eqref{equ_def_ERM_funs} 
@@ -7047,12 +7130,12 @@ it slightly perturbed label values for the training data.
 
 \section{Data Augmentation} 
 \label{sec_data_augmentation} 
-implement robustness principle by augmenting dataset with random perturbatios of original training data. 
+implement robustness principle by augmenting dataset with random perturbations of original training data. 
 
 
 
-\section{Regularized Linear Regression}
-\label{sec_regularization}
+\section{A Probabilistic Model for Regularization}
+\label{sec_prob_mod_regularization}
 
 As mentioned above, the overfitting of the training data 
 $\dataset^{(\rm train)}=\{(\vx^{(\sampleidx)},y^{(\sampleidx)})\}_{\sampleidx=1}^{\samplesize_{\rm t}}$ 
@@ -7319,11 +7402,13 @@ considered in Section \ref{sec_modsel} uses a discrete sequence of hypothesis sp
 %??????
 
 \section{Semi-Supervised Learning} 
+\label{sec_ssl_regularization}
 %%% use unlabeled data to construct regularizers ?? 
 Can we use unlabelled datapoints to construct better regularizers? We could use unlabled data 
 to learn some subspace of features that are most relevant ? (relation to feature learning ?)
 
 \section{Multitask Learning} 
+\label{sec_mtl_regularization}
 %%%% use different tasks to construct regularizers ????
 Remember that a formal ML problem is specified by identifying 
 datapoints, their features and labels, a model (hypothesis space)
@@ -7682,8 +7767,9 @@ with smallest clustering error \eqref{equ_def_emp_risk_kmeans}.
      \end{tikzpicture}
 \end{center}
 \caption{The clustering error $\emperror \big( \{\vm^{(\clusteridx)}\}_{\clusteridx=1}^{\nrcluster},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize} \mid \dataset \big)$ (see \eqref{equ_def_emp_risk_kmeans}), 
-which is minimized by $k$-means, is a non-convex function of the cluster means and assignments. 
-It is therefore possible for $k$-means to get trapped around a local minimum.} \label{fig_emp_risk_k_means}
+which is minimized by $k$-means, is a non-convex function of 
+the cluster means and assignments. The $k$-means algorithm 
+can get trapped around a local minimum.} \label{fig_emp_risk_k_means}
 \end{figure}
 
 Up till now, we have assumed the number $k$ of clusters 
@@ -7699,7 +7785,7 @@ which results in the smallest validation error.
 Another approach to choosing $k$ is the so-called ``elbow-method''. 
 We run the $k$-means Algorithm \ref{alg:kmeansimpl} for different choice 
 for $k$. For each choice of $k$, Algorithm \ref{alg:kmeansimpl} delivers a 
-different (approximate) optimum empirical error $$\mathcal{E}^{(k)} = \emperror \big( \{\vm^{(c)}\}_{c=1}^{k},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize} \mid \dataset \big).$$ 
+different (approximate) optimum empirical error $$\mathcal{E}^{(\nrcluster)} = \emperror \big( \{\vm^{(\clusteridx)}\}_{\clusteridx=1}^{\nrcluster},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize} \mid \dataset \big).$$ 
 We then plot the minimum empirical error $\mathcal{E}^{(k)}$ as a 
 function of the number $k$ of clusters. Figure \ref{fig_ellbow} depicts 
 an example for such a plot which typically starts with a steep decrease 
@@ -7739,7 +7825,7 @@ The cluster assignments obtained from hard-clustering
 methods, such as Algorithm \ref{alg:kmeansimpl}, provide 
 rather coarse-grained information. Indeed, even if two data 
 points $\vx^{(\sampleidx)}, \vx^{(j)}$ are assigned to the 
-same cluster $c$, their distances to the cluster mean $\vm^{(c)}$ 
+same cluster $\clusteridx$, their distances to the cluster mean $\vm^{(\clusteridx)}$ 
 might be very different. For some applications, we would 
 like to have a more fine-grained information about the cluster 
 assignments. 
@@ -7799,7 +7885,7 @@ The modelling of cluster assignments $\clusteridx^{(\sampleidx)}$ as
 (unobserved) random variables suggests a natural definition for degree 
 $y^{(\sampleidx)}_{\clusteridx}$ by which datapoint $\vx^{(\sampleidx)}$ 
 belongs to cluster $\clusteridx$. We define the degree $y^{(\sampleidx)}_{\clusteridx}$ 
-of datapoint $\vx^{(\sampleidx)}$ belonging to cluster $c$ as 
+of datapoint $\vx^{(\sampleidx)}$ belonging to cluster $\clusteridx$ as 
 the ``a-posteriori'' probability of the cluster assignment $\clusteridx^{(\sampleidx)}$ 
 being equal to $\clusteridx \in \{1,\ldots,\nrcluster\}$: 
 \begin{equation}
@@ -7873,8 +7959,8 @@ probabilities $p_{\clusteridx}$ (see \eqref{equ_def_cluster_prob}), cluster
 means ${\bm \mu}^{(\clusteridx)}$ and cluster covariance matrices 
 ${\bm \Sigma}^{(\clusteridx)}$ (see \eqref{equ_cond_dist_GMM}) from 
 the observed datapoints $\dataset = \{ \vx^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$. 
-The datapoints $\vx^{(\sampleidx)}$ are i.i.d.\ realizations of a random vector with 
-probability distribution \eqref{equ_def_GMM}. 
+The datapoints $\vx^{(\sampleidx)}$ are realizations of i.i.d.\ random vectors with 
+the common probability distribution \eqref{equ_def_GMM}. 
 %Having estimates for the GMM parameters allows us to compute an estimate (approximation) of the ``a-posteriori'' probability 
 %$\prob\{ c^{(\sampleidx)}= c | \dataset \}$, which we consider as the ``true'' degree of datapoint $\vx^{(\sampleidx)}$ belonging to cluster $c$. 
 
@@ -7935,20 +8021,21 @@ y_{c}^{(\sampleidx)} & =  \frac{\hat{p}_{\clusteridx} \mathcal{N}(\vx^{(\samplei
 \end{algorithmic}
 \end{algorithm}
 
-As for k-means, we can interpret the soft clustering problem 
-as an instance of the ERM principle (Chapter \ref{ch_Optimization}). 
-In particular, Algorithm \ref{alg:softclustering} aims at minimizing the 
+As for $k$-means, we can interpret the soft clustering problem 
+as an instance of the ERM principle discussed in Chapter \ref{ch_Optimization}. 
+Indeed, Algorithm \ref{alg:softclustering} aims at minimizing the 
 empirical risk 
 \begin{equation} 
 \label{equ_def_emp_risk_soft_clustering}
 \emperror \big( \{ \vm^{(\clusteridx)}, \mathbf{C}^{(\clusteridx)}, \hat{p}_{\clusteridx} \}_{\clusteridx=1}^{\nrcluster} \mid \dataset \big)=
  - \log {\rm Prob} \big\{\dataset; \{ \vm^{(\clusteridx)}, \mathbf{C}^{(\clusteridx)}, \hat{p}_{\clusteridx} \}_{\clusteridx=1}^{\nrcluster}\big\}. 
 \end{equation} 
+
 The interpretation of Algorithm \ref{alg:softclustering} as a 
 method for minimizing the empirical risk \eqref{equ_def_emp_risk_soft_clustering} 
-suggests to monitor the decrease of the empirical risk 
-$ - \log {\rm Prob} \big\{\dataset; \{ \vm^{(\clusteridx)}, \mathbf{C}^{(\clusteridx)}, \hat{p}_{\clusteridx} \}_{\clusteridx=1}^{\nrcluster}\big\}$ 
-to decide when to stop iterating (see Step \ref{equ_conv_soft_clustering_algo} 
+suggests a stopping criterion. We can monitor the decrease of the empirical risk 
+$$ - \log {\rm Prob} \big\{\dataset; \{ \vm^{(\clusteridx)}, \mathbf{C}^{(\clusteridx)}, \hat{p}_{\clusteridx} \}_{\clusteridx=1}^{\nrcluster}\big\}$$
+to decide when to stop iterating (see step \ref{equ_conv_soft_clustering_algo} 
 of Algorithm \ref{alg:softclustering}). % the termination criterion. % Algorithm \ref{alg:softclustering}. 
 
 Similar to $k$-means Algorithm \ref{alg:kmeans}, also the soft clustering 
@@ -7980,10 +8067,9 @@ using existing convergence results for EM methods \cite{XuJordan1996}.
 %??????
 
 There is an interesting link between the soft-clustering 
-Algorithm \ref{alg:softclustering} and $k$-means. In 
-particular, $k$-means hard clustering can be interpreted 
-as an extreme case of soft-clustering Algorithm \ref{alg:softclustering}. 
-
+Algorithm \ref{alg:softclustering} and $k$-means. The 
+$k$-means algorithm can be interpreted as an extreme 
+case of soft-clustering Algorithm \ref{alg:softclustering}. 
 Consider fixing the cluster covariance matrices $ {\bm \Sigma}^{(c)}$ 
 within the GMM \eqref{equ_cond_dist_GMM} to be the scaled identity: 
 \begin{equation}
@@ -7997,14 +8083,14 @@ covariance matrix for cluster $c$. %The estimates $\mathbf{C}^{(c)}$
 Thus, we replace the covariance matrix updates in Algorithm \ref{alg:softclustering} 
 with $\mathbf{C}^{(c)} \defeq  {\bm \Sigma}^{(c)}$.
  
-When using a very small variance $\sigma^{2}$ in \eqref{equ_def_special_case}), 
+When choosing a very small variance $\sigma^{2}$ in \eqref{equ_def_special_case}, 
 the update \eqref{equ_update_soft_cluster_assignm} tends to enforce 
-$y_{c}^{(\sampleidx)} \in \{0,1\}$, i.e., each datapoint $\vx^{(\sampleidx)}$ 
-is associated to exactly one cluster $c$, whose cluster mean $\vm^{(c)}$ 
-is closest to the datapoint $\vx^{(\sampleidx)}$. Thus, for $\sigma^{2} \rightarrow 0$, 
-the soft-clustering update \eqref{equ_update_soft_cluster_assignm} reduces 
-to the hard cluster assignment update \eqref{equ_cluster_assign_update} 
-of the $k$-means Algorithm \ref{alg:kmeans}. 
+$y_{\clusteridx}^{(\sampleidx)} \in \{0,1\}$. Thus, each datapoint $\vx^{(\sampleidx)}$ 
+is associated exclusively to the cluster $\clusteridx$ whose cluster mean $\vm^{(\clusteridx)}$ 
+has minimum Euclidean distance to the datapoint $\vx^{(\sampleidx)}$. 
+To summarize, for $\sigma^{2} \rightarrow 0$, the soft-clustering update 
+\eqref{equ_update_soft_cluster_assignm} reduces to the hard cluster 
+assignment update \eqref{equ_cluster_assign_update} of the $k$-means Algorithm \ref{alg:kmeans}. 
 
 \section{Density Based Clustering with DBSCAN}
 

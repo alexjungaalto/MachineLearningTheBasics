@@ -2266,16 +2266,21 @@ Let us illustrate our concept for the size of a hypothesis space
 with two examples: linear regression and polynomial regression. 
 Linear regression uses the hypothesis space 
 $$\hypospace^{(\featuredim)} = \{ h: \mathbb{R}^{\featuredim} \rightarrow \mathbb{R}: h(\vx) = \vw^{T} \vx \mbox{ with some vector } \vw \in \mathbb{R}^{\featurelen}\}.$$ 
-Consider $\samplesize$ datapoints, each characterized by a feature 
+Consider a dataset $\dataset=\big( \big(\vx^{(1)} ,y^{(1)}\big),\ldots, \big(\vx^{(\samplesize)} ,y^{(\samplesize)}\big) \big)$ consisting of $\samplesize$ datapoints. 
+Each datapoint is characterized by a feature 
 vector $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and a numeric label 
-$y^{(\sampleidx)} \in \mathbb{R}$. We assume that datapoints are 
-realizations of i.i.d.\ continuous random variables with the same 
-probability density function. 
-Under this assumption, the matrix obtained by stacking (column-wise) the 
-feature vectors is full rank with probability one. Basic linear algebra allows to show that 
-such a set of datapoints can be perfectly fit by a linear map $h \in \hypospace^{(\featuredim)}$ 
-as long as $\samplesize \leq \featuredim$. The size of the linear 
-hypothesis space $\hypospace^{(\featuredim)}$ is therefore $\sizehypospace = \featuredim$. 
+$y^{(\sampleidx)} \in \mathbb{R}$. 
+
+Let us assume that datapoints are realizations of i.i.d.\ continuous random 
+variables with the same probability density function. 
+Under this assumption, the matrix 
+$$\mathbf{X} = \big(\vx^{(1)},\ldots,\vx^{(\samplesize)}\big) \in \mathbb{R}^{\featuredim\times \samplesize},$$ 
+which is obtained by stacking (column-wise) the feature vectors $\vx^{(\sampleidx)}$ (for $\sampleidx=1,\ldots,\samplesize$), 
+is full rank with probability one. Basic linear algebra allows to show that 
+the datapoints in $\dataset$ can be perfectly fit by a linear map $h \in \hypospace^{(\featuredim)}$ 
+as long as $\samplesize \leq \featuredim$. In other words, for  $\samplesize \leq \featuredim$, we 
+can find (with probability one) a weight vector $\hat{\vw}$ such that $y^{(\sampleidx)} = \hat{\vw}^{T} \vx^{(\sampleidx)}$ 
+for all $\sampleidx=1,\ldots,\samplesize$. The size of the linear hypothesis space $\hypospace^{(\featuredim)}$ is therefore $\sizehypospace = \featuredim$. 
 
 As a second example, consider the hypothesis space 
 $\hypospace_{\rm poly}^{(\featuredim)}$ which is constituted 
@@ -3042,14 +3047,14 @@ predictor out of the hypothesis space
 $$ \mathcal{H} = \big\{ h(\vx) = \vx^{T} \mathbf{A} \mathbf{w}: \mathbf{w} \in \mathcal{S} \}. $$
 Here, we used the matrix 
 $\mathbf{A} = \begin{pmatrix} 1 & -1 \\ -1 & 1 \end{pmatrix}$ and 
-the set $\mathcal{S} = \big\{ (1,1)^{T}, (2,2)^{2}, (-1,3)^{T}, (0,4)^{T} \big\} \subseteq \mathbb{R}^{2}$. 
+the set $$\mathcal{S} = \big\{ (1,1)^{T}, (2,2)^{T}, (-1,3)^{T}, (0,4)^{T} \big\} \subseteq \mathbb{R}^{2}.$$ 
 What is the cardinality of $\mathcal{H}$, i.e., how many 
 different predictor maps does $\mathcal{H}$ contain?
  
   \subsection{Squared Error Loss}
  \label{ex_2_4}
  Consider a hypothesis space $\hypospace$ constituted by three predictors $h_{1}(\cdot), h_{2}(\cdot),h_{3}(\cdot)$. 
- Each predictor $h_{j}(x)$ is a real-valued function of a real-valued argument $x$. Moreover, for each $j \in \{1,2,4\}$, 
+ Each predictor $h_{j}(x)$ is a real-valued function of a real-valued argument $x$. Moreover, for each $j \in \{1,2,3\}$, 
  $h_{j}(x) = 0$ for all $x^2 \leq 1$. Can you tell which of these predictors is optimal in the sense of incurring the 
  smallest average squared error loss on the three (training) datapoints $(x=1/10,y=3)$, $(0,0)$ and $(1,-1)$. 
  
@@ -3371,7 +3376,7 @@ loss \eqref{equ_squared_loss} by taking into account the weight
 vector of the linear predictor $h(\vx) = \vw^{T}\vx$. 
 
 The Least Absolute Shrinkage and Selection Operator (Lasso) is 
-obtained from linear regression by replacing the squarer error loss 
+obtained from linear regression by replacing the squared error loss 
 with the regularized loss 
 \begin{equation}
 \loss{(\vx,y)}{h^{(\vw)}} = (y-\vw^{T}\vx)^{2} + \alpha \| \vw \|_{1}. 
@@ -4803,7 +4808,7 @@ alternate between training and inference periods.
 
 We assume that datapoints are i.i.d.\ realizations drawn from some fixed 
 probability distribution $p(\vx,y)$. The probability distribution $p(\vx,y)$ 
-allows us to define the expected loss or risk 
+allows us to define the {\bf expected loss} or {\bf risk} 
 \begin{equation}
 \label{equ_def_risk} 
 \expect \big \{ \loss{(\vx,y)}{h} \}.
@@ -5052,13 +5057,15 @@ which solves \eqref{equ_zero_gradient_lin_reg} achieves the same minimum empiric
 \label{equ_emp_risk_lin_proje}
 \emperror(h^{(\vw_{\rm opt})} \mid \dataset) = \min_{\vw \in \mathbb{R}^{\featuredim}} \emperror(h^{(\vw)} \mid \dataset) = \|  (\mathbf{I}- \mathbf{P}) \vy \|^{2}.
 \end{equation} 
-Here, we used the orthogonal projection matrix $\mathbf{P} \in \mathbb{R}^{\samplesize \times \samplesize}$ on the linear span of the 
-feature matrix $\mX = (\vx^{(1)},\ldots,\vx^{(\samplesize)})^{T} \in \mathbb{R}^{\samplesize \times \featuredim}$ (see \eqref{equ_def_vec_matrix}).\footnote{The linear span ${\rm span } \mA$ 
-of a matrix $\mA=(\va^{(1)},\ldots,\va^{(\samplesize)}) \in \mathbb{R}^{\featuredim \times \samplesize}$ is the subspace of $\mathbb{R}^{\featuredim}$ consisting of 
-all linear combinations of the columns $\va^{(r)} \in \mathbb{R}^{\featuredim}$ of $\mA$.} 
+Here, we used the orthogonal projection matrix $\mathbf{P} \in \mathbb{R}^{\samplesize \times \samplesize}$ 
+on the linear span of the feature matrix $\mX = (\vx^{(1)},\ldots,\vx^{(\samplesize)})^{T} \in \mathbb{R}^{\samplesize \times \featuredim}$ (see \eqref{equ_def_vec_matrix}).\footnote{The linear span ${\rm span } \mA$ 
+of a matrix $\mA=(\va^{(1)},\ldots,\va^{(\samplesize)}) \in \mathbb{R}^{\featuredim \times \samplesize}$ 
+is the subspace of $\mathbb{R}^{\featuredim}$ consisting of all linear combinations 
+of the columns $\va^{(r)} \in \mathbb{R}^{\featuredim}$ of $\mA$.} 
 
-If the feature matrix $\mX$ (see \eqref{equ_def_vec_matrix}) has full column rank, implying invertibility of the matrix $\mX^{T} \mX$, 
-the projection matrix $\mathbf{P}$ is given explicitly as 
+If the feature matrix $\mX$ (see \eqref{equ_def_vec_matrix}) has full column rank, 
+implying invertibility of the matrix $\mX^{T} \mX$, the projection matrix $\mathbf{P}$ 
+is given explicitly as 
 \begin{equation} 
 \nonumber
 \mathbf{P} = \mX \big( \mX^{T} \mX \big)^{-1} \mX^{T}. 
@@ -6885,13 +6892,30 @@ by empirical approximations (sample averages).
 be Bayes risk when using probabilistic model (such as i.i.d.), or human 
 performance or risk of some other ML methods ("experts" in regret framework)  }
 
-Consider a predictor $\hat{h}$ obtained from ERM \eqref{equ_def_ERM_funs} 
-with training error $\emperror(\hat{h}| \trainset)$ and validation 
-error $\emperror(\hat{h}| \dataset^{(\rm val)})$. By comparing 
-the two numbers $\emperror(\hat{h}| \trainset)$ and $\emperror(\hat{h}| \dataset^{(\rm val)})$ 
-with some benchmark error level $E_{0}$, we can get 
-some idea of how to adapt components 
-of the ML method to improve performance: 
+Consider a ML method which learns a hypothesis $\hat{h}$ using ERM 
+\eqref{equ_def_ERM_funs} on a training set $\trainset$ resulting in the 
+training error 
+$$\emperror(\hat{h}| \trainset) =  (1/|\trainset|) \sum_{(\vx,y) \in \trainset} \loss{(\vx,y)}{\hat{h}}.$$ 
+We then validate the hypothesis by computing the validation error  
+$$\emperror(\hat{h}| \dataset^{(\rm val)}) = (1/|\valset|) \sum_{(\vx,y) \in \valset} \loss{(\vx,y)}{\hat{h}}.$$ 
+By comparing the two numbers $\emperror(\hat{h}| \trainset)$ and $\emperror(\hat{h}| \dataset^{(\rm val)})$ 
+we diagnose the ML method. This diagnosis might provide insight into how 
+the ML method could be improved. 
+
+In some applications we might know a benchmark $\mathcal{E}_{0}$ 
+for the average loss that is considered as acceptable. Such a benchmark 
+can be obtained via a probabilistic model for data. Given such a probabilistic 
+model we can compute the minimum possible expected loss or risk \ref{equ_def_risk}. 
+This minimum risk can often be read from the posterior distribution $p(y|\vx)$ of 
+the label $y$, given the features $\vx$ of a datapoint. 
+
+Another option to obtain such a benchmark is by considering other ML methods 
+(``experts'') which are computationally more expensive. Finally, such a benchmark 
+might simply be prescribed by the specification of the overall product which uses 
+the ML method. 
+
+We can diagnose a ML method by comparing the training error $\emperror(\hat{h}| \trainset)$ 
+with the validation error $\emperror(\hat{h}| \dataset^{(\rm val)})$ and (if available) the benchmark $\mathcal{E}_{0}$.
 \begin{itemize} 
 \item $\emperror(\hat{h}| \trainset) \approx \emperror(\hat{h}| \valset) \approx E_{0}$: 
 There is not much to improve regarding prediction accuracy since we 
@@ -8148,16 +8172,34 @@ clustering ?
 
 %????? Discuss a simple method for dim. red. for binary data ????
 
-Roughly speaking, ML methods exploit the intrinsic geometry of (large) sets of 
-datapoints to compute predictions. By definition, we represent these datapoints 
-as elements of the feature space $\featurespace$. Note that the features are 
-a design choice so we can shape the intrinsic geometry of the datapoints by 
-using different choices for the features (and feature space). Feature learning 
-methods automate the choice of finding a good feature space for a given 
-data set. A subclass of feature learning methods are dimensionality reduction methods, 
-where the new feature space has a (much) smaller dimension than the original 
-feature space (see Section \ref{sec_dim_red}). However, sometimes it might be 
-useful to change to a higher-dimensional feature space (see Section \ref{sec_dim_increas}). 
+Chapter \ref{} discussed features as those properties of a datapoint that can 
+be measured or computed easily. Sometimes the choice of features follows 
+naturally from the available hard and software. As an example we might use 
+the measurements delivered by sensing devices as features. Beside direct 
+sensor readings, we might construct new features by simple computations. 
+
+Consider datapoints representing ski days which are characterized by the 
+minimum daytime temperature as their feature $x$. Then we might construct 
+new features of a datapoint by computing  powers $x^{2}$ and $x^{3}$. 
+Another feature is obtained by $x+5$. Each of these computations produces 
+a new feature. Which of these additional features are most useful?
+%Feature learning methods aim at learning how to compute most relevant features 
+%given the raw datapoint. One example 
+%
+%Roughly speaking, ML methods exploit the intrinsic geometry of (large) sets of 
+%datapoints to compute predictions. By definition, we represent these datapoints 
+%as elements of the feature space $\featurespace$. Note that the features are 
+%a design choice so we can shape the intrinsic geometry of the datapoints by 
+%using different choices for the features (and feature space). 
+
+Feature learning methods automate the choice of finding a good features. These 
+methods learn a map that read in the original raw features and transform them to 
+a set of new features. A subclass of feature learning methods are dimensionality 
+reduction methods, where the new feature space has a (much) smaller dimension 
+than the original feature space (see Section \ref{sec_dim_red}). Sometimes 
+it might be useful to change to a higher-dimensional feature space. Section \ref{sec_dim_increas} 
+discusses feature learning method that result in new feature vectors which 
+are longer than the raw feature vector 
 
 
 ??? Develop feature learning as an approximation problem. The raw data 
@@ -8458,9 +8500,12 @@ get closed-form solutions of Gaussian Information Bottleneck.
 \section{Dimensionality Increase} 
 \label{sec_dim_increas} 
 
-Feature learning methods are mainly dimensionality reduction methods. However, it might be 
-beneficial to also consider feature learning methods that produce new feature vectors which 
-are longer than the raw feature vectors. An extreme example for such a feature map are kernel 
+? Discuss kernel methods; and polynomial regression as special case???
+
+Feature learning methods are mainly dimensionality reduction methods.
+However, it might be beneficial to also consider feature learning methods 
+that produce new feature vectors which are longer than the raw feature 
+vectors. An extreme example for such a feature map are kernel 
 methods which map finite length vector to infinite dimensional spaces. 
 
 Mapping raw feature vectors into higher-dimensional spaces might be useful 
@@ -8597,13 +8642,16 @@ a user.
 
 \section{Sets} 
 \begin{align} 
-&\mathbb{R}  &\quad &\mbox{Set of real numbers $x$.} \nonumber \\
-&\mathbb{R}_{+}  &\quad &\mbox{Set of non-negative real numbers $x\geq0$.} \nonumber \\ \nonumber
+&\mathbb{R}  &\quad &\mbox{The set of real numbers $x$.} \nonumber \\
+&\mathbb{R}_{+}  &\quad &\mbox{The set of non-negative real numbers $x\geq0$.} \nonumber \\ \nonumber
 \end{align} 
 
 \section{Matrices and Vectors} 
 \begin{align} 
-&\mathbf{I}  &\quad &\mbox{The identity matrix having ones on the main diagonal and zeros off diagonal.} \nonumber 
+&\mathbf{I}  &\quad &\mbox{The identity matrix having ones on the main diagonal and zeros off diagonal.} \nonumber \\
+&\mathbf{R}^{n}  &\quad &\mbox{The set of all vectors constituted by $n$ real-valued entries.} \nonumber \\
+&\mathbf{x}=\big(x_{1},\ldots,x_{n})^{T}  &\quad &\mbox{Some vector of length $n$. The $j$th entry of the vector is denoted $x_{j}$.} \nonumber \\
+&\| \mathbf{x}\|_{2}  &\quad &\mbox{The Euclidean norm of the vector $\mathbf{x}$, } \| \mathbf{x}\|_{2} \defeq \sqrt{\sum_{j=1}^{n} x_{j}^{2}} \nonumber 
 \end{align} 
 
 \section{Machine Learning}

@@ -4987,9 +4987,9 @@ and non-convex objective functions.
 \label{sec_ERM_lin_reg}
 
 As discussed in Section \ref{sec_lin_regression}, linear regression methods 
-learn a linear hypothesis $h^{(\vw)}(\vx) = \vx^{T} \vw$ with minimum squared 
-error loss \eqref{equ_squared_loss}. The resulting ERM problem \eqref{eq_def_ERM_weight} 
-is  
+learn a linear hypothesis $h^{(\vw)}(\vx) = \vw^{T} \vx$ with minimum squared 
+error loss \eqref{equ_squared_loss}. For this choices, the ERM problem \eqref{eq_def_ERM_weight} 
+specializes to  
 \begin{align}
 \label{equ_def_cost_MSE}
 \vw_{\rm opt} & = \argmin_{\vw \in \mathbb{R}^{\featuredim}} f(\vw) \nonumber \\ 
@@ -6191,9 +6191,10 @@ minimum average loss on a set of labeled datapoints (the training set). The mini
 average loss achieved by a hypothesis that solves the ERM is referred to as 
 the training error. ERM makes sense if the training error of a hypothesis 
 is also a good indicator for the typical loss incurred on datapoints outside 
-the training set. If the training error has can serve as such an indicator for 
-general performance depends on the statistical properties of 
-the datapoints and on the hypothesis space used by the ML method.  
+the training set. Whether the training error of a hypothesis is a reliable 
+indicator for its error on datapoints outside the training set depends on 
+the statistical properties of the datapoints and on the hypothesis space 
+used by the ML method.  
 
 %The training error is often not a good estimate for the average performance 
 %of the learnt hypothesis $\hat{h}$. 
@@ -6240,7 +6241,7 @@ We can use validation not only to detect if a ML method overfits.
 The validation error can also be used as a performance measure 
 for the hypothesis space or model that is used by that method. 
 This is similar in spirit to the the concept of a loss function that 
-allows to evaluate the quality of a hypothesis $h \in \hypospace$. 
+allows to evaluate the quality of a hypothesis $h\!\in\!\hypospace$. 
 
 The validation error allows to evaluate the quality of the entire hypothesis 
 space $\hypospace$. Similar to ERM, which chooses between different 
@@ -6538,6 +6539,22 @@ each repetition, this method uses different subsets for training and validation.
 We refer to \cite[Sec. 7.10]{hastie01statisticallearning} for a detailed discussion of $k$-fold 
 cross-validation. 
 
+{\bf Unbalanced Data.} 
+The simple validation approach discussed above requires the validation set to be 
+a good representative for the overall statistical properties of the data. This might 
+not be the case in applications with discrete valued labels and some of the label 
+values being very rare. 
+
+Consider datapoints characterized by a feature vector $\vx$ and binary label $y \in \{-1,1\}$. 
+Assume we aim at learning a hypothesis $h(\vx) = \vw^{T} \vx$ to classify datapoints 
+via $\hat{y}=1$ if $h(\vx) \geq 0$ while $\hat{y}=-1$ otherwise. The learning is based 
+on a dataset $\dataset$ which contains only one single (!) datapoint with $y=-1$. If 
+we then use above approach to split into training and validation set with high probability we will 
+never use the datapoint with $y=-1$ in any validation. This cannot happen when using 
+$k$-fold CV since the single data point must be one of the validation folds. However, 
+still we evaluate the performance of $h(\vx)$ only using one single datapoint with $y=-1$. 
+
+
 \section{Model Selection}
 \label{sec_modsel}
 
@@ -6615,7 +6632,7 @@ The label $y$ of a datapoint is related to its features $\vx$ via a
 {\bf linear Gaussian model} 
 \begin{equation} 
 \label{equ_linear_obs_model}
-y = \vw_{\rm true}^{T}  \vx + \varepsilon \mbox{, with noise } \varepsilon \sim \mathcal{N}(0,\sigma^{2}).
+y = \bar{\vw}^{T}  \vx + \varepsilon \mbox{, with noise } \varepsilon \sim \mathcal{N}(0,\sigma^{2}).
 \end{equation} 
 The noise variance $\sigma^{2}$ is assumed fixed (non-random) and known. 
 Note that the error component $\varepsilon$ in \eqref{equ_linear_obs_model} 
@@ -6624,9 +6641,9 @@ any ML method. We highlight that this model for the observed data
 points might not be accurate for a particular ML application. However, 
 this toy model will allow us to study some fundamental behaviour of ML methods. 
 
-In order to predict the label $y$ from the features $\vx$ we will use 
-predictors $h$ that are linear maps of the first $r$ features $x_{1},\ldots,x_{r}$. 
-This results in the hypothesis space 
+We predict the label $y$ from the features $\vx$ using a linear hypothesis $h(\vx)$ 
+that depends only on the first $r$ features $x_{1},\ldots,x_{r}$. Thus, we use the 
+hypothesis space 
 \vspace*{-2mm}
 \begin{equation}
 \label{equ_generalization_hypospace_r}
@@ -6660,7 +6677,7 @@ datapoint $(\vx,y)$ share the same probability distribution (a multivariate norm
 and the labels $y^{(\sampleidx)},y$ are obtained as 
 \begin{equation} 
 \label{equ_labels_training_data}
-y^{(\sampleidx)} = \vw_{\rm true}^{T}  \vx^{(\sampleidx)} + \varepsilon^{(\sampleidx)}\mbox{, and } y = \vw_{\rm true}^{T}  \vx + \varepsilon
+y^{(\sampleidx)} = \bar{\vw}^{T}  \vx^{(\sampleidx)} + \varepsilon^{(\sampleidx)}\mbox{, and } y = \bar{\vw}^{T}  \vx + \varepsilon
 \end{equation}  
 with i.i.d.\ noise $\varepsilon, \varepsilon^{(\sampleidx)} \sim \mathcal{N}(0,\sigma^{2})$. 
 
@@ -6704,29 +6721,32 @@ since we model the training data as random, the weight vector $\widehat{\vw}$
 realization of the training dataset, we obtain a different realization of the 
 optimal weight $\widehat{\vw}$. 
 
-Within our toy model, which relates the features $\vx$ of a datapoint 
-to its label $y$ via \eqref{equ_linear_obs_model}, the best case would 
-be if $\widehat{\vw} = \vw_{\rm true}$. However, in general this will not 
-happen since we have to compute $\widehat{\vw}$ based on the features 
+The probabilistic model \eqref{equ_linear_obs_model} relates the features 
+$\vx$ of a datapoint to its label $y$ via some (unknown) true weight vector $\bar{\vw}$. 
+Intuitively, the best linear hypothesis would be $h(\vx) =\widehat{\vw}^{T} \vx$ with 
+weight vector $\widehat{\vw} = \bar{\vw}$. However, in general this will not be 
+achievable since we have to compute $\widehat{\vw}$ based on the features 
 $\vx^{(\sampleidx)}$ and noisy labels $y^{(\sampleidx)}$ of the data 
-points in the training dataset $\dataset$. Thus, we typically have to 
-face a non-zero {\bf estimation error}
+points in the training dataset $\dataset$. 
+
+In general, learning the weights of a linear hypothesis by ERM \eqref{equ_def_cost_MSE} 
+results in a non-zero {\bf estimation error}
 \begin{equation}
 \label{equ_def_est_error}
-\Delta \vw \defeq \widehat{\vw} - \vw_{\rm true}. 
+\Delta \vw \defeq \widehat{\vw} - \bar{\vw}. 
 \end{equation} 
 Note that the estimation error is a random quantity since the 
 learnt weight vector $\widehat{\vw}$ (see \eqref{equ_optimal_weight_closed_form}) 
 is itself a random quantity.
 
 {\bf Bias and Variance.} 
-As we will see below, the prediction quality achieved by $h^{(\widehat{\vw})}$ depends crucially on the 
-{\bf mean squared estimation error (MSE)}
+As we will see below, the prediction quality achieved by $h^{(\widehat{\vw})}$ 
+depends crucially on the {\bf mean squared estimation error (MSE)}
 \begin{equation}
 \label{equ_def_est_err}
-\mathcal{E}_{\rm est} \defeq \expect \{  \| \Delta \vw \|^{2}_{2} \} =  \expect \big\{ \big \| \widehat{\vw} - \vw_{\rm true} \big\|^{2}_{2} \big \}. 
+\mathcal{E}_{\rm est} \defeq \expect \{  \| \Delta \vw \|^{2}_{2} \} =  \expect \big\{ \big \| \widehat{\vw} - \bar{\vw} \big\|^{2}_{2} \big \}. 
 \end{equation}
-The MSE $\mathcal{E}_{\rm est}$ can be decomposed into two components. 
+We can decompose the MSE $\mathcal{E}_{\rm est}$ into two components. 
 One component (the ``bias'') characterizes the properties of the average 
 hypothesis. The second component is the ``variance'' which quantities 
 the amount of random fluctuations of the hypothesis obtained from ERM 
@@ -6740,22 +6760,26 @@ It is not too difficult to show that
 \vspace*{-1mm}
 \begin{align}
 \label{equ_bias_var_decomp}
-\mathcal{E}_{\rm est} & = \underbrace{ \| \vw_{\rm true} - \expect \{ \widehat{\vw} \} \|^{2}_{2} }_{\mbox{``bias''} B^2}+ \underbrace{\expect \| \widehat{\vw} - \expect \{ \widehat{\vw} \} \|^{2}_{2}}_{\mbox{``variance''} V} 
+\mathcal{E}_{\rm est} & = \underbrace{ \| \bar{\vw} - \expect \{ \widehat{\vw} \} \|^{2}_{2} }_{\mbox{``bias''} B^2}+ \underbrace{\expect \| \widehat{\vw} - \expect \{ \widehat{\vw} \} \|^{2}_{2}}_{\mbox{``variance''} V} 
 \end{align} 
 
 The bias term in \eqref{equ_bias_var_decomp}, which can be computed as 
 \vspace*{-3mm}
 \begin{equation}
 \label{equ_def_bias_term}
-B^{2} = \| \vw_{\rm true} - \expect \{ \widehat{\vw} \} \|^{2}_{2} = \sum_{l=r+1}^{\featuredim} w_{{\rm true},l}^2, 
+B^{2} = \| \bar{\vw} - \expect \{ \widehat{\vw} \} \|^{2}_{2} = \sum_{l=r+1}^{\featuredim} \bar{w}_{l}^2, 
 \end{equation} 
-measures the distance between the ``true predictor'' $h^{(\vw_{\rm true})}(\vx)=\vw_{\rm true}^{T} \vx$ and the 
-hypothesis space $\hypospace^{(r)}$ (see \eqref{equ_generalization_hypospace_r}) of the linear regression problem. 
-The bias is zero if $w_{{\rm true},l}=0$ for any index $l=r+1,\ldots,\featuredim$, or equivalently if $h^{(\vw_{\rm true})} \in \hypospace^{(r)}$. 
-We can guarantee $h^{(\vw_{\rm true})} \in \hypospace^{(r)}$ only if we 
+measures the distance between the ``true hypothesis'' $h^{(\bar{\vw})}(\vx)=\bar{\vw}^{T} \vx$ 
+and the hypothesis space $\hypospace^{(r)}$ (see \eqref{equ_generalization_hypospace_r}) of 
+the linear regression problem. 
+
+The bias \eqref{equ_def_bias_term} is zero if $\bar{w}_{l}=0$ for any index 
+$l=r+1,\ldots,\featuredim$, or equivalently if $h^{(\bar{\vw})} \in \hypospace^{(r)}$. 
+We can ensure the condition $h^{(\bar{\vw}} \in \hypospace^{(r)}$ for every 
+possible true weight vector $\bar{\vw}$ in \eqref{equ_linear_obs_model} only if we 
 use the hypothesis space $\hypospace^{(r)}$ with $r=\featuredim$. 
 For $r < \featuredim$, we cannot guarantee a zero bias term since we 
-have no access to the true underlying weight vector $\vw_{\rm true}$ 
+have no access to the true underlying weight vector $\bar{\vw}$ 
 in \eqref{equ_linear_obs_model}. In general, the bias term decreases for 
 increasing model size $r$ (see Figure \ref{fig_bias_variance}). We 
 highlight that the bias term does not depend on the variance 
@@ -6812,42 +6836,47 @@ has to balance between small variance and small bias term.
 
 
 {\bf Generalization.}
-In most ML applications, we are primarily interested in how well a 
-predictor $h^{(\hat{\vw})}$, which has been learnt from some 
-training data $\dataset$ (see \eqref{equ_def_ERM_funs}), predicts 
-the label $y$ of a new datapoint (which is not contained in the training data $\dataset$) 
-with features $\vx$. The prediction (approximation guess or estimate) 
-$\hat{y}$ of the label $y$ is obtained using the learnt 
-predictor $h^{(\hat{\vw})}$ via  
-\begin{equation}
-\label{equ_def_pred_simple_toy_model}
-\hat{y} = \widehat{\vw}^{T} \vx. 
-\end{equation} 
-
-The prediction $\hat{y}$ is a random variable since (i) the feature vector 
-$\vx$ is modelled as a random vector (see \eqref{equ_toy_model_iid}) 
-and (ii) the optimal weight vector $\widehat{\vw}$ (see \eqref{equ_optimal_weight_closed_form}) 
-is random. In general, we cannot hope for a perfect prediction 
-but have to face a non-zero prediction error 
-\begin{align}
-\label{equ_def_pred_error}
-e_{\rm pred} & \defeq \hat{y} - y \nonumber \\ 
-& \stackrel{\eqref{equ_def_pred_simple_toy_model}}{=}\widehat{\vw}^{T} \vx - y \nonumber \\ 
-& \stackrel{\eqref{equ_linear_obs_model}}{=} \widehat{\vw}^{T} \vx - (\vw_{\rm true}^{T}  \vx + \varepsilon) \nonumber \\ 
-& = \Delta \vw^{T}  \vx - \varepsilon.
-\end{align} 
-%Within our toy model (see \eqref{equ_linear_obs_model}, \eqref{equ_toy_model_iid} 
-%and \eqref{equ_labels_training_data}), 
-The prediction error $e_{\rm pred}$ is a random variable since (i) the 
-label $y$ is modelled as a random variable (see \eqref{equ_linear_obs_model}) 
-and (ii) the prediction $\hat{y}$ is random. 
-
-Since, within our toy model \eqref{equ_labels_training_data}, $\varepsilon$ is zero-mean and independent of 
-$\vx$ and $\widehat{\vw} - \vw_{\rm true}$, we obtain the {\bf average predictor error} as 
+Consider the linear hypothesis $h(\vx) = \hat{\vw}^{T} \vx$ with weight 
+vector \eqref{equ_optimal_weight_closed_form} obtained by minimizing 
+the training error. We would like this predictor to generalize well to datapoints 
+which are different from the training set. This generalization capability can 
+be quantified by the expected loss or risk %\eqref{}. 
+%In most ML applications, we are primarily interested in how well a 
+%predictor $h^{(\hat{\vw})}$, which has been learnt from some 
+%training data $\dataset$ (see \eqref{equ_def_ERM_funs}), predicts 
+%the label $y$ of a new datapoint (which is not contained in the training data $\dataset$) 
+%with features $\vx$. The prediction (approximation guess or estimate) 
+%$\hat{y}$ of the label $y$ is obtained using the learnt 
+%predictor $h^{(\hat{\vw})}$ via  
+%\begin{equation}
+%\label{equ_def_pred_simple_toy_model}
+%\hat{y} = \widehat{\vw}^{T} \vx. 
+%\end{equation} 
+%
+%The prediction $\hat{y}$ is a random variable since (i) the feature vector 
+%$\vx$ is modelled as a random vector (see \eqref{equ_toy_model_iid}) 
+%and (ii) the optimal weight vector $\widehat{\vw}$ (see \eqref{equ_optimal_weight_closed_form}) 
+%is random. In general, we cannot hope for a perfect prediction 
+%but have to face a non-zero prediction error 
+%\begin{align}
+%\label{equ_def_pred_error}
+%e_{\rm pred} & \defeq \hat{y} - y \nonumber \\ 
+%& \stackrel{\eqref{equ_def_pred_simple_toy_model}}{=}\widehat{\vw}^{T} \vx - y \nonumber \\ 
+%& \stackrel{\eqref{equ_linear_obs_model}}{=} \widehat{\vw}^{T} \vx - (\vw_{\rm true}^{T}  \vx + \varepsilon) \nonumber \\ 
+%& = \Delta \vw^{T}  \vx - \varepsilon.
+%\end{align} 
+%%Within our toy model (see \eqref{equ_linear_obs_model}, \eqref{equ_toy_model_iid} 
+%%and \eqref{equ_labels_training_data}), 
+%The prediction error $e_{\rm pred}$ is a random variable since (i) the 
+%label $y$ is modelled as a random variable (see \eqref{equ_linear_obs_model}) 
+%and (ii) the prediction $\hat{y}$ is random. 
+%
+%Since, within our toy model \eqref{equ_labels_training_data}, $\varepsilon$ is zero-mean and independent of 
+%$\vx$ and $\widehat{\vw} - \vw_{\rm true}$, we obtain the {\bf average predictor error} as 
 \begin{align} 
 \label{equ_decomp_E_pred_toy_model}
-\mathcal{E}_{\rm pred} & = \expect \{ e_{\rm pred}^{2} \} \nonumber \\
-& \stackrel{\eqref{equ_def_pred_error},\eqref{equ_linear_obs_model}}{=} \expect \{ \Delta \vw^{T} \vx \vx^{T} \Delta \vw \} + \sigma^{2}   \nonumber \\
+\mathcal{E}_{\rm pred} & = \expect \big\{ \big( y - \hat{y} \big)^2 \big\} \nonumber \\
+& \stackrel{\eqref{equ_linear_obs_model}}{=} \expect \{ \Delta \vw^{T} \vx \vx^{T} \Delta \vw \} + \sigma^{2}   \nonumber \\
 & \stackrel{(a)}{=} \expect \{ \expect \{ \Delta \vw^{T} \vx \vx^{T} \Delta \vw \mid \dataset \} \} + \sigma^{2}  \nonumber \\
 & \stackrel{(b)}{=} \expect \{ \Delta \vw^{T} \Delta \vw \}  + \sigma^{2}  \nonumber \\
 & \stackrel{\eqref{equ_def_est_error},\eqref{equ_def_est_err}}{=} \mathcal{E}_{\rm est} + \sigma^{2} \nonumber \\
@@ -6885,6 +6914,23 @@ some random number generator \cite{Andrieu2001}. Using these
 i.i.d.\ copies, we can replace exact computations (expectations) 
 by empirical approximations (sample averages).  
 
+\section{The Bootstrap} 
+
+Consider learning a linear hypothesis $h( \vx) = \hat{\vw}^{T} \vx$ 
+from datapoints which are modelled as realizations of i.i.d.\
+random variables. If we interpret datapoints as realizations of 
+random variables, also the weights $\hat{\vw}$ is a realization  
+of a random variable. The bootstrap is a method for estimating 
+(parameters of) its probability distribution $p(\hat{\vw})$.  
+
+Section \ref{sec_gen_linreg} used a probabilistic model for 
+datapoints to derive analytically (some parameters of) the probability 
+distribution $p(\hat{\vw})$. While the analysis in Section \ref{sec_gen_linreg} 
+only applies to the specific probabilistic model \eqref{equ_toy_model_iid}, \eqref{equ_labels_training_data}, 
+the bootstrap can be used for datapoints drawn from an arbitrary 
+probability distribution. 
+
+
 
 \section{Diagnosing ML} 
 \label{equ_diagnosis_ML}
@@ -6918,31 +6964,43 @@ We can diagnose a ML method by comparing the training error $\emperror(\hat{h}| 
 with the validation error $\emperror(\hat{h}| \dataset^{(\rm val)})$ and (if available) the benchmark $\mathcal{E}_{0}$.
 \begin{itemize} 
 \item $\emperror(\hat{h}| \trainset) \approx \emperror(\hat{h}| \valset) \approx E_{0}$: 
-There is not much to improve regarding prediction accuracy since we 
-achieve the desired error on both training and validation set.
+There is not much to improve here since the validation error is already on the 
+desired error level. Moreover, the training error is not much smaller than 
+the validation error which indicates that there is no overfitting and we cannot 
+reduce the validation error by much. 
 \item $\emperror(\hat{h}| \valset) \gg \emperror(\hat{h}| \trainset) \approx E_{0}$: 
 The ERM \eqref{equ_def_ERM_funs} results in a hypothesis $\hat{h}$ 
 with sufficiently small training error but when applied to new (validation) 
 data the performance of $\hat{h}$ is significantly worse. This is an 
-indicator of overfitting which can be addressed by regularization 
-techniques (see Section \ref{sec_regularization}). 
+indicator for overfitting which can be addressed either by using a small 
+model (hypothesis space). Another option to avoid overfitting is to use 
+regularization techniques which will be discussed in Chapter \ref{ch_overfitting_regularization}. 
 \item $\emperror(\hat{h}| \trainset) \gg \emperror(\hat{h}| \valset)$: 
 This indicates that the method for solving the ERM \eqref{equ_def_ERM_funs} 
-is not working properly. The training error obtained by solving the 
-ERM \eqref{equ_def_ERM_funs} should always be smaller than the 
-validation error. When using GD for solving ERM, one particular 
-reason for $\emperror(\hat{h}| \trainset) \gg \emperror(\hat{h}| \valset)$ 
-could be that the step size $\alpha$ in the GD step \eqref{equ_def_GD_step} 
-is chosen too large (see Figure \ref{fig_small_large_alpha}-(b)). 
+fails to find (an approximation of) the minimum in \eqref{equ_def_ERM_funs}. 
+Indeed, the training error obtained by solving the ERM \eqref{equ_def_ERM_funs} should 
+typically be smaller than the validation error. When using GD for solving ERM, 
+one reason for obtaining $\emperror(\hat{h}| \trainset) \gg \emperror(\hat{h}| \valset)$ could be that 
+the step size $\alpha$ in the GD step \eqref{equ_def_GD_step} is chosen too large 
+(see Figure \ref{fig_small_large_alpha}-(b)). 
 \end{itemize}
 
 \section{Exercises} 
+
 \subsection{Validation Set Size} 
 Consider a linear regression problem with datapoints characterized 
 by a scalar feature and numeric label. Assume datapoints are i.i.d. 
-Gaussian with zero-mean and covariance $\mathbf{C}$ How many datapoints 
-do we need for a validation set such that the probability that the MSE incurred on the validation 
-does not deviate by more than $20$ percent from the average MSE is larger than $0.8$. 
+Gaussian with zero-mean and covariance matrix $\mathbf{C}$. How 
+many datapoints do we need to include in the validation set such 
+that with probability at least $0.8$ the validation error does 
+not deviate by more than $20$ percent from the expected loss or risk. 
+
+\subsection{Validation Error Smaller Than Training Error?} 
+Consider learning a learning hypothesis by minimizing the average 
+squared error on some training set. The resulting linear predictor 
+is then validated on some other validation set. Can you construct 
+a training and validation set such that the validation error is strictly 
+smaller than the training set?
 
 
 
@@ -7260,7 +7318,7 @@ The bias of regularized linear regression \eqref{equ_reg_lin_reg_opt_weight}
 is obtained as 
 \begin{equation} 
 \label{equ_bias_reg_lin_reg}
-B^{2} = \big \| (\mathbf{I} - \expect \{ ( \mX^{T} \mX +  \samplesize \lambda \mathbf{I})^{-1} \mX^{T} \mX  \})  \vw_{\rm true} \big  \|^{2}_{2}. 
+B^{2} = \big \| (\mathbf{I} - \expect \{ ( \mX^{T} \mX +  \samplesize \lambda \mathbf{I})^{-1} \mX^{T} \mX  \})  \bar{\vw} \big  \|^{2}_{2}. 
 %B^{2} =    \| (\mathbf{I}-\mX_{r}^{T} \mX_{r} ) \mathbf{I}_{r \times \featuredim} \vw_{\rm true} \}   \} \|^{2}_{2} \geq \sum_{l=r+1}^{\featuredim} w_{{\rm true},l}^2  
 \end{equation} 
 For sufficiently large sample size $\samplesize_{\rm t}$ we can use the approximation 
@@ -7271,8 +7329,8 @@ For sufficiently large sample size $\samplesize_{\rm t}$ we can use the approxim
 such that \eqref{equ_bias_reg_lin_reg} can be approximated as 
  \begin{align} 
 \label{equ_bias_reg_lin_reg_approx}
-B^{2} & \approx \big \| (\mathbf{I}\!-\!(\mathbf{I}\!+\!\lambda \mathbf{I})^{-1} ) \vw_{\rm true} \big  \|^{2}_{2} \nonumber \\
-& =  \sum_{l=1}^{\featuredim} \frac{\lambda}{1+\lambda} w_{{\rm true},l}^2 .
+B^{2} & \approx \big \| (\mathbf{I}\!-\!(\mathbf{I}\!+\!\lambda \mathbf{I})^{-1} ) \bar{\vw} \big  \|^{2}_{2} \nonumber \\
+& =  \sum_{l=1}^{\featuredim} \frac{\lambda}{1+\lambda} \bar{w}_{l}^2 .
 \end{align} 
 Compare the (approximate) bias term \eqref{equ_bias_reg_lin_reg_approx} 
 of regularized linear regression with the bias term \eqref{equ_def_bias_term} of 
@@ -7486,6 +7544,16 @@ Is it possible to write the objective function $f(\vw)$ as a convex quadratic fo
 $f(\vw) = \vw^{T} \mathbf{C} \vw + \vb \vw + c$? If this is possible, how are the 
 matrix $\mathbf{C}$, vector $\vb$ and constant $c$ related to the feature vectors 
 and labels of the training data ? 
+
+\subsection{Regularization or Model Selection} 
+Consider datapoints characterized by $\featurelen=10$ features $\vx \in \mathbb{R}^{\featurelen}$ 
+and a single numeric label $y$. We want to learn a linear hypothesis $h(x) = \vw^{T} \vx$ by 
+minimizing the average squared error on the training set $\dataset$ of size $\samplesize=4$. 
+We could learn such a hypothesis by two approaches. The first approach is split the dataset 
+into training and validation set of the same size (two). Then we consider all models that are given by 
+linear hypothesis with weight vectors have at most two non-zeros. We use the validation 
+set to choose between these models. The second approach is learn a linear hypothesis 
+with arbitrary weight vector $\vw$ but using regularization (ridge). 
 
 
 

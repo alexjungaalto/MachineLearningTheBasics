@@ -2114,9 +2114,8 @@ vectors (see \cite[Chap. 12]{Goodfellow-et-al-2016} for more details).
 
 %Since the choice of what features are used to characterize datapoints is a design choice, we can simply require the features 
 %to be represented by vectors to allow the use of  
-The hypothesis space $\hypospace$, the set of possible predictor maps, 
-used in a ML method, is a {\bf design choice}. Some choices have 
-proven useful for a wide range of applications (see Chapter \ref{ch_some_examples}). 
+The hypothesis space $\hypospace$ used by a ML method is a {\bf design choice}. 
+Some choices have proven useful for a wide range of applications (see Chapter \ref{ch_some_examples}). 
 %As with the choice of what properties to use as features of a datapoint, 
 In general, choosing a suitable hypothesis space requires a good 
 understanding (``domain expertise'') of statistical properties of 
@@ -6202,28 +6201,30 @@ Modern ML methods often use high-dimensional hypothesis spaces.
 One example is linear regression with datapoints having a vast number 
 of features. This results in a high-dimensional space of 
 linear maps. Another example are deep learning methods that use 
-high-dimensional hypotheses spaces constituted by maps represented 
+high-dimensional hypothesis spaces constituted by maps represented 
 by deep neural networks with billions of tunable weights. For such vast 
-hypothesis spaces, it is quite easy to find some hypothesis that fits well the 
-training data and has small training error. However, such a hypothesis might overfit 
-the training data and does a poor job on datapoints outside the training data. 
+hypothesis spaces, it is quite easy to find some hypothesis that fits the 
+training data well, resulting in a small training error. However, such a 
+hypothesis might incur a large loss when predicting the labels of datapoints 
+outside the training data. 
 %can be much smaller than the average loss. This happens if the training algorithm 
 %overfits the training data. 
 
-A ML method overfits if it learns a predictor $h \in \hypospace$ that, 
-merely by luck, fits well the training data but does a poor job on 
-other data. Such a predictor will fail to {\bf generalize} well to new 
-data for which we do not know the label $y$ but only the features 
-$\vx$. Section \ref{sec_overfitting_sec_6} analyzes overfitting of 
+A ML method overfits if it learns a predictor $h \in \hypospace$ that 
+accurately predicts the labels of the datapoints in the training set 
+but does a poor job when predicting labels of datapoints outside the 
+training set. Section \ref{sec_overfitting_sec_6} analyzes overfitting of 
 linear regression by using a probabilistic model for datapoints. 
 
-This chapter discusses how a simple procedure known as 
-validation can detect and avoid overfitting. Section \ref{sec_validate_predictor} 
-will discuss how {\bf to validate} a learnt hypothesis by computing its average loss on 
-datapoints which are different from the training set. The datapoints 
-used to validate the hypothesis are referred to as the {\bf validation set}. 
-If a ML method overfits, it will learn a hypothesis whose training error is 
-much smaller than the validation error. 
+This chapter discusses a simple validation procedure that allows to 
+detect and avoid overfitting. Section \ref{sec_validate_predictor} will 
+discuss how {\bf to validate} a learnt hypothesis by computing its 
+average loss on datapoints which are different from the training set. 
+
+The datapoints used to validate the hypothesis are referred to as the 
+{\bf validation set}. When a ML method is overfitting the training set, 
+it will learn a hypothesis whose training error is much smaller than 
+the validation error. 
 %Indeed, the ultimate goal of ML methods is to find a predictor $\hat{h}$ which is accurate 
 %when applied to a new unlabeled datapoint for which we do not know the label $y$ but 
 %only the features $\vx$ (if we would know the label, then there is no point in learning 
@@ -6251,16 +6252,17 @@ The resulting model selection strategy is detailed in Section \ref{sec_modsel}.
 
 Section \ref{sec_gen_linreg} uses a simple probabilistic model for the 
 data to study the relation between training error and the expected loss 
-or risk of a hypothesis. This analysis sheds some light on the interplay 
-between the properties of the hypothesis space used in a ML method 
-with the resulting training and validation error.
+or risk of a hypothesis. This analysis reveals the interplay between the 
+properties of the hypothesis space used by a ML method and the resulting 
+training and validation error.
 
 Computing validation errors not only allows to detect overfitting and 
 select between different models (hypothesis spaces). Section \ref{equ_diagnosis_ML} 
-will show how we can debug and diagnose ML methods merely by 
+will show how we can debug and diagnose a ML method merely by 
 comparing its training and validation error. The comparison of these 
-two errors informs possible improvements of ML methods by 
-collecting more data or change the model (hypothesis space). 
+two errors might help to identify possible improvements of the ML method. 
+These improvements might be obtained by collecting more datapoints, 
+using more features of datapoints or to change the model (hypothesis space). 
 
 
 
@@ -6298,9 +6300,9 @@ whenever looking at a wave (Figure \ref{equ_wave_as_tractor}).
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.7\textwidth]{LabeledDataTractorOverfitting1.jpg}  
-	\caption{A (misleading) training dataset $\trainset= \{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize_{\rm t}}$ 
-		consisting of $\samplesize_{\rm t}=9$ images. The $\sampleidx$-th image is characterized by the feature vector $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ 
-		and labeled with $y^{(\sampleidx)}=1$(if image depicts a tractor) or with $y^{(\sampleidx)}=-1$ (if image does not depict a tractor).}
+	\caption{A (misleading) training dataset $\trainset \!=\! \{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize_{\rm t}}$ 
+		consisting of $\samplesize_{\rm t}=9$ images. The $\sampleidx$-th image is characterized by the feature vector $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and labeled with $y^{(\sampleidx)}\!=\!1$ 
+		(tractor) or with $y^{(\sampleidx)}\!=\!-1$ (no tractor).}
 	%    \caption{Hypothesis Map}\label{fig:Hypothesis Map}
 	\label{fig_misleading_data_set}
 \end{figure}
@@ -6362,21 +6364,25 @@ Inserting $\mathbf{P} = \mathbf{I}$ into \eqref{equ_emp_risk_lin_proje} yields
 To sum up: as soon as the number of training examples $\samplesize_{\rm t} = | \dataset_{\rm train}|$ is smaller 
 than the size $\featuredim$ of the feature vector $\vx$, there 
 is a linear predictor $h^{(\vw_{\rm opt})}$ achieving {\bf zero empirical risk} 
-(see \eqref{eq_zero_trianing_error})on the training data. The result 
+(see \eqref{eq_zero_trianing_error}) on the training data. The result 
 \eqref{eq_zero_trianing_error} only applies if the feature vectors of 
-the training datapoints are linearly independent. It can be shown 
-that if the feature vectors $\vx^{(1)},\ldots,\vx^{(\samplesize)} \in \mathbb{R}^{\featuredim}$ 
+the training datapoints are linearly independent. 
+
+It can be shown that if the feature vectors $\vx^{(1)},\ldots,\vx^{(\samplesize)} \in \mathbb{R}^{\featuredim}$ 
 are realizations of i.i.d.\ RVs with a continuous probability distribution, 
 then with probability one they are linearly independent whenever \eqref{equ_condition_overfitting} holds. 
 
-While this ``optimal'' predictor $h^{(\vw_{\rm opt})}$ is perfectly accurate on the training 
+While the learnt predictor $h^{(\vw_{\rm opt})}$ is perfectly accurate on the training 
 data (the training error is zero!), it will typically incur a non-zero average prediction error 
 $y - h^{(\vw_{\rm opt})}(\vx)$ on new datapoints $(\vx,y)$ (which are different from the 
-training data). Indeed, using a simple toy model for the data generation, we obtained the 
-expression \eqref{equ_decomp_E_pred_toy_model} for the average prediction error. This 
-average prediction error is lower bounded by the noise variance $\sigma^{2}$ which might 
-be very large even the training error is zero. Thus, in case of overfitting, a small training 
-error can be highly misleading regarding the average prediction error of a predictor. 
+training data). 
+
+Using a simple toy model for the data generation, we obtained the expression 
+\eqref{equ_decomp_E_pred_toy_model} for the average prediction error. This 
+average prediction error is lower bounded by the noise variance $\sigma^{2}$ 
+which might be very large even when the training error is zero. Thus, when a method overfits, 
+a small training error can be highly misleading regarding the average prediction 
+error of a hypothesis. 
 
 A simple, yet quite useful, strategy to detect if a predictor $\hat{h}$ overfits the training 
 dataset $\dataset^{(\rm train)}$, is to compare the resulting training error 
@@ -6479,21 +6485,20 @@ training set.
 \framebox[0.96\textwidth]{
  \parbox{0.9\textwidth}{
 \begin{quote}
-A golden rule of ML practice: try always to use different datapoints 
-for the training (see \eqref{equ_def_ERM_funs}) and the validation 
-of a predictor $\hat{h}$!
+A golden rule of ML practice: use different datapoints for the learning 
+(see \eqref{equ_def_ERM_funs}) and the validation of a hypothesis $\hat{h}$!
 \end{quote}
 }}
 \end{center}
  
-A very simple recipe for validating a ML method is as follows (see Figure \ref{fig_split_train_val}): 
+To validate the hypothesis learn by some ML method, we can use the 
+following steps. 
 \begin{enumerate} 
-\item randomly divide (``split'') the entire set $\dataset$ of labeled datapoints into 
+\item We randomly divide (``split'') the entire set $\dataset$ of labeled datapoints into 
 two disjoint subsets $\dataset = \trainset \cup \valset$ (see Figure \ref{fig_split_train_val}). 
 The first subset $\trainset$ is referred to as the {\bf training set}. The second subset $\valset$ 
 is referred to as {\bf validation set}.  
-\item learn a hypothesis $\hat{h}$ via ERM using the training data $\trainset$, i.e., 
-compute (cf.\ \eqref{equ_def_ERM_funs}) 
+\item We learn a hypothesis $\hat{h}$ via ERM using the training data $\trainset$ (cf.\ \eqref{equ_def_ERM_funs}), 
 \begin{align} 
 \label{equ_def_hat_h_fitting}
 \hat{h} & = \argmin_{h \in \hypospace} \emperror(h| \trainset) \nonumber \\
@@ -6502,20 +6507,25 @@ compute (cf.\ \eqref{equ_def_ERM_funs})
 with corresponding {\bf training error} 
 \begin{equation} 
 \label{equ_def_training_error_val}
-\emperror(\hat{h}|\trainset)=  (1/\samplesize_{\rm t}) \sum_{\sampleidx=1}^{\samplesize_{\rm t}} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})} {\hat{h}}  %( y- \hat{h}(\vx))^2.
+\emperror(\hat{h}|\trainset)=  (1/\samplesize_{\rm t}) \sum_{\sampleidx=1}^{\samplesize_{\rm t}} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})} {\hat{h}}.  %( y- \hat{h}(\vx))^2.
 \end{equation}  
-\item validate the hypothesis $\hat{h}$ obtained from \eqref{equ_def_hat_h_fitting} by computing the empirical risk 
+\item We validate the hypothesis $\hat{h}$ obtained from \eqref{equ_def_hat_h_fitting} by computing the empirical risk 
 \begin{equation} 
 \label{equ_def_training_val_val}
 \emperror(\hat{h}|\valset) = (1/\samplesize_{\rm v})  \sum_{(\vx,y) \in \valset} \loss{(\vx,y)} {\hat{h}}  % ( y- \hat{h}(\vx))^2, 
 \end{equation}  
-obtained when applying the predictor $\hat{h}$ to the {\bf validation dataset} $\dataset^{(\rm val)}$. 
-We might refer to $\emperror(\hat{h}| \dataset^{(\rm val)})$ as the {\bf validation error}. 
+on the {\bf validation set} $\dataset^{(\rm val)}$. We refer to $\emperror(\hat{h}| \dataset^{(\rm val)})$ 
+as the {\bf validation error} of $\hat{h}$. 
 \end{enumerate} 
-The choice of the split ratio $|\dataset^{(\rm val)}| / |\dataset^{(\rm train)}|$, i.e., how 
-large should the training set be relative to the validation set is often based on experimental 
-tuning. It seems difficult to make a precise statement on how to choose the split ratio 
-which applies broadly to different ML problems \cite{Larsen1999}.
+The choice of the split ratio (between the size of training and validation set) $|\dataset^{(\rm val)}| / |\dataset^{(\rm train)}|$ 
+is often based on trial and error. It is difficult to make a precise statement on 
+how to choose the split ratio which applies broadly \cite{Larsen1999}. 
+
+The optimal choice for the size of training and validation set depends on the 
+statistical properties of the datapoints. If we know the probability distribution 
+from which datapoints are drawn, we can derive lower bounds on the size of 
+the validation set such that the validation error \eqref{equ_def_training_val_val} 
+is close to the expected loss $\expect\{ \loss{(\vx,y)} {\hat{h}} \}$ with high probability. 
  
 % \begin{figure}[htbp]
 %    \centering
@@ -6532,14 +6542,14 @@ which applies broadly to different ML problems \cite{Larsen1999}.
 %\end{figure}
 
 The basic idea of randomly splitting the available labeled data into training and 
-validation sets is underlying many validation techniques. A popular extension 
+validation sets underlies many validation techniques. A popular extension 
 of the above approach, which is known as $k$-fold cross-validation, is based 
 on repeating the splitting into training and validation sets $k$ times. During 
 each repetition, this method uses different subsets for training and validation. 
 We refer to \cite[Sec. 7.10]{hastie01statisticallearning} for a detailed discussion of $k$-fold 
 cross-validation. 
 
-{\bf Unbalanced Data.} 
+{\bf Imbalanced Data.} 
 The simple validation approach discussed above requires the validation set to be 
 a good representative for the overall statistical properties of the data. This might 
 not be the case in applications with discrete valued labels and some of the label 
@@ -6552,7 +6562,8 @@ on a dataset $\dataset$ which contains only one single (!) datapoint with $y=-1$
 we then use above approach to split into training and validation set with high probability we will 
 never use the datapoint with $y=-1$ in any validation. This cannot happen when using 
 $k$-fold CV since the single data point must be one of the validation folds. However, 
-still we evaluate the performance of $h(\vx)$ only using one single datapoint with $y=-1$. 
+even in $k$-fold CV, we evaluate the performance of $h(\vx)$ using only one single 
+datapoint with $y=-1$. 
 
 
 \section{Model Selection}
@@ -6747,10 +6758,11 @@ depends crucially on the {\bf mean squared estimation error (MSE)}
 \mathcal{E}_{\rm est} \defeq \expect \{  \| \Delta \vw \|^{2}_{2} \} =  \expect \big\{ \big \| \widehat{\vw} - \bar{\vw} \big\|^{2}_{2} \big \}. 
 \end{equation}
 We can decompose the MSE $\mathcal{E}_{\rm est}$ into two components. 
-One component (the ``bias'') characterizes the properties of the average 
-hypothesis. The second component is the ``variance'' which quantities 
-the amount of random fluctuations of the hypothesis obtained from ERM 
-applied to different training sets. Both components depend on the model 
+The first component is the {\bf bias} which characterizes the properties of 
+the learn hypothesis on average (over all different realizations of training sets). 
+The second component is the {\bf variance} which quantifies the amount of 
+random fluctuations of the hypothesis obtained from ERM applied to 
+different realizations of the training set. Both components depend on the model 
 complexity parameter $r$. 
 %depends on the 
 %distribution of the observed feature vectors $\vx^{(\sampleidx)}$ 
@@ -6916,19 +6928,35 @@ by empirical approximations (sample averages).
 
 \section{The Bootstrap} 
 
-Consider learning a linear hypothesis $h( \vx) = \hat{\vw}^{T} \vx$ 
-from datapoints which are modelled as realizations of i.i.d.\
-random variables. If we interpret datapoints as realizations of 
-random variables, also the weights $\hat{\vw}$ is a realization  
-of a random variable. The bootstrap is a method for estimating 
-(parameters of) its probability distribution $p(\hat{\vw})$.  
+Consider learning a hypothesis $\hat{h} \in \hypospace$ by minimizing the 
+average loss incurred on a dataset $\dataset=\{ \big(\vx^{(1)},y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)},y^{(\samplesize)}\big)\}$. 
+The datapoints $\big(\vx^{(\sampleidx))},y^{(\sampleidx)}\big)$ are modelled 
+as realizations of i.i.d.\ random variables. Let use denote the (common) probability 
+distribution of these random variables by $p(\vx,y)$. 
+
+If we interpret the datapoints $\big(\vx^{(\sampleidx))},y^{(\sampleidx)}\big)$ as realizations of 
+random variables, also the learnt hypothesis $\hat{h}$ is a realization  
+of a random variable. Indeed, the hypothesis $\hat{h}$ is obtained by 
+solving an optimization problem \eqref{equ_def_ERM_funs} that involves 
+realizations of random variables. The bootstrap is a method for estimating 
+(parameters of) the probability distribution $p(\hat{h})$ \cite{hastie01statisticallearning}.  
 
 Section \ref{sec_gen_linreg} used a probabilistic model for 
 datapoints to derive analytically (some parameters of) the probability 
-distribution $p(\hat{\vw})$. While the analysis in Section \ref{sec_gen_linreg} 
+distribution $p(\hat{h})$. While the analysis in Section \ref{sec_gen_linreg} 
 only applies to the specific probabilistic model \eqref{equ_toy_model_iid}, \eqref{equ_labels_training_data}, 
 the bootstrap can be used for datapoints drawn from an arbitrary 
 probability distribution. 
+
+The core idea behind the bootstrap is to use the empirical distribution 
+or histogram $\hat{p}(\vz)$ of the available datapoints $\dataset$ to 
+generate $B$ new datasets $\dataset^{(1)},\ldots$. Each dataset is 
+constructed such that is has the same size as the original dataset $\dataset$. 
+The then solve ERM \eqref{equ_def_ERM_funs} for each dataset $\dataset^{(b)}$ to obtain 
+the hypothesis $\hat{h}^{(b)}$. The hypothesis $\hat{h}^{(b)}$ is a realization 
+of a random variable whose distribution is determined by the empirical distribution 
+$\hat{p}(\vz)$ as well as the hypothesis space and loss function used in the ERM \eqref{equ_def_ERM_funs}. 
+
 
 
 
@@ -6951,7 +6979,7 @@ the ML method could be improved.
 In some applications we might know a benchmark $\mathcal{E}_{0}$ 
 for the average loss that is considered as acceptable. Such a benchmark 
 can be obtained via a probabilistic model for data. Given such a probabilistic 
-model we can compute the minimum possible expected loss or risk \ref{equ_def_risk}. 
+model we can compute the minimum achievable expected loss or risk \eqref{equ_def_risk}. 
 This minimum risk can often be read from the posterior distribution $p(y|\vx)$ of 
 the label $y$, given the features $\vx$ of a datapoint. 
 

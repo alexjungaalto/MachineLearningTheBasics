@@ -5764,7 +5764,7 @@ The choice of the step size $\alpha$ in the GD step \eqref{equ_def_GD_step}
 has a strong impact on the performance of Algorithm \ref{alg:gd_linreg}. If we 
 choose the step size $\alpha$ too large, the GD steps \eqref{equ_def_GD_step} 
 diverge (see Figure \ref{fig_small_large_alpha}-(b)) and, in turn, 
-Algorithm \ref{alg:gd_linreg} fails n delivering an approximation of 
+Algorithm \ref{alg:gd_linreg} fails to deliver an approximation of 
 the optimal weight vector $\vw^{(\rm opt)}$ (see \eqref{equ_def_cost_linreg}). 
 
 If we choose the step size $\alpha$ too small (see Figure \ref{fig_small_large_alpha}-(a)), 
@@ -6072,15 +6072,18 @@ corresponds to a particular choice of $\vw$) and a loss function $\loss{(\vx,y)}
 depends smoothly on the weight vector $\vw$. The resulting ERM \eqref{equ_def_ERM_continous} 
 amounts to a smooth optimization problem which can be solved using GD \eqref{equ_def_GD_step}. 
 
-Note that the gradient $\nabla f(\vw)$ obtained for the optimization problem \eqref{equ_def_ERM_continous} has a particular structure. 
-Indeed, the gradient is a sum 
+The gradient $\nabla f(\vw)$ obtained for the optimization problem 
+\eqref{equ_def_ERM_continous} has a particular structure. Indeed, the 
+gradient is a sum 
 \vspace*{-2mm}
 \begin{equation}
 \label{eq_gradient_sum}
-\nabla f(\vw) = (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \nabla f_{\sampleidx}(\vw)   \mbox{ with } f_{\sampleidx}(\vw) \defeq \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h^{(\vw)}}. 
+\nabla f(\vw) = (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \nabla f_{\sampleidx}(\vw)   \mbox{ with } f_{\sampleidx}(\vw) \defeq \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h^{(\vw)}}, 
 \end{equation} 
-Evaluating the gradient $\nabla f(\vw)$ (e.g., within a GD step \eqref{equ_def_GD_step}) by 
-computing the sum in \eqref{eq_gradient_sum} can be computationally challenging for at least 
+with the components corresponding to the datapoints $(\vx^{(\sampleidx)},y^{(\sampleidx)})$, for $\sampleidx=1,\ldots,\samplesize$. 
+Note that each GD step \eqref{equ_def_GD_step} requires to compute the gradient \eqref{eq_gradient_sum}. 
+
+Computing the sum in \eqref{eq_gradient_sum} can be computationally challenging for at least 
 two reasons. First, computing the sum exactly is challenging for extremely large datasets with 
 $\samplesize$ in the order of billions. Second, for datasets which are stored in different data 
 centres located all over the world, the summation would require huge amount of network resources 
@@ -6098,11 +6101,11 @@ least $10^{9}$ FLOPS.
 \end{center}
 
 
-The idea of {\bf stochastic GD (SGD)} is quite simple: Replace the exact gradient $\nabla f(\vw)$ 
-by some approximation which can be computed easier than \eqref{eq_gradient_sum}. The word ``stochastic'' 
-in the name SGD hints already at the use of randomness (stochastic approximations). 
+The idea of {\bf stochastic GD (SGD)} is to replace the exact gradient $\nabla f(\vw)$ 
+by some approximation which can be computed easier than \eqref{eq_gradient_sum}. 
+The word ``stochastic'' in the name SGD hints already at the use of stochastic approximations. 
 
-One basic variant of SGD approximates the gradient $\nabla f(\vw)$ (see \eqref{eq_gradient_sum}) 
+A basic variant of SGD approximates the gradient $\nabla f(\vw)$ (see \eqref{eq_gradient_sum}) 
 a randomly selected component $\nabla f_{\hat{\sampleidx}}(\vw)$ in \eqref{eq_gradient_sum}, 
 with the index $\hat{\sampleidx}$ being chosen randomly out of $\{1,\ldots,\samplesize\}$. SGD 
 amounts to iterating the update 
@@ -6123,9 +6126,16 @@ gradient noise
 \label{equ_gradient_noise}
 \varepsilon = \nabla f(\vw)  - \nabla f_{\hat{\sampleidx}}(\vw), 
 \end{equation} 
-into the SGD updates. In order avoid the accumulation of the gradient noise \eqref{equ_gradient_noise} 
-while running SGD updates \eqref{equ_SGD_update} the step size $\alpha$ needs to be gradually 
-decreased, e.g., using $\alpha = 1/\itercntr$ with $\itercntr$ being the iteration counter (see \cite{Murata98astatistical}). 
+into the SGD updates. 
+
+To avoid a detrimental accumulation of the gradient noise \eqref{equ_gradient_noise} 
+during the SGD updates \eqref{equ_SGD_update}, the step size $\alpha$ needs to be gradually 
+decreased. Thus, the step-size used in the SGD update \eqref{equ_gradient_noise}
+typically depends on the iteration number $\itercntr$, $\alpha\!=\!\alpha_{\itercntr}$. 
+The sequence $\alpha_{\itercntr}$ of step-sizes is referred to as a {\bf learning rate schedule} \cite[Chapter 8]{Goodfellow-et-al-2016}. 
+One popular choice for the learning rate schedule is $\alpha\!=\!1/\itercntr$ \cite{Murata98astatistical}. 
+We consider conditions on the learning rate schedule that guarantee convergence of 
+SGD in Exercise \ref{ex_SGD_learning_rate}. 
 
 The SGD iteration \eqref{equ_SGD_update} assumes that the training data is already 
 collected but so large that the sum in \eqref{eq_gradient_sum} is computationally intractable. 
@@ -6147,14 +6157,36 @@ computing, for each time step $\timeidx$, the iteration
 Consider the space $\mathcal{P}$ of sequences $f = (f[0],f[1],\ldots)$ 
 that have the following properties 
 \begin{itemize} 
-	\item they are monotone increasing, $f[n] \geq f[m]$ for any $n \geq m$ and $f \in \mathcal{P}$
-	\item a change point $n$, where $f[n] \neq f[n+1]$ can only be at integer multiples of $100$, 
-	e.g., $n=100$ or $n=300$. 
+	\item they are monotone increasing, $f[\itercntr'] \geq f[\itercntr]$ for any $\itercntr' \geq \itercntr$ and $f \in \mathcal{P}$
+	\item a change point $\itercntr$, where $f[\itercntr] \neq f[\itercntr\!+\!1]$ can only be at integer multiples of $100$, 
+	e.g., $\itercntr\!=\!100$ or $\itercntr\!=\!300$. 
 \end{itemize} 
 Given some unknown function $f \in \mathcal{P}$ and starting 
-point $n_{0}$ the problem is to find the minimum value of $f$ as 
+point $\itercntr_{0}$ the problem is to find the minimum value of $f$ as 
 quickly as possible. We consider iterative algorithms that can query
-the function at some point $n$ to obtain the values $f[n], f[n-1]$ and $f[n+1]$. 
+the function at some point $\itercntr$ to obtain the values $f[\itercntr], f[\itercntr\!-\!1]$ and $f[\itercntr\!+\!1]$. 
+
+\subsection{SGD Learning Rate Schedule} 
+\label{ex_SGD_learning_rate}
+Consider learning a linear hypothesis $h(\vx) = \vw^{T} \vx$ from datapoints 
+that arrive sequentially. In each time step $\itercntr\!=\!1,\ldots,$, we collect 
+a new datapoint $\big(\vx^{(\itercntr)},y^{(\itercntr)} \big)$. The 
+datapoints are modelled as realizations of i.i.d.\ copies of a random data point $\big(\vx,y\big)$. 
+The probability distribution of the features $\vx$ is a standard 
+multivariate normal distribution $\mathcal{N}(\mathbf{0},\mathbf{I})$. 
+The label of a random datapoint is related to its features via $y = \bar{\vw}^{T} \vx+ \varepsilon$ with 
+standard Gaussian noise $ \varepsilon \sim \mathcal{N}(0,1)$. 
+We use SGD to learn the weight vector $\vw$ of a linear hypothesis, 
+\begin{equation}
+\label{equ_SGD_update}
+\vw^{(\itercntr+1)} = \vw^{(\itercntr)} - \alpha_{\itercntr}  \big ( \big(\vw^{(\itercntr)}\big)^{T} \vx^{(\itercntr)} - y^{(\itercntr)} \big) \vx^{(\itercntr)}.
+\end{equation} 
+with learning rate schedule $\alpha_{\itercntr} = \beta/\itercntr^{\gamma}$. Note 
+that we implement one SGD iteration \eqref{equ_SGD_update} during each time step $\itercntr$. 
+Thus, the iteration counter is the time index in this case. 
+What conditions on the hyper-parameters $\beta, \gamma$ ensure that 
+$\lim\limits_{\itercntr \rightarrow \infty} \vw^{(\itercntr)} = \bar{\vw}$ in distribution. 
+
 
 
 \newpage
@@ -7024,7 +7056,7 @@ that with probability at least $0.8$ the validation error does
 not deviate by more than $20$ percent from the expected loss or risk. 
 
 \subsection{Validation Error Smaller Than Training Error?} 
-Consider learning a learning hypothesis by minimizing the average 
+Consider learning a linear hypothesis by minimizing the average 
 squared error on some training set. The resulting linear predictor 
 is then validated on some other validation set. Can you construct 
 a training and validation set such that the validation error is strictly 
@@ -8268,7 +8300,7 @@ clustering ?
 
 %????? Discuss a simple method for dim. red. for binary data ????
 
-Chapter \ref{} discussed features as those properties of a datapoint that can 
+Chapter \ref{ch_Elements_ML} discussed features as those properties of a datapoint that can 
 be measured or computed easily. Sometimes the choice of features follows 
 naturally from the available hard and software. As an example we might use 
 the measurements delivered by sensing devices as features. Beside direct 

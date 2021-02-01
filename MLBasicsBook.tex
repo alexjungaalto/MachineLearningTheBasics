@@ -1411,7 +1411,7 @@ Each snapshot contains around $10^{6}$ pixels. Let us use each
 greyscale level of an individual pixel in those snapshots as features. 
 This results in more than $10^{9}$ features (per year!). If we stack all 
 those features into a single feature vector $\vx$, its length $\featurelen$ 
-would be on the order of $10^{9}$. 
+would be of the order of $10^{9}$. 
 
 Many important ML applications involve datapoints represented by very 
 long feature vectors. To process such high-dimensional data, modern 
@@ -4738,27 +4738,32 @@ Chapter \ref{ch_Elements_ML} explained three components of ML (see Figure \ref{f
 \begin{itemize} 
 \item the feature space $\featurespace$ and label space $\labelspace$, 
 \item a hypothesis space $\hypospace$ of computationally feasible predictor maps $\featurespace \rightarrow \labelspace$, 
-\item and a loss function $\loss{(\vx,y)}{h}$ which measures the error incurred by predictor $h \in \hypospace$. 
+\item and a loss function $\loss{(\vx,y)}{h}$ which measures the discrepancy between the predicted label $h(\vx)$ and 
+the true label $y$ of a datapoint. $ error $ incurred by predictor $h \in \hypospace$. 
 \end{itemize} 
-ML methods find - or learn - an accurate predictor map $h$ out 
-of the model $\hypospace$ such that $h(\vx) \approx y$ for any 
-datapoint $(\vx,y)$. The deviation between the predicted label $\hat{y}=h(\vx)$ 
-and true label $y$ is measured by a loss function $\loss{(\vx,y)}{h}$. 
-However, how can we make precise the requirement that the loss 
-should be small for any datapoint ? 
+Ideally we would like to learn a hypothesis $h$ out of the model $\hypospace$ 
+such that $h(\vx) \approx y$ or, in turn,  $\loss{(\vx,y)}{h}$ is very small, 
+for any datapoint $(\vx,y)$. However, in practice we can only use a given 
+set of labeled datapoints (the training set) to measure the average loss 
+of a hypothesis $h$. 
 
-To assess how well a predictor map is doing for any datapoint, 
-we can use the concept of an expected loss or risk. The risk is 
-defined as the expectation of the loss incurred by the predictor 
-for a randomly drawn datapoint. In this approach, we interpret 
-datapoints as realizations of random variables which are 
-characterized by a probability distribution. 
+How can we know the loss of a hypothesis $h$ when predicting the label 
+of datapoints outside the training set? One possible approach is to use 
+a {\bf probabilistic model} for the data. In this model, we interpret datapoints 
+as realizations of i.i.d. random variables with the (same) probability distribution 
+$p(\vx,y)$. The training set is one particular set of such realizations drawn 
+from $p(\vx,y)$. Moreover, we can generate datapoints outside the training 
+set by drawing realizations from the distribution $p(\vx,y)$. Given this probability 
+distribution over different realizations of datapoints allows to define the risk 
+of a hypothesis $h$ as the expectation of the loss incurred by $h$ on a 
+random datapoint. 
 
-If the probability distribution underlying the datapoints is known, 
-minimizing the expected loss or risk amounts to computing the 
-Bayes' estimator for the label given the feature vector. 
-Roughly speaking, this estimator can be read directly from the 
-posterior probability distribution of the label given the features. 
+If we would know the probability distribution $p(\vx,y)$, from which the datapoints 
+are drawn, we could minimize the risk using probability theory. 
+Roughly speaking, the optimal hypothesis $h$ can be read directly from the 
+posterior probability distribution $p(y|\vx)$ of the label $y$ 
+given the features $\vx$ of a datapoint. When using the squared error loss, 
+the risk is minimized by the hypothesis $h(\vx) = \expect \big\{ y | \vx \}$. 
 
 In practice we do not know the true underlying probability 
 distribution and have to estimate it from data. Therefore, 
@@ -4769,25 +4774,31 @@ estimate. Moreover, the risk of the Bayes' optimal estimator
 provides a useful benchmark against which we can compare 
 the average loss of practical ML methods. 
 
-Using a simple probabilistic model for datapoints, we formally define 
-empirical risk minimization (ERM) in Section \eqref{equ_sec_emp_risk_approximates_expected_loss}. 
-We then specialize the ERM for three particular ML problems. In Section \ref{sec_ERM_lin_reg}, 
-we discuss the ERM obtained for linear regression (see Section \ref{sec_lin_regression}). 
-The resulting ERM has appealing properties as it amounts to 
-minimizing a differentiable (smooth) and convex function which 
-can be done efficiently using efficient gradient based methods (see Chapter \ref{ch_GD}). 
+Section \eqref{equ_sec_emp_risk_approximates_expected_loss} formally 
+defines the risk of a hypothesis and motivates empirical risk minimization (ERM) 
+as a natural approximation of the risk using labeled (training) datapoints. 
+We then specialize the ERM for three particular ML problems. These three 
+ML problems use different combinations of model (hypothesis space) and 
+loss functions which result in ERM with different computational complexities. 
+
+In Section \ref{sec_ERM_lin_reg}, we discuss the ERM obtained for linear 
+regression (see Section \ref{sec_lin_regression}). The resulting ERM amounts 
+to minimizing a differentiable convex function, which can be done efficiently 
+using gradient-based methods (see Chapter \ref{ch_GD}). 
 
 We then discuss in Section \ref{sec_ERM_decision_tree} the ERM 
-obtained for decision trees which yields a discrete optimization 
-problem and is therefore fundamentally different from the smooth 
-ERM obtained for linear regression. In particular, we cannot apply 
-gradient based methods (see Chapter \ref{ch_GD}) to solve them 
-but have to rely on discrete search methods. 
+obtained for decision tree models. The resulting ERM becomes a 
+discrete optimization problem which are typically much harder than 
+convex optimization problems. We cannot apply gradient-based methods 
+to solve the ERM for decision trees. To solve the decision tree ERM we 
+essentially must try out all possible choices for the tree structure \cite{}. 
 
-Section \ref{sec_ERM_Bayes} discusses how Bayes' methods 
-can be used to solve the non-convex and non-differentiable 
-ERM problem obtained for classification problems with the 
-$0/1$ loss \eqref{equ_def_0_1}. 
+Section \ref{sec_ERM_Bayes} considers the ERM obtained when learning a linear hypothesis 
+using the $0/1$ loss for classification problems. The resulting ERM 
+amounts to minimizing a non-differentiable and non-convex function. 
+Instead of using computationally expensive methods for minimizing 
+this function, we will use a different rout via probability theory to 
+construct approximate solutions to this ERM instance. 
 
 As explained in Section \ref{sec_training_inference}, many ML methods 
 use the ERM during a training period to learn a hypothesis which is 
@@ -4850,9 +4861,9 @@ which is therefore referred to as the {\bf training set}.
 \label{sec_comp_stat_ERM}
 
 \emph{Statistical Aspects: Objective in ERM is Noisy version of Actual Objective; sometimes we do 
-not know most parts of objective function (reinforcement learning); even if we know perfectly 
-the objective function (expected risk), optimizatino might be hard for non-smooth, non-convex 
-objective functions}
+not know most parts of objective function (reinforcement learning); even if we know 
+the objective function (expected risk) perfectly, optimization might be hard for non-smooth, 
+non-convex objective functions}
 
 Solving the optimization problem \eqref{equ_def_ERM_funs} provides 
 two things. First, the minimizer $\hat{h}$ is a predictor which performs 
@@ -4943,7 +4954,7 @@ The objective function $f(\vw)$ obtained for ANN are typically
 {\bf highly non-convex} having many local minima. The optimization 
 of non-convex objective function is in general more difficult than 
 optimizing convex objective functions. However, it turns out that 
-despite the non-convexity, iterative gradient based methods can 
+despite the non-convexity, iterative gradient-based methods can 
 still be successfully applied to solve the ERM \cite{Goodfellow-et-al-2016}. 
 Even more challenging is the ERM obtained for decision trees or 
 Bayes' classifiers. These ML problems involve non-differentiable 
@@ -4997,7 +5008,7 @@ specializes to
 Here, $\samplesize=|\dataset|$ denotes the (sample) size of the training set $\dataset$. 
 The objective function $f(\vw)$ in \eqref{equ_def_cost_MSE} is computationally 
 appealing since it is a convex and smooth function. Such a function can be minimized 
-efficiently using the gradient based methods of Chapter \ref{ch_GD}. 
+efficiently using the gradient-based methods discussed in Chapter \ref{ch_GD}. 
 
 The ERM problem \eqref{equ_def_cost_MSE} can rewritten in a more compact form 
 by stacking the labels $y^{(\sampleidx)}$ and feature vectors $\vx^{(\sampleidx)}$, for 
@@ -5020,7 +5031,7 @@ we obtain the quadratic problem
 & \min_{\vw \in \mathbb{R}^{\featuredim}} \underbrace{(1/2) \vw^{T} \mathbf{Q} \vw - \vq^{T}  \vw}_{= f(\vw)} \nonumber \\
 & \mbox{ with } \mathbf{Q}= (1/\samplesize) \mathbf{X}^{T} \mathbf{X}, \mathbf{q} =(1/\samplesize) \mathbf{X}^{T} \mathbf{y}. 
 \end{align} 
-Since $f(\vw)$ is a differentiable and convex, a necessary and sufficient condition for 
+Since $f(\vw)$ is a differentiable and convex function, a necessary and sufficient condition for 
 $\vw_{\rm opt}$ to be a minimizer $f(\vw_{\rm opt})\!=\!\min_{\vw \in \mathbb{R}^{\featuredim}} f(\vw)$ is the 
 {\bf zero-gradient condition} \cite[Sec. 4.2.3]{BoydConvexBook}
 \begin{equation}
@@ -5050,20 +5061,20 @@ of the feature matrix $\mathbf{X}$.
 It can be shown that, for any given feature matrix $\mX$ and label vector $\vy$, there always 
 exists at least one optimal weight vector $\vw_{\rm opt}$ which solves \eqref{equ_zero_gradient_lin_reg}. 
 The optimal weight vector might not be unique, such that there are several different vectors 
-which achieve the minimum in \eqref{equ_def_cost_MSE}. However, any optimal solution $\vw_{\rm opt}$ 
-which solves \eqref{equ_zero_gradient_lin_reg} achieves the same minimum empirical risk 
+which achieve the minimum in \eqref{equ_def_cost_MSE}. However, 
+every vector $\vw_{\rm opt}$ which solves \eqref{equ_zero_gradient_lin_reg} 
+achieves the same minimum empirical risk 
 \begin{equation}
 \label{equ_emp_risk_lin_proje}
 \emperror(h^{(\vw_{\rm opt})} \mid \dataset) = \min_{\vw \in \mathbb{R}^{\featuredim}} \emperror(h^{(\vw)} \mid \dataset) = \|  (\mathbf{I}- \mathbf{P}) \vy \|^{2}.
 \end{equation} 
 Here, we used the orthogonal projection matrix $\mathbf{P} \in \mathbb{R}^{\samplesize \times \samplesize}$ 
-on the linear span of the feature matrix $\mX = (\vx^{(1)},\ldots,\vx^{(\samplesize)})^{T} \in \mathbb{R}^{\samplesize \times \featuredim}$ (see \eqref{equ_def_vec_matrix}).\footnote{The linear span ${\rm span } \mA$ 
-of a matrix $\mA=(\va^{(1)},\ldots,\va^{(\samplesize)}) \in \mathbb{R}^{\featuredim \times \samplesize}$ 
-is the subspace of $\mathbb{R}^{\featuredim}$ consisting of all linear combinations 
+on the linear span of the feature matrix $\mX = (\vx^{(1)},\ldots,\vx^{(\samplesize)})^{T} \in \mathbb{R}^{\samplesize \times \featuredim}$ (see \eqref{equ_def_vec_matrix}).\footnote{The linear span of a matrix $\mA=(\va^{(1)},\ldots,\va^{(\samplesize)}) \in \mathbb{R}^{\featuredim \times \samplesize}$, denoted as ${\rm span } \big\{\mA\}$, is the subspace 
+	of $\mathbb{R}^{\featuredim}$ consisting of all linear combinations 
 of the columns $\va^{(r)} \in \mathbb{R}^{\featuredim}$ of $\mA$.} 
 
 If the feature matrix $\mX$ (see \eqref{equ_def_vec_matrix}) has full column rank, 
-implying invertibility of the matrix $\mX^{T} \mX$, the projection matrix $\mathbf{P}$ 
+which implies that the matrix $\mX^{T} \mX$ is invertible, the projection matrix $\mathbf{P}$ 
 is given explicitly as 
 \begin{equation} 
 \nonumber
@@ -5081,7 +5092,7 @@ Computing the inverse of $\mX^{T} \mX$ can be computationally challenging
 for large number $\featuredim$ of features. Figure \ref{fig_snapshot_pixels} 
 depicts a simple ML problem where the number of features is already 
 in the millions. The inversion of the matrix $\mX^{T} \mX$ is particularly 
-challenging if this matrix is ill conditioned. In general, we do not have 
+challenging if this matrix is ill-conditioned. In general, we do not have 
 any control on this condition number as we face datapoints with arbitrary 
 feature vectors. 
 
@@ -5116,12 +5127,9 @@ each map corresponding to a particular decision tree.
 For the small hypothesis space $\hypospace$ in Figure \ref{fig_hypospace_DT_depth_2}, 
 ERM is easy. Indeed, we just have to evaluate the empirical risk 
 for each of the elements in $\hypospace$ and pick the one yielding 
-the smallest empirical risk. 
-
-However, in ML applications we typically use significantly 
-larger hypothesis spaces and then discrete optimization tends to be 
-more complicated compared to smooth optimization which can solved 
-by (variants of) gradient descent (see Chapter \ref{ch_GD}). 
+the smallest empirical risk. However, for increasing size of decision 
+trees the computational complexity of exactly solving the ERM becomes 
+intractable. 
 
 A popular approach to ERM for decision trees is to use greedy algorithms which try to expand (grow) 
 a given decision tree by adding new branches to leaf nodes in order to reduce the empirical risk 
@@ -5268,9 +5276,10 @@ child { node [env]  {$x_{2}\!\leq\!3?$ }
 \end{minipage}
 \caption{Given the labeled dataset and a decision tree in the top row, 
 	we grow the decision tree by expanding it at one of 
-	its two leaf nodes. The resulting new decision trees 
-	obtained by expanding different leaf node is shown 
-	in the bottom row.}
+	its two leaf nodes. The bottom row shows two different 
+	decision trees, along with their decision boundaries, 
+	obtained by expanding different leaf nodes of the 
+	tree in the top row.}
 \label{fig_growingatree}
 \end{figure}
  
@@ -5299,10 +5308,10 @@ or growing the decision tree).
                       & \stackrel{\eqref{equ_def_0_1}}{=}  \argmin_{h \in \hypospace} (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \mathcal{I} ( h(\vx^{(\sampleidx)}) \neq y^{(\sampleidx)}). %\nonumber  \\
                  %     & \stackrel{\eqref{equ_0_1_approx_prob}}{\approx}\argmin_{h \in \hypospace} \prob{ h(\vx) \neq y} . 
 \end{align}
-Note that the objective function of this optimization problem is non-smooth 
-(non differentiable) and non-convex (see Figure \ref{fig_diff_types_bojec}). 
-This prevents us from using standard gradient based optimization methods 
-(see Chapter \ref{ch_GD}) to solve \eqref{equ_approx_bayes_class}.
+The objective function in this optimization problem is non-differentiable 
+and non-convex (see Figure \ref{fig_diff_types_bojec}). This prevents us 
+from using gradient-based optimization methods (see Chapter \ref{ch_GD}) 
+to solve \eqref{equ_approx_bayes_class}.
 
 We will now approach the ERM \eqref{equ_approx_bayes_class} via a different 
 route by interpreting the datapoints $(\vx^{(\sampleidx)},y^{(\sampleidx)})$ as 
@@ -5398,11 +5407,11 @@ We highlight that the classifier \eqref{equ_classif_Bayes_impl} is only well-def
 covariance matrix $\widehat{\bf \Sigma}$ \eqref{ML_est_naive_Bayes} is invertible. This requires 
 to use a sufficiently large number of training datapoints such that $\samplesize \geq \featuredim$. 
 
-We can have derived the classifier \eqref{equ_classif_Bayes_impl} as an approximate solution 
+We derived the classifier \eqref{equ_classif_Bayes_impl} as an approximate solution 
 to the ERM \eqref{equ_approx_bayes_class}. The classifier \eqref{equ_classif_Bayes_impl} partitions 
-the feature space $\mathbb{R}^{\featuredim}$ into two half spaces. One half space 
+the feature space $\mathbb{R}^{\featuredim}$ into two half-spaces. One half-space 
 consists of feature vectors $\vx$ for which \eqref{equ_classif_Bayes_impl} is non-negative and, 
-in turn, $\hat{y}=1$. The other half space is constituted by feature vectors $\vx$ for which 
+in turn, $\hat{y}=1$. The other half-space is constituted by feature vectors $\vx$ for which 
 \eqref{equ_classif_Bayes_impl} is negative and, in turn, $\hat{y}=-1$ (see Figure \ref{fig_lin_dec_boundary}). 
 
 The Bayes' classifier \eqref{equ_classif_Bayes_impl} is another instance of a linear 
@@ -5416,7 +5425,7 @@ boundaries.
 
 For the estimator $\widehat{\bf \Sigma}$ \eqref{equ_ML_mean_cov_Gauss} 
 to be accurate (close to the unknown covariance matrix) we need a number 
-of datapoints (sample size) which is at least on the order of $\featuredim^{2}$. 
+of datapoints (sample size) which is at least of the order $\featuredim^{2}$. 
 This sample size requirement might be infeasible for applications with only few 
 datapoints available. 
 
@@ -5565,7 +5574,7 @@ expected loss ?
 
 
 \newpage
-\chapter{Gradient Based Learning}
+\chapter{Gradient-Based Learning}
 \label{ch_GD}
 
 ML methods are optimization methods, that learn an optimal 
@@ -5575,12 +5584,11 @@ average loss, viewed as a function of the hypothesis, defines
 an objective function whose minimum is achieved by the 
 optimal hypothesis. 
 
-Many ML methods use gradient based methods to efficiently search 
+Many ML methods use gradient-based methods to efficiently search 
 for a (nearly) optimal hypothesis. These methods locally 
 approximate the objective function by a linear function which 
 is used to improve the current guess for the optimal hypothesis. 
-The prototype of a gradient based optimization methods is 
-{\bf gradient descent} (GD). 
+The prototype of a gradient-based optimization method is {\bf gradient descent} (GD). 
 
 Variants of GD are used to tune the weights of artificial neural 
 networks within deep learning methods \cite{Goodfellow-et-al-2016}. 
@@ -5615,14 +5623,14 @@ is a {\bf smooth optimization problem}
 with a smooth function $f: \mathbb{R}^{\featuredim} \rightarrow \mathbb{R}$ of 
 the vector argument $\vw \in \mathbb{R}^{\featuredim}$. 
 
-We can approximate a smooth function $f(\vw$) locally, around some point $\vw_{0}$. 
-using a hyperplane, which passes through the point $(\vw_{0},f(\vw_{0}))$ and 
-with the normal vector $\mathbf{n} = (\nabla f(\vw_{0}),-1)$ (see Figure \ref{fig_smooth_function}). 
+We can approximate a smooth function $f(\vw$) locally around some point $\vw_{0}$ 
+using a hyperplane. This hyperplane passes through the point $(\vw_{0},f(\vw_{0}))$ and 
+has the normal vector $\mathbf{n} = (\nabla f(\vw_{0}),-1)$ (see Figure \ref{fig_smooth_function}). 
 Elementary calculus yields the following linear approximation (around a point $\vw_{0}$) 
 \cite{RudinBookPrinciplesMatheAnalysis}
 \begin{equation} 
 \label{equ_linear_approx_diff}
-f(\vw) \approx f(\vw_{0}) + (\vw-\vw_{0})^{T} \nabla f(\vw_{0}) \mbox{ for  all }\vw \mbox{ close to } \vw_{0}.
+f(\vw) \approx f(\vw_{0}) + (\vw-\vw_{0})^{T} \nabla f(\vw_{0}) \mbox{ for }\vw \mbox{ sufficiently close to } \vw_{0}.
 \end{equation}  
 
 The approximation \eqref{equ_linear_approx_diff} lends naturally to an 
@@ -5758,22 +5766,21 @@ regression allow for closed-form expressions of the gradient $\nabla f(\vw)$.
 \label{fig_small_large_alpha}
 \end{figure}
 
-
-
 The choice of the step size $\alpha$ in the GD step \eqref{equ_def_GD_step} 
 has a strong impact on the performance of Algorithm \ref{alg:gd_linreg}. If we 
 choose the step size $\alpha$ too large, the GD steps \eqref{equ_def_GD_step} 
 diverge (see Figure \ref{fig_small_large_alpha}-(b)) and, in turn, 
-Algorithm \ref{alg:gd_linreg} fails to deliver an approximation of 
+Algorithm \ref{alg:gd_linreg} fails to deliver a satisfactory approximation of 
 the optimal weight vector $\vw^{(\rm opt)}$ (see \eqref{equ_def_cost_linreg}). 
 
 If we choose the step size $\alpha$ too small (see Figure \ref{fig_small_large_alpha}-(a)), 
 the updates \eqref{equ_def_GD_step} make only very little progress towards 
 approximating the optimal weight vector $\vw_{\rm opt}$. In applications that
 require real-time processing of data streams, it is possible to repeat the GD 
-steps only for a moderate number.. Thus, if the GD step size is chosen to 
+steps only for a moderate number. If the GD step size is chosen too 
 small, Algorithm \ref{alg:gd_linreg} will fail to deliver a good approximation 
-of $\vw_{\rm opt}$ within an acceptable amount of computation time. 
+of $\vw_{\rm opt}$ within an acceptable number of iterations (which translates 
+to computation time). 
 
 The optimal choice of the step size $\alpha$ of GD can be a challenging 
 task and many sophisticated approaches have been proposed for its 
@@ -5971,15 +5978,17 @@ guess (or approximation) $\vw^{(k\!-\!1)}$ for the optimal weight vector $\vw_{\
 \label{equ_correction_logreg_GD}
 (\alpha/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \underbrace{ \frac{y^{(\sampleidx)}}{1 + \exp ( y^{(\sampleidx)} \vw^{T} \vx^{(\sampleidx)})}}_{e^{(\sampleidx)}} \vx^{(\sampleidx)}. 
 \end{equation}
-The correction term \eqref{equ_correction_logreg_GD} is a weighted average of the feature vectors $\vx^{(\sampleidx)}$, 
-each of those vectors is weighted by the factor $(\alpha/\samplesize) \cdot e^{(i)}$. These weighting factors consist of 
-the global factor $(\alpha/\samplesize)$ (that applies equally to all feature vectors $\vx^{(\sampleidx)}$) and a sample-specific 
-factor $e^{(\sampleidx)} =  \frac{y^{(\sampleidx)}}{1 + \exp ( y^{(\sampleidx)} \vw^{T} \vx^{(\sampleidx)})}$, which quantifies 
-the error of the classifier  $h^{(\vw^{(k-1)})}(\vx^{(\sampleidx)}) =   \big(\vw^{(k\!-\!1)})^{T} \vx^{(\sampleidx)}$ for a datapoint 
-having true label $y^{(\sampleidx)} \in \{-1,1\}$ and the features $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$. 
+The correction term \eqref{equ_correction_logreg_GD} is a weighted average 
+of the feature vectors $\vx^{(\sampleidx)}$, each of which is weighted by the 
+factor $(\alpha/\samplesize) \cdot e^{(i)}$. These weighting factors are a product 
+of the global factor $(\alpha/\samplesize)$ that applies equally to all feature vectors 
+$\vx^{(\sampleidx)}$. The global factor is multiplied by a datapoint-specific factor 
+$e^{(\sampleidx)} =  \frac{y^{(\sampleidx)}}{1 + \exp ( y^{(\sampleidx)} \vw^{T} \vx^{(\sampleidx)})}$, 
+which quantifies the error of the classifier  $h^{(\vw^{(k-1)})}(\vx^{(\sampleidx)}) =   \big(\vw^{(k\!-\!1)})^{T} \vx^{(\sampleidx)}$ 
+for a single datapoint with true label $y^{(\sampleidx)} \in \{-1,1\}$ and features $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$. 
 
-We can use the sufficient condition \eqref{equ_GD_conv_guarantee} (which guarantees convergence of GD) 
-to guide the choice of the step size $\alpha$ in Algorithm \ref{alg:gd_logreg}. In order to apply condition 
+We can use the sufficient condition \eqref{equ_GD_conv_guarantee} for the convergence of GD 
+to guide the choice of the step size $\alpha$ in Algorithm \ref{alg:gd_logreg}. To apply condition 
 \eqref{equ_GD_conv_guarantee}, we need to determine the Hessian $\nabla^{2} f(\vw)$ matrix of the 
 objective function $f(\vw)$ underlying logistic regression (see \eqref{equ_smooth_problem_logeg}). 
 Some basic calculus reveals (see \cite[Ch. 4.4.]{hastie01statisticallearning})
@@ -6086,8 +6095,9 @@ Note that each GD step \eqref{equ_def_GD_step} requires to compute the gradient 
 Computing the sum in \eqref{eq_gradient_sum} can be computationally challenging for at least 
 two reasons. First, computing the sum exactly is challenging for extremely large datasets with 
 $\samplesize$ in the order of billions. Second, for datasets which are stored in different data 
-centres located all over the world, the summation would require huge amount of network resources 
-and also put limits on the rate by which the GD steps \eqref{equ_def_GD_step} can be executed. 
+centres located all over the world, the summation would require a huge amount of 
+network resources. Moreover, the finite transmission rate of communication networks 
+limits the rate by which the GD steps \eqref{equ_def_GD_step} can be executed. 
 \begin{center}
 \framebox[0.96\textwidth]{
  \parbox{0.9\textwidth}{
@@ -6140,8 +6150,8 @@ SGD in Exercise \ref{ex_SGD_learning_rate}.
 The SGD iteration \eqref{equ_SGD_update} assumes that the training data is already 
 collected but so large that the sum in \eqref{eq_gradient_sum} is computationally intractable. 
 Another variant of SGD is obtained by assuming a different data generation 
-mechanism. If the datapoints are collected sequentially, one new datapoint $\vx^{(\timeidx)},y^{(\timeidx)}$ 
-at each new time step $\timeidx$, we could a SGD variant for online learning 
+mechanism. If datapoints are collected sequentially, one new datapoint $\vx^{(\timeidx)},y^{(\timeidx)}$ 
+at each new time step $\timeidx$, we could use a SGD variant for online learning 
 (see Section \ref{sec_online_learning}). This online SGD algorithm amounts to 
 computing, for each time step $\timeidx$, the iteration 
 \begin{equation}
@@ -6179,13 +6189,29 @@ standard Gaussian noise $ \varepsilon \sim \mathcal{N}(0,1)$.
 We use SGD to learn the weight vector $\vw$ of a linear hypothesis, 
 \begin{equation}
 \label{equ_SGD_update}
-\vw^{(\itercntr+1)} = \vw^{(\itercntr)} - \alpha_{\itercntr}  \big ( \big(\vw^{(\itercntr)}\big)^{T} \vx^{(\itercntr)} - y^{(\itercntr)} \big) \vx^{(\itercntr)}.
+\vw^{(\itercntr\!+\!1)} = \vw^{(\itercntr)} - \alpha_{\itercntr}  \big ( \big(\vw^{(\itercntr)}\big)^{T} \vx^{(\itercntr)} - y^{(\itercntr)} \big) \vx^{(\itercntr)}.
 \end{equation} 
 with learning rate schedule $\alpha_{\itercntr} = \beta/\itercntr^{\gamma}$. Note 
 that we implement one SGD iteration \eqref{equ_SGD_update} during each time step $\itercntr$. 
 Thus, the iteration counter is the time index in this case. 
 What conditions on the hyper-parameters $\beta, \gamma$ ensure that 
-$\lim\limits_{\itercntr \rightarrow \infty} \vw^{(\itercntr)} = \bar{\vw}$ in distribution. 
+$\lim\limits_{\itercntr \rightarrow \infty} \vw^{(\itercntr)} = \bar{\vw}$ in distribution?
+
+
+\subsection{Apple or No Apple?} 
+\label{ex_GD_distributed_data}
+Consider datapoints representing images. Each image is characterized by 
+the RGB values (value range $0,\ldots,255$) of $1024 \times 1024$ pixels, 
+which we stack into a feature vector $\vx \in \mathbb{R}^{\featurelen}$.
+We assign each image the label $y=1$ if it shows an 
+apple and $y=-1$ if it does not show an apple. 
+
+We use logistic regression to learn a linear hypothesis $h(\vx) = \vw^{T} \vx$ for classifying 
+an image according to $\hat{y} =1$ if $h(\vx) \geq 0$. We use a training set 
+of $\samplesize=10^{10}$ labeled images which are stored in the cloud. We implement 
+the ML method on our own laptop which is connected to the internet with a rate 
+of at most $100$ Mbps. Unfortunately we only store at most five images on our 
+computer. How long does one single GD step take at least?
 
 
 
@@ -8380,7 +8406,7 @@ is known as {\bf deep autoencoders} \cite[Ch. 14]{Goodfellow-et-al-2016}.
 
 %We will now discuss some basic but powerful methods for efficiently constructing relevant features $\vx$ for a datapoint $\vz$. 
 Consider a datapoint $\vz \in \mathbb{R}^{D}$ which is represented by a (typically very long) 
-vector of length $D$. The length $D$ of the raw feature vector might be easily on the order of 
+vector of length $D$. The length $D$ of the raw feature vector might be easily of the order of 
 millions. To obtain a small set of relevant features $\vx \in \mathbb{R}^{\featuredim}$, we apply 
 a linear transformation to the datapoint: 
 \begin{equation} 
@@ -8610,7 +8636,7 @@ datapoints $\vz^{(\sampleidx)} \in \mathbb{R}^{D}$ as its columns. The computati
 complexity (amount of multiplications and additions) for computing this PCA is lower 
 bounded by $\min\{ D^{2}, \samplesize^{2} \}$ \cite{Du08low-complexityprincipal,Sharma2007}. 
 This computational complexity can be prohibitive for ML applications with $\featuredim$ 
-and $\samplesize$ being on the order of millions (which is already the case if the features 
+and $\samplesize$ being of the order of millions (which is already the case if the features 
 are pixel values of a $512 \times 512$ RGB bitmap, see Section \ref{sec_feature_space}). 
 There is a surprisingly cheap alternative to PCA for finding a good choice for the 
 compression matrix $\mathbf{W}$ in \eqref{equ_feat_learning_matrix}. Indeed, a randomly 

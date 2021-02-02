@@ -5408,11 +5408,13 @@ covariance matrix $\widehat{\bf \Sigma}$ \eqref{ML_est_naive_Bayes} is invertibl
 to use a sufficiently large number of training datapoints such that $\samplesize \geq \featuredim$. 
 
 We derived the classifier \eqref{equ_classif_Bayes_impl} as an approximate solution 
-to the ERM \eqref{equ_approx_bayes_class}. The classifier \eqref{equ_classif_Bayes_impl} partitions 
-the feature space $\mathbb{R}^{\featuredim}$ into two half-spaces. One half-space 
-consists of feature vectors $\vx$ for which \eqref{equ_classif_Bayes_impl} is non-negative and, 
-in turn, $\hat{y}=1$. The other half-space is constituted by feature vectors $\vx$ for which 
-\eqref{equ_classif_Bayes_impl} is negative and, in turn, $\hat{y}=-1$ (see Figure \ref{fig_lin_dec_boundary}). 
+to the ERM \eqref{equ_approx_bayes_class}. The classifier \eqref{equ_classif_Bayes_impl} 
+partitions the feature space $\mathbb{R}^{\featuredim}$ into two half-spaces. One 
+half-space consists of feature vectors $\vx$ for which the hypothesis \eqref{equ_classif_Bayes_impl} 
+is non-negative and, in turn, $\hat{y}=1$. The other half-space is constituted by feature 
+vectors $\vx$ for which the hypothesis \eqref{equ_classif_Bayes_impl} is negative and, in turn, 
+$\hat{y}=-1$. Figure \ref{fig_lin_dec_boundary} illustrates these two half-spaces and the 
+decision boundary between them. 
 
 The Bayes' classifier \eqref{equ_classif_Bayes_impl} is another instance of a linear 
 classifier like logistic regression and the SVM. Each of these methods learns a 
@@ -5932,9 +5934,9 @@ choosing the step size $\alpha =1$.
 
 %We can now formulate a full-fledged ML algorithm for solving a linear regression problem (see Section \ref{sec_lin_regression}). 
 As discussed in Section \ref{sec_LogReg}, logistic regression learns 
-a linear hypothesis $h^{(\vw_{\rm opt})}$ by minimizing the average logistic loss 
-\eqref{equ_def_emp_risk_logreg} obtained for a dataset $\dataset= \{ (\vx^{(\sampleidx)}, y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$, with features $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ 
-and binary labels $y^{(\sampleidx)} \in \{-1,1\}$. This minimization problem is an instance 
+a linear hypothesis $h^{(\vw_{\rm opt})}$ by minimizing the average 
+logistic loss \eqref{equ_def_emp_risk_logreg} obtained for a dataset $\dataset= \{ (\vx^{(\sampleidx)}, y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$, with features $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and binary labels 
+$y^{(\sampleidx)} \in \{-1,1\}$. This minimization problem is an instance 
 of the smooth optimization problem \eqref{equ_generic_smooth_problem},
 \begin{align} 
 \label{equ_smooth_problem_logeg}
@@ -5942,7 +5944,7 @@ of the smooth optimization problem \eqref{equ_generic_smooth_problem},
  \mbox{ with } f(\vw) & = (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \log( 1\!+\!\exp ( - y^{(\sampleidx)} \vw^{T} \vx^{(\sampleidx)})). 
 \end{align} 
 
-In order to apply GD \eqref{equ_def_GD_step} to solve \eqref{equ_smooth_problem_logeg}, 
+To apply GD \eqref{equ_def_GD_step} to solve \eqref{equ_smooth_problem_logeg}, 
 we need to compute the gradient $\nabla f(\vw)$. 
 The gradient of the objective function in \eqref{equ_smooth_problem_logeg} is given by 
 \begin{equation}
@@ -5957,12 +5959,12 @@ By inserting \eqref{equ_gradient_logistic_regression} into the basic GD iteratio
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
 \Require   labeled dataset $\dataset=\{ (\vx^{(\sampleidx)}, y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$ containing feature vectors 
 $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and labels $y^{(\sampleidx)} \in \mathbb{R}$; GD step size $\alpha >0$. 
-\Statex\hspace{-6mm}{\bf Initialize:}set $\vw^{(0)}\!\defeq\!\mathbf{0}$; set iteration counter $k\!\defeq\!0$   
+\Statex\hspace{-6mm}{\bf Initialize:}set $\vw^{(0)}\!\defeq\!\mathbf{0}$; set iteration counter $\itercntr\!\defeq\!0$   
 \Repeat 
-\State $k \defeq k +1$    (increase iteration counter) 
-\State  $\vw^{(k)} \defeq \vw^{(k\!-\!1)}  \alpha (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \frac{y^{(\sampleidx)}}{1 + \exp \big( y^{(\sampleidx)} \big(\vw^{(k\!-\!1)}\big)^{T} \vx^{(\sampleidx)}\big)} \vx^{(\sampleidx)}$  (do a GD step \eqref{equ_def_GD_step})
+\State $\itercntr\!\defeq\! \itercntr\!+\!1$    (increase iteration counter) 
+\State  $\vw^{(\itercntr)} \defeq \vw^{(\itercntr\!-\!1)}\!+\!\alpha (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \frac{y^{(\sampleidx)}}{1\!+\!\exp \big( y^{(\sampleidx)} \big(\vw^{(\itercntr\!-\!1)}\big)^{T} \vx^{(\sampleidx)}\big)} \vx^{(\sampleidx)}$  (do a GD step \eqref{equ_def_GD_step})
 \Until convergence 
-\Ensure $\vw^{(k)}$ (which approximates the optimal weight vector $\vw_{\rm opt}$ defined in \eqref{equ_smooth_problem_logeg})
+\Ensure $\vw^{(\itercntr)}$ (which approximates the optimal weight vector $\vw_{\rm opt}$ defined in \eqref{equ_smooth_problem_logeg})
 \end{algorithmic}
 \end{algorithm}
 

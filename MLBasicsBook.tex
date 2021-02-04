@@ -5964,7 +5964,7 @@ $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and labels $y^{(\sampleidx)} \
 \State $\itercntr\!\defeq\! \itercntr\!+\!1$    (increase iteration counter) 
 \State  $\vw^{(\itercntr)} \defeq \vw^{(\itercntr\!-\!1)}\!+\!\alpha (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \frac{y^{(\sampleidx)}}{1\!+\!\exp \big( y^{(\sampleidx)} \big(\vw^{(\itercntr\!-\!1)}\big)^{T} \vx^{(\sampleidx)}\big)} \vx^{(\sampleidx)}$  (do a GD step \eqref{equ_def_GD_step})
 \Until convergence 
-\Ensure $\vw^{(\itercntr)}$ (which approximates the optimal weight vector $\vw_{\rm opt}$ defined in \eqref{equ_smooth_problem_logeg})
+\Ensure $\vw^{(\itercntr)}$, which approximates a solution $\vw_{\rm opt}$ of \eqref{equ_smooth_problem_logeg})
 \end{algorithmic}
 \end{algorithm}
 
@@ -6243,16 +6243,17 @@ plot coordinates{(5,5)};
 
 
 
-As discussed in Chapter \ref{ch_Optimization}, a principled approach to learn a 
-good hypothesis is ERM. The idea of ERM is to learn a hypothesis $\hat{h} \in \hypospace$ that incurs 
-minimum average loss on a set of labeled datapoints (the training set). The minimum 
-average loss achieved by a hypothesis that solves the ERM is referred to as 
-the training error. ERM makes sense if the training error of a hypothesis 
-is also a good indicator for the typical loss incurred on datapoints outside 
-the training set. Whether the training error of a hypothesis is a reliable 
-indicator for its error on datapoints outside the training set depends on 
-the statistical properties of the datapoints and on the hypothesis space 
-used by the ML method.  
+Chapter \ref{ch_Optimization} discussed ERM as a principled approach to learning a 
+good hypothesis out of a hypothesis space or model. The idea of ERM is to learn a 
+hypothesis $\hat{h} \in \hypospace$ that incurs minimum average loss on a set of 
+labeled datapoints (the training set). The minimum average loss achieved by a 
+hypothesis that solves the ERM is referred to as the training error. 
+
+ERM makes sense if the training error of a hypothesis is also a good indicator for 
+the typical loss incurred on datapoints outside the training set. Whether the training 
+error of a hypothesis is a reliable indicator for its error on datapoints outside the 
+training set depends on the statistical properties of the datapoints and on the 
+hypothesis space used by the ML method.  
 
 %The training error is often not a good estimate for the average performance 
 %of the learnt hypothesis $\hat{h}$. 
@@ -6262,8 +6263,8 @@ of features. This results in a high-dimensional space of
 linear maps. Another example are deep learning methods that use 
 high-dimensional hypothesis spaces constituted by maps represented 
 by deep neural networks with billions of tunable weights. For such vast 
-hypothesis spaces, it is quite easy to find some hypothesis that fits the 
-training data well, resulting in a small training error. However, such a 
+hypothesis spaces, it is quite easy to find a hypothesis that fits the given 
+training data well and, in turn, achieve a small training error. However, such a 
 hypothesis might incur a large loss when predicting the labels of datapoints 
 outside the training data. 
 %can be much smaller than the average loss. This happens if the training algorithm 
@@ -6271,9 +6272,9 @@ outside the training data.
 
 A ML method overfits if it learns a predictor $h \in \hypospace$ that 
 accurately predicts the labels of the datapoints in the training set 
-but does a poor job when predicting labels of datapoints outside the 
-training set. Section \ref{sec_overfitting_sec_6} analyzes overfitting of 
-linear regression by using a probabilistic model for datapoints. 
+but does a poor job when predicting labels of datapoints outside 
+the training set. Section \ref{sec_overfitting_sec_6} using a probabilistic 
+model for datapoints to analyzes overfitting of linear regression methods. 
 
 This chapter discusses a simple validation procedure that allows to 
 detect and avoid overfitting. Section \ref{sec_validate_predictor} will 
@@ -6376,7 +6377,7 @@ whenever looking at a wave (Figure \ref{equ_wave_as_tractor}).
 \end{figure}
 
 
-For the sake of the argument, we assume that the child uses a linear predictor 
+For the sake of argument, we assume that the child uses a linear predictor 
 $h^{(\vw)}(\vx) = \vx^{T} \vw$, using the features $\vx$ of the image, and encodes 
 the fact of showing a tractor by $y=1$ and if it is not showing a tractor by $y=-1$. 
 We learn the weight vector by minimizing the squared error loss \eqref{equ_def_cost_MSE} 
@@ -6439,9 +6440,9 @@ training data).
 Using a simple toy model for the data generation, we obtained the expression 
 \eqref{equ_decomp_E_pred_toy_model} for the average prediction error. This 
 average prediction error is lower bounded by the noise variance $\sigma^{2}$ 
-which might be very large even when the training error is zero. Thus, when a method overfits, 
-a small training error can be highly misleading regarding the average prediction 
-error of a hypothesis. 
+which might be very large even when the training error is zero. Thus, when a 
+method overfits, a small training error can be highly misleading regarding the 
+average prediction error of a hypothesis. 
 
 A simple, yet quite useful, strategy to detect if a predictor $\hat{h}$ overfits the training 
 dataset $\dataset^{(\rm train)}$, is to compare the resulting training error 
@@ -6550,13 +6551,12 @@ A golden rule of ML practice: use different datapoints for the learning
 }}
 \end{center}
  
-To validate the hypothesis learn by some ML method, we can use the 
-following steps. 
+To validate the hypothesis learnt by a ML method we can use the following steps. 
 \begin{enumerate} 
 \item We randomly divide (``split'') the entire set $\dataset$ of labeled datapoints into 
 two disjoint subsets $\dataset = \trainset \cup \valset$ (see Figure \ref{fig_split_train_val}). 
 The first subset $\trainset$ is referred to as the {\bf training set}. The second subset $\valset$ 
-is referred to as {\bf validation set}.  
+is referred to as the {\bf validation set}.  
 \item We learn a hypothesis $\hat{h}$ via ERM using the training data $\trainset$ (cf.\ \eqref{equ_def_ERM_funs}), 
 \begin{align} 
 \label{equ_def_hat_h_fitting}
@@ -6566,7 +6566,7 @@ is referred to as {\bf validation set}.
 with corresponding {\bf training error} 
 \begin{equation} 
 \label{equ_def_training_error_val}
-\emperror(\hat{h}|\trainset)=  (1/\samplesize_{\rm t}) \sum_{\sampleidx=1}^{\samplesize_{\rm t}} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})} {\hat{h}}.  %( y- \hat{h}(\vx))^2.
+\emperror(\hat{h}|\trainset)=  (1/\samplesize_{\rm t})\sum_{(\vx,y) \in \trainset}  \loss{(\vx,y)} {\hat{h}}.  %( y- \hat{h}(\vx))^2.
 \end{equation}  
 \item We validate the hypothesis $\hat{h}$ obtained from \eqref{equ_def_hat_h_fitting} by computing the empirical risk 
 \begin{equation} 
@@ -6618,11 +6618,13 @@ Consider datapoints characterized by a feature vector $\vx$ and binary label $y 
 Assume we aim at learning a hypothesis $h(\vx) = \vw^{T} \vx$ to classify datapoints 
 via $\hat{y}=1$ if $h(\vx) \geq 0$ while $\hat{y}=-1$ otherwise. The learning is based 
 on a dataset $\dataset$ which contains only one single (!) datapoint with $y=-1$. If 
-we then use above approach to split into training and validation set with high probability we will 
-never use the datapoint with $y=-1$ in any validation. This cannot happen when using 
-$k$-fold CV since the single data point must be one of the validation folds. However, 
-even in $k$-fold CV, we evaluate the performance of $h(\vx)$ using only one single 
-datapoint with $y=-1$. 
+we then split the dataset into training and validation set, it is with high probability that 
+the validation set does not include any datapoint with $y=-1$. This cannot happen 
+when using $k$-fold CV since the single data point must be one of the validation folds. 
+However, even when using $k$-fold CV for such an imbalanced dataset is problematic since 
+we evaluate the performance of a hypothesis $h(\vx)$ using only one single 
+datapoint with $y=-1$. The validation error will then be dominated by the performance 
+of $h(\vx)$ only on datapoints with $y=1$. 
 
 
 \section{Model Selection}
@@ -6681,13 +6683,14 @@ obtained when applying the predictor $\hat{h}_{l}$ to the {\bf validation datase
 \label{sec_gen_linreg}
 \emph{More Data Beats Clever Algorithms ?; More Data Beats Clever Feature Selection?}
 
-A core problem or challenge within ML is the verification (or validation) if a 
-predictor or classifier which works well on a labeled training dataset will also 
-work well (generalize) to new datapoints. In practice we can only validate 
-by using different datapoints than for training an ML method via ERM. However, 
-if we can find some generative probabilistic model which well explains the 
-observed datapoints $\vz^{(\sampleidx)}$ we can study the generalization 
-ability via probability theory. 
+A core problem or challenge within ML is the verification (or validation) whether a 
+hypothesis incurring a small loss on a training dataset, will also incur a small 
+loss on new datapoints (generalize well). Roughly speaking, we must validate 
+a hypothesis by evaluating the loss of its predictions for datapoints that have 
+not been used already for learning that hypothesis. However, if interpret  
+datapoints as realizations of i.i.d.\ random variables, we can study the 
+generalization ability (beyond the training set) of a hypothesis via probability 
+theory. 
 
 To study generalization within a linear regression problem 
 (see Section \ref{sec_lin_regression}), we will invoke a {\bf probabilistic toy model} 
@@ -6721,9 +6724,10 @@ hypothesis space
 \vspace*{-1mm}
 \end{equation}
 The design parameter $r$ determines the size of the hypothesis space 
-$\hypospace^{(r)}$ and allows to control the computational complexity 
-of the resulting ML method which is based on the hypothesis space 
-$\hypospace^{(r)}$. For $r < \featuredim$, the hypothesis space $\hypospace^{(r)}$ 
+$\hypospace^{(r)}$ and, in turn, the computational complexity of learning 
+the optimal hypothesis in $\hypospace^{(r)}$. 
+
+For $r < \featuredim$, the hypothesis space $\hypospace^{(r)}$ 
 is a proper subset of the space of linear predictors \eqref{equ_def_hypo_linear_pred} 
 used within linear regression (see Section \ref{sec_lin_regression}). Note that 
 each element $h^{(\vw)} \in \hypospace^{(r)}$ corresponds to a particular 
@@ -6736,10 +6740,10 @@ Within our toy model (see \eqref{equ_linear_obs_model}, \eqref{equ_toy_model_iid
 and \eqref{equ_labels_training_data}), the training datapoints $(\vx^{(\sampleidx)},y^{(\sampleidx)})$ 
 are i.i.d.\ copies of the datapoint $\vz = (\vx,y)$. 
 
-Each of the datapoints in the training dataset is statistically independent from 
-any other datapoint $(\vx,y)$ (which has not been used for training). However, 
-the training datapoints $(\vx^{(\sampleidx)},y^{(\sampleidx)})$ and any other (new) 
-datapoint $(\vx,y)$ share the same probability distribution (a multivariate normal distribution): 
+The datapoints in the training dataset and any other datapoints outside the 
+training set are statistically independent. However, the training datapoints 
+$(\vx^{(\sampleidx)},y^{(\sampleidx)})$ and any other datapoint $(\vx,y)$ are 
+drawn from  the same probability distribution, which is a multivariate normal distribution, 
 \begin{equation} 
 \label{equ_toy_model_iid}
 \vx, \vx^{(\sampleidx)} \mbox{ i.i.d. with } \vx, \vx^{(\sampleidx)} \sim \mathcal{N}(\mathbf{0}, \mathbf{I}) 
@@ -6765,9 +6769,9 @@ with feature matrix $\mX_{r}$ and label vector $\vy$ defined as
 \vy& \!=\!\big(y^{(1)},\ldots,y^{(\samplesize_{\rm t})}\big)^{T}\!\in\!\mathbb{R}^{\samplesize_{\rm t}}.
 \end{align} 
 
-It will be convenient to tolerate a slight abuse of notation and denote by $\widehat{\vw}$ 
-both, the length-$r$ vector \eqref{equ_optimal_weight_closed_form} as well as the zero 
-padded length-$\featuredim$ vector $(\widehat{\vw}^{T},\mathbf{0})^{T}$. 
+It will be convenient to tolerate a slight abuse of notation and denote both, 
+the length-$r$ vector \eqref{equ_optimal_weight_closed_form} as well as the zero 
+padded length-$\featuredim$ vector $(\widehat{\vw}^{T},\mathbf{0})^{T}$, by $\widehat{\vw}$. 
 This allows us to write % the predictor $h^{(\hat{\vw})}(\vx)$ as 
 \begin{equation} 
 h^{(\widehat{\vw})}(\vx) = \widehat{\vw}^{T} \vx. 
@@ -6805,9 +6809,9 @@ results in a non-zero {\bf estimation error}
 \label{equ_def_est_error}
 \Delta \vw \defeq \widehat{\vw} - \bar{\vw}. 
 \end{equation} 
-Note that the estimation error is a random quantity since the 
-learnt weight vector $\widehat{\vw}$ (see \eqref{equ_optimal_weight_closed_form}) 
-is itself a random quantity.
+The estimation error \eqref{equ_def_est_error} is a random quantity (realization of a random variable) 
+since the learnt weight vector $\widehat{\vw}$ (see \eqref{equ_optimal_weight_closed_form}) 
+is a random quantity itself.
 
 {\bf Bias and Variance.} 
 As we will see below, the prediction quality achieved by $h^{(\widehat{\vw})}$ 
@@ -6846,12 +6850,12 @@ the linear regression problem.
 
 The bias \eqref{equ_def_bias_term} is zero if $\bar{w}_{l}=0$ for any index 
 $l=r+1,\ldots,\featuredim$, or equivalently if $h^{(\bar{\vw})} \in \hypospace^{(r)}$. 
-We can ensure the condition $h^{(\bar{\vw}} \in \hypospace^{(r)}$ for every 
-possible true weight vector $\bar{\vw}$ in \eqref{equ_linear_obs_model} only if we 
-use the hypothesis space $\hypospace^{(r)}$ with $r=\featuredim$. 
-For $r < \featuredim$, we cannot guarantee a zero bias term since we 
-have no access to the true underlying weight vector $\bar{\vw}$ 
-in \eqref{equ_linear_obs_model}. In general, the bias term decreases for 
+We can ensure that for every possible true weight vector $\bar{\vw}$ in \eqref{equ_linear_obs_model} 
+only if we use the hypothesis space $\hypospace^{(r)}$ with $r=\featuredim$. 
+
+When using the model $\hypospace^{(r)}$ with $r < \featuredim$, we cannot guarantee 
+a zero bias term since we have no access to the true underlying weight vector $\bar{\vw}$ 
+in \eqref{equ_linear_obs_model}. In general, the bias term decreases with an 
 increasing model size $r$ (see Figure \ref{fig_bias_variance}). We 
 highlight that the bias term does not depend on the variance 
 $\sigma^{2}$ of the noise $\varepsilon$ in our toy model \eqref{equ_linear_obs_model}. 
@@ -6882,7 +6886,7 @@ contrast to the bias term which decreases with increasing $r$.
 The opposite dependency of bias and variance on the model 
 complexity is known as the {\bf bias-variance trade-off}. Thus, 
 the choice of model complexity $r$ (see \eqref{equ_generalization_hypospace_r}) 
-has to balance between small variance and small bias term. 
+has to balance between a small variance and a small bias. 
 
 \begin{figure}
 \begin{center}
@@ -6907,9 +6911,9 @@ has to balance between small variance and small bias term.
 
 
 {\bf Generalization.}
-Consider the linear hypothesis $h(\vx) = \hat{\vw}^{T} \vx$ with weight 
-vector \eqref{equ_optimal_weight_closed_form} obtained by minimizing 
-the training error. We would like this predictor to generalize well to datapoints 
+Consider the linear hypothesis $h(\vx) = \hat{\vw}^{T} \vx$ with the weight 
+vector \eqref{equ_optimal_weight_closed_form} which results in a minimum 
+training error. We would like this predictor to generalize well to datapoints 
 which are different from the training set. This generalization capability can 
 be quantified by the expected loss or risk %\eqref{}. 
 %In most ML applications, we are primarily interested in how well a 
@@ -6955,7 +6959,8 @@ be quantified by the expected loss or risk %\eqref{}.
 \end{align} 
 Step (a) uses the law of total expectation \cite{BillingsleyProbMeasure} and 
 step (b) uses that, conditioned on the dataset $\dataset$, the feature vector 
-$\vx$ of a random datapoint has zero mean and covariance matrix $\expect \{ \vx \vx^{T}\}=\mathbf{I}$ (see \eqref{equ_toy_model_iid}). 
+$\vx$ of a new datapoint is a random vector with zero mean and a 
+covariance matrix $\expect \{ \vx \vx^{T}\}=\mathbf{I}$ (see \eqref{equ_toy_model_iid}). 
 
 According to \eqref{equ_decomp_E_pred_toy_model}, the average (expected) 
 prediction error $\mathcal{E}_{\rm pred}$ is the sum of three components: (i) 
@@ -7037,7 +7042,7 @@ the ML method could be improved.
 
 In some applications we might know a benchmark $\mathcal{E}_{0}$ 
 for the average loss that is considered as acceptable. Such a benchmark 
-can be obtained via a probabilistic model for data. Given such a probabilistic 
+can be obtained using a probabilistic model for the datapoints. Given such a probabilistic 
 model we can compute the minimum achievable expected loss or risk \eqref{equ_def_risk}. 
 This minimum risk can often be read from the posterior distribution $p(y|\vx)$ of 
 the label $y$, given the features $\vx$ of a datapoint. 
@@ -7057,11 +7062,14 @@ the validation error which indicates that there is no overfitting and we cannot
 reduce the validation error by much. 
 \item $\emperror(\hat{h}| \valset) \gg \emperror(\hat{h}| \trainset) \approx E_{0}$: 
 The ERM \eqref{equ_def_ERM_funs} results in a hypothesis $\hat{h}$ 
-with sufficiently small training error but when applied to new (validation) 
-data the performance of $\hat{h}$ is significantly worse. This is an 
-indicator for overfitting which can be addressed either by using a small 
-model (hypothesis space). Another option to avoid overfitting is to use 
-regularization techniques which will be discussed in Chapter \ref{ch_overfitting_regularization}. 
+with sufficiently small training error but when applied to new datapoints, 
+such as those in the validation set, the performance of $\hat{h}$ is significantly worse. 
+This is an indicator for overfitting which can be addressed by using using a smaller 
+hypothesis space. Reducing the size of the hypothesis space can be 
+achieved by using only a subset of features in a linear model \eqref{equ_lin_hypospace}, 
+by using a shorter decision tree (Section \ref{sec_decision_trees}) or by using a smaller ANN (Section \ref{sec_deep_learning}). 
+Another option to avoid overfitting is to use 
+regularization techniques, which will be discussed in Chapter \ref{ch_overfitting_regularization}. 
 \item $\emperror(\hat{h}| \trainset) \gg \emperror(\hat{h}| \valset)$: 
 This indicates that the method for solving the ERM \eqref{equ_def_ERM_funs} 
 fails to find (an approximation of) the minimum in \eqref{equ_def_ERM_funs}. 
@@ -7076,11 +7084,11 @@ the step size $\alpha$ in the GD step \eqref{equ_def_GD_step} is chosen too larg
 
 \subsection{Validation Set Size} 
 Consider a linear regression problem with datapoints characterized 
-by a scalar feature and numeric label. Assume datapoints are i.i.d. 
+by a scalar feature and a numeric label. Assume datapoints are i.i.d. 
 Gaussian with zero-mean and covariance matrix $\mathbf{C}$. How 
 many datapoints do we need to include in the validation set such 
-that with probability at least $0.8$ the validation error does 
-not deviate by more than $20$ percent from the expected loss or risk. 
+that with probability of at least $0.8$ the validation error does 
+not deviate by more than $20$ percent from the expected loss or risk?
 
 \subsection{Validation Error Smaller Than Training Error?} 
 Consider learning a linear hypothesis by minimizing the average 

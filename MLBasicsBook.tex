@@ -4121,8 +4121,9 @@ in the middle (hidden) layer. The output of the $j$-th node in the hidden layer
 is given by $s_{j} = g( \sum_{i=1}^{\featuredim} w_{j,i} x_{i} )$ with some 
 (typically non-linear) {\bf activation function} $g(z)$. The input (or activation) 
 $z$ for the activation (or output) $g(z)$ of a neuron is a weighted 
-(linear) combination $ \sum_{i=1}^{\featuredim} w_{j,i} s_{i}$ of the outputs $s_{i}$ of the nodes in the previous layer. For 
-the ANN depicted in Figure \ref{fig_ANN}, the activation of the neuron $s_{1}$ is $z=w_{1,1}x_{1} + w_{1,2}x_{2}$.
+(linear) combination $ \sum_{i=1}^{\featuredim} w_{j,i} s_{i}$ of the outputs $s_{i}$ 
+of the nodes in the previous layer. For the ANN depicted in Figure \ref{fig_ANN}, 
+the activation of the neuron $s_{1}$ is $z=w_{1,1}x_{1} + w_{1,2}x_{2}$.
 
 Two popular choices for the activation function used within ANNs 
 are the {\bf sigmoid function} $g(z) = \frac{1}{1+\exp(-z)}$ or the 
@@ -4288,8 +4289,8 @@ representation of hypothesis maps is beneficial for the computational
 implementation of ML methods. First, we can evaluate a map $h^{(\vw)}$ represented 
 by an ANN efficiently using modern parallel and distributed computing 
 infrastructure via message passing over the network. Second, the 
-graphical ANN representation of hypotheses allows to efficiently
-compute the gradient of the loss function via a message passing 
+graphical representation of a parametrized hypothesis in the form 
+of a ANN allows to efficiently compute the gradient of the loss function via a message passing 
 procedure known as {\bf back-propagation} \cite{Goodfellow-et-al-2016}.
 
 \section{Maximum Likelihood Methods}
@@ -7965,9 +7966,9 @@ what a good choice for $k$ is. The choice for the number
 $k$ of clusters depends on how the clustering methods is 
 used within an overall ML application. If the clustering method 
 serves as a pre-processing for a supervised ML problem, we 
-could try out different values of the number $k$ and determine 
-validation errors for each choice. Then, we pick value of $k$ 
-which results in the smallest validation error. 
+could try out different values of the number $k$ and determine, 
+for each choice $k$, the corresponding validation error. We 
+pick then the value of $k$ which results in the smallest validation error. 
 
 Another approach to choosing $k$ is the so-called ``elbow-method''. 
 We run the $k$-means Algorithm \ref{alg:kmeansimpl} for different choice 

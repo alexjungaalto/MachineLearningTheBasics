@@ -337,9 +337,9 @@ showstringspaces=false            %
 	\end{tikzpicture}
 	\vspace*{-9mm}
 	\caption{
-		Machine learning implements the scientific principle of ``trial and error''. 
-		Machine learning continuously validates and refines a hypothesis based on 
-		a model about a phenomenon that generates observable data.}
+		Machine learning combines three main components: data, model and loss. Machine learning 
+		methods implement the scientific principle of ``trial and error''. These methods continuously validate and 
+		refine a model based on the loss incurred by its predictions about a phenomenon that generates data.}
 	\label{fig_AlexMLBP}
 \end{figure}
 \end{center}
@@ -2777,8 +2777,8 @@ Many ML methods are based on a simple probabilistic model for the
 observed datapoints (i.i.d.). Using this assumption, we can define the 
 average or generalization risk as the expectation of the loss. A large class 
 of ML methods is based on approximating the expected value of the loss 
-by an empirical (sample) average over a finite set of labeled datapoints 
-(referred to as training set). 
+by an empirical (sample) average over a finite set of labeled datapoints which 
+are we refer to as the training set. 
 
 We define the empirical risk of some predictor when applied to labeled datapoints $\dataset=\big(\vx^{(1)},y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)},y^{(\samplesize)}\big)$ 
 as 
@@ -3072,7 +3072,7 @@ different predictor maps does $\mathcal{H}$ contain?
  Linear regression models the relation between the label $y$ and feature $x$ of 
  a datapoint by $y = h(x) + e$ with some small additive term $e$. The predictor 
  map $h(x)$ is assumed to be linear $h(x) =w_1 x + w_0$. The weight $w_{0}$ is 
- sometimes referred to as intercept or bias term. Assume we know for a given 
+ sometimes referred to as the intercept (or bias) term. Assume we know for a given 
  linear predictor map its values $h(x)$ for $x=1$ and $x=3$. Can you determine 
  the weights $w_{1}$ and $w_{0}$ based on $h(1)$ and $h(3)$?
  
@@ -3657,7 +3657,7 @@ boundary and the classes $\mathcal{C}_{1}$ and $\mathcal{C}_{2}$
 is typically determined by few datapoints (such as $\vx^{(6)}$ in 
 Figure \ref{fig_svm}) which are closest to the decision boundary. 
 These datapoints have minimum distance to the decision boundary 
-and are referred to as {\bf support vectors}. 
+and are referred to as the {\bf support vectors}. 
 
 %These support vectors 
 %fully determine the resulting classifier $h^{(\vw_{\rm SVM})}$ and 
@@ -4306,7 +4306,7 @@ distributed (i.i.d.) realizations $\vz^{(1)},\ldots,\vz^{(\samplesize)}\sim \pro
 Maximum likelihood estimation can be interpreted as an ML problem with a hypothesis space 
 parameterized by the weight vector $\vw$, i.e., each element $h^{(\vw)}$ of the hypothesis 
 space $\hypospace$ corresponds to one particular choice for the 
-weight vector $\vw$, and loss function 
+weight vector $\vw$, and the loss function 
 \begin{equation} 
 \label{equ_loss_ML}
 \loss{\vz}{h^{(\vw)}} \defeq - \log {\rm P} (\vz; \vw). 
@@ -4641,8 +4641,9 @@ The loss function of nLasso is a combination of squared error and TV (see \eqref
 \begin{equation}
 \loss{(\vx,y)}{h} = (y - h(\vx))^{2} + \lambda \| h  \|_{\rm TV}. 
 \end{equation} 
-The regularization parameter $\lambda$ allows to trade-off a small prediction error $y-h(\vx)$ 
-against ``clusteredness'' of the predictor $h$. 
+Choosing a small value for the regularization parameter $\lambda$ put more emphasis 
+on a small prediction error $y-h(\vx)$. Using a large value for $\lambda$ favours clustered 
+hypothesis $h$, which is constant over well-connected subsets of nodes. 
 
 
 {\bf Logistic Network Lasso.} The logistic network Lasso \cite{LogisticNLassoAsilomar2018,LogisticNLasso} 
@@ -4891,11 +4892,11 @@ we can reformulate the optimization problem \eqref{equ_def_ERM_funs}
 as an optimization of the weight vector, 
 \begin{equation}
 \label{eq_def_ERM_weight}
-    \vw_{\rm opt} = \argmin_{\vw \in \mathbb{R}^{\featuredim}} f(\vw) \mbox{ with } f(\vw) \defeq \emperror\big(h^{(\vw)} |\dataset\big). 
+    \vw_{\rm opt} = \argmin_{\vw \in \mathbb{R}^{\featuredim}} f(\vw) \mbox{ with } f(\vw) \defeq(1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h^{(\vw)}}. 
 \end{equation}
 The objective function $f(\vw)$ in \eqref{eq_def_ERM_weight} is 
-the empirical risk $\emperror\big(h^{(\vw)} |\dataset\big)$ achieved 
-by $h^{(\vw)}$ when applied to the datapoints in the dataset $\dataset$. 
+the empirical risk $\emperror\big(h^{(\vw)} |\dataset\big)$ incurred  
+by the hypothesis $h^{(\vw)}$ when applied to the datapoints in the dataset $\dataset$. 
 
 The optimization problems \eqref{eq_def_ERM_weight} and \eqref{equ_def_ERM_funs} 
 are fully equivalent. Given the optimal weight vector $\vw_{\rm opt}$ solving 
@@ -6260,14 +6261,16 @@ hypothesis space used by the ML method.
 %of the learnt hypothesis $\hat{h}$. 
 Modern ML methods often use high-dimensional hypothesis spaces. 
 One example is linear regression with datapoints having a vast number 
-of features. This results in a high-dimensional space of 
-linear maps. Another example are deep learning methods that use 
-high-dimensional hypothesis spaces constituted by maps represented 
-by deep neural networks with billions of tunable weights. For such vast 
-hypothesis spaces, it is quite easy to find a hypothesis that fits the given 
-training data well and, in turn, achieve a small training error. However, such a 
-hypothesis might incur a large loss when predicting the labels of datapoints 
-outside the training data. 
+of features. This results in a high-dimensional space of linear maps. 
+Another example for a high-dimensional hypothesis space is used by 
+deep learning methods. These methods use hypothesis spaces constituted 
+by hypothesis maps represented  by deep neural networks with billions of 
+tunable weights. 
+
+When using a high-dimensional hypothesis space, it is quite easy to find a 
+hypothesis that fits the given training data well and, in turn, achieve a small 
+training error. However, such a hypothesis might incur a large loss when 
+predicting the labels of datapoints outside the training data. 
 %can be much smaller than the average loss. This happens if the training algorithm 
 %overfits the training data. 
 
@@ -6302,7 +6305,7 @@ the validation error.
 We can use validation not only to detect if a ML method overfits. 
 The validation error can also be used as a performance measure 
 for the hypothesis space or model that is used by that method. 
-This is similar in spirit to the the concept of a loss function that 
+This is similar in spirit to the concept of a loss function that 
 allows to evaluate the quality of a hypothesis $h\!\in\!\hypospace$. 
 
 The validation error allows to evaluate the quality of the entire hypothesis 
@@ -7017,10 +7020,10 @@ The core idea behind the bootstrap is to use the empirical distribution
 or histogram $\hat{p}(\vz)$ of the available datapoints $\dataset$ to 
 generate $B$ new datasets $\dataset^{(1)},\ldots$. Each dataset is 
 constructed such that is has the same size as the original dataset $\dataset$. 
-The then solve ERM \eqref{equ_def_ERM_funs} for each dataset $\dataset^{(b)}$ to obtain 
-the hypothesis $\hat{h}^{(b)}$. The hypothesis $\hat{h}^{(b)}$ is a realization 
+For each dataset $\dataset^{(b)}$, we solve a separate ERM \eqref{equ_def_ERM_funs} 
+to obtain the hypothesis $\hat{h}^{(b)}$. The hypothesis $\hat{h}^{(b)}$ is a realization 
 of a random variable whose distribution is determined by the empirical distribution 
-$\hat{p}(\vz)$ as well as the hypothesis space and loss function used in the ERM \eqref{equ_def_ERM_funs}. 
+$\hat{p}(\vz)$ as well as the hypothesis space and the loss function used in the ERM \eqref{equ_def_ERM_funs}. 
 
 
 
@@ -7042,7 +7045,7 @@ we diagnose the ML method. This diagnosis might provide insight into how
 the ML method could be improved. 
 
 In some applications we might know a benchmark $\mathcal{E}_{0}$ 
-for the average loss that is considered as acceptable. Such a benchmark 
+for the average loss that is considered acceptable. Such a benchmark 
 can be obtained using a probabilistic model for the datapoints. Given such a probabilistic 
 model we can compute the minimum achievable expected loss or risk \eqref{equ_def_risk}. 
 This minimum risk can often be read from the posterior distribution $p(y|\vx)$ of 
@@ -7219,11 +7222,11 @@ regularization terms which are used for regularized ERM on the (typically small)
 subset of labeled datapoints. 
 
 Multitask learning methods exploit similarities between different ML problems. 
-As an example consider ML problem that use the same datapoints and their 
-features but different labels. The similarity between ML problems could mean 
-that the same subset of features is relevant for all ML problems. 
-Section \ref{sec_mtl_regularization} designs regularization terms for individual 
-ML problems by using their similarities. 
+As an example consider two ML problems that use the same datapoints and 
+their features but different choices for their labels. Here, a similarity between 
+these two ML problems could arise if the same subset of features is relevant 
+for both choices for the label. Section \ref{sec_mtl_regularization} designs 
+regularization terms for individual ML problems by using their similarities. 
 
 
 
@@ -7259,13 +7262,11 @@ $\hypospace' \subset \hypospace$ we can find a penalty $\mathcal{R}(h)$ term suc
 solutions of \eqref{equ_ERM_fun_pruned} and \eqref{equ_ERM_fun_regularized} coincide. Similarly 
 for a many popular types of penalty terms $\mathcal{R}(h)$, we can find a restriction $\hypospace' \subset \hypospace$ 
 such that the solutions of \eqref{equ_ERM_fun_pruned} and \eqref{equ_ERM_fun_regularized} coincide. 
-This statements can be made precise using the theory of duality for optimization problems (see \cite{BertsekasNonLinProgr}). 
+The relation between the optimization problems \eqref{equ_ERM_fun_pruned} and \eqref{equ_ERM_fun_regularized} 
+can be made precise using the concept of duality in optimization theory \cite{BertsekasNonLinProgr}. 
 
-
-
-In what follows we will analyze the occurrence of overfitting 
-in Section \ref{sec_overfitting} and then discuss in Section 
-\ref{sec_regularization} how to avoid overfitting using regularization. 
+%We will analyze the occurrence of overfitting in Section \ref{sec_overfitting} and then discuss in Section 
+%\ref{sec_regularization} how to avoid overfitting using regularization. 
 
 
 \section{Robustness} 
@@ -7351,15 +7352,21 @@ which penalizes overly large weight vectors $\mathbf{w}$. Thus, we arrive
 at {\bf regularized ERM}
 \begin{align} 
 \label{equ_rerm}
-\hat{\vw}^{(\lambda)}  & = \argmin_{h^{(\vw)} \in  \hypospace} \big[ \emperror(h^{(\vw)}|\dataset^{(\rm train)})+ \lambda \| \mathbf{w} \|^{2} \big] \nonumber \\ %  \nonumber \\ 
-&  = \argmin_{h^{(\vw)} \in  \hypospace} \big[(1/\samplesize_{\rm t}) \sum_{\sampleidx=1}^{\samplesize_{\rm t}} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h^{(\vw)}} + \lambda \| \mathbf{w} \|^{2} \big],
+\hat{\vw}^{(\lambda)}  & = \argmin_{\vw \in  \mathbb{R}^{\featurelen}} \big[ \emperror(h^{(\vw)}|\dataset^{(\rm train)})+ \lambda \| \mathbf{w} \|^{2} \big] \nonumber \\ %  \nonumber \\ 
+&  = \argmin_{\vw \in  \mathbb{R}^{\featurelen}} \big[(1/\samplesize_{\rm t}) \sum_{\sampleidx=1}^{\samplesize_{\rm t}} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h^{(\vw)}} + \lambda \| \mathbf{w} \|^{2} \big],
 \end{align}
-with the regularization parameter $\lambda >0$. The parameter $\lambda$ trades 
-a small training error $\emperror(h^{(\vw)}|\dataset)$ against a small norm $\| \mathbf{w} \|$ 
-of the weight vector. In particular, if we choose a large value for $\lambda$, then 
-weight vectors $\vw$ with a large norm $\| \vw \|$ are ``penalized'' by having a larger 
-objective function and are therefore unlikely to be a solution (minimizer) of the 
-optimization problem \eqref{equ_rerm}. 
+with the  {\bf regularization parameter} $\lambda \geq 0$. 
+
+Choosing a small value for $\lambda$ in \eqref{equ_rerm} puts more emphasis on obtaining a 
+predictor $h(\vx) = \big( \hat{\vw}^{(\lambda)}  \big)^{T} \vx$ incurring a small training error. 
+For the extreme case of $\lambda =0$, regularized ERM \eqref{equ_rerm} reduces to ERM \eqref{eq_def_ERM_weight}. 
+
+% regularization parameter $\lambda$ trades a small training error $\emperror(h^{(\vw)}|\dataset)$ 
+%against a small norm $\| \mathbf{w} \|$ of the weight vector. In particular, 
+If we choose a large value for $\lambda$, weight vectors $\vw$ with a large norm $\| \vw \|$ are 
+``penalized'' by incurring a larger value of the objective function in \eqref{equ_rerm}. Increasing the value 
+of $\lambda$ results in the solution (minimizer) of the optimization problem \eqref{equ_rerm} having 
+smaller norm $\| \vw \|$. 
 
 Specialising \eqref{equ_rerm} to the squared error loss and linear predictors 
 yields {\bf regularized linear regression} (see \eqref{equ_def_cost_MSE}): 
@@ -7395,7 +7402,7 @@ regression (see \eqref{equ_reg_lin_reg_opt_weight} and \eqref{equ_def_cost_MSE})
 is important to note that for $\lambda>0$, the formula \eqref{equ_close_form_reglinreg} 
 is always valid, even when $\mX^{T} \mX$ is singular (not invertible). This implies, in turn, 
 that for $\lambda> 0$ the optimization problem \eqref{equ_def_rlr_w_opt} (and \eqref{equ_reg_lin_reg_opt_weight}) 
-have a unique solution (which is given by \eqref{equ_close_form_reglinreg}). 
+has a unique solution (which is given by \eqref{equ_close_form_reglinreg}). 
 
 We now study the effect of regularization on the bias, variance 
 and average prediction error incurred by the predictor $h^{(\hat{\vw}^{(\lambda)})}(\vx) = \big(\hat{\vw}^{(\lambda)}\big)^{T} \vx$. 
@@ -7504,7 +7511,7 @@ rewrite \eqref{equ_def_rlr_w_opt} as the quadratic problem
 %\min_{\mathbf{w} \in \mathbb{R}^{\featuredim}} \mathbf{w}^{T} \mathbf{Q} \mathbf{w}  \mbox{, with } \mathbf{Q} = \mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I}.
 \end{align} 
 This is similar to the quadratic optimization problem \eqref{equ_quadr_form_linreg} 
-underlying linear regression but with different matrix $\mQ$. It turns out 
+underlying linear regression but with a different matrix $\mQ$. It turns out 
 that the convergence speed of GD (see \eqref{equ_def_GD_step}) applied 
 to solving a quadratic problem of the form \eqref{equ_quadr_form_reglinreg} 
 depends crucially on the condition number $\kappa(\mQ) \geq 1$ of the 
@@ -7515,12 +7522,12 @@ This condition number is given by $\frac{\lambda_{\rm max}((1/\samplesize) \mX^{
 (see \eqref{equ_quadr_form_linreg}) and given by $\frac{\lambda_{\rm max}((1/\samplesize)\mX^{T} \mX) + \lambda} {\lambda_{\rm min}((1/\samplesize)\mX^{T} \mX)+ \lambda}$ 
 for regularized linear regression \eqref{equ_quadr_form_reglinreg}. For increasing 
 regularization parameter $\lambda$, the condition number obtained for regularized 
-linear regression \eqref{equ_quadr_form_reglinreg} tends to $1$: 
+linear regression \eqref{equ_quadr_form_reglinreg} tends to approach $1$, 
 \begin{equation}
 \label{equ_cond_numer_goes_1_rlr}
 \lim_{\lambda \rightarrow \infty} \frac{\lambda_{\rm max}((1/\samplesize)\mX^{T} \mX) + \lambda} {\lambda_{\rm min}((1/\samplesize)\mX^{T} \mX)+ \lambda} =1. 
 \end{equation} 
-Thus, according to \eqref{equ_cond_numer_goes_1_rlr}, the GD 
+According to \eqref{equ_cond_numer_goes_1_rlr}, the GD 
 implementation of regularized linear regression (see Algorithm \ref{alg:gd_reglinreg}) 
 with a large value of the regularization parameter $\lambda$ 
 in \eqref{equ_reg_lin_reg_opt_weight} will converge faster compared 
@@ -7590,7 +7597,7 @@ to learn some subspace of features that are most relevant ? (relation to feature
 %%%% use different tasks to construct regularizers ????
 Remember that a formal ML problem is specified by identifying 
 datapoints, their features and labels, a model (hypothesis space)
-and loss function. Note that we can use the very same raw data, model 
+and a loss function. Note that we can use the very same raw data, model 
 and loss function and still define many different ML problems by 
 using different choices for the label. Multitask learning aims at 
 exploiting relations between similar ML problems or tasks. 
@@ -7609,8 +7616,17 @@ an apple or not.
 Different choices for the label result in different ML problems. These 
 different ML problems are related since they are based on the same data 
 points, the hand-drawings. Some ML problems (label choices) are more 
-difficult to answer while others are easier to answer, e.g., if there no single 
-hand-drawing of an orange but many drawings of an apple. 
+difficult to solve while others are easier to solve. 
+
+One important criterion for the difficulty in solving a particular ML problem 
+is the availability of labeled datapoints. For some choices for the labels, we 
+might have no labeled datapoints available. Consider datapoints representing 
+different days in Finland. It might be easy to get labeled datapoints when the 
+label of a datapoint is the minimum daytime temperature measured at some 
+observation station of FMI. If we would use instead as the label the precise 
+water temperature at some remote lake (not having any sensors), we would 
+not have access to any labeled datapoint. 
+
 
 Consider the ML problem arising from guiding the operation of a mower robot. 
 For a mowing robot, it is important to determine if it is currently on grassland 
@@ -8102,12 +8118,12 @@ random draw from the distribution $\mathcal{N} (\vx ; {\bm \mu}^{(\clusteridx^{(
 Since the cluster indices $\clusteridx^{(\sampleidx)}$ are unknown,\footnote{After all, the goal 
 of soft-clustering is to estimate the cluster indices $\clusteridx^{(\sampleidx)}$.} 
 we model them as random variables. In particular, we model the cluster indices 
-$\clusteridx^{(\sampleidx)}$ as i.i.d.\ with probabilities$p_{\clusteridx} = \prob{ c^{(\sampleidx)} = \clusteridx}.$ 
+$\clusteridx^{(\sampleidx)}$ as i.i.d.\ with probabilities $p_{\clusteridx} = \prob{ c^{(\sampleidx)} = \clusteridx}.$ 
 
 The overall probabilistic model \eqref{equ_cond_dist_GMM}, \eqref{equ_def_cluster_prob} 
 amounts to a {\bf Gaussian mixture model} (GMM). The marginal distribution $\prob{\vx^{(\sampleidx)}}$, 
 which is the same for all datapoints $\vx^{(\sampleidx)}$, is a (additive) mixture of 
-multivariate Gaussian distributions, 
+multivariate normal (Gaussian) distributions, 
 \begin{equation} 
 \label{equ_def_GMM}
  \prob{\vx^{(\sampleidx)}} = \sum_{\clusteridx=1}^{\nrcluster} \underbrace{\prob{\clusteridx^{(\sampleidx)}=\clusteridx}}_{p_{\clusteridx}}  \underbrace{\prob{\vx^{(\sampleidx)} | \clusteridx^{(\sampleidx)}=\clusteridx}}_{\mathcal{N}(\vx^{(\sampleidx)};{\bm \mu}^{(\clusteridx)}, {\bm \Sigma}^{(\clusteridx)})}. 

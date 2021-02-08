@@ -1466,7 +1466,7 @@ are simply obtained by image transformation such as rotations or
 re-scaling (zoom-in or zoom-out) that do not change the depicted 
 objects. We will see in Chapter \ref{ch_overfitting_regularization} 
 that regularization techniques can be interpreted as an implicit 
-form of data augmentation.  
+data augmentation.  
 
 Instead of collecting more datapoints to ensure the condition $\samplesize/\featurelen$, 
 we can use try to reduce the number $\featurelen$ of features used to 
@@ -6237,10 +6237,9 @@ plot coordinates{(5,5)};
 \draw[dashed] (-1,2) -- (7,2) node[right,text width=5cm]{some benchmark \\ (Bayes' risk, human performance,$\ldots$)};
 \end{tikzpicture}
 \end{center}
-\label{fig_bars_val_sel}
-\caption{The diagnosis of ML methods is often based on comparing the training 
-	with validation error. Sometimes we also have some benchmark against which 
-	we can compare these errors.}
+\caption{To diagnose ML methods we compare the training with validation error. 
+	Ideally both errors are on the same level as a relevant benchmark.}
+ \label{fig_bars_val_sel}
 \end{figure}
 
 
@@ -6284,11 +6283,12 @@ This chapter discusses a simple validation procedure that allows to
 detect and avoid overfitting. Section \ref{sec_validate_predictor} will 
 discuss how {\bf to validate} a learnt hypothesis by computing its 
 average loss on datapoints which are different from the training set. 
-
 The datapoints used to validate the hypothesis are referred to as the 
 {\bf validation set}. When a ML method is overfitting the training set, 
 it will learn a hypothesis whose training error is much smaller than 
-the validation error. 
+the validation error. To diagnose a ML method we should always 
+compare the training with validation error (see Figure \ref{fig_bars_val_sel}). 
+
 %Indeed, the ultimate goal of ML methods is to find a predictor $\hat{h}$ which is accurate 
 %when applied to a new unlabeled datapoint for which we do not know the label $y$ but 
 %only the features $\vx$ (if we would know the label, then there is no point in learning 
@@ -6309,9 +6309,9 @@ This is similar in spirit to the concept of a loss function that
 allows to evaluate the quality of a hypothesis $h\!\in\!\hypospace$. 
 
 The validation error allows to evaluate the quality of the entire hypothesis 
-space $\hypospace$. Similar to ERM, which chooses between different 
-hypotheses based on (average) loss on the training set, we can choose 
-between different hypothesis spaces based on their validation errors. 
+space $\hypospace$. In ERM, we chose between different 
+hypotheses based on (average) loss on the training set. Similarly, we 
+choose between different hypothesis spaces based on their validation errors. 
 The resulting model selection strategy is detailed in Section \ref{sec_modsel}. 
 
 Section \ref{sec_gen_linreg} uses a simple probabilistic model for the 
@@ -6322,11 +6322,18 @@ training and validation error.
 
 Computing validation errors not only allows to detect overfitting and 
 select between different models (hypothesis spaces). Section \ref{equ_diagnosis_ML} 
-will show how we can debug and diagnose a ML method merely by 
-comparing its training and validation error. The comparison of these 
-two errors might help to identify possible improvements of the ML method. 
-These improvements might be obtained by collecting more datapoints, 
-using more features of datapoints or to change the model (hypothesis space). 
+shows how the comparison between training and validation error informs 
+possible improvements of the ML method. These improvements might be 
+obtained by collecting more datapoints, using more features of datapoints 
+or by changing the model (hypothesis space). 
+
+Comparing training and validation errors with a benchmark also allows to 
+verify if the ML method provides satisfactory prediction quality (see Figure \ref{fig_bars_val_sel}). 
+Such a benchmark might be obtained from existing ML methods, human performance 
+levels or from a probabilistic model as used in Section \ref{sec_gen_linreg}. If the 
+training and validation error of a ML method are on the same level as the theoretically 
+optimal Bayes' estimator, there is no point in modifying the ML method as it 
+already performs optimally. 
 
 
 
@@ -6425,8 +6432,8 @@ Inserting $\mathbf{P} = \mathbf{I}$ into \eqref{equ_emp_risk_lin_proje} yields
 \label{eq_zero_trianing_error}
 \emperror(h^{(\vw_{\rm opt})} \mid \dataset^{(\rm train)}) = 0.
 \end{equation} 
-To sum up: as soon as the number of training examples $\samplesize_{\rm t} = | \dataset_{\rm train}|$ is smaller 
-than the size $\featuredim$ of the feature vector $\vx$, there 
+To sum up: as soon as the number  $\samplesize_{\rm t} = | \dataset_{\rm train}|$ 
+of training datapoints is smaller than the number $\featuredim$ of features $\vx$, there 
 is a linear predictor $h^{(\vw_{\rm opt})}$ achieving {\bf zero empirical risk} 
 (see \eqref{eq_zero_trianing_error}) on the training data. The result 
 \eqref{eq_zero_trianing_error} only applies if the feature vectors of 
@@ -6687,36 +6694,30 @@ obtained when applying the predictor $\hat{h}_{l}$ to the {\bf validation datase
 \label{sec_gen_linreg}
 \emph{More Data Beats Clever Algorithms ?; More Data Beats Clever Feature Selection?}
 
-A core problem or challenge within ML is the verification (or validation) whether a 
-hypothesis incurring a small loss on a training dataset, will also incur a small 
-loss on new datapoints (generalize well). Roughly speaking, we must validate 
-a hypothesis by evaluating the loss of its predictions for datapoints that have 
-not been used already for learning that hypothesis. However, if interpret  
-datapoints as realizations of i.i.d.\ random variables, we can study the 
-generalization ability (beyond the training set) of a hypothesis via probability 
-theory. 
+A key challenge in ML is the ensure that a hypothesis that predicts well 
+the labels of training datapoints will also predict well the labels of datapoints 
+outside the training set. We say that a ML method generalizes if a small 
+loss on the training set implies small loss on other datapoints as well. 
 
 To study generalization within a linear regression problem 
-(see Section \ref{sec_lin_regression}), we will invoke a {\bf probabilistic toy model} 
-for the data arising in an ML application. We assume that 
-any observed datapoint $\vz=(\vx,y)$ with features $\vx \in \mathbb{R}^{\featuredim}$ 
-and label $y \in \mathbb{R}$ is an i.i.d.\ realization of a 
-Gaussian random vector. 
-
-The feature vector $\vx$ is assumed to have zero mean and covariance 
+(see Section \ref{sec_lin_regression}), we will use a {\bf probabilistic model} 
+for the data. We interpret datapoints as i.i.d. realizations of RVs that have 
+the same distribution as a random datapoint $\vz=(\vx,y)$. The random 
+feature vector $\vx$ is assumed to have zero mean and covariance 
 being the identity matrix, i.e., $\vx \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$. 
-The label $y$ of a datapoint is related to its features $\vx$ via a 
+The label $y$ of a random datapoint is related to its features $\vx$ via a 
 {\bf linear Gaussian model} 
 \begin{equation} 
 \label{equ_linear_obs_model}
 y = \bar{\vw}^{T}  \vx + \varepsilon \mbox{, with noise } \varepsilon \sim \mathcal{N}(0,\sigma^{2}).
 \end{equation} 
-The noise variance $\sigma^{2}$ is assumed fixed (non-random) and known. 
-Note that the error component $\varepsilon$ in \eqref{equ_linear_obs_model} 
-is intrinsic to the data (within our toy model) and cannot be overcome by 
-any ML method. We highlight that this model for the observed data 
-points might not be accurate for a particular ML application. However, 
-this toy model will allow us to study some fundamental behaviour of ML methods. 
+We assume the noise variance $\sigma^{2}$ fixed and known. This is a simplifying assumption as in 
+practice, we would need to estimate the noise variance from data \cite{Cohen2002}. Note that, within 
+our probabilistic model, the error component $\varepsilon$ in \eqref{equ_linear_obs_model} is intrinsic 
+to the data and cannot be overcome by any ML method. We highlight that the probabilistic model for 
+the observed data points is just a modelling assumption. This assumption allows us to study some 
+fundamental behaviour of ML methods. There are principled statistical that allow to determine if 
+given datapoints can be accurately modelled using \eqref{equ_linear_obs_model} \cite{}. 
 
 We predict the label $y$ from the features $\vx$ using a linear hypothesis $h(\vx)$ 
 that depends only on the first $r$ features $x_{1},\ldots,x_{r}$. Thus, we use the 
@@ -7023,7 +7024,8 @@ constructed such that is has the same size as the original dataset $\dataset$.
 For each dataset $\dataset^{(b)}$, we solve a separate ERM \eqref{equ_def_ERM_funs} 
 to obtain the hypothesis $\hat{h}^{(b)}$. The hypothesis $\hat{h}^{(b)}$ is a realization 
 of a random variable whose distribution is determined by the empirical distribution 
-$\hat{p}(\vz)$ as well as the hypothesis space and the loss function used in the ERM \eqref{equ_def_ERM_funs}. 
+$\hat{p}(\vz)$ as well as the hypothesis space and the loss function 
+used in the ERM \eqref{equ_def_ERM_funs}. 
 
 
 
@@ -7128,13 +7130,17 @@ smaller than the training set?
 		%\foreach \x/\xtext in{ 1/1,2/2,3/3,4/4,5/5}\draw[shift={(\x,0)}] (0pt,2pt) -- (0pt,-2pt) node[below] {$\xtext/5$};  
 		\end{tikzpicture}
 	\end{center}
-	\caption{Many ML methods learn a hypothesis $\hat{h}$ by minimizing the 
-		average loss incurred by the predictions $\hat{h}(x^{(\sampleidx)})$ on a 
-		training set $\big(x^{(\sampleidx)},y^{(\sampleidx)}\big)$, for $\sampleidx=1,\ldots,\samplesize$. 
-		Regularization techniques try to estimate (or to anticipate) how the performance 
-		of a hypothesis $\hat{h}$ differs between the training set and other datapoints. The average loss incurred 
-		by $\hat{h}$ on arbitrary datapoints is typically larger than the average loss on 
-		the training set. 
+	\caption{%Many ML methods learn a hypothesis $\hat{h}$ by minimizing the 
+	%	average loss incurred by the predictions $\hat{h}(x^{(\sampleidx)})$ on a 
+%		training set $\big(x^{(\sampleidx)},y^{(\sampleidx)}\big)$, for $\sampleidx=1,\ldots,\samplesize$. 
+	%	Regularization techniques try to estimate (or to anticipate) how the performance 
+	%	of a hypothesis $\hat{h}$ differs between the training set and other datapoints. The average loss incurred 
+	%	by $\hat{h}$ on arbitrary datapoints is typically larger than the average loss on 
+	%	the training set. 
+	A highly non-linear hypothesis map $\hat{h}$ that perfectly fits the training set and, in turn, has  
+	vanishing training error. Note that while fitting perfectly the training set, the hypothesis delivers 
+	the trivial prediction $\hat{y}=\hat{h}(x)=0$ for any datapoint whose feature $x$ is not 
+	in the vicinity of the feature values for the training datapoints. 
 	} 
 	\label{fig_regular}
 \end{figure}
@@ -7150,18 +7156,21 @@ smaller than the training set?
 %which use high-dimensional hypothesis spaces. 
 Many ML methods use the principle of ERM (see Chapter \ref{ch_Optimization}) 
 to learn a hypothesis out of a hypothesis space by minimizing the average loss 
-(training error) on a set of labeled datapoints (training set). 
+(training error) on a set of labeled datapoints (training set). Using ERM as a guiding 
+principle for ML methods makes sense only if the training error is a good indicator 
+for the loss it incurs on other datapoints which are different from the training set. 
+As illustrated in Figure \ref{} for modern ML methods, that use large hypothesis 
+spaces that include highly non-linear maps, a small training error does not guarantee 
+a reasonable behaviour outside the training set. 
 
-Using ERM as a guiding principle for ML methods makes sense only if the 
-training error is a good indicator for the loss it incurs on other datapoints 
-which are different from the training set. % the general or average prediction performance of 
+% the general or average prediction performance of 
 %a hypothesis. % prediction error (see \eqref{equ_decomp_E_pred_toy_model}) 
 %incurred by that predictor on new datapoints which are different 
 %from the training data. 
 %One main pitfall for ERM is the phenomenon of overfitting. 
 
 Chapter \ref{ch_validation_selection} discussed how validation techniques 
-can be used to verify if the hypothesis performs also well on datapoints 
+can be used to verify if the hypothesis performs well also on datapoints 
 outside the training set. This is achieved by measuring the validation error 
 as the average loss on a validation set which is different from the training set. 
 The validation error serves as an estimate for the expected loss or risk of a 
@@ -7174,16 +7183,6 @@ much the loss incurred on arbitrary datapoints exceeds the (optimistic)
 training error. This increase is estimated by adding different regularizations 
 terms to the average loss in ERM. We discuss the resulting regularized ERM 
 in Section \ref{sec_reg_ERM}. 
-
-Section \ref{sec_prob_mod_regularization} analyzes the effect of regularization 
-for linear regression using a simple probabilistic model for data points. This 
-analysis parallels the analysis of model validation in Section \ref{sec_gen_linreg}. 
-In particular, we will obtain another instance of a bias-variance tradeoff. While 
-this trade off was traced out by a discrete model complexity parameter 
-in Section \ref{sec_gen_linreg}, here it is traced out by a continuous 
-regularization parameter. 
-
-
 
 %  of computing a validation error to estimate the average loss of a 
 %hypothesis we can also use intrinsic properties of datasets and hypothesis spaces 
@@ -7202,7 +7201,6 @@ regularization parameter.
 %a given training dataset. However, the resulting small empirical risk on the training 
 %dataset is highly misleading since if a predictor was good for the training dataset just 
 %``by accident'', we can not expect hat it will be any good for other datapoints. We 
-
 The regularization terms used in regularized ERM can be obtained in different ways. 
 Section \ref{sec_robustness} discusses the construction of regularization terms 
 by requiring the ML method to be robust against (small) random perturbations in 
@@ -7214,6 +7212,14 @@ a simulation-based variant of the techniques discussed in Section \ref{sec_robus
 Data augmentation adds for each training data points a certain number of perturbed 
 copies. One such copy of a training data point can be obtained by adding the 
 realizations of random numbers to its features. 
+
+Section \ref{sec_prob_mod_regularization} analyzes the effect of regularization 
+for linear regression using a simple probabilistic model for data points. This 
+analysis parallels the analysis of model validation in Section \ref{sec_gen_linreg}. 
+In particular, we will obtain another instance of a bias-variance tradeoff. While 
+this trade off was traced out by a discrete model complexity parameter 
+in Section \ref{sec_gen_linreg}, here it is traced out by a continuous 
+regularization parameter. 
 
 Semi-supervised learning problems refer to ML problems that involve a mix of 
 labeled and unlabeled data points. Section \ref{sec_ssl_regularization} shows 
@@ -7255,15 +7261,16 @@ $\hat{h}$ when it is applied to new datapoints, which are
 different from the dataset $\dataset$ used to learn the 
 predictor $\hat{h}$ by \eqref{equ_ERM_fun_regularized}. 
 
-The two approaches \eqref{equ_ERM_fun_pruned} and \eqref{equ_ERM_fun_regularized}, for 
-making ERM \eqref{equ_def_ERM_funs} robust against overfitting are closely related. In particular, 
-these two approaches are, in a certain sense, {\bf dual} to each other: for a given restriction 
-$\hypospace' \subset \hypospace$ we can find a penalty $\mathcal{R}(h)$ term such that the 
-solutions of \eqref{equ_ERM_fun_pruned} and \eqref{equ_ERM_fun_regularized} coincide. Similarly 
-for a many popular types of penalty terms $\mathcal{R}(h)$, we can find a restriction $\hypospace' \subset \hypospace$ 
-such that the solutions of \eqref{equ_ERM_fun_pruned} and \eqref{equ_ERM_fun_regularized} coincide. 
-The relation between the optimization problems \eqref{equ_ERM_fun_pruned} and \eqref{equ_ERM_fun_regularized} 
-can be made precise using the concept of duality in optimization theory \cite{BertsekasNonLinProgr}. 
+The restriction \eqref{equ_ERM_fun_pruned} and penalization \eqref{equ_ERM_fun_regularized} 
+approach to make ERM \eqref{equ_def_ERM_funs} robust against overfitting are closely related.
+The are, in a certain sense, {\bf dual} to each other. For a given restriction 
+$\hypospace' \subset \hypospace$, we can find a penalty $\mathcal{R}(h)$ term such that the 
+solutions of \eqref{equ_ERM_fun_pruned} and \eqref{equ_ERM_fun_regularized} coincide. In the 
+other direction, for a many important choices for the penalty term $\mathcal{R}(h)$, there is a 
+restriction $\hypospace' \subset \hypospace$ such that the solutions of \eqref{equ_ERM_fun_pruned} 
+and \eqref{equ_ERM_fun_regularized} coincide. The relation between the optimization problems 
+\eqref{equ_ERM_fun_pruned} and \eqref{equ_ERM_fun_regularized} can be made precise using 
+the concept of convex duality (see \cite[Ch. 5]{BoydConvexBook} and \cite{BertsekasNonLinProgr}. 
 
 %We will analyze the occurrence of overfitting in Section \ref{sec_overfitting} and then discuss in Section 
 %\ref{sec_regularization} how to avoid overfitting using regularization. 
@@ -7279,19 +7286,21 @@ we can find one such predictor map that perfectly fits the
 training set resulting in zero training error and, in turn, solving 
 ERM \eqref{equ_def_ERM_funs}. 
 
-Overfitting is closely related to another property of ML methods: 
-robustness. If a method overfits it will typically be not robust to 
-small perturbations in the training data. The robustness to small 
-perturbations in the data is almost a mandatory requirement for 
-ML methods to be useful in important application domains. 
+Overfitting is closely related to another property of ML methods which 
+is referred to as {\bf robustness}. A ML method is robust if the delivered 
+hypothesis does not change significantly after small perturbations to 
+the training set. Since we typically expect the datapoints to have similar 
+labels if they have similar features, robustness is almost a necessary condition for 
+a ML method to generalize well. 
 
 The ML methods discussed in Chapter \ref{ch_Optimization} rest on the 
 idealizing assumption that we have access to the true label values and feature 
-values of a set of datapoints (the training set). However, the means by which 
-the label and feature values are determing are prone to errors. These errors might 
-stem from the measurement device itself (hardward failures) or might be 
-due to modelling errors. We need ML methods that do not ``break'' if we feed 
-it slightly perturbed label values for the training data. 
+values of a set of datapoints (the training set). However, the acquisition of 
+the label and feature values of datapoints is often prone to errors. These 
+errors might stem from the measurement device itself (hardware failures) 
+or might be due to human mistakes such as labelling errors. We need ML 
+methods that do not ``break'' if we feed it slightly perturbed label values 
+for the training data. 
 
 
 
@@ -7318,7 +7327,7 @@ implement robustness principle by augmenting dataset with random perturbations o
 
 As mentioned above, the overfitting of the training data 
 $\dataset^{(\rm train)}=\{(\vx^{(\sampleidx)},y^{(\sampleidx)})\}_{\sampleidx=1}^{\samplesize_{\rm t}}$ 
-might be caused by choosing the hypothesis space too large. Therefore, we can avoid 
+might be caused by choosing a hypothesis space that is too large. Therefore, we can avoid 
 overfitting by making (pruning) the hypothesis space $\hypospace$ smaller to obtain a new 
 hypothesis space $\hypospace_{\rm small}$. This smaller hypothesis space $\hypospace_{\rm small}$ 
 can be obtained by pruning, i.e., removing certain maps $h$, from $\hypospace$. 
@@ -7458,13 +7467,11 @@ regression decreases with increasing regularization parameter $\lambda$. This is
 opposite behaviour as for the bias \eqref{equ_bias_reg_lin_reg_approx}, which increases 
 with increasing $\lambda$. 
 
-As illustrated in Figure \ref{fig_bias_variance_lambda}, the choice for $\lambda$ has 
-to balance between the bias $B^{2}$ \eqref{equ_bias_reg_lin_reg_approx} 
-(which increases with increasing $\lambda$) and the variance $V$ \eqref{equ_variance_reglinreg_approx} 
-(which decreases with increasing $\lambda$). This results in bias-variance trade 
-off for the choice of $\lambda$. We have discussed a similar a bias-variance tradeoff 
-already in Section \ref{sec_gen_linreg}. However, in contrast to the trade-off 
-obtained from the discrete model complexity $r$ in \eqref{equ_generalization_hypospace_r}, 
+Figure \ref{fig_bias_variance_lambda} illustrates a trade-off between the bias $B^{2}$ 
+\eqref{equ_bias_reg_lin_reg_approx}, which increases for increasing $\lambda$, 
+and the variance $V$ \eqref{equ_variance_reglinreg_approx} which decreases with increasing $\lambda$.
+We have discussed another example for a bias-variance trade-off already in Section \ref{sec_gen_linreg}. 
+In contrast to the trade-off obtained there for the discrete model complexity $r$ in \eqref{equ_generalization_hypospace_r}, 
 here we obtain a continuous trade-off via the real-valued parameter $\lambda$. 
 
 
@@ -7564,12 +7571,12 @@ with the restricted hypothesis space
 \hypospace^{(\lambda)} & \defeq \{ h^{(\vw)}: \mathbb{R}^{\featuredim} \rightarrow \mathbb{R}: h^{(\vw)}(\vx) = \vw^{T} \vx \nonumber \\
 & \mbox{, with some } \vw \mbox{ satisfying } \| \vw \|^{2} \leq C(\lambda) \} \subset \hypospace^{(\featuredim)}. 
 \end{align} 
-For any given value $\lambda$, we can find a bound $C(\lambda)$ such that 
+For any given value $\lambda$, there is a $C(\lambda)$ such that 
 solutions of \eqref{equ_rerm} coincide with the solutions of \eqref{equ_restr_ERM}. 
-Thus, by solving the regularized ERM \eqref{equ_rerm} we are performing implicitly 
-model selection using a continuous ensemble of hypothesis spaces $\hypospace^{(\lambda)}$ 
-given by \eqref{equ_hyposapce_lambda}. In contrast, the simple model selection strategy 
-considered in Section \ref{sec_modsel} uses a discrete sequence of hypothesis spaces.   
+We can interpret regularized ERM \eqref{equ_rerm} as a form of model selection using 
+a continuous ensemble of hypothesis spaces $\hypospace^{(\lambda)}$ \eqref{equ_hyposapce_lambda}. 
+In contrast, the simple model selection strategy considered in Section \ref{sec_modsel} 
+uses a discrete sequence of hypothesis spaces.   
 
 %\subsection{How To Choose $\lambda$?} 
 %????

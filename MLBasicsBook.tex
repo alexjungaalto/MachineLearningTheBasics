@@ -2255,11 +2255,12 @@ measuring the size of infinite hypothesis spaces with the {\bf Vapnik–Chervone
 being maybe the most famous one \cite{VapnikBook}. 
 
 We will use a simplified variant of the VC dimension and define the 
-size of a hypothesis space $\hypospace$ as the maximum number 
-$\sizehypospace$ of arbitrary datapoints that can be perfectly fit 
-(with probability one). For any set of $\sizehypospace$ datapoints 
-with different features, we can always find a hypothesis $h \in \hypospace$ 
-such that $y=h(\vx)$ for all datapoints $(\vx,y) \in \dataset$. 
+{\bf effective dimension} of a hypothesis space $\hypospace$ 
+as the maximum number $\sizehypospace$ of datapoints, drawn from 
+a continues probability distribution, that can be perfectly fit (with probability one). 
+For any set of $\sizehypospace$ datapoints with different features, we 
+can always find a hypothesis $h \in \hypospace$ such that $y=h(\vx)$ 
+for all datapoints $(\vx,y) \in \dataset$. 
 
 Let us illustrate our concept for the size of a hypothesis space 
 with two examples: linear regression and polynomial regression. 
@@ -2279,7 +2280,8 @@ is full rank with probability one. Basic linear algebra allows to show that
 the datapoints in $\dataset$ can be perfectly fit by a linear map $h \in \hypospace^{(\featuredim)}$ 
 as long as $\samplesize \leq \featuredim$. In other words, for  $\samplesize \leq \featuredim$, we 
 can find (with probability one) a weight vector $\hat{\vw}$ such that $y^{(\sampleidx)} = \hat{\vw}^{T} \vx^{(\sampleidx)}$ 
-for all $\sampleidx=1,\ldots,\samplesize$. The size of the linear hypothesis space $\hypospace^{(\featuredim)}$ is therefore $\sizehypospace = \featuredim$. 
+for all $\sampleidx=1,\ldots,\samplesize$. The effective dimension of the linear hypothesis space 
+$\hypospace^{(\featuredim)}$ is therefore $\sizehypospace = \featuredim$. 
 
 As a second example, consider the hypothesis space 
 $\hypospace_{\rm poly}^{(\featuredim)}$ which is constituted 
@@ -2288,7 +2290,7 @@ The fundamental theorem of algebra tells us that any set
 of $\samplesize$ datapoints with different features can 
 be perfectly fit by a polynomial of degree $\featuredim$ 
 as long as $\featuredim \geq \samplesize$. Therefore, the 
-size of the hypothesis space $\hypospace_{\rm poly}^{(\featuredim)}$ 
+effective dimension of the hypothesis space $\hypospace_{\rm poly}^{(\featuredim)}$ 
 is $\sizehypospace=\featuredim$. Section \ref{sec_polynomial_regression} 
 discusses polynomial regression in more detail. 
 
@@ -3703,8 +3705,8 @@ computational complexity. In particular, the hinge loss \eqref{equ_hinge_loss}
 is non-differentiable which prevents the use of  simple gradient-based 
 methods (see Chapter \ref{ch_GD}) and requires more advanced optimization 
 methods. In contrast, the logistic loss \eqref{equ_log_loss} is convex and 
-differentiable which allows to apply simple iterative methods for minimization 
-of the loss (see Chapter \ref{ch_GD}). 
+differentiable. We can therefore use gradient based methods to minimize 
+the average logistic loss incurred on a training set (see Chapter \ref{ch_GD}). 
 
 
 \section{Bayes' Classifier}
@@ -4944,8 +4946,8 @@ optimization is more or less difficult.
 
 The objective function $f(\vw)$ for the ERM obtained for linear 
 regression (see Section \ref{sec_lin_regression}) is differentiable 
-and convex and can therefore be minimized using simple iterative 
-gradient descent methods (see Chapter \ref{ch_GD}). In contrast, 
+and convex and can therefore be minimized using simple 
+gradient based  methods (see Chapter \ref{ch_GD}). In contrast, 
 the objective function $f(\vw)$ of ERM obtained for the SVM (see 
 Section \ref{sec_SVM}) is non-differentiable but still convex. The 
 minimization of such functions is more challenging but still tractable 
@@ -6690,7 +6692,7 @@ obtained when applying the predictor $\hat{h}_{l}$ to the {\bf validation datase
 
 
 
-\section{A Probabilistic Model of Generalization} 
+\section{A Probabilistic Analysis of Generalization} 
 \label{sec_gen_linreg}
 \emph{More Data Beats Clever Algorithms ?; More Data Beats Clever Feature Selection?}
 
@@ -7236,41 +7238,149 @@ regularization terms for individual ML problems by using their similarities.
 
 
 
-\section{Regularized ERM} 
+\section{Structural Risk Minimization} 
 \label{sec_reg_ERM}
 
-It seems reasonable to avoid overfitting by pruning the 
-hypothesis space $\hypospace$, i.e., removing some of 
-its elements. In particular, instead of solving \eqref{equ_def_ERM_funs} 
-we solve the restricted ERM 
+A main reason for ERM \eqref{equ_def_ERM_funs} to overfit is when the hypothesis space is 
+too large relative to the available training data $\dataset$. Examples for large hypothesis spaces 
+are linear maps using a large number features or ANNs using too many neurons. Section \ref{sec_hypo_space} 
+introduced the concept of the effective dimension of a hypothesis space $\hypospace$ which 
+is the maximum number of datapoints that can be perfectly fit by some $h \in \hypospace$. 
+Roughly speaking, as soon as the effective dimension of the hypothesis space in \eqref{equ_def_ERM_funs} 
+exceeds the number $\samplesize$ of training data points, we can easily find a hypothesis that 
+perfectly fits the training data but might be of no use outside the training data. 
+
+% of the training data 
+%$\dataset^{(\rm train)}=\{(\vx^{(\sampleidx)},y^{(\sampleidx)})\}_{\sampleidx=1}^{\samplesize_{\rm t}}$ 
+%might be caused by choosing a hypothesis space that is too large. 
+It seems quite natural to combat overfitting of a ML method by pruning its 
+hypothesis space $\hypospace$. We can reduce the tendency of a ML method 
+to overfit if we prune (or remove) some of the hypothesis in $\hypospace$, 
+resulting in the smaller hypothesis space $\hypospace' \subset \hypospace$. 
+We then replace ERM \eqref{equ_def_ERM_funs} with the restricted ERM 
 \begin{equation}
 \label{equ_ERM_fun_pruned}
-   \hat{h} = \argmin_{h \in \hypospace'} \emperror(h|\dataset) \mbox{ with pruned hypothesis space } \hypospace' \!\subset\!\hypospace. 
+\hat{h} = \argmin_{h \in \hypospace'} \emperror(h|\dataset) \mbox{ with pruned hypothesis space } \hypospace' \!\subset\!\hypospace. 
 \end{equation}
-Another approach to avoid overfitting is to regularize the ERM \eqref{equ_def_ERM_funs} 
-by adding a penalty term $\mathcal{R}(h)$ which somehow measures the complexity or 
-non-regularity of a predictor map $h$ using a non-negative number $\mathcal{R}(h) \in \mathbb{R}_{+}$. 
-We then obtain the regularized ERM 
-\begin{equation}
-\label{equ_ERM_fun_regularized}
-  \hat{h} = \argmin_{h \in \hypospace} \emperror(h|\dataset)  + \mathcal{R}(h). 
-\end{equation} 
-The additional term $\mathcal{R}(h)$ aims at approximating 
-(or anticipating) the increase in the empirical risk of a predictor 
-$\hat{h}$ when it is applied to new datapoints, which are 
-different from the dataset $\dataset$ used to learn the 
-predictor $\hat{h}$ by \eqref{equ_ERM_fun_regularized}. 
 
-The restriction \eqref{equ_ERM_fun_pruned} and penalization \eqref{equ_ERM_fun_regularized} 
-approach to make ERM \eqref{equ_def_ERM_funs} robust against overfitting are closely related.
-The are, in a certain sense, {\bf dual} to each other. For a given restriction 
-$\hypospace' \subset \hypospace$, we can find a penalty $\mathcal{R}(h)$ term such that the 
-solutions of \eqref{equ_ERM_fun_pruned} and \eqref{equ_ERM_fun_regularized} coincide. In the 
-other direction, for a many important choices for the penalty term $\mathcal{R}(h)$, there is a 
-restriction $\hypospace' \subset \hypospace$ such that the solutions of \eqref{equ_ERM_fun_pruned} 
+As an example consider linear regression which uses the hypothesis space \eqref{equ_lin_hypospace} 
+constituted by linear maps $h(\vx) = \vw^{T} \vx$. This hypothesis space might be 
+too large if we use a large number $\featurelen$ of features, leading to overfitting. 
+We can prune this hypothesis space by using only linear hypotheses $h(\vx) = \big(\vw'\big)^T \vx$ 
+whose weight vectors have only its first two entries being non-zero, $w'_{3} = w_{4}'= \ldots = w_{\featurelen}'=0$. 
+These restricted hypotheses form the smaller hypothesis space $\hypospace'$ whose 
+dimension is $2$ instead of $\featurelen$. 
+
+Pruning the hypothesis space is a special case of a more general strategy which we  
+refer to as {\bf structural risk minimization} (SRM) \cite{VapnikBook}. The idea behing 
+SRM is to modify the training error in ERM \eqref{equ_def_ERM_funs} to favour hypotheses 
+which are smooth or regular in a specific sense. A smooth hypothesis $h$ should be less 
+sensitive to small perturbations of the training datapoints. Section \ref{sec_robustness} discusses 
+the intimate relation between the lack of robustness of a ML 
+
+We measure the smoothness of a hypothesis using a {\bf regularizer} $\mathcal{R}(h) \in \mathbb{R}_{+}$. 
+Roughly speaking, the value $\mathcal{R}(h)$ measures the irregularity or variation of a predictor map $h$. 
+The (design) choice for the regularizer depends on the precise definition of what is meant by regularity 
+or variation of a hypothesis. Section \ref{sec_data_augmentation} discusses how a natural choice for the 
+regularizer $\mathcal{R}{h}$ can arise from a probabilistic model for the datapoints arising in an ML application. 
+
+SRM is obtained from ERM \eqref{equ_def_ERM_funs} by adding the scaled regularizer $\lambda \mathcal{R}(h)$, 
+\begin{align}
+\label{equ_ERM_fun_regularized}
+\hat{h} & = \argmin_{h \in \hypospace} \emperror(h|\dataset)  + \lambda \mathcal{R}(h) \nonumber \\
+   &   \stackrel{\eqref{eq_def_emp_error_101}}{=}  \argmin_{h \in \hypospace} (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}+ \lambda \mathcal{R}(h). 
+\end{align} 
+We can interpret the regularization term $\lambda \mathcal{R}(h)$ in \eqref{equ_ERM_fun_regularized} as an estimate 
+(or approximation) for the increase, relative to the training error on $\dataset$, of the average loss of a hypothesis $\hat{h}$ 
+when it is applied to datapoints outside $\dataset$. Another interpretation of the term $\lambda \mathcal{R}(h)$ will be 
+discussed in Section \ref{sec_data_augmentation}. 
+
+
+The {\bf regularization parameter} $\lambda$ allows to trade between a small training error $\emperror(h^{(\vw)}|\dataset)$ 
+and small $\mathcal{R}(h)$ (a smooth or regular hypothesis $h$) in the following sense. If we choose a large value for $\lambda$, irregular 
+or hypotheses $h$, with large $\mathcal{R}(h)$, are heavily ``punished'' in \eqref{equ_ERM_fun_regularized}. Thus, 
+increasing the value of $\lambda$ results in the solution (minimizer) of \eqref{equ_ERM_fun_regularized} having 
+smaller $\mathcal{R}(h)$. On the other hand, choosing a small value for $\lambda$ in \eqref{equ_rerm} puts more 
+emphasis on obtaining a hypothesis $h$ incurring a small training error. 
+In the extreme case of $\lambda =0$, SRM \eqref{equ_rerm} reduces to ERM \eqref{equ_def_ERM_funs}. 
+
+The pruning \eqref{equ_ERM_fun_pruned} and regularization \eqref{equ_ERM_fun_regularized} 
+approach are closely related. They are, in a certain sense, {\bf dual} to each other. First, note that 
+\eqref{equ_ERM_fun_regularized} reduces to the pruning approach \eqref{equ_ERM_fun_pruned} when 
+choosing the regularizer $\mathcal{R}(h) = 0$ for all $h \in \hypospace'$ and $\mathcal{R}(h) = \infty$ 
+otherwise. In the other direction, for a many important choices for the penalty term $\mathcal{R}(h)$, 
+there is a restriction $\hypospace' \subset \hypospace$ such that the solutions of \eqref{equ_ERM_fun_pruned} 
 and \eqref{equ_ERM_fun_regularized} coincide. The relation between the optimization problems 
 \eqref{equ_ERM_fun_pruned} and \eqref{equ_ERM_fun_regularized} can be made precise using 
 the concept of convex duality (see \cite[Ch. 5]{BoydConvexBook} and \cite{BertsekasNonLinProgr}. 
+
+
+
+
+
+
+
+
+%
+%???
+%In some sense, regularization provides a soft variant of the model selection method discussed in \ref{}. There, we discussed 
+%how to choose the best hypothesis space out of a sequence of increasing hypothesis spaces.  Use interpretation of regu. as 
+%anticipating inrease in validation error from Round 4 noteboook ..$
+%????
+%This 
+
+%In order to avoid overfitting, we have to augment our basic ERM approach 
+%(cf.\ \eqref{equ_def_ERM_funs}) by {\bf regularization techniques}. According 
+%to \cite{Goodfellow-et-al-2016}, regularization aims at ``any modification we 
+%make to a learning algorithm that is intended to reduce its generalization error 
+%but not its training error.'' By generalization error, we mean the average prediction 
+%error (see \eqref{equ_decomp_E_pred_toy_model}) incurred by a predictor 
+%when applied to new datapoints (different from the training set). 
+
+%A simple but effective method to regularize the ERM learning principle, is to 
+%augment the empirical risk \eqref{equ_def_cost_linreg} of linear regression 
+%by the penalty term $\mathcal{R}(h^{(\vw)}) \defeq \lambda \| \mathbf{w} \|^{2}_{2}$, 
+For a hypothesis space $\hypospace$ that is parameterized by some weight vector $\vw$, 
+we can rewrite SRM \eqref{equ_ERM_fun_regularized} as 
+\begin{align} 
+\label{equ_rerm}
+\hat{\vw}^{(\lambda)}  & = \argmin_{\vw \in  \mathbb{R}^{\featurelen}} \big[ \emperror(h^{(\vw)}|\dataset)+ \lambda \mathcal{R}(\vw)\big] \nonumber \\ %  \nonumber \\ 
+&  = \argmin_{\vw \in  \mathbb{R}^{\featurelen}} \big[(1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h^{(\vw)}} + \lambda \mathcal{R}(\vw) \big]. 
+\end{align}
+For the particular choice of squared error loss \eqref{equ_squared_loss}, linear hypothesis space \eqref{equ_lin_hypospace} 
+and regularizer $\mathcal{R}(\vw)=\| \vw \|_{2}^{2}$, SRM \eqref{equ_rerm} specializes to 
+\begin{align} 
+\label{equ_rerm_ridge_regression}
+\hat{\vw}^{(\lambda)}  & = \argmin_{\vw \in  \mathbb{R}^{\featurelen}} \big[(1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \big( \vw^{T} \vx^{(\sampleidx)}- y^{(\sampleidx)}\big)^{2} + \lambda \| \vw \|_{2}^{2}\big]. 
+\end{align}
+The SRM special case \eqref{equ_rerm_ridge_regression} is also known as ridge regression. 
+
+
+%with the  {\bf regularization parameter} $\lambda \geq 0$. 
+
+
+
+%
+%It seems reasonable to avoid overfitting by pruning the 
+%hypothesis space $\hypospace$, i.e., removing some of 
+%its elements.
+
+
+%Another approach to avoid overfitting is to regularize the ERM \eqref{equ_def_ERM_funs} 
+%by adding a penalty term $\mathcal{R}(h)$ which somehow measures the complexity or 
+%non-regularity of a predictor map $h$ using a non-negative number $\mathcal{R}(h) \in \mathbb{R}_{+}$. 
+%We then obtain the regularized ERM 
+%\begin{equation}
+%\label{equ_ERM_fun_regularized}
+%  \hat{h} = \argmin_{h \in \hypospace} \emperror(h|\dataset)  + \mathcal{R}(h). 
+%\end{equation} 
+%The additional term $\mathcal{R}(h)$ aims at approximating 
+%(or anticipating) the increase in the empirical risk of a predictor 
+%$\hat{h}$ when it is applied to new datapoints, which are 
+%different from the dataset $\dataset$ used to learn the 
+%predictor $\hat{h}$ by \eqref{equ_ERM_fun_regularized}. 
+
+
 
 %We will analyze the occurrence of overfitting in Section \ref{sec_overfitting} and then discuss in Section 
 %\ref{sec_regularization} how to avoid overfitting using regularization. 
@@ -7320,62 +7430,91 @@ for the training data.
 \label{sec_data_augmentation} 
 implement robustness principle by augmenting dataset with random perturbations of original training data. 
 
+ML methods using ERM \eqref{equ_def_ERM_funs} are prone to overfitting as soon 
+as the effective dimension of the hypothesis space $\hypospace$ exceeds the number 
+$\samplesize$ of training datapoints. Section \ref{sec_modsel} and Section \ref{sec_reg_ERM} 
+approached this by modifying either the model or the loss function. We can also approach 
+this via somehow enlarging the dataset. 
 
+The data arising in many ML applications exhibit intrinsic symmetries and invariances at least in 
+some approximation. The rotated image of a cat still shows a cat. The temperature measurement 
+taken at a given location will be similar to another measurement taken $10$ milliseconds later. 
+Data augmentation exploits such symmetries and invariances to augment the raw data with 
+additional synthetic data. 
 
-\section{A Probabilistic Model for Regularization}
-\label{sec_prob_mod_regularization}
+Let us illustrate data augmentation using an application that involves data points characterized 
+by features $\vx \in \mathbb{R}^{\featuredim}$ and number labels $y \in \mathbb{R}$. We assume 
+that the data generating process is such that data points with close feature values have the same label. 
+This suggests to augment a data point $\big(\vx,y\big)$ by several synthetic data points 
+\begin{equation} 
+\label{equ_def_copies_aug}
+\big(\vx+{\bm \varepsilon}^{(1)},y\big),\ldots,\big(\vx+{\bm \varepsilon}^{(\augparam)},y\big), 
+\end{equation}
+with ${\bm \varepsilon}^{(1)},\ldots,{\bm \varepsilon}^{(\augparam)}$ being realizations of i.i.d. random vectors. 
 
-As mentioned above, the overfitting of the training data 
-$\dataset^{(\rm train)}=\{(\vx^{(\sampleidx)},y^{(\sampleidx)})\}_{\sampleidx=1}^{\samplesize_{\rm t}}$ 
-might be caused by choosing a hypothesis space that is too large. Therefore, we can avoid 
-overfitting by making (pruning) the hypothesis space $\hypospace$ smaller to obtain a new 
-hypothesis space $\hypospace_{\rm small}$. This smaller hypothesis space $\hypospace_{\rm small}$ 
-can be obtained by pruning, i.e., removing certain maps $h$, from $\hypospace$. 
-
-A more general strategy is {\bf regularization}, which amounts to modifying the loss 
-function of an ML problem in order to favour a subset of predictor maps. Pruning the 
-hypothesis space can be interpreted as an extreme case of regularization, where the 
-loss functions become infinite for predictors which do not belong to the smaller 
-hypothesis space $\hypospace_{\rm small}$. 
-
-%
-%???
-%In some sense, regularization provides a soft variant of the model selection method discussed in \ref{}. There, we discussed 
-%how to choose the best hypothesis space out of a sequence of increasing hypothesis spaces.  Use interpretation of regu. as 
-%anticipating inrease in validation error from Round 4 noteboook ..$
-%????
-%This 
-
-In order to avoid overfitting, we have to augment our basic ERM approach 
-(cf.\ \eqref{equ_def_ERM_funs}) by {\bf regularization techniques}. According 
-to \cite{Goodfellow-et-al-2016}, regularization aims at ``any modification we 
-make to a learning algorithm that is intended to reduce its generalization error 
-but not its training error.'' By generalization error, we mean the average prediction 
-error (see \eqref{equ_decomp_E_pred_toy_model}) incurred by a predictor 
-when applied to new datapoints (different from the training set). 
-
-A simple but effective method to regularize the ERM learning principle, is to 
-augment the empirical risk \eqref{equ_def_cost_linreg} of linear regression 
-by the penalty term $\mathcal{R}(h^{(\vw)}) \defeq \lambda \| \mathbf{w} \|^{2}_{2}$, 
-which penalizes overly large weight vectors $\mathbf{w}$. Thus, we arrive 
-at {\bf regularized ERM}
+Given a (raw) dataset $\dataset = \big\{ \big(\vx^{(1)},y^{(1)}\big),\ldots, \big(\vx^{(\samplesize)},y^{(\samplesize)}\big) \} $ 
+we denote the associated augmented dataset by 
 \begin{align} 
-\label{equ_rerm}
-\hat{\vw}^{(\lambda)}  & = \argmin_{\vw \in  \mathbb{R}^{\featurelen}} \big[ \emperror(h^{(\vw)}|\dataset^{(\rm train)})+ \lambda \| \mathbf{w} \|^{2} \big] \nonumber \\ %  \nonumber \\ 
-&  = \argmin_{\vw \in  \mathbb{R}^{\featurelen}} \big[(1/\samplesize_{\rm t}) \sum_{\sampleidx=1}^{\samplesize_{\rm t}} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h^{(\vw)}} + \lambda \| \mathbf{w} \|^{2} \big],
+\label{equ_def_augmented_dataset}
+\dataset' = \big\{ &\big(\vx^{(1,1)},y^{(1)}\big), \ldots, \big(\vx^{(1,\augparam)},y^{(1)}\big), \nonumber \\ 
+                                  &\big(\vx^{(2,1)},y^{(2)}\big), \ldots, \big(\vx^{(2,B)},y^{(2)}\big), \nonumber \\ 
+                                  & \ldots \nonumber \\ 
+ &\big(\vx^{(\samplesize,1)},y^{(\samplesize)}\big), \ldots, \big(\vx^{(\samplesize,\augparam)},y^{(\samplesize)}\big) \}. 
+\end{align} 
+The size of the augmented dataset $\dataset'$ is $ \samplesize' = \augparam \times \samplesize$. 
+For a sufficiently large augmentation parameter $B$, the augmented samplesize $\samplesize'$ is 
+larger than the effective dimension $\featurelen$ of the hypothesis space $\hypospace$. We might 
+then learn a hypothesis by ERM on the augmented dataset, 
+\begin{align}
+\label{equ_def_ERM_funs_aug}
+\hat{h} & = \argmin_{h \in \hypospace} \emperror(h|\dataset') \nonumber \\ 
+& \stackrel{\eqref{equ_def_augmented_dataset}}{=}  \argmin_{h \in \hypospace} (1/\samplesize') \sum_{\sampleidx=1}^{\samplesize} \sum_{b=1}^{B} \loss{(\vx^{(\sampleidx,b)},y^{(\sampleidx,b)})}{h} \nonumber \\ 
+& \stackrel{\eqref{equ_def_copies_aug}}{=}  \argmin_{h \in \hypospace} (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (1/\augparam)\sum_{b=1}^{\augparam} \loss{(\vx^{(\sampleidx)}+{\bm \varepsilon}^{(b)},y^{(\sampleidx)})}{h}. 
 \end{align}
-with the  {\bf regularization parameter} $\lambda \geq 0$. 
+We can interpret data-augmented ERM \eqref{equ_def_ERM_funs_aug} as a data-driven 
+form of regularization (see Section \ref{sec_reg_ERM}). The regularization is implemented 
+by replacing the loss $\loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}$ incurred for the 
+datapoint $(\vx^{(\sampleidx)},y^{(\sampleidx)})$ with the average 
+loss $(1/\augparam)\sum_{b=1}^{\augparam} \loss{(\vx^{(\sampleidx)}+{\bm \varepsilon}^{(b)},y^{(\sampleidx)})}{h}$ 
+incurred over the augmented datapoints. 
 
-Choosing a small value for $\lambda$ in \eqref{equ_rerm} puts more emphasis on obtaining a 
-predictor $h(\vx) = \big( \hat{\vw}^{(\lambda)}  \big)^{T} \vx$ incurring a small training error. 
-For the extreme case of $\lambda =0$, regularized ERM \eqref{equ_rerm} reduces to ERM \eqref{eq_def_ERM_weight}. 
+Note that in order to implement \eqref{equ_def_ERM_funs_aug} we need to first generate 
+$\augparam$ realizations  ${\bm \varepsilon}^{(b)} \in \mathbb{R}^{\featurelen}$ of i.i.d.
+random vectors with probability distribution $p(\vu)$. 
+This might be computationally costly for a large $\augparam, \featurelen$. 
+However, when using a large augmentation parameter $\augparam$, we might 
+use the approximation  
+\begin{align}
+\label{equ_approx_augm_loss_expect}
+ (1/\augparam)\sum_{b=1}^{\augparam} \loss{(\vx^{(\sampleidx)}+{\bm \varepsilon}^{(b)},y^{(\sampleidx)})}{h} \approx  
+ \expect_{{\bm \varepsilon} \sim p(\vu) } \big\{ \loss{(\vx^{(\sampleidx)}+{\bm \varepsilon},y^{(\sampleidx)})}{h} \big\}. 
+\end{align}
+We can then learn a hypothesis by inserting \eqref{equ_approx_augm_loss_expect} into \eqref{equ_def_ERM_funs_aug}, 
+\begin{align}
+\label{equ_def_ERM_funs_aug_approx}
+\hat{h}  = \argmin_{h \in \hypospace} (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \expect_{{\bm \varepsilon} \sim p(\vu) } \big\{ \loss{(\vx^{(\sampleidx)}+{\bm \varepsilon},y^{(\sampleidx)})}{h} \big\}. 
+\end{align}
 
-% regularization parameter $\lambda$ trades a small training error $\emperror(h^{(\vw)}|\dataset)$ 
-%against a small norm $\| \mathbf{w} \|$ of the weight vector. In particular, 
-If we choose a large value for $\lambda$, weight vectors $\vw$ with a large norm $\| \vw \|$ are 
-``penalized'' by incurring a larger value of the objective function in \eqref{equ_rerm}. Increasing the value 
-of $\lambda$ results in the solution (minimizer) of the optimization problem \eqref{equ_rerm} having 
-smaller norm $\| \vw \|$. 
+
+The usefulness of \eqref{equ_def_ERM_funs_aug_approx} as a computationally efficient approximation to 
+the augmented ERM \eqref{equ_def_ERM_funs_aug} depends on how efficiently we can compute the 
+expectation $\expect_{{\bm \varepsilon} \sim p(\vu) } \big\{ \loss{(\vx^{(\sampleidx)}+{\bm \varepsilon},y^{(\sampleidx)})}{h} \big\}$. 
+The complexity of computing this expectation depends on the choice of loss function and the 
+choice for the probability distribution $p(\vu)$.  
+
+Let us evaluate \eqref{equ_def_ERM_funs_aug_approx} for the special case of squared error loss and $p(\vu)$ 
+being a multivariate normal distribution with zero mean and covariance matrix $\sigma^{2} \mathbf{I}$. 
+
+ 
+
+
+
+
+
+
+
+\section{A Probabilistic Analysis of Regularization}
+\label{sec_prob_mod_regularization}
 
 Specialising \eqref{equ_rerm} to the squared error loss and linear predictors 
 yields {\bf regularized linear regression} (see \eqref{equ_def_cost_MSE}): 

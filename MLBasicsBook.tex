@@ -7272,7 +7272,7 @@ These restricted hypotheses form the smaller hypothesis space $\hypospace'$ whos
 dimension is $2$ instead of $\featurelen$. 
 
 Pruning the hypothesis space is a special case of a more general strategy which we  
-refer to as {\bf structural risk minimization} (SRM) \cite{VapnikBook}. The idea behing 
+refer to as {\bf structural risk minimization} (SRM) \cite{VapnikBook}. The idea behind 
 SRM is to modify the training error in ERM \eqref{equ_def_ERM_funs} to favour hypotheses 
 which are smooth or regular in a specific sense. A smooth hypothesis $h$ should be less 
 sensitive to small perturbations of the training datapoints. Section \ref{sec_robustness} discusses 
@@ -7351,7 +7351,7 @@ For the particular choice of squared error loss \eqref{equ_squared_loss}, linear
 and regularizer $\mathcal{R}(\vw)=\| \vw \|_{2}^{2}$, SRM \eqref{equ_rerm} specializes to 
 \begin{align} 
 \label{equ_rerm_ridge_regression}
-\hat{\vw}^{(\lambda)}  & = \argmin_{\vw \in  \mathbb{R}^{\featurelen}} \big[(1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \big( \vw^{T} \vx^{(\sampleidx)}- y^{(\sampleidx)}\big)^{2} + \lambda \| \vw \|_{2}^{2}\big]. 
+\hat{\vw}^{(\lambda)}  & = \argmin_{\vw \in  \mathbb{R}^{\featurelen}} \big[(1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \big( y^{(\sampleidx)} - \vw^{T} \vx^{(\sampleidx)}\big)^{2} + \lambda \| \vw \|_{2}^{2}\big]. 
 \end{align}
 The SRM special case \eqref{equ_rerm_ridge_regression} is also known as ridge regression. 
 
@@ -7450,7 +7450,8 @@ This suggests to augment a data point $\big(\vx,y\big)$ by several synthetic dat
 \label{equ_def_copies_aug}
 \big(\vx+{\bm \varepsilon}^{(1)},y\big),\ldots,\big(\vx+{\bm \varepsilon}^{(\augparam)},y\big), 
 \end{equation}
-with ${\bm \varepsilon}^{(1)},\ldots,{\bm \varepsilon}^{(\augparam)}$ being realizations of i.i.d. random vectors. 
+with ${\bm \varepsilon}^{(1)},\ldots,{\bm \varepsilon}^{(\augparam)}$ being realizations of i.i.d. 
+random vectors with the same probability distribution $p(\vu)$. 
 
 Given a (raw) dataset $\dataset = \big\{ \big(\vx^{(1)},y^{(1)}\big),\ldots, \big(\vx^{(\samplesize)},y^{(\samplesize)}\big) \} $ 
 we denote the associated augmented dataset by 
@@ -7462,7 +7463,7 @@ we denote the associated augmented dataset by
  &\big(\vx^{(\samplesize,1)},y^{(\samplesize)}\big), \ldots, \big(\vx^{(\samplesize,\augparam)},y^{(\samplesize)}\big) \}. 
 \end{align} 
 The size of the augmented dataset $\dataset'$ is $ \samplesize' = \augparam \times \samplesize$. 
-For a sufficiently large augmentation parameter $B$, the augmented samplesize $\samplesize'$ is 
+For a sufficiently large augmentation parameter $\augparam$, the augmented samplesize $\samplesize'$ is 
 larger than the effective dimension $\featurelen$ of the hypothesis space $\hypospace$. We might 
 then learn a hypothesis by ERM on the augmented dataset, 
 \begin{align}
@@ -7489,7 +7490,9 @@ use the approximation
  (1/\augparam)\sum_{b=1}^{\augparam} \loss{(\vx^{(\sampleidx)}+{\bm \varepsilon}^{(b)},y^{(\sampleidx)})}{h} \approx  
  \expect_{{\bm \varepsilon} \sim p(\vu) } \big\{ \loss{(\vx^{(\sampleidx)}+{\bm \varepsilon},y^{(\sampleidx)})}{h} \big\}. 
 \end{align}
-We can then learn a hypothesis by inserting \eqref{equ_approx_augm_loss_expect} into \eqref{equ_def_ERM_funs_aug}, 
+This approximation is made precise by a key result of probability theory, known as the law of large numbers. 
+
+We can learn a hypothesis by inserting \eqref{equ_approx_augm_loss_expect} into \eqref{equ_def_ERM_funs_aug}, 
 \begin{align}
 \label{equ_def_ERM_funs_aug_approx}
 \hat{h}  = \argmin_{h \in \hypospace} (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \expect_{{\bm \varepsilon} \sim p(\vu) } \big\{ \loss{(\vx^{(\sampleidx)}+{\bm \varepsilon},y^{(\sampleidx)})}{h} \big\}. 
@@ -7497,13 +7500,71 @@ We can then learn a hypothesis by inserting \eqref{equ_approx_augm_loss_expect} 
 
 
 The usefulness of \eqref{equ_def_ERM_funs_aug_approx} as a computationally efficient approximation to 
-the augmented ERM \eqref{equ_def_ERM_funs_aug} depends on how efficiently we can compute the 
+the augmented ERM \eqref{equ_def_ERM_funs_aug} depends on the complexity of computing the 
 expectation $\expect_{{\bm \varepsilon} \sim p(\vu) } \big\{ \loss{(\vx^{(\sampleidx)}+{\bm \varepsilon},y^{(\sampleidx)})}{h} \big\}$. 
 The complexity of computing this expectation depends on the choice of loss function and the 
 choice for the probability distribution $p(\vu)$.  
 
-Let us evaluate \eqref{equ_def_ERM_funs_aug_approx} for the special case of squared error loss and $p(\vu)$ 
-being a multivariate normal distribution with zero mean and covariance matrix $\sigma^{2} \mathbf{I}$. 
+Let us evaluate \eqref{equ_def_ERM_funs_aug_approx} for the special case of squared error loss \eqref{equ_squared_loss} 
+and $p(\vu)$ being a multivariate normal distribution with zero mean and covariance matrix $\sigma^{2} \mathbf{I}$. Using 
+basic calculus of probability theory, 
+ \begin{align} 
+ \label{equ_implicit_aug_regu_1}
+ \expect_{{\bm \varepsilon} \sim p(\vu) } \big\{ \loss{(\vx^{(\sampleidx)}+{\bm \varepsilon},y^{(\sampleidx)})}{h^{(\vw)}} \big\} & \stackrel{\eqref{equ_squared_loss}}{=}
+  \expect_{{\bm \varepsilon} \sim p(\vu) } \big( y^{(\sampleidx)} - h^{(\vw)} \big(\vx^{(\sampleidx)}+{\bm \varepsilon} \big)\big)^{2}  \nonumber \\
+  & \stackrel{h^{(\vw)}(\vx) = \vw^{T} \vx}{=}  \expect_{{\bm \varepsilon} \sim p(\vu) }\big( y^{(\sampleidx)} - \vw^{T} \big(\vx^{(\sampleidx)}+{\bm \varepsilon} \big) \big)^{2}.
+\end{align}
+
+We can develop \eqref{equ_implicit_aug_regu_1} further by using 
+\begin{equation} 
+\label{equ_uncorr_augmentation_implicit}
+\expect\{\big( y^{(\sampleidx)} - \vw^{T} \vx^{(\sampleidx)} \big) {\bm \varepsilon}  \} = \mathbf{0},
+\end{equation}
+which follows from our assumption that the datapoints $\big(\vx^{(\sampleidx)},y^{(\sampleidx)}$ are 
+fixed and known (deterministic) while ${\bm \varepsilon}$ is a zero-mean random vector.
+Inserting \eqref{equ_uncorr_augmentation_implicit} into \eqref{equ_implicit_aug_regu_1}, 
+ \begin{align} 
+\label{equ_implicit_aug_regu_11}
+\expect_{{\bm \varepsilon} \sim p(\vu) } \big\{ \loss{(\vx^{(\sampleidx)}+{\bm \varepsilon},y^{(\sampleidx)})}{h^{(\vw)}} \big\} 
+& \stackrel{\eqref{equ_uncorr_augmentation_implicit},\eqref{equ_implicit_aug_regu_1}}{=}  
+\expect_{{\bm \varepsilon} \sim p(\vu) }\big[ \big( y^{(\sampleidx)} - \vw^{T}\vx^{(\sampleidx)} \big) ^{2} 
+\!+\!\big\| \vw \big\|^{2} \big\| {\bm \varepsilon} \big\|^{2}\big] \nonumber \\ 
+& = \big( y^{(\sampleidx)} - \vw^{T}\vx^{(\sampleidx)} \big) ^{2} \!+\!\big\| \vw \big\|^{2}  \expect_{{\bm \varepsilon} \sim p(\vu) }  \big\| {\bm \varepsilon} \big\|^{2}, 
+\end{align}
+where the last step used the linearity of expectations. Since the covariance matrix of ${\bm \varepsilon}$ is 
+$\sigma^{2} \mathbf{I}$, i.e., $\expect_{{\bm \varepsilon} \sim p(\vu) }  \big\| {\bm \varepsilon} \big\|^{2} = \featurelen \sigma^{2}$, 
+ \begin{align} 
+\label{equ_implicit_aug_regu_111}
+\expect_{{\bm \varepsilon} \sim p(\vu) } \big\{ \loss{(\vx^{(\sampleidx)}+{\bm \varepsilon},y^{(\sampleidx)})}{h^{(\vw)}} \big\} 
+& = \big( y^{(\sampleidx)} - \vw^{T}\vx^{(\sampleidx)} \big) ^{2}  + \featurelen \big\| \vw \big\|^{2}  \sigma^{2}. 
+\end{align}
+
+Inserting \eqref{equ_implicit_aug_regu_111} into \eqref{equ_def_ERM_funs_aug_approx}, 
+\begin{align}
+\label{equ_def_ERM_funs_aug_approx_ridge}
+\hat{h}  = \argmin_{h \in \hypospace} (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \big( y^{(\sampleidx)} - \vw^{T}\vx^{(\sampleidx)} \big) ^{2}  + \featurelen \big\| \vw \big\|^{2}  \sigma^{2}.
+\end{align}
+We have obtained \eqref{equ_def_ERM_funs_aug_approx_ridge} as an approximation of 
+the augmented ERM \eqref{equ_def_ERM_funs_aug} for the special case of squared error 
+loss and linear hypotheses. This approximation uses the law of large numbers \eqref{equ_approx_augm_loss_expect} 
+and becomes more accurate for increasing augmentation parameter $\augparam$. 
+
+We emphasize that \eqref{equ_def_ERM_funs_aug_approx_ridge} is nothing but ridge regression 
+\eqref{equ_rerm_ridge_regression} using the regularization parameter $\lambda  =\featurelen \sigma^{2}$. 
+Thus, we can interpret ridge regression as using an implicit data augmentation \eqref{equ_def_augmented_dataset} 
+using random perturbations \eqref{equ_def_copies_aug} of the feature vectors of raw datapoint (while leaving their 
+labels untouched). 
+
+Note that the regularizer $\mathcal{R}(\vw) = \| \vw \|^{2}$ in \eqref{equ_def_ERM_funs_aug_approx_ridge} 
+arose naturally from the specific choice for the probability distribution $p(\vu)$ of the random perturbation ${\bm \varepsilon}^{(\sampleidx)}$ 
+in \eqref{equ_def_copies_aug} and using the squared error loss. Other choices for this probability distribution or the 
+loss function result in different regularizers. 
+
+
+
+
+
+  
 
  
 
@@ -8977,7 +9038,8 @@ a user.
 &\mathbf{I}  &\quad &\mbox{The identity matrix having ones on the main diagonal and zeros off diagonal.} \nonumber \\
 &\mathbf{R}^{n}  &\quad &\mbox{The set of all vectors constituted by $n$ real-valued entries.} \nonumber \\
 &\mathbf{x}=\big(x_{1},\ldots,x_{n})^{T}  &\quad &\mbox{Some vector of length $n$. The $j$th entry of the vector is denoted $x_{j}$.} \nonumber \\
-&\| \mathbf{x}\|_{2}  &\quad &\mbox{The Euclidean norm of the vector $\mathbf{x}$, } \| \mathbf{x}\|_{2} \defeq \sqrt{\sum_{j=1}^{n} x_{j}^{2}} \nonumber 
+&\| \mathbf{x}\|_{2}  &\quad &\mbox{The Euclidean norm of the vector $\mathbf{x}$, } \| \mathbf{x}\|_{2} \defeq \sqrt{\sum_{j=1}^{n} x_{j}^{2}}  \nonumber \\
+&\| \mathbf{x}\|  &\quad &\mbox{Some norm of the vector $\mathbf{x}$, by default the Euclidean norm. }  \nonumber 
 \end{align} 
 
 \section{Machine Learning}

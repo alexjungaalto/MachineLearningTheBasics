@@ -364,8 +364,8 @@ adaptation of a hypothesis about a phenomenon that generates data.
 
 ML methods use a hypothesis to compute predictions for future events. 
 ML methods choose or learn a hypothesis from a (typically very) large set 
-of candidate hypotheses. We refer to this set as candidates as the model 
-of a ML method. 
+of candidate hypotheses. We refer to this set as the model or hypothesis 
+space underlying a ML method. 
 
 The adaptation or improvement of the hypothesis is based on the discrepancy 
 between predictions and observed data. ML methods use a loss function 
@@ -386,19 +386,19 @@ data.
 
 Our three-component picture of ML allows a unified treatment of a 
 wide range of concepts and techniques which seem quite unrelated 
-at first sight. On a low-level, we discuss the regularization effect of 
-early stopping in terms of adjusting the effective model space. On a 
-higher-level, we can interpret privacy-preserving and explainable ML as 
-particular design choices for the model, data and loss. 
+at first sight. We can understand the regularization effect of early stopping 
+iterative methods as changing the effective size of the model. We can also 
+interpret privacy-preserving and explainable ML methods as particular design 
+choices for the three components: model, data and loss. 
 
 To make good use of ML tools it is instrumental to understand 
 its underlying principles at different levels of detail. On a lower-level, 
 this tutorial helps ML engineers to choose suitable methods for 
-the application at hand. The book also provides leaders a 
-higher-level view on the development of ML which is required 
-to manage a ML or data analysis team. We believe that thinking 
-about ML as combinations of data, model and loss helps to navigate 
-the steadily growing offer for ready-to-use ML methods. 
+the application at hand. The book also offers a higher-level view 
+on the implementation of ML methods which is typically required 
+to manage a team of ML engineers and data scientists. We believe 
+that thinking about ML as combinations of data, model and loss 
+helps to navigate the steadily growing offer for ready-to-use ML methods. 
 
 \section*{Acknowledgement}
 This tutorial is based on lecture notes prepared for the 
@@ -428,7 +428,7 @@ Harri Wallenius and Satu Korhonen.
 
 
 \chapter{Introduction}
-Consider waking up some morning during winter in Finland 
+Consider waking up one morning during winter in Finland 
 and looking outside the window (see Figure \ref{fig:skiday}). 
 It seems to become a nice sunny day which is ideal for a 
 ski trip. To choose the right gear (clothing, wax) it is 
@@ -538,7 +538,7 @@ This hypothesis reflects the intuition that the maximum daytime temperature
 $y$ should be higher for days with a higher minimum daytime temperature $x$. 
 
 Given our initial hypothesis \eqref{equ_initial_hypo_FMI}, it seems reasonable 
-to restrict the ML method to only consider linear predictor maps
+to restrict the ML method to only consider linear maps\footnote{We describe our notation in Chapter \ref{ch_list_of_symbols}.}
 \begin{equation} 
 \label{equ_def_linear_map}
 h(x) = w_{1} x + w_{0} \mbox{ with some weights } w_{1} \in \mathbb{R}_{+},w_{0} \in \mathbb{R}. 
@@ -851,7 +851,7 @@ $\mathbf{z} =\big(x,y\big)^{T}$. The random vector $\vz$
 is distributed according to some fixed but typically unknown 
 probability distribution $p(\vz)$. Figure \ref{fig_scatterplot_temp_FMI_stat_model} 
 extends the scatter plot of Figure \ref{fig_scatterplot_temp_FMI} 
-with some contour line that indicates the probability distribution $p(\vz)$. 
+by adding a contour line that indicates the probability distribution $p(\vz)$. 
 
 %A simple but useful model for continuous-valued random vectors is provided by the  
 %multivariate normal distribution. This distribution of parametrized by the mean vector 
@@ -879,7 +879,7 @@ datapoint $\vz=(x,y) \sim p(\vz)$.
 Having an (estimate of) probability distribution $p(\vz)$ for the observed 
 datapoints not only allows us to compute predictions but also to generate 
 new datapoints. Indeed, we can artificially augment the available data  
-by randomly drawing new datapoints according the probability distribution $p(\vz)$ 
+by randomly drawing new datapoints according to the probability distribution $p(\vz)$ 
 (see Section \ref{sec_data_augmentation}). A recently popularized class of 
 ML methods that use probabilistic models to generate synthetic data  
 is known as {\bf generative adversarial networks} \cite{GoodfellowGAN}. 
@@ -1003,8 +1003,8 @@ the category of the image instead of its raw digital form.
 ML methods are also used for higher-level tasks of an AI system. 
 To behave optimally, an AI system or agent is required to learn a 
 good hypothesis about how its behaviour affects its environment. 
-We can think of optimal behaviour as the consequent choice of actions 
-that are predicted as optimal according to some hypothesis which 
+We can think of optimal behaviour as a consequent choice of actions 
+that are predicted as optimal according to a hypothesis which 
 could be obtained by ML methods. 
 
 %A widely used operation mode of ML is to predict some quantity of interest, or label, of 
@@ -1371,8 +1371,9 @@ received the vaccine.
 It is useful to distinguish between two different groups of 
 properties of a datapoint. The first group of properties is 
 referred to as {\bf features}  and the second group of properties 
-is referred to as {\bf label} (some authors refer to labels also 
-as {\bf target} or {\bf output}). 
+is referred to as a {\bf label}. Depending on the application domain, 
+we might refer to labels also as a {\bf target} or the {\bf output variable}. 
+The features of a datapoint might also be referred to as {\bf input variables}. 
 
 The distinction between features and labels is somewhat 
 blurry. The same property of a datapoint might be used 
@@ -1395,9 +1396,9 @@ pixels.
 Similar to the definition of datapoints, also the choice of which 
 properties to be used as features of a datapoint is a design choice. 
 As a rule of thumb, features are properties or quantities that can be 
-computed or measured easily. This is only an informal characterization 
-since there is no widely-applicable measure for the difficulty in 
-measuring a specific property. 
+computed or measured easily. Note that this is a highly informal characterization 
+since there is no widely-applicable criterion for the difficulty of computing 
+of measuring a property of datapoints.  
 
 Modern information-technology, including smartphones or wearables, 
 allows to measure a huge number of properties about datapoints in 
@@ -1448,9 +1449,8 @@ much larger than the number $\featurelen$ of numeric features.
 
 The informal condition $\samplesize/\featurelen \gg 1$ can be ensured 
 by either collecting a sufficiently large number $\samplesize$ of datapoints 
-or by using a sufficiently small number $\featurelen$ of features. In what 
-follows, we discuss how each of these two complementary approaches 
-can be implemented. 
+or by using a sufficiently small number $\featurelen$ of features. We next briefly  
+discuss how each of these two complementary approaches can be implemented. 
 
 The acquisition of (labeled) datapoints might be costly, requiring human 
 experts labour. Instead of collecting more raw data, it might 
@@ -1493,10 +1493,13 @@ features into a single feature vector
 \nonumber 
 \vx=\big(x_{1},\ldots,x_{\featuredim}\big)^{T} \in \mathbb{R}^{\featuredim}. 
 \end{equation}
-Each datapoint is then characterized by such a feature vector $\vx$. 
-The feature vectors of datapoints take on values out of some {\bf feature space}, 
-which we denote as $\featurespace$. 
+Each datapoint is then characterized by such a feature vector $\vx$. Note that stacking 
+the features of a datapoint into a column vector $\vx$ is pure convention. We could also 
+arrange the features as a row vector or even as a matrix, which might be even more natural 
+for features obtained by the pixels of an image (see Figure \ref{fig_snapshot_pixels}).
 
+We refer to the set of possible feature vectors of datapoints arising in some ML application 
+as the {\bf feature space} and denote it as $\featurespace$. 
 The feature space is a design choice as it depends on what properties of a 
 datapoint we use as its features. This design choice should take into account 
 the statistical properties of the data as well as the available computational infrastructure. 
@@ -1741,16 +1744,21 @@ the datapoints in a scatter plot.
 %when for some reason the counting device did not deliver the count (estimate).  
 
 \subsection{Probabilistic Models for Data} 
+\label{equ_prob_models_data}
 %Consider datapoints representing previous days in Finland. Each datapoint is 
 %characterized by its (average) daytime temperature $x \in \mathbb{R}$. Assume we 
-%have downloaded $\samplesize$ datapoints $\big(x^{(1)},\ldots,x^{(\samplesize)} \big)$. 
-In what follows, we consider datapoints that are characterized by a 
-single feature $x$. Many successful ML methods are based on a simple 
-but crucial idea: Interpret datapoints as realizations of random variables. 
-One of the most basic examples of a probabilistic model for the 
-datapoints in ML is the {\bf ``independent and identically distributed'' (i.i.d.)} 
-assumption. This assumption interprets datapoints $x^{(1)},\ldots,x^{(\samplesize)}$ 
-as statistically independent realizations of one single random variable $x$.
+%have downloaded $\samplesize$ datapoints $\big(x^{(1)},\ldots,x^{(\samplesize)} \big)$.
+A powerful idea in ML is to interpret datapoints as realizations of random variables. 
+For ease of exposition let us consider datapoints that are characterized by a single feature $x$. 
+The following concepts can be extended easily to datapoints characterized by 
+a feature vector $\vx$ and a label $y$. 
+
+One of the most basic examples of a probabilistic model for datapoints in ML is 
+the {\bf ``independent and identically distributed'' (i.i.d.)} assumption. This assumption 
+interprets datapoints $x^{(1)},\ldots,x^{(\samplesize)}$ as realizations of statistically independent 
+random variables (RV) that have the same probability distribution $p(x)$.\footnote{We assume the reader 
+	is familiar with the concepts of a probability distribution which reduces to the concept of a 
+	probability mass function for discrete RVs \cite{}.}
 
 It might seem somewhat awkward to interpret datapoints as realizations 
 of random variables with some probability distribution $p(x)$. However, this 
@@ -2427,8 +2435,8 @@ Every practical ML method uses some hypothesis space $\hypospace$
 which consists of all {\bf computationally feasible} predictor maps $h$. 
 Which predictor map $h$ out of all the maps in the hypothesis space 
 $\hypospace$ is the best for the ML problem at hand? We answer this 
-question by using the concept of a {\bf loss} as a measure the error  
-incurred by the prediction $h(\vx)$ when the true label is $y$. 
+question by using the concept of a {\bf loss}. The loss is a measure for 
+the error  incurred by the prediction $h(\vx)$ when the true label is $y$. 
 
 We formally define a loss function $\mathcal{L}: \featurespace \times \labelspace \times \hypospace \rightarrow \mathbb{R}$ 
 which measures the loss $\loss{(\vx,y)}{h}$ incurred by predicting the 
@@ -2637,7 +2645,7 @@ and equal to one otherwise.
 
 The $0/1$ loss \eqref{equ_def_0_1} is conceptually appealing when 
 datapoints are interpreted as realizations of i.i.d.\ random variables 
-with underlying probability distribution $p(\vx,y)$. Given 
+with the same probability distribution $p(\vx,y)$. Given 
 $\samplesize$ realizations $(\vx^{(\sampleidx)},y^{(\sampleidx)}) \big\}_{\sampleidx=1}^{\samplesize}$ 
 of such i.i.d.\ random variables,
 \begin{equation} 
@@ -2686,7 +2694,7 @@ The logistic loss
 is used within logistic regression to measure the usefulness of 
 a linear hypothesis $h(\vx) = \vw^{T} \vx$. 
 
-For a fixed feature vector $\vx$ and label $y$, both, the hinge 
+For a fixed feature vector $\vx$ and label $y$, both the hinge 
 and the logistic loss function are {\bf convex functions} of 
 the hypothesis $h$. The logistic loss \eqref{equ_log_loss} 
 depends {\bf smoothly} on $h$ such that we could define a derivative 
@@ -2694,15 +2702,14 @@ of the loss with respect to $h$. In contrast, the hinge loss
 \eqref{equ_hinge_loss} is {\bf non-smooth} which makes it 
 more difficult to minimize. 
 
-ML methods that use the logistic loss function, such 
-as logistic regression in Section \ref{sec_LogReg}, can 
-apply simple {\bf gradient descent methods} (see Chapter \ref{ch_GD}) 
-to minimize the average loss. 
-
-ML methods based on the hinge loss, such as those presented 
-in Section \ref{sec_SVM}, must use more sophisticated optimization 
-methods to learn a predictor by minimizing the loss (see Chapter \ref{ch_Optimization}).  
-We cannot directly apply GD to minimize the hinge loss since 
+ML methods that use the convex and differentiable logistic loss function, 
+such as logistic regression in Section \ref{sec_LogReg}, can 
+apply simple {\bf gradient based methods} such as GD (see Chapter \ref{ch_GD}) 
+to minimize the average loss. In contrast, 
+%ML methods based on the hinge loss, such as those presented 
+%in Section \ref{sec_SVM}, must use more sophisticated optimization 
+%methods to learn a predictor by minimizing the loss (see Chapter \ref{ch_Optimization}).  
+we cannot use gradient based methods to minimize the hinge loss since 
 it is not differentiable. However, we can apply a generalization of 
 GD which is known as {\bf subgradient descent} \cite{CvxBubeck2015}. 
 Loosely speaking, subgradient descent is obtained from GD 
@@ -2777,21 +2784,21 @@ efficient iterative methods that will be discussed in Chapter \ref{ch_GD}.
 {\bf Empirical and Generalization Risk.} 
 Many ML methods are based on a simple probabilistic model for the 
 observed datapoints (i.i.d.). Using this assumption, we can define the 
-average or generalization risk as the expectation of the loss. A large class 
-of ML methods is based on approximating the expected value of the loss 
-by an empirical (sample) average over a finite set of labeled datapoints which 
-are we refer to as the training set. 
+average or generalization risk as the expectation of the loss. Many 
+ML methods approximate the expected value of the loss incurred by 
+a given hypothesis by an empirical (sample) average over a finite set 
+of labeled datapoints $\dataset=\big(\vx^{(1)},y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)},y^{(\samplesize)}\big)$. 
 
-We define the empirical risk of some predictor when applied to labeled datapoints $\dataset=\big(\vx^{(1)},y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)},y^{(\samplesize)}\big)$ 
-as 
+The empirical risk of a predictor $h \in \hypospace$ incurred on the labeled dataset $\dataset$ is 
 \begin{equation} 
 \label{eq_def_emp_error_101}
 \emperror(h|\dataset) = (1/\samplesize)\sum_{\sampleidx=1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}.  
 \end{equation} 
-To ease notational burden, if the dataset $\dataset$ is clear from the context, 
-we use $\emperror(h)$. 
+To ease notational burden and if the dataset $\dataset$ is clear from the context, 
+we use $\emperror(h)$ as a shorthand for $\emperror(h|\dataset)$. Note that in general 
+the empirical risk depends on both, the hypothesis $h$ and the properties of the dataset $\dataset$. 
 
-{\bf Regret.} In some application, we might have access to the 
+{\bf Regret.} In some ML applications, we might have access to the 
 predictions obtained from some reference methods or {\bf experts}. 
 The quality of a hypothesis $h$ can then be measured via the 
 difference between the loss incurred by its predictions 
@@ -2800,12 +2807,14 @@ $h(\vx)$ and the loss incurred by the predictions of the experts
 This different measures how much we regret to have used the 
 prediction $h(\vx)$ instead of having followed the prediction of the expert. 
 The goal of regret minimization is to learn a hypothesis 
-with small regret compared to all considered experts. 
+with a small regret compared to all considered experts. 
 
 The concept of regret minimization is useful when we do 
-not make any probabilistic assumptions (such as i.i.d.) about 
-the datapoints. Without a probabilistic model we cannot use 
-the Bayes risk (of Bayes optimal estimator) as benchmark. 
+not make any probabilistic assumptions (see Section \ref{equ_prob_models_data}) 
+about the data. Without a probabilistic model we cannot use 
+the Bayes risk, which is the risk of the Bayes optimal estimator, 
+as a benchmark. 
+
 Regret minimization techniques can be designed and analyzed 
 without any such probabilistic model for the data \cite{PredictionLearningGames}. 
 This approach replaces the Bayes risk with the regret relative to 
@@ -2828,7 +2837,7 @@ state via a feature vector $\vx$ whose entries are pixel intensities of a
 snapshot. The goal is to learn a hypothesis map from the feature vector 
 $\vx$ to a guess $\hat{y} = h(\vx)$ for the optimal steering direction $y$ (true label). 
 
-In some applications, we might have no access to the true label of any 
+In some applications, we might not have access to the true label of any 
 datapoint. This means that we cannot evaluate the quality of a particular 
 map based on the average loss on training data. Instead, we might have 
 only some indirect signal about the loss incurred by the prediction 
@@ -2988,14 +2997,16 @@ to the feature vectors and labels of the training data ?
 
 \subsection{Find Labeled Data for Given Empirical Risk} 
 \label{ex_2_1}
-Consider linear hypothesis space consisting of linear maps parameterized by 
-weights $\mathbf{w}$. We try to find the best linear map by minimizing the average 
-squared error loss (empirical risk) incurred on some labeled training datapoints. 
-Assume we know the shape of the empirical risk as a function of the weight. 
-Can you reconstruct the labeled training data that resulted in this empirical risk 
-function? Is the resulting labeled training data unique or are there different training sets 
-that could have resulted in the same empirical risk function? 
-%% write down empirical risk as quadratic form f(w) = w^{T} X' X w + y^*y + 2*y'*X*w %%%% 
+Consider linear hypothesis space consisting of linear maps $h^{(\vw)}(\vx) = \vw^{T} \vx$ that are 
+parameterized by the weight vector $\mathbf{w}$. We learn a good choice for the weight vector by 
+minimizing the average squared error loss $f(\vw) = \emperror \big( h^{(\vw)} | \dataset\big)$ 
+incurred by $h^{(\vw)}(\vx)$ on the training set $\dataset = \big(\vx^{(1)},y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)},y^{(\samplesize)}\big)$. 
+Is it possible to reconstruct the training data $\dataset$ just from knowing the function $f(\vw)$?. 
+Is the resulting labeled training data unique or are there different training sets that could have 
+resulted in the same empirical risk function? 
+Hint: Write down the training error $f(\vw)$ in the form $f(\vw) = \vw^{T} \mathbf{Q} \vw + c + \vb^{T} \vw$ 
+with some matrix $\mathbf{Q}$, vector $\vb$ and scalar $c$ that might depend on 
+the features and labels of the training datapoints. 
 
 \subsection{Dummy Feature Instead of Intercept}
 \label{sec_dummy_feature}
@@ -3080,12 +3091,10 @@ different predictor maps does $\mathcal{H}$ contain?
  
  \subsection{Picture Classification} 
  \label{ex_2_6}
-Consider a huge collection of outdoor pictures 
-you have taken during your last adventure 
-trip. You want to organize these pictures as 
-three categories (or classes) \emph{dog}, 
-\emph{bird} and \emph{fish}. How could you  
-formalize this task as a ML problem? 
+Consider a huge collection of outdoor pictures you have taken during 
+your last adventure trip. You want to organize these pictures as three 
+categories (or classes) \emph{dog}, \emph{bird} and \emph{fish}. How 
+could you formalize this task as a ML problem? 
 
  \subsection{Maximum Hypothesis Space} 
 \label{ex_2_7}
@@ -3376,7 +3385,7 @@ One approach to avoid overfitting is to modify the squared error
 loss \eqref{equ_squared_loss} by taking into account the weight 
 vector of the linear predictor $h(\vx) = \vw^{T}\vx$. 
 
-The Least Absolute Shrinkage and Selection Operator (Lasso) is 
+The least absolute shrinkage and selection operator (Lasso) is 
 obtained from linear regression by replacing the squared error loss 
 with the regularized loss 
 \begin{equation}
@@ -3848,8 +3857,8 @@ them for the particular feature space $\featurespace = \mathbb{R}^{2}$
 and label space $\labelspace=\mathbb{R}$. %Here, a decision tree describes 
 %how a feature vector $\vx=(x_{1},x_{2})^{T}$ is mapped to a predicted label $h(\vx)$. 
 
-We have depicted an example of a decision tree in Figure \ref{fig_decision_tree}. 
-The decision tree consists of nodes which are connected by directed edges. 
+Figure \ref{fig_decision_tree} depicts an example for a decision tree. 
+A decision tree consists of nodes which are connected by directed edges. 
 We might think of a decision tree as a step-by-step instruction, 
 or a ``recipe'', for how to compute the function value $h(\vx)$ 
 given the features $\vx \in \featurespace$ of a datapoint. This 
@@ -3879,22 +3888,22 @@ radius $r >0$ and depth no larger than $2$.\footnote{The depth of a decision tre
 	is the maximum number of hops it takes to reach a leaf node starting 
 	from the root and following the arrows. The decision tree depicted in Figure \ref{fig_decision_tree} has depth $2$.} 
 
-To assess the quality of different decision trees we need to use some 
-loss function. Examples of loss functions used to measure the quality 
+To assess the quality of a particular decision tree we can use various  
+loss functions. Examples of loss functions used to measure the quality 
 of a decision tree are the squared error loss (for numeric labels) or the 
 impurity of individual decision regressions (for discrete labels). 
 
-In general, we are not interested in one particular decision tree only but 
-in a large set of different decision trees from which we choose the most 
-suitable given some data (see Section \ref{sec_ERM_decision_tree}). We 
-can define a hypothesis space by collecting predictor maps $h$ represented 
-by a set of decision trees (such as depicted in Figure \ref{fig_hypospace_DT_depth_2}). 
+Decision tree methods use as a hypothesis space the set of all hypotheses 
+which represented by some collection of decision trees.  Figure \ref{fig_hypospace_DT_depth_2} 
+depicts a collection of decision trees which are characterized by having depth at most two. 
+These methods search for a decision trees such that the corresponding hypothesis has 
+minimum average loss on some labeled training data (see Section \ref{sec_ERM_decision_tree}). 
 
 A collection of decision trees can be constructed based on a fixed set of 
 ``elementary tests'' on the input feature vector, e.g., $\| \vx \| > 3$, $x_{3} < 1$ 
 or a continuous ensemble of parametrized tests such as $\{ x_{2} > \eta \}_ {\eta \in [0,10]}$. 
 We then build a hypothesis space by considering all decision trees not 
-exceeding a maximum depth and whose decision nodes carry out 
+exceeding a maximum depth and whose decision nodes carry out one of the 
 elementary tests. 
 
 \begin{figure}[htbp]
@@ -3996,10 +4005,10 @@ such as linear regression, logistic regression or SVM. Such linear maps have a r
 simple geometry. Indeed, a linear map is constant along hyperplanes. Moreover, the 
 decision regions obtained from linear classifiers are always entire half-spaces (see Figure \ref{fig_lin_dec_boundary}). 
 
-In contrast, the shape of a map represented by a decision tree can be highly 
-complicated. Using a sufficiently large (deep) decision tree, we can obtain a 
-map that closely resembles almost any given non-linear map. The decision 
-regions obtained from a deep decision tree can be highly irregular. 
+In contrast, the shape of a map represented by a decision tree can be much more  
+complicated. Using a sufficiently large (deep) decision tree, we can obtain a hypothesis 
+map that closely approximates any given non-linear map. Using sufficiently deep decision trees 
+for classification problems allows for highly irregular decision regions. 
 
 %can be arbitrary complicated if the decision tree is sufficiently large (deep). % we can construct a sufficiently complex 
 %decision tree which partitions the feature space such that each datapoint belongs to a separate cluster (corresponding to a particular leaf node). 
@@ -4292,8 +4301,8 @@ implementation of ML methods. First, we can evaluate a map $h^{(\vw)}$ represent
 by an ANN efficiently using modern parallel and distributed computing 
 infrastructure via message passing over the network. Second, the 
 graphical representation of a parametrized hypothesis in the form 
-of a ANN allows to efficiently compute the gradient of the loss function via a message passing 
-procedure known as {\bf back-propagation} \cite{Goodfellow-et-al-2016}.
+of a ANN allows to efficiently compute the gradient of the loss function 
+via a (highly scalable) message passing procedure known as {\bf back-propagation} \cite{Goodfellow-et-al-2016}.
 
 \section{Maximum Likelihood Methods}
 \label{sec_max_iikelihood}
@@ -4325,8 +4334,8 @@ the covariance matrix are obtained via
 \hat{\bm \mu}, \widehat{\bf \Sigma} = \argmin_{{\bm \mu} \in \mathbb{R}^{\featurelen},{\bf \Sigma} \in \mathbb{S}^{\featurelen}_{+}} (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} - \log {\rm P} (\vz^{(\sampleidx)}; ({\bm \mu},{\bf \Sigma})). 
 \end{equation} 
 
-The optimization in \eqref{equ_max_likeli} is over choices for the mean 
-vector ${\bm \mu} \in \mathbb{R}^{\featurelen}$ and covariance matrix 
+The optimization in \eqref{equ_max_likeli} is over all choices for the mean 
+vector ${\bm \mu} \in \mathbb{R}^{\featurelen}$ and the covariance matrix 
 ${\bf \Sigma} \in \mathbb{S}^{\featurelen}_{+}$. Here, $\mathbb{S}^{\featurelen}_{+}$ 
 denotes the set of all psd Hermitian $\featurelen \times \featurelen$ matrices. 
 
@@ -4430,239 +4439,239 @@ discrete and indicates which product out of a finite set of products should
 be advertised to the customer; 
 
  
-\section{Network Lasso} 
-\label{sec_network_lasso}
-
-Maybe the most widely used choice for the feature space $\featurespace$ in 
-ML methods is the Euclidean space $\mathbb{R}^{\featuredim}$. If the features 
-of the datapoints are available in numeric form it is quite natural to stack them 
-into feature vectors. But even for non-numerical data such as text it is often 
-preferable to transform it to numeric features (word-embedding). The feature 
-space $\mathbb{R}^{\featuredim}$ is attractive since it has a rich algebraic and 
-geometric structure which allows to navigate (search) it efficiently. 
-
-A recent thread in ML is to use feature spaces whose structure better 
-reflects the structure of non-Euclidean data. One example of non-Euclidean 
-data is network-structured data where individual datapoints are related 
-by some application-specific notion of similarity. For such data it might be useful 
-to use as a feature space a graph whose nodes represent individual datapoints. 
-Similar datapoints are connected by an edge. 
-
-
-Partially labeled network-structured data arises in many important application 
-domains including signal processing \cite{ChenVarma,Chen2015}, image 
-processing \cite{LempKohli2009,ShiMalik2000}, social networks, internet and bioinformatics 
-\cite{NewmannBook,SemiSupervisedBook,Fergus2009}. Networked data 
-can be described by an ``empirical graph'' $\graph=(\nodes,\edges,\mathbf{W})$ 
-such as those depicted in Figure \ref{fig_graph_signals}.   
-
-The nodes $\nodes$ of the empirical graph represent individual datapoints. 
-Datapoints are connected by edges $\edges$ if they are considered ``similar'' 
-in an application-specific sense. We encode the extent of similarity between 
-connected nodes $i,j \in \nodes$ using the edge weight $W_{i,j} > 0$. The 
-edge weights are the entries of weight matrix $\mathbf{W} \in \mathbb{R}_{+}^{|\nodes| \times |\nodes|}$.  
-
-The notion of similarity between datapoints can be based on physical 
-proximity (in time or space), communication networks or probabilistic 
-graphical models \cite{LauritzenGM,BishopBook,koller2009probabilistic}. 
-
-Besides the graph structure, datasets carry additional information 
-in the form of labels associated with individual datapoints. In a 
-social network, we might define the personal preference for some 
-product as the label associated with a datapoint (which represents 
-a user profile). 
-
-Acquiring labels is often costly and requires manual labor or 
-experiment design. Therefore, we assume to have access to 
-the labels of only a few datapoints which belong to a small ``training set''. 
-
-The availability of accurate network models for datasets provides 
-computational and statistical benefits. Computationally, network 
-models lend naturally to highly scalable ML methods which 
-can be implemented as message passing over the empirical graph \cite{DistrOptStatistLearningADMM}. 
-
-Network models borrow statistical strength between connected data 
-points, which allows semi-supervised learning (SSL) methods to 
-capitalize on massive amounts of unlabeled data \cite{SemiSupervisedBook}. 
-
-The key idea behind many SSL methods is the assumption that labels 
-of close-by datapoints are similar, which allows to combine partially 
-labeled data with its network structure in order to obtain predictors 
-which generalize well \cite{SemiSupervisedBook,belkin2004regularization}. 
-While SSL methods on graphs have been applied to many application 
-domains, the precise understanding of which type of data allow for 
-accurate SSL is still in its infancy \cite{ijcai2017-450,NSZ09,elalaoui16}. 
-
-%Consider a network-structured dataset which we represent by a simple undirected weighted graph $\graph = (\nodes, \edges, \mathbf{W})$. 
-%Following \cite{SemiSupervisedBook}, we refer to the graph $\graph$ as the empirical graph associated with a dataset. The nodes $i\!\in\!\nodes$ 
-%of the empirical graph $\graph$ represent individual datapoints. It will be convenient to identify (represent) the nodes by the first 
-%$\samplesize$ natural numbers such that $\nodes\!=\! = \{1,\ldots,\samplesize\}$. The undirected edges $\{i,j\} \in \edges$ connect datapoints 
-%which are considered similar (in some domain-specific sense).  Given an edge $\{i,j\} \in \edges$, the nonzero value $W_{i,j}\!>\!0$ represents the strength of the 
-%connection $\{i,j\} \in \edges$. The edge set $\edges$ is encoded in the non-zero pattern of the weight matrix $\mathbf{W} \!\in\! \mathbb{R}^{\samplesize \times \samplesize}$ 
-%by requiring that 
-%\begin{equation}
-%\label{equ_edge_set_support_weights}
-%\{ i , j \} \in \edges \mbox{ if and only if } W_{i,j}  > 0.  
-%\end{equation} 
-%In Figure \ref{fig_graph_signals} we depict the empirical graphs of different types of data. 
-
-\begin{figure}[htbp]
-\begin{center}
-\begin{minipage}[b]{.4\textwidth} 
-\begin{tikzpicture}
-    \tikzset{x=1cm,y=2cm,every path/.style={>=latex},node style/.style={circle,draw}}
-    \node [minimum width=0.05cm]   (x1) at (-1,1)  {};     
-    \node [circle,minimum width=0.05cm,draw,label={$x[-1]$}]   (x2) at (0,1)  {};
-    \node [circle,minimum width=0.05cm,draw,label={$x[0]$}]   (x3) at (1,1)  {};  
-    \node [circle,minimum width=0.05cm,draw,label={$x[1]$}]   (x4) at (2,1)  {};         
-    \node [minimum width=0.05cm]   (x5) at (3,1)  {};          
-    \draw[line width=0.4,-,dashed] (x1) edge (x2);
-    \draw[line width=0.4,-] (x2) edge (x3);
-    \draw[line width=0.4,-] (x3) edge (x4);
-    \draw[line width=0.4,-,dashed] (x4) edge (x5);
-     \coordinate [label=45:(a)] (A) at (1,-0.6);
-\end{tikzpicture}
-%\includegraphics[width=.3\columnwidth,angle=0]{Networks.eps}
-\end{minipage} 
-\begin{minipage}[b]{.4\textwidth} 
-\begin{tikzpicture}
-    \tikzset{x=1cm,y=2cm,every path/.style={>=latex},node style/.style={circle,draw}}
-%    \node [minimum width=0.05cm]   (x1) at (-1,0)  {};     
-%    \node [circle,minimum width=0.05cm,draw,label={$x[i]$}]   (x3) at (1,0)  {};  
-%    \node [circle,minimum width=0.05cm,draw,label={$x[i\!+\!1]$}]   (x4) at (2,0)  {};         
-%    \node [minimum width=0.05cm]   (x5) at (3,0)  {};          
+%\section{Network Lasso} 
+%\label{sec_network_lasso}
+%
+%Maybe the most widely used choice for the feature space $\featurespace$ in 
+%ML methods is the Euclidean space $\mathbb{R}^{\featuredim}$. If the features 
+%of the datapoints are available in numeric form it is quite natural to stack them 
+%into feature vectors. But even for non-numerical data such as text it is often 
+%preferable to transform it to numeric features (word-embedding). The feature 
+%space $\mathbb{R}^{\featuredim}$ is attractive since it has a rich algebraic and 
+%geometric structure which allows to navigate (search) it efficiently. 
+%
+%A recent thread in ML is to use feature spaces whose structure better 
+%reflects the structure of non-Euclidean data. One example of non-Euclidean 
+%data is network-structured data where individual datapoints are related 
+%by some application-specific notion of similarity. For such data it might be useful 
+%to use as a feature space a graph whose nodes represent individual datapoints. 
+%Similar datapoints are connected by an edge. 
+%
+%
+%Partially labeled network-structured data arises in many important application 
+%domains including signal processing \cite{ChenVarma,Chen2015}, image 
+%processing \cite{LempKohli2009,ShiMalik2000}, social networks, internet and bioinformatics 
+%\cite{NewmannBook,SemiSupervisedBook,Fergus2009}. Networked data 
+%can be described by an ``empirical graph'' $\graph=(\nodes,\edges,\mathbf{W})$ 
+%such as those depicted in Figure \ref{fig_graph_signals}.   
+%
+%The nodes $\nodes$ of the empirical graph represent individual datapoints. 
+%Datapoints are connected by edges $\edges$ if they are considered ``similar'' 
+%in an application-specific sense. We encode the extent of similarity between 
+%connected nodes $i,j \in \nodes$ using the edge weight $W_{i,j} > 0$. The 
+%edge weights are the entries of weight matrix $\mathbf{W} \in \mathbb{R}_{+}^{|\nodes| \times |\nodes|}$.  
+%
+%The notion of similarity between datapoints can be based on physical 
+%proximity (in time or space), communication networks or probabilistic 
+%graphical models \cite{LauritzenGM,BishopBook,koller2009probabilistic}. 
+%
+%Besides the graph structure, datasets carry additional information 
+%in the form of labels associated with individual datapoints. In a 
+%social network, we might define the personal preference for some 
+%product as the label associated with a datapoint (which represents 
+%a user profile). 
+%
+%Acquiring labels is often costly and requires manual labor or 
+%experiment design. Therefore, we assume to have access to 
+%the labels of only a few datapoints which belong to a small ``training set''. 
+%
+%The availability of accurate network models for datasets provides 
+%computational and statistical benefits. Computationally, network 
+%models lend naturally to highly scalable ML methods which 
+%can be implemented as message passing over the empirical graph \cite{DistrOptStatistLearningADMM}. 
+%
+%Network models borrow statistical strength between connected data 
+%points, which allows semi-supervised learning (SSL) methods to 
+%capitalize on massive amounts of unlabeled data \cite{SemiSupervisedBook}. 
+%
+%The key idea behind many SSL methods is the assumption that labels 
+%of close-by datapoints are similar, which allows to combine partially 
+%labeled data with its network structure in order to obtain predictors 
+%which generalize well \cite{SemiSupervisedBook,belkin2004regularization}. 
+%While SSL methods on graphs have been applied to many application 
+%domains, the precise understanding of which type of data allow for 
+%accurate SSL is still in its infancy \cite{ijcai2017-450,NSZ09,elalaoui16}. 
+%
+%%Consider a network-structured dataset which we represent by a simple undirected weighted graph $\graph = (\nodes, \edges, \mathbf{W})$. 
+%%Following \cite{SemiSupervisedBook}, we refer to the graph $\graph$ as the empirical graph associated with a dataset. The nodes $i\!\in\!\nodes$ 
+%%of the empirical graph $\graph$ represent individual datapoints. It will be convenient to identify (represent) the nodes by the first 
+%%$\samplesize$ natural numbers such that $\nodes\!=\! = \{1,\ldots,\samplesize\}$. The undirected edges $\{i,j\} \in \edges$ connect datapoints 
+%%which are considered similar (in some domain-specific sense).  Given an edge $\{i,j\} \in \edges$, the nonzero value $W_{i,j}\!>\!0$ represents the strength of the 
+%%connection $\{i,j\} \in \edges$. The edge set $\edges$ is encoded in the non-zero pattern of the weight matrix $\mathbf{W} \!\in\! \mathbb{R}^{\samplesize \times \samplesize}$ 
+%%by requiring that 
+%%\begin{equation}
+%%\label{equ_edge_set_support_weights}
+%%\{ i , j \} \in \edges \mbox{ if and only if } W_{i,j}  > 0.  
+%%\end{equation} 
+%%In Figure \ref{fig_graph_signals} we depict the empirical graphs of different types of data. 
+%
+%\begin{figure}[htbp]
+%\begin{center}
+%\begin{minipage}[b]{.4\textwidth} 
+%\begin{tikzpicture}
+%    \tikzset{x=1cm,y=2cm,every path/.style={>=latex},node style/.style={circle,draw}}
+%    \node [minimum width=0.05cm]   (x1) at (-1,1)  {};     
+%    \node [circle,minimum width=0.05cm,draw,label={$x[-1]$}]   (x2) at (0,1)  {};
+%    \node [circle,minimum width=0.05cm,draw,label={$x[0]$}]   (x3) at (1,1)  {};  
+%    \node [circle,minimum width=0.05cm,draw,label={$x[1]$}]   (x4) at (2,1)  {};         
+%    \node [minimum width=0.05cm]   (x5) at (3,1)  {};          
 %    \draw[line width=0.4,-,dashed] (x1) edge (x2);
 %    \draw[line width=0.4,-] (x2) edge (x3);
 %    \draw[line width=0.4,-] (x3) edge (x4);
 %    \draw[line width=0.4,-,dashed] (x4) edge (x5);
-      \foreach \x in {0,...,2}
-       \foreach \y in {0,...,2} 
-       { \node [circle,minimum width=0.05cm,draw]   (xy\x\y) at (\x,\y)  {}; 
-       } 
-  \foreach \x in {0,...,2}
-   \foreach \y [count=\yi] in {0,...,1}  
-      {\draw (xy\x\y)--(xy\x\yi) (xy\y\x)--(xy\yi\x) ;}
-     
-          \node [circle,minimum width=0.05cm,draw,label={$x[1,1]$}]   (x2) at (0,2)  {};
-            \node [circle,minimum width=0.05cm,draw,label={$x[2,1]$}]   (x2) at (1,2)  {};
-     \coordinate [label=45:(b)] (A) at (1,-0.6);\end{tikzpicture}
-\end{minipage}
-
-\vspace*{6mm}
-
-\begin{minipage}[b]{.8\textwidth} 
-\begin{center}
-\begin{tikzpicture}
-    \tikzset{x=0.5cm,y=3cm,every path/.style={>=latex},node style/.style={circle,draw}}
-      \csvreader[ head to column names]%
-                {NodesKarate.tex}{}{% 
-     \coordinate[] (\nodeID) at (\a,\b);
-     \draw [fill=white] (\nodeID) circle (2pt);
-    }
-     \draw [fill=white] (12) circle (2pt) node [above=2mm] {$x[i]$};
-      \csvreader[ head to column names]%
-                {EdgesKarate.tex}{}{%
-    \draw[line width=0.3,-] (\a) edge (\b);
-    } 
-          \csvreader[ head to column names]%
-                {NodesKarate.tex}{}{%
-    \node [fill=white,circle,minimum width=0.05cm,draw]   (\nodeID) at (\a,\b)  {};     
-    } 
-       \coordinate [label=45:(c)] (A) at (3,1);
-\end{tikzpicture}
-\end{center}
-\end{minipage}
-\end{center}
-\caption{\label{fig_graph_signals} Examples for the empirical graph of 
-	networked data. (a) Chain graph representing signal amplitudes of 
-	discrete time signals.  (b) Grid graph representing pixels of 2D-images. 
-	(c) Empirical graph $\graph\!=\!(\nodes,\edges,\mW)$ for a dataset obtained 
-from the social relations between members of a Karate club \cite{Zachary77}. 
-The empirical graph with $\samplesize$ nodes $i \!\in\!\nodes\!=\!\{1,\ldots,\samplesize \}$ 
-represents $\samplesize$ individual club members. Two nodes $i,j\!\in\!\nodes$ 
-are connected by an edge $\{i,j\}\!\in\!\edges$ if the corresponding club members 
-have interacted outside the club.}
-\end{figure}
-
-
-
-%Some important ML applications involve datasets which can be represented efficiently by an {\bf empirical graph} $\graph\!=\!(\nodes,\edges)$ 
-%whose nodes $\nodes$ represent individual datapoints $\vx^{(\sampleidx)}$. For example, the node $i \!\in\! \nodes$ might represent a (super-)pixel in 
-%image processing, a neuron of a neural network \cite{Goodfellow-et-al-2016} or a social network user profile \cite{BigDataNetworksBook}. 
+%     \coordinate [label=45:(a)] (A) at (1,-0.6);
+%\end{tikzpicture}
+%%\includegraphics[width=.3\columnwidth,angle=0]{Networks.eps}
+%\end{minipage} 
+%\begin{minipage}[b]{.4\textwidth} 
+%\begin{tikzpicture}
+%    \tikzset{x=1cm,y=2cm,every path/.style={>=latex},node style/.style={circle,draw}}
+%%    \node [minimum width=0.05cm]   (x1) at (-1,0)  {};     
+%%    \node [circle,minimum width=0.05cm,draw,label={$x[i]$}]   (x3) at (1,0)  {};  
+%%    \node [circle,minimum width=0.05cm,draw,label={$x[i\!+\!1]$}]   (x4) at (2,0)  {};         
+%%    \node [minimum width=0.05cm]   (x5) at (3,0)  {};          
+%%    \draw[line width=0.4,-,dashed] (x1) edge (x2);
+%%    \draw[line width=0.4,-] (x2) edge (x3);
+%%    \draw[line width=0.4,-] (x3) edge (x4);
+%%    \draw[line width=0.4,-,dashed] (x4) edge (x5);
+%      \foreach \x in {0,...,2}
+%       \foreach \y in {0,...,2} 
+%       { \node [circle,minimum width=0.05cm,draw]   (xy\x\y) at (\x,\y)  {}; 
+%       } 
+%  \foreach \x in {0,...,2}
+%   \foreach \y [count=\yi] in {0,...,1}  
+%      {\draw (xy\x\y)--(xy\x\yi) (xy\y\x)--(xy\yi\x) ;}
+%     
+%          \node [circle,minimum width=0.05cm,draw,label={$x[1,1]$}]   (x2) at (0,2)  {};
+%            \node [circle,minimum width=0.05cm,draw,label={$x[2,1]$}]   (x2) at (1,2)  {};
+%     \coordinate [label=45:(b)] (A) at (1,-0.6);\end{tikzpicture}
+%\end{minipage}
 %
-%These applications naturally suggest a notion of similarity between individual datapoints, e.g., the profiles of 
-%befriended social network users or greyscale values of neighbouring image pixels. These domain-specific 
-%notions of similarity are represented by the edges of the empirical graph $\graph$, i.e., the nodes $i,j\!\in\!\nodes$ 
-%representing similar datapoints $\vx^{(i)}$ and $\vx^{(j)}$ are connected by an undirected edge $\{i,j\}\!\in\!\edges$. We denote 
-%the neighbourhood of the node $i\in \nodes$ by $\mathcal{N}(i) \defeq \{ j \in \nodes: \{i,j\} \in \edges \}$. 
+%\vspace*{6mm}
 %
-%In some applications it is possible to quantify the extent to which datapoints $\vx^{(i)}$ and $\vx^{(j)}$ are similar, e.g., via the Euclidean distance 
-%$\| \vx^{(i)} -  \vx^{(j)} \|$. Given two similar datapoints $i,j\!\in\!\nodes$, which are connected by an edge $\{i,j\} \in \edges$, 
-%we will quantify the strength of their connection by the edge weight $W_{i,j}\!>\!0$ which we collect 
-%in the symmetric weight matrix $\mathbf{W} \in \mathbb{R}_{+}^{\samplesize \times \samplesize}$. The 
-%absence of an edge between nodes $i,j \in \nodes$ is encoded by a zero weight $W_{i,j}\!=\!0$. 
-%Thus the edge structure of the empirical graph $\graph$ is fully specified by the support (locations of 
-%the non-zero entries) of the weight matrix $\mathbf{W}$. 
-
-Besides the empirical graph structure $\graph$, a dataset 
-typically conveys additional information, e.g., features, labels 
-or model parameters. We can represent this additional 
-information by a graph signal defined over $\graph$. 
-A graph signal $h[\cdot]$ is a map $\nodes \rightarrow \mathbb{R}$, 
-which associates every node $i\!\in\!\nodes$ with the signal 
-value $h[i] \!\in\! \mathbb{R}$. 
-
-The graph signals arising in several important application domains can 
-be well modelled using a cluster assumption \cite{SemiSupervisedBook}. 
-The cluster assumption requires similar signal values $h[i] \approx h[j]$ 
-at nodes $i,j \in \nodes$, which belong to the same well-connected 
-subset of nodes (``cluster'') of the empirical graph. The clusteredness 
-of a graph signal $h[\cdot]$ can be measured by the total variation (TV): 
-\begin{equation}
-\label{equ_def_TV}
- \| h \|_{\rm TV} = \sum_{\{i,j\} \in \edges} W_{i,j} |h(i) - h(j)|. 
-\end{equation} 
- 
-Clustered graph signals arise in digital signal processing which 
-studies graph signals defined over the chain graph representing 
-discrete time instants. 
-
-The signal values at adjacent time instants are correlated 
-for sufficiently high sampling rate. Image processing methods 
-use the tendency of close-by pixels to be coloured likely 
-which amounts to a clustered graph signal over a grid 
-graph representing pixels of a 2D image.  
-
-The recently introduced network Lasso (nLasso) amounts to a formal ML problem involving 
-network-structured data which can be represented by an empirical graph $\graph$. In particular, 
-the hypothesis space of nLasso is constituted by graph signals on $\graph$: 
-\begin{equation}
-\hypospace  = \{ h: \nodes \rightarrow \labelspace \}.
-\end{equation} 
-The loss function of nLasso is a combination of squared error and TV (see \eqref{equ_def_TV}) 
-\begin{equation}
-\loss{(\vx,y)}{h} = (y - h(\vx))^{2} + \lambda \| h  \|_{\rm TV}. 
-\end{equation} 
-Choosing a small value for the regularization parameter $\lambda$ put more emphasis 
-on a small prediction error $y-h(\vx)$. Using a large value for $\lambda$ favours clustered 
-hypothesis $h$, which is constant over well-connected subsets of nodes. 
-
-
-{\bf Logistic Network Lasso.} The logistic network Lasso \cite{LogisticNLassoAsilomar2018,LogisticNLasso} 
-is a modification of the network Lasso (see Section \ref{sec_network_lasso}) for classification problems 
-involving partially labeled networked data represented by an empirical graph $\graph=(\nodes,\edges,\mathbf{W})$. 
-
-Each datapoint $\vz$ is characterized by the features $\vx$ and is associated with a label $y \in \labelspace$, 
-taking on values from a discrete label space $\labelspace$. The simplest setting is binary classification where 
-each datapoint has a binary label $y \in \{-1,1\}$. The hypothesis space underlying logistic network Lasso 
-is given by the graph signals on the empirical graph: 
-\begin{equation}
-\hypospace  = \{ h: \nodes \rightarrow \labelspace \}
-\end{equation} 
-and the loss function is a combination of logistic loss and TV (see \eqref{equ_def_TV})
-\begin{equation}
-\loss{(\vx,y)}{h} = -\log(1+ \exp(-yh(\vx))) + \lambda \| h  \|_{\rm TV}. 
-\end{equation} 
+%\begin{minipage}[b]{.8\textwidth} 
+%\begin{center}
+%\begin{tikzpicture}
+%    \tikzset{x=0.5cm,y=3cm,every path/.style={>=latex},node style/.style={circle,draw}}
+%      \csvreader[ head to column names]%
+%                {NodesKarate.tex}{}{% 
+%     \coordinate[] (\nodeID) at (\a,\b);
+%     \draw [fill=white] (\nodeID) circle (2pt);
+%    }
+%     \draw [fill=white] (12) circle (2pt) node [above=2mm] {$x[i]$};
+%      \csvreader[ head to column names]%
+%                {EdgesKarate.tex}{}{%
+%    \draw[line width=0.3,-] (\a) edge (\b);
+%    } 
+%          \csvreader[ head to column names]%
+%                {NodesKarate.tex}{}{%
+%    \node [fill=white,circle,minimum width=0.05cm,draw]   (\nodeID) at (\a,\b)  {};     
+%    } 
+%       \coordinate [label=45:(c)] (A) at (3,1);
+%\end{tikzpicture}
+%\end{center}
+%\end{minipage}
+%\end{center}
+%\caption{\label{fig_graph_signals} Examples for the empirical graph of 
+%	networked data. (a) Chain graph representing signal amplitudes of 
+%	discrete time signals.  (b) Grid graph representing pixels of 2D-images. 
+%	(c) Empirical graph $\graph\!=\!(\nodes,\edges,\mW)$ for a dataset obtained 
+%from the social relations between members of a Karate club \cite{Zachary77}. 
+%The empirical graph with $\samplesize$ nodes $i \!\in\!\nodes\!=\!\{1,\ldots,\samplesize \}$ 
+%represents $\samplesize$ individual club members. Two nodes $i,j\!\in\!\nodes$ 
+%are connected by an edge $\{i,j\}\!\in\!\edges$ if the corresponding club members 
+%have interacted outside the club.}
+%\end{figure}
+%
+%
+%
+%%Some important ML applications involve datasets which can be represented efficiently by an {\bf empirical graph} $\graph\!=\!(\nodes,\edges)$ 
+%%whose nodes $\nodes$ represent individual datapoints $\vx^{(\sampleidx)}$. For example, the node $i \!\in\! \nodes$ might represent a (super-)pixel in 
+%%image processing, a neuron of a neural network \cite{Goodfellow-et-al-2016} or a social network user profile \cite{BigDataNetworksBook}. 
+%%
+%%These applications naturally suggest a notion of similarity between individual datapoints, e.g., the profiles of 
+%%befriended social network users or greyscale values of neighbouring image pixels. These domain-specific 
+%%notions of similarity are represented by the edges of the empirical graph $\graph$, i.e., the nodes $i,j\!\in\!\nodes$ 
+%%representing similar datapoints $\vx^{(i)}$ and $\vx^{(j)}$ are connected by an undirected edge $\{i,j\}\!\in\!\edges$. We denote 
+%%the neighbourhood of the node $i\in \nodes$ by $\mathcal{N}(i) \defeq \{ j \in \nodes: \{i,j\} \in \edges \}$. 
+%%
+%%In some applications it is possible to quantify the extent to which datapoints $\vx^{(i)}$ and $\vx^{(j)}$ are similar, e.g., via the Euclidean distance 
+%%$\| \vx^{(i)} -  \vx^{(j)} \|$. Given two similar datapoints $i,j\!\in\!\nodes$, which are connected by an edge $\{i,j\} \in \edges$, 
+%%we will quantify the strength of their connection by the edge weight $W_{i,j}\!>\!0$ which we collect 
+%%in the symmetric weight matrix $\mathbf{W} \in \mathbb{R}_{+}^{\samplesize \times \samplesize}$. The 
+%%absence of an edge between nodes $i,j \in \nodes$ is encoded by a zero weight $W_{i,j}\!=\!0$. 
+%%Thus the edge structure of the empirical graph $\graph$ is fully specified by the support (locations of 
+%%the non-zero entries) of the weight matrix $\mathbf{W}$. 
+%
+%Besides the empirical graph structure $\graph$, a dataset 
+%typically conveys additional information, e.g., features, labels 
+%or model parameters. We can represent this additional 
+%information by a graph signal defined over $\graph$. 
+%A graph signal $h[\cdot]$ is a map $\nodes \rightarrow \mathbb{R}$, 
+%which associates every node $i\!\in\!\nodes$ with the signal 
+%value $h[i] \!\in\! \mathbb{R}$. 
+%
+%The graph signals arising in several important application domains can 
+%be well modelled using a cluster assumption \cite{SemiSupervisedBook}. 
+%The cluster assumption requires similar signal values $h[i] \approx h[j]$ 
+%at nodes $i,j \in \nodes$, which belong to the same well-connected 
+%subset of nodes (``cluster'') of the empirical graph. The clusteredness 
+%of a graph signal $h[\cdot]$ can be measured by the total variation (TV): 
+%\begin{equation}
+%\label{equ_def_TV}
+% \| h \|_{\rm TV} = \sum_{\{i,j\} \in \edges} W_{i,j} |h(i) - h(j)|. 
+%\end{equation} 
+% 
+%Clustered graph signals arise in digital signal processing which 
+%studies graph signals defined over the chain graph representing 
+%discrete time instants. 
+%
+%The signal values at adjacent time instants are correlated 
+%for sufficiently high sampling rate. Image processing methods 
+%use the tendency of close-by pixels to be coloured likely 
+%which amounts to a clustered graph signal over a grid 
+%graph representing pixels of a 2D image.  
+%
+%The recently introduced network Lasso (nLasso) amounts to a formal ML problem involving 
+%network-structured data which can be represented by an empirical graph $\graph$. In particular, 
+%the hypothesis space of nLasso is constituted by graph signals on $\graph$: 
+%\begin{equation}
+%\hypospace  = \{ h: \nodes \rightarrow \labelspace \}.
+%\end{equation} 
+%The loss function of nLasso is a combination of squared error and TV (see \eqref{equ_def_TV}) 
+%\begin{equation}
+%\loss{(\vx,y)}{h} = (y - h(\vx))^{2} + \lambda \| h  \|_{\rm TV}. 
+%\end{equation} 
+%Choosing a small value for the regularization parameter $\lambda$ put more emphasis 
+%on a small prediction error $y-h(\vx)$. Using a large value for $\lambda$ favours clustered 
+%hypothesis $h$, which is constant over well-connected subsets of nodes. 
+%
+%
+%{\bf Logistic Network Lasso.} The logistic network Lasso \cite{LogisticNLassoAsilomar2018,LogisticNLasso} 
+%is a modification of the network Lasso (see Section \ref{sec_network_lasso}) for classification problems 
+%involving partially labeled networked data represented by an empirical graph $\graph=(\nodes,\edges,\mathbf{W})$. 
+%
+%Each datapoint $\vz$ is characterized by the features $\vx$ and is associated with a label $y \in \labelspace$, 
+%taking on values from a discrete label space $\labelspace$. The simplest setting is binary classification where 
+%each datapoint has a binary label $y \in \{-1,1\}$. The hypothesis space underlying logistic network Lasso 
+%is given by the graph signals on the empirical graph: 
+%\begin{equation}
+%\hypospace  = \{ h: \nodes \rightarrow \labelspace \}
+%\end{equation} 
+%and the loss function is a combination of logistic loss and TV (see \eqref{equ_def_TV})
+%\begin{equation}
+%\loss{(\vx,y)}{h} = -\log(1+ \exp(-yh(\vx))) + \lambda \| h  \|_{\rm TV}. 
+%\end{equation} 
 
 \section{Exercises}
 
@@ -4683,8 +4692,12 @@ discussed in this chapter aim at learning a linear classifier?
 
 \subsection{Data Dependent Hypothesis Space} 
 \label{exercise_data_dep_hypospace} 
+Consider a ML application involving data points that are characterized 
+by feature vectors $\vx \in \mathbb{R}^{6}$ and a numeric label $y$. 
+We learn a hypothesis by minimizing the average loss incurred on a 
+training set $\dataset = \big\{\big(\vx^{(1)},y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)},y^{(\samplesize)}\big)\big\}$. 
 Which of the following ML methods uses a hypothesis space that 
-depends on the training data. 
+depends on the dataset $\dataset$?
 \begin{itemize} 
 	\item logistic regression 
 	\item linear regression 
@@ -4778,16 +4791,15 @@ estimate. Moreover, the risk of the Bayes' optimal estimator
 provides a useful benchmark against which we can compare 
 the average loss of practical ML methods. 
 
-Section \eqref{equ_sec_emp_risk_approximates_expected_loss} formally 
-defines the risk of a hypothesis and motivates empirical risk minimization (ERM) 
-as a natural approximation of the risk using labeled (training) datapoints. 
-We then specialize the ERM for three particular ML problems. These three 
-ML problems use different combinations of model (hypothesis space) and 
-loss functions which result in ERM with different computational complexities. 
+Section \eqref{equ_sec_emp_risk_approximates_expected_loss} defines the 
+risk of a hypothesis and motivates {\bf empirical risk minimization (ERM)} 
+by approximating the risk using an (empirical) average over labeled (training) datapoints. 
+We then specialize the ERM for three particular ML problems. These three ML problems 
+use different combinations of model (hypothesis space) and loss functions which result 
+in ERM with different computational complexities. 
 
-In Section \ref{sec_ERM_lin_reg}, we discuss the ERM obtained for linear 
-regression (see Section \ref{sec_lin_regression}). The resulting ERM amounts 
-to minimizing a differentiable convex function, which can be done efficiently 
+Section \ref{sec_ERM_lin_reg} discusses ERM for linear regression (see Section \ref{sec_lin_regression}). 
+Here, ERM amounts to minimizing a differentiable convex function, which can be done efficiently 
 using gradient-based methods (see Chapter \ref{ch_GD}). 
 
 We then discuss in Section \ref{sec_ERM_decision_tree} the ERM 
@@ -4795,7 +4807,7 @@ obtained for decision tree models. The resulting ERM becomes a
 discrete optimization problem which are typically much harder than 
 convex optimization problems. We cannot apply gradient-based methods 
 to solve the ERM for decision trees. To solve the decision tree ERM we 
-essentially must try out all possible choices for the tree structure \cite{}. 
+essentially must try out all possible choices for the tree structure \cite{Hyafil1976}. 
 
 Section \ref{sec_ERM_Bayes} considers the ERM obtained when learning a linear hypothesis 
 using the $0/1$ loss for classification problems. The resulting ERM 
@@ -4820,9 +4832,12 @@ alternate between training and inference periods.
 \section{Why Empirical Risk Minimization?} 
 \label{equ_sec_emp_risk_approximates_expected_loss}
 
-We assume that datapoints are i.i.d.\ realizations drawn from some fixed 
-probability distribution $p(\vx,y)$. The probability distribution $p(\vx,y)$ 
-allows us to define the {\bf expected loss} or {\bf risk} 
+Consider some ML application that generates datapoints, each of 
+which is characterized by a feature vector $\vx$ and a label $y$. It is 
+often useful to interpret datapoints as realizations of i.i.d.\ random variables 
+with the same probability distribution $p(\vx,y)$. 
+
+The probability distribution $p(\vx,y)$ allows us to define the {\bf expected loss} or {\bf risk} 
 \begin{equation}
 \label{equ_def_risk} 
 \expect \big \{ \loss{(\vx,y)}{h} \}.
@@ -4836,9 +4851,10 @@ optimization problem. This optimal predictor is known as the Bayes'
 predictor and depends on the probability distribution $p(\vx,y)$ 
 and the loss function. For the squared error loss, the Bayes' 
 predictor is the posterior mean of $y$ given the features $\vx$. 
-
-We often do not know the probability distribution and therefore 
-cannot evaluate the expectation in \eqref{equ_def_risk}. 
+However, in practice we do not know the probability distribution $p(\vx,y)$ 
+and therefore cannot evaluate the expectation in \eqref{equ_def_risk}.\footnote{One exception to this rule is if 
+the datapoints are synthetically generated by drawing realizations from a 
+given probability distribution $p(\vx,y)$.} 
 %However, we can 
 %estimate the expectation using an empirical average over a set of 
 %datapoints (``training data''). 
@@ -5102,7 +5118,7 @@ feature vectors.
 
 Section \ref{sec_lin_reg} discusses a method for computing the optimal weight vector 
 $\vw_{\rm opt}$ which does not require any matrix inversion. This method, 
-referred to as {\bf gradient descent}, constructs a sequence 
+referred to as {\bf gradient descent} (GD), constructs a sequence 
 $\vw^{(0)}, \vw^{(1)},\ldots$ of increasingly accurate approximations 
 of $\vw_{\rm opt}$. This iterative method has two major benefits 
 compared to evaluating the formula \eqref{equ_close_form_lin_reg} using 
@@ -6047,7 +6063,7 @@ It is therefore often beneficial to pre-process the feature vectors using a {\bf
 %\Statex\hspace{-6mm}{\bf Initialize:}set $\vw^{(0)}\!\defeq\!\mathbf{0}$; set iteration counter $k\!\defeq\!0$   
 %\Repeat 
 \vspace*{2mm}
-\State remove sample means $\bar{\vx}=(1/\samplesize) \sum_{\sampleidx=1}^{\samplesize}  \vx^{(\timeidx)}$ from features, i.e., 
+\State remove sample means $\bar{\vx}=(1/\samplesize) \sum_{\sampleidx=1}^{\samplesize}  \vx^{(\sampleidx)}$ from features, i.e., 
  \begin{equation}
  \nonumber
  \vx^{(\sampleidx)} \defeq \vx^{(\sampleidx)} - \bar{\vx} \mbox{ for  }  \sampleidx=1,\ldots,\samplesize
@@ -6353,70 +6369,74 @@ already performs optimally.
 \section{Overfitting}
 \label{sec_overfitting_sec_6}
 
-We illustrate the phenomenon of overfitting by considering 
-a human child that learns the concept ``tractor''. This 
-learning task amounts to finding an association between 
-an image and the fact if the image shows a tractor or not. 
-The association can be modelled as a hypothesis $h(\vx)$ 
-that reads in the features of the image and outputs a value 
-that indicates if the image shows a tractor or not. 
+Let us illustrate the phenomenon of overfitting by considering linear regression that 
+we discussed in Section \ref{sec_lin_regression}. Here, the goal is to learn a linear 
+hypothesis $h(\vx) = \vw^{T} \mathbf{x}$ which is parametrized by the weight 
+vector $\vw \in \mathbb{R}^{\featurelen}$. The hypothesis is used to predict the 
+numeric label $y$ of a datapoint based on its feature vector $\vx \in \mathbb{R}^{\featurelen}$. 
+
+Linear regression methods learn the weight vector $\vw$ of a linear predictor by 
+minimizing the average squared error loss incurred on some training set 
+ $$\dataset = \big\{ \big(\vx^{(1)},y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)},y^{(\samplesize)}\big)  \big\}.$$ 
+The training set consists of $\samplesize$ datapoints $\big(\vx^{(1)},y^{(1)}\big)$, 
+for $\sampleidx=1,\ldots,\samplesize$, with known label values $y^{(\sampleidx)}$. 
+
 %We show it many pictures and tell for each picture 
 %f there is a ``tractor'' or if there is ``no tractor'' depicted. 
 
-Assume that we have taught the child using the image collection 
-$\trainset$ depicted in Figure \ref{fig_misleading_data_set}. For some 
-reason, one of the images is labeled erroneously as ``tractor'' 
-but actually shows an ocean wave. As a consequence, if the child is 
-good in memorizing images, it might predict the presence of tractors 
-whenever looking at a wave (Figure \ref{equ_wave_as_tractor}). 
+%Assume that we have taught the child using the image collection 
+%$\trainset$ depicted in Figure \ref{fig_misleading_data_set}. For some 
+%reason, one of the images is labeled erroneously as ``tractor'' 
+%but actually shows an ocean wave. As a consequence, if the child is 
+%good in memorizing images, it might predict the presence of tractors 
+%whenever looking at a wave (Figure \ref{equ_wave_as_tractor}). 
+%
+%\begin{figure}[htbp]
+%	\centering
+%	\includegraphics[width=0.7\textwidth]{LabeledDataTractorOverfitting1.jpg}  
+%	\caption{A (misleading) training dataset $\trainset \!=\! \{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize_{\rm t}}$ 
+%		consisting of $\samplesize_{\rm t}=9$ images. The $\sampleidx$-th image is characterized by the feature vector $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and labeled with $y^{(\sampleidx)}\!=\!1$ 
+%		(tractor) or with $y^{(\sampleidx)}\!=\!-1$ (no tractor).}
+%	%    \caption{Hypothesis Map}\label{fig:Hypothesis Map}
+%	\label{fig_misleading_data_set}
+%\end{figure}
+%
+%
+%\begin{figure}[htbp]
+%	\centering
+%	\includegraphics[width=0.7\textwidth]{OverfittingSample.jpg}   
+%	\caption{The child, who has been taught the concept ``tractor'' using the image collection 
+%		$\trainset$ in Figure \ref{fig_misleading_data_set}, might ``see'' a lot of tractors during the next beach holiday.}
+%	\label{equ_wave_as_tractor}   
+%\end{figure}
 
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.7\textwidth]{LabeledDataTractorOverfitting1.jpg}  
-	\caption{A (misleading) training dataset $\trainset \!=\! \{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize_{\rm t}}$ 
-		consisting of $\samplesize_{\rm t}=9$ images. The $\sampleidx$-th image is characterized by the feature vector $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and labeled with $y^{(\sampleidx)}\!=\!1$ 
-		(tractor) or with $y^{(\sampleidx)}\!=\!-1$ (no tractor).}
-	%    \caption{Hypothesis Map}\label{fig:Hypothesis Map}
-	\label{fig_misleading_data_set}
-\end{figure}
 
+%For the sake of argument, we assume that the child uses a linear predictor 
+%$h^{(\vw)}(\vx) = \vx^{T} \vw$, using the features $\vx$ of the image, and encodes 
+%the fact of showing a tractor by $y=1$ and if it is not showing a tractor by $y=-1$. 
+%We learn the weight vector by minimizing the squared error loss \eqref{equ_def_cost_MSE} 
+%on the training dataset $\dataset^{(\rm train)}$.
 
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.7\textwidth]{OverfittingSample.jpg}   
-	\caption{The child, who has been taught the concept ``tractor'' using the image collection 
-		$\trainset$ in Figure \ref{fig_misleading_data_set}, might ``see'' a lot of tractors during the next beach holiday.}
-	\label{equ_wave_as_tractor}   
-\end{figure}
-
-
-For the sake of argument, we assume that the child uses a linear predictor 
-$h^{(\vw)}(\vx) = \vx^{T} \vw$, using the features $\vx$ of the image, and encodes 
-the fact of showing a tractor by $y=1$ and if it is not showing a tractor by $y=-1$. 
-We learn the weight vector by minimizing the squared error loss \eqref{equ_def_cost_MSE} 
-on the training dataset $\dataset^{(\rm train)}$.
-
-If we stack the feature vectors $\vx^{(\sampleidx)}$ and labels $y^{(\sampleidx)}$ into 
-the feature matrix $\mX=(\vx^{(1)},\ldots,\vx^{(\samplesize_{\rm t})})^{T}$ and label 
-vector $\vy=(y^{(1)},\ldots,y^{(\samplesize_{\rm t})})^{T}$, the optimal linear predictor 
-is obtained for the weight vector solving \eqref{equ_zero_gradient_lin_reg} 
-and the associated training error is given by \eqref{equ_emp_risk_lin_proje}, which 
-we repeat here for convenience: 
+Let us stack the feature vectors $\vx^{(\sampleidx)}$ and labels $y^{(\sampleidx)}$ of 
+the training data into the feature matrix $\mX=(\vx^{(1)},\ldots,\vx^{(\samplesize)})^{T}$ 
+and label vector $\vy=(y^{(1)},\ldots,y^{(\samplesize)})^{T}$.The optimal linear hypothesis  
+is obtained for any weight vector $\widehat{\vw}$ that solves \eqref{equ_zero_gradient_lin_reg}. 
+The corresponding minimum training error is obtained from \eqref{equ_emp_risk_lin_proje} as 
 \begin{equation}
-\emperror(h^{(\vw_{\rm opt})} \mid \trainset) = \min_{\vw \in \mathbb{R}^{\featuredim}} \emperror(h^{(\vw)} \mid \trainset) = \|  (\mathbf{I}- \mathbf{P}) \vy \|^{2}.
+\emperror(h^{(\widehat{\vw})} \mid \dataset) = \min_{\vw \in \mathbb{R}^{\featuredim}} \emperror(h^{(\vw)}) = \|  (\mathbf{I}- \mathbf{P}) \vy \|^{2}.
 \end{equation} 
 Here, we used the orthogonal projection matrix $\mathbf{P}$ on the linear span 
 \begin{equation} 
 \nonumber
-{\rm span}\{ \mX \} = \big\{  \mX \va : \va \in \mathbb{R}^{\featuredim} \big\} \subseteq \mathbb{R}^{\samplesize_{\rm t}} , 
+{\rm span}\{ \mX \} = \big\{  \mX \va : \va \in \mathbb{R}^{\featuredim} \big\} \subseteq \mathbb{R}^{\samplesize} , 
 \end{equation}
 of the feature matrix 
 \begin{equation} 
 \label{equ_feature_matrix_overfit}
-\mX = (\vx^{(1)},\ldots,\vx^{(\samplesize_{\rm t})})^{T} \in \mathbb{R}^{  \samplesize_{\rm t} \times \featuredim}. 
+\mX = (\vx^{(1)},\ldots,\vx^{(\samplesize)})^{T} \in \mathbb{R}^{  \samplesize \times \featuredim}. 
 \end{equation} 
 
-ML methods using linear predictors overfit as soon as the 
+Linear regression will overfit (with probability one) as soon as the 
 number $\featuredim$ of features exceeds the sample size $\samplesize$,
 \begin{equation} 
 \label{equ_condition_overfitting}
@@ -6434,22 +6454,24 @@ Inserting $\mathbf{P} = \mathbf{I}$ into \eqref{equ_emp_risk_lin_proje} yields
 \label{eq_zero_trianing_error}
 \emperror(h^{(\vw_{\rm opt})} \mid \dataset^{(\rm train)}) = 0.
 \end{equation} 
-To sum up: as soon as the number  $\samplesize_{\rm t} = | \dataset_{\rm train}|$ 
+To sum up, as soon as the number  $\samplesize_{\rm t} = | \dataset_{\rm train}|$ 
 of training datapoints is smaller than the number $\featuredim$ of features $\vx$, there 
 is a linear predictor $h^{(\vw_{\rm opt})}$ achieving {\bf zero empirical risk} 
-(see \eqref{eq_zero_trianing_error}) on the training data. The result 
-\eqref{eq_zero_trianing_error} only applies if the feature vectors of 
-the training datapoints are linearly independent. 
+(see \eqref{eq_zero_trianing_error}) on the training data. 
 
-It can be shown that if the feature vectors $\vx^{(1)},\ldots,\vx^{(\samplesize)} \in \mathbb{R}^{\featuredim}$ 
+The result \eqref{eq_zero_trianing_error} only applies if the feature vectors of 
+the training datapoints are linearly independent. It can be shown that if the feature 
+vectors $\vx^{(1)},\ldots,\vx^{(\samplesize)} \in \mathbb{R}^{\featuredim}$ 
 are realizations of i.i.d.\ RVs with a continuous probability distribution, 
 then with probability one they are linearly independent whenever \eqref{equ_condition_overfitting} holds. 
 
 While the learnt predictor $h^{(\vw_{\rm opt})}$ is perfectly accurate on the training 
 data (the training error is zero!), it will typically incur a non-zero average prediction error 
-$y - h^{(\vw_{\rm opt})}(\vx)$ on new datapoints $(\vx,y)$ (which are different from the 
-training data). 
+$y - h^{(\vw_{\rm opt})}(\vx)$ on datapoints $(\vx,y)$ which are different from the 
+training data (see Figure \ref{fig_polyn_training}). 
 
+
+???
 Using a simple toy model for the data generation, we obtained the expression 
 \eqref{equ_decomp_E_pred_toy_model} for the average prediction error. This 
 average prediction error is lower bounded by the noise variance $\sigma^{2}$ 
@@ -6998,6 +7020,12 @@ i.i.d.\ copies, we can replace exact computations (expectations)
 by empirical approximations (sample averages).  
 
 \section{The Bootstrap} 
+?????
+In the From Features to Classification slides, on page 15 (or 49) regarding 
+0.632 bootstrap, I don't understand where the formula 1 - (1 - 1/n)n-1 comes from.
+In the same lecture slides, page 17 (or 54) and the following page, I don't 
+understand what the numbers between training and testing mean, 
+as above it says that each instance should only be left out once.???????
 
 Consider learning a hypothesis $\hat{h} \in \hypospace$ by minimizing the 
 average loss incurred on a dataset $\dataset=\{ \big(\vx^{(1)},y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)},y^{(\samplesize)}\big)\}$. 
@@ -7161,9 +7189,10 @@ to learn a hypothesis out of a hypothesis space by minimizing the average loss
 (training error) on a set of labeled datapoints (training set). Using ERM as a guiding 
 principle for ML methods makes sense only if the training error is a good indicator 
 for the loss it incurs on other datapoints which are different from the training set. 
-As illustrated in Figure \ref{} for modern ML methods, that use large hypothesis 
-spaces that include highly non-linear maps, a small training error does not guarantee 
-a reasonable behaviour outside the training set. 
+Figure \ref{fig_regular} illustrates a typical scenario for a modern ML method which uses 
+a large hypothesis space. This large hypothesis space includes highly non-linear maps 
+for which a mall training error does not guarantee accurate predictions for the labels 
+of datapoints outside the training set. 
 
 % the general or average prediction performance of 
 %a hypothesis. % prediction error (see \eqref{equ_decomp_E_pred_toy_model}) 
@@ -7423,7 +7452,7 @@ for the training data.
 		outside the training set. To prevent learning such a predictor 
 		map we could require it to be robust against small perturbations in the features of the 
         training datapoints or the predictor map itself.}
-	\label{fig_polyn_training}
+	\label{fig_robustness_overfitting}
 \end{figure}
 
 \section{Data Augmentation} 
@@ -9026,6 +9055,7 @@ a user.
 
 
 \chapter{Lists of Symbols}
+\label{ch_list_of_symbols}
 
 \section{Sets} 
 \begin{align} 

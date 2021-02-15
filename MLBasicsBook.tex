@@ -2287,7 +2287,7 @@ which is obtained by stacking (column-wise) the feature vectors $\vx^{(\sampleid
 is full rank with probability one. Basic linear algebra allows to show that 
 the datapoints in $\dataset$ can be perfectly fit by a linear map $h \in \hypospace^{(\featuredim)}$ 
 as long as $\samplesize \leq \featuredim$. In other words, for  $\samplesize \leq \featuredim$, we 
-can find (with probability one) a weight vector $\hat{\vw}$ such that $y^{(\sampleidx)} = \hat{\vw}^{T} \vx^{(\sampleidx)}$ 
+can find (with probability one) a weight vector $\widehat{\vw}$ such that $y^{(\sampleidx)} = \widehat{\vw}^{T} \vx^{(\sampleidx)}$ 
 for all $\sampleidx=1,\ldots,\samplesize$. The effective dimension of the linear hypothesis space 
 $\hypospace^{(\featuredim)}$ is therefore $\sizehypospace = \featuredim$. 
 
@@ -3232,14 +3232,14 @@ we can rewrite \eqref{equ_opt_pred_linreg} as an optimization
 problem directly over the weight vector $\vw$: 
 \begin{align} 
 \label{equ_opt_weight_vector_linreg_weight}
-\vw_{\rm opt} &  = \argmin_{\vw \in \mathbb{R}^{\featuredim}} (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - h^{(\vw)}(\vx^{(\sampleidx)}))^{2} \nonumber \\
+\widehat{\vw} &  = \argmin_{\vw \in \mathbb{R}^{\featuredim}} (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - h^{(\vw)}(\vx^{(\sampleidx)}))^{2} \nonumber \\
 & \stackrel{h^{(\mathbf{w})}(\vx) = \vw^{T} \vx}{=} \argmin_{\vw \in \mathbb{R}^{\featuredim}} (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - \vw^{T} \vx^{(\sampleidx)})^{2}.
 \end{align} 
 The optimization problems \eqref{equ_opt_pred_linreg} and \eqref{equ_opt_weight_vector_linreg_weight} 
-are equivalent in the following sense: Any optimal weight vector $\vw_{\rm opt}$ which solves 
+are equivalent in the following sense: Any optimal weight vector $\widehat{\vw}$ which solves 
 \eqref{equ_opt_weight_vector_linreg_weight}, can be used to 
 construct an optimal predictor $\hat{h}$, which solves 
-\eqref{equ_opt_pred_linreg}, via $\hat{h}(\vx) = h^{(\vw_{\rm opt})}(\vx) = \vw_{\rm opt}^{T} \vx$. 
+\eqref{equ_opt_pred_linreg}, via $\hat{h}(\vx) = h^{(\widehat{\vw})}(\vx) = \big(\widehat{\vw}\big)^{T} \vx$. 
 
 
 \section{Polynomial Regression} 
@@ -3614,7 +3614,7 @@ according to \eqref{equ_prob_model_logistic_model}. This yields the maximum
 likelihood estimator 
 \begin{align}
 \label{equ_deriv_prog_logreg}
-\hat{\vw} & = \argmax_{\vw \in \mathbb{R}^{\featuredim}} \prob{ \{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize}} \nonumber \\
+\widehat{\vw} & = \argmax_{\vw \in \mathbb{R}^{\featuredim}} \prob{ \{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize}} \nonumber \\
 & \stackrel{y^{(\sampleidx)}\mbox{ i.i.d.}}{=} \argmax_{\vw \in \mathbb{R}^{\featuredim}} \prod_{\sampleidx=1}^{\samplesize} \prob { y^{(\sampleidx)}}\nonumber \\
 & \stackrel{\eqref{equ_prob_model_logistic_model},\eqref{equ_prob_model_logistic_model_minus_1}}{=} \argmax_{\vw \in \mathbb{R}^{\featuredim}} \prod_{\sampleidx=1}^{\samplesize} 1/(1 + \exp(- y^{(\sampleidx)} \vw^{T} \vx^{(\sampleidx)}) ). 
 \end{align}
@@ -3626,7 +3626,7 @@ Maximizing a positive function $f(\vw)>0$ is equivalent to maximizing $\log f(x)
 Therefore, \eqref{equ_deriv_prog_logreg} can be further developed as 
 \begin{align}
 \label{equ_deriv_prog_logreg_2}
-\hat{\vw} & \stackrel{\eqref{equ_deriv_prog_logreg}}{=} \argmax_{\vw \in \mathbb{R}^{\featuredim}} \sum_{\sampleidx=1}^{\samplesize} - \log\big(1\!+\!\exp(- y^{(\sampleidx)} \vw^{T} \vx^{(\sampleidx)}) \big)  \nonumber \\
+\widehat{\vw} & \stackrel{\eqref{equ_deriv_prog_logreg}}{=} \argmax_{\vw \in \mathbb{R}^{\featuredim}} \sum_{\sampleidx=1}^{\samplesize} - \log\big(1\!+\!\exp(- y^{(\sampleidx)} \vw^{T} \vx^{(\sampleidx)}) \big)  \nonumber \\
 & = \argmin_{\vw \in \mathbb{R}^{\featuredim}} (1/\samplesize)\sum_{\sampleidx=1}^{\samplesize} \log\big(1\!+\!\exp(- y^{(\sampleidx)}\vw^{T} \vx^{(\sampleidx)}) \big). 
 \end{align}
 Comparing \eqref{equ_deriv_prog_logreg_2} with \eqref{equ_def_emp_risk_logreg} 
@@ -4743,9 +4743,9 @@ depends on the dataset $\dataset$?
      \end{tikzpicture}
      \vspace*{-4mm}
 \end{center}
-\caption{ML methods aim at learning a predictor $h \in \hypospace$ that incurs 
-	small loss on any datapoint. Empirical risk minimization approximates the
-    expected loss or risk with the empirical risk (solid curve) incurred on a 
+\caption{ML methods learn a hypothesis $h \in \hypospace$ that incur small loss 
+	when predicting the label $y$ of datapoint based on its features $\vx$. Empirical risk minimization
+	 approximates the expected loss or risk with the empirical risk (solid curve) incurred on a 
     finite set of labeled datapoints (the training set).}
 \label{fig_ERM_idea}
 \end{figure}
@@ -4910,15 +4910,15 @@ we can reformulate the optimization problem \eqref{equ_def_ERM_funs}
 as an optimization of the weight vector, 
 \begin{equation}
 \label{eq_def_ERM_weight}
-    \vw_{\rm opt} = \argmin_{\vw \in \mathbb{R}^{\featuredim}} f(\vw) \mbox{ with } f(\vw) \defeq(1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h^{(\vw)}}. 
+    \widehat{\vw} = \argmin_{\vw \in \mathbb{R}^{\featuredim}} f(\vw) \mbox{ with } f(\vw) \defeq(1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h^{(\vw)}}. 
 \end{equation}
 The objective function $f(\vw)$ in \eqref{eq_def_ERM_weight} is 
 the empirical risk $\emperror\big(h^{(\vw)} |\dataset\big)$ incurred  
 by the hypothesis $h^{(\vw)}$ when applied to the datapoints in the dataset $\dataset$. 
 
 The optimization problems \eqref{eq_def_ERM_weight} and \eqref{equ_def_ERM_funs} 
-are fully equivalent. Given the optimal weight vector $\vw_{\rm opt}$ solving 
-\eqref{eq_def_ERM_weight}, the predictor $h^{(\vw_{\rm opt})}$ is 
+are fully equivalent. Given the optimal weight vector $\widehat{\vw}$ solving 
+\eqref{eq_def_ERM_weight}, the predictor $h^{(\widehat{\vw})}$ is 
 an optimal predictor solving \eqref{equ_def_ERM_funs}. 
 
 Learning a hypothesis via ERM \eqref{equ_def_ERM_funs} is a form of 
@@ -5016,13 +5016,12 @@ and non-convex objective functions.
 \section{ERM for Linear Regression}
 \label{sec_ERM_lin_reg}
 
-As discussed in Section \ref{sec_lin_regression}, linear regression methods 
-learn a linear hypothesis $h^{(\vw)}(\vx) = \vw^{T} \vx$ with minimum squared 
-error loss \eqref{equ_squared_loss}. For this choices, the ERM problem \eqref{eq_def_ERM_weight} 
-specializes to  
+As discussed in Section \ref{sec_lin_regression}, linear regression methods learn a linear 
+hypothesis $h^{(\vw)}(\vx) = \vw^{T} \vx$ with minimum squared error loss \eqref{equ_squared_loss}. 
+For linear regression, the ERM problem \eqref{eq_def_ERM_weight} becomes 
 \begin{align}
 \label{equ_def_cost_MSE}
-\vw_{\rm opt} & = \argmin_{\vw \in \mathbb{R}^{\featuredim}} f(\vw) \nonumber \\ 
+\widehat{\vw} & = \argmin_{\vw \in \mathbb{R}^{\featuredim}} f(\vw) \nonumber \\ 
 & \mbox{ with } f(\vw)\!\defeq\!(1/\samplesize) \sum_{(\vx,y)\!\in\!\dataset} (y \!-\! \vx^{T} \vw )^2.
 \end{align} 
 Here, $\samplesize=|\dataset|$ denotes the (sample) size of the training set $\dataset$. 
@@ -5030,7 +5029,7 @@ The objective function $f(\vw)$ in \eqref{equ_def_cost_MSE} is computationally
 appealing since it is a convex and smooth function. Such a function can be minimized 
 efficiently using the gradient-based methods discussed in Chapter \ref{ch_GD}. 
 
-The ERM problem \eqref{equ_def_cost_MSE} can rewritten in a more compact form 
+We can rewrite the ERM problem \eqref{equ_def_cost_MSE} more concisely 
 by stacking the labels $y^{(\sampleidx)}$ and feature vectors $\vx^{(\sampleidx)}$, for 
 $\sampleidx=1,\ldots,\samplesize$, into a ``label vector'' $\vy$ and ``feature matrix'' $\mX$, 
 \begin{align}
@@ -5045,48 +5044,87 @@ f(\vw) = (1/\samplesize) \| \vy - \mX\vw \|^{2}_{2}.
 \end{equation} 
 
 Inserting \eqref{equ_min_lin_pred_vec_mat} into \eqref{equ_def_cost_MSE}, 
-we obtain the quadratic problem 
+resulting in the following form of the ERM for linear regression: 
+\begin{align}
+\label{equ_def_cost_MSE_least_squard_errors}
+\widehat{\vw} & = \argmin_{\vw \in \mathbb{R}^{\featuredim}} (1/\samplesize) \| \vy - \mX\vw \|^{2}_{2}. 
+\end{align} 
+The formulation \eqref{equ_def_cost_MSE_least_squard_errors} allows for an interesting geometric 
+interpretation of linear regression. Solving \eqref{equ_def_cost_MSE_least_squard_errors} amounts to 
+finding a vector $ \mX\vw$, with fixed feature matrix $\mX$ (see \eqref{equ_def_vec_matrix}), 
+that is closest (in the Euclidean norm) to the given label vector $\vy \in \mathbb{R}^{\samplesize}$ 
+(see \eqref{equ_def_vec_matrix}). The solution to this approximation problem is precisely the orthogonal projection 
+of the vector $\vy$ onto the subspace of $\mathbf{R}^{\samplesize}$ that is spanned by the 
+columns of the feature matrix $\mX$. 
+
+\begin{figure}
+\begin{center}
+\begin{tikzpicture}[dot/.style={circle,inner sep=1pt,fill,label={#1},name=#1},
+extended line/.style={shorten >=-#1,shorten <=-#1},
+extended line/.default=1cm]
+%\draw[thick,-stealth] (-4.5,0) -- (4.5,0);
+%\draw[thick,-stealth] (0,0) -- (0,4.5);
+\coordinate (A) at (-5,0);
+\coordinate (optw) at (3,0) ; 
+\coordinate (labelvec) at (3,2); 
+\coordinate (B) at (5,0);
+\draw [dashed,line width=0.5pt]  ([xshift=-1cm]A)  --  ([xshift=-1cm]A) node [left]{$\{ \mathbf{X}\vw: \vw \in \mathbb{R}^{\featuredim}\}$} ;
+\draw [dashed,line width=0.5pt] ([xshift=-1cm]A) -- ([xshift=1cm]B) ; 
+\draw [->,,line width=2pt] (A) -- (labelvec) node[above right]{$\mathbf{y}$} ; 
+\draw [dotted,,line width=2pt] (labelvec) -- (optw); 
+\draw [->,,line width=2pt] (A) -- (optw) node[above right]{$\mathbf{X}\widehat{\vw}$} ; 
+%\draw [extended line=0.5cm, stealth-stealth] (A) -- (B) node[pos=1.15,font=\small]{$\mathbf{X}\mathbf{w}$};     
+%\draw [ -stealth] (0,0) -- (-2.6, 4.3) coordinate (yn) node[right]{label vector $\vy$}; 
+%\draw[dashed] (yn) --  node[midway,above left]{$\varepsilon$} ($(A)!(yn)!(B)$) node[below left]{$y_p$};
+\end{tikzpicture}
+\end{center}
+\caption{The ERM \eqref{equ_def_cost_MSE_least_squard_errors} for linear regression amounts to an orthogonal projection of the label vector $\vy=\big(y^{(1)},\ldots,y^{(\samplesize)}\big)^{T}$ on the subspace spanned by the columns of the 
+	feature matrix $\mathbf{X} = \big(\vx^{(1)},\ldots,\vx^{(\samplesize)} \big)^{T}$.}
+\end{figure}
+
+To solve the optimization problem \eqref{equ_def_cost_MSE_least_squard_errors}, it is convenient to rewrite it 
+as the quadratic problem 
 \begin{align}
 \label{equ_quadr_form_linreg}
 & \min_{\vw \in \mathbb{R}^{\featuredim}} \underbrace{(1/2) \vw^{T} \mathbf{Q} \vw - \vq^{T}  \vw}_{= f(\vw)} \nonumber \\
 & \mbox{ with } \mathbf{Q}= (1/\samplesize) \mathbf{X}^{T} \mathbf{X}, \mathbf{q} =(1/\samplesize) \mathbf{X}^{T} \mathbf{y}. 
 \end{align} 
 Since $f(\vw)$ is a differentiable and convex function, a necessary and sufficient condition for 
-$\vw_{\rm opt}$ to be a minimizer $f(\vw_{\rm opt})\!=\!\min_{\vw \in \mathbb{R}^{\featuredim}} f(\vw)$ is the 
+$\widehat{\vw}$ to be a minimizer $f(\widehat{\vw})\!=\!\min_{\vw \in \mathbb{R}^{\featuredim}} f(\vw)$ is the 
 {\bf zero-gradient condition} \cite[Sec. 4.2.3]{BoydConvexBook}
 \begin{equation}
 \label{equ_zero_gradient}
- \nabla f(\vw_{\rm opt}) = \mathbf{0}.
+ \nabla f(\widehat{\vw}) = \mathbf{0}.
 \end{equation} 
 
 Combining \eqref{equ_quadr_form_linreg} with \eqref{equ_zero_gradient}, 
 yields the following sufficient and necessary condition for a weight vector 
-$\vw_{\rm opt}$ to solve the ERM \eqref{equ_def_cost_MSE},
+$\widehat{\vw}$ to solve the ERM \eqref{equ_def_cost_MSE},
 \begin{equation}
 \label{equ_zero_gradient_lin_reg}
-(1/\samplesize) \mX^{T} \mX \vw_{\rm opt} = (1/\samplesize) \mX^{T} \vy.  
+(1/\samplesize) \mX^{T} \mX\widehat{\vw} = (1/\samplesize) \mX^{T} \vy.  
 \end{equation} 
 This condition can be rewritten as 
 \begin{equation}
 \label{equ_zero_gradient_lin_reg_normal_condition}
-(1/\samplesize) \mX^{T} \big( \vy - \mX \vw_{\rm opt} \big) = \mathbf{0}.  
+(1/\samplesize) \mX^{T} \big( \vy - \mX \widehat{\vw} \big) = \mathbf{0}.  
 \end{equation} 
 We might refer to this condition as ``normal equations'' as they 
-require the vector $$\big( \vy - \mX \vw_{\rm opt} \big) = \big(\big(y^{(1)}-\hat{y}^{(1)}\big),\ldots,\big(y^{(\samplesize)}-\hat{y}^{(\samplesize)}\big)  \big)^{T},$$
+require the vector $$\big( \vy - \mX\widehat{\vw}\big) = \big(\big(y^{(1)}-\hat{y}^{(1)}\big),\ldots,\big(y^{(\samplesize)}-\hat{y}^{(\samplesize)}\big)  \big)^{T},$$
 whose entries are the prediction errors for the training datapoints, to 
 be orthogonal (or normal) to the subspace spanned by the columns 
 of the feature matrix $\mathbf{X}$. 
 
 
 It can be shown that, for any given feature matrix $\mX$ and label vector $\vy$, there always 
-exists at least one optimal weight vector $\vw_{\rm opt}$ which solves \eqref{equ_zero_gradient_lin_reg}. 
+exists at least one optimal weight vector $\widehat{\vw}$ which solves \eqref{equ_zero_gradient_lin_reg}. 
 The optimal weight vector might not be unique, such that there are several different vectors 
 which achieve the minimum in \eqref{equ_def_cost_MSE}. However, 
-every vector $\vw_{\rm opt}$ which solves \eqref{equ_zero_gradient_lin_reg} 
+every vector $\widehat{\vw}$ which solves \eqref{equ_zero_gradient_lin_reg} 
 achieves the same minimum empirical risk 
 \begin{equation}
 \label{equ_emp_risk_lin_proje}
-\emperror(h^{(\vw_{\rm opt})} \mid \dataset) = \min_{\vw \in \mathbb{R}^{\featuredim}} \emperror(h^{(\vw)} \mid \dataset) = \|  (\mathbf{I}- \mathbf{P}) \vy \|^{2}.
+\emperror(h^{(\widehat{\vw})} \mid \dataset) = \min_{\vw \in \mathbb{R}^{\featuredim}} \emperror(h^{(\vw)} \mid \dataset) = \|  (\mathbf{I}- \mathbf{P}) \vy \|^{2}.
 \end{equation} 
 Here, we used the orthogonal projection matrix $\mathbf{P} \in \mathbb{R}^{\samplesize \times \samplesize}$ 
 on the linear span of the feature matrix $\mX = (\vx^{(1)},\ldots,\vx^{(\samplesize)})^{T} \in \mathbb{R}^{\samplesize \times \featuredim}$ (see \eqref{equ_def_vec_matrix}).\footnote{The linear span of a matrix $\mA=(\va^{(1)},\ldots,\va^{(\samplesize)}) \in \mathbb{R}^{\featuredim \times \samplesize}$, denoted as ${\rm span } \big\{\mA\}$, is the subspace 
@@ -5103,7 +5141,7 @@ is given explicitly as
 Moreover, the solution of \eqref{equ_zero_gradient_lin_reg} is then unique and given by 
 \begin{equation}
 \label{equ_close_form_lin_reg}
-\vw_{\rm opt} = \big(  \mX^{T} \mX \big)^{-1} \mX^{T} \vy. 
+\widehat{\vw} = \big(  \mX^{T} \mX \big)^{-1} \mX^{T} \vy. 
 \end{equation}
 The closed-form solution \eqref{equ_close_form_lin_reg} requires 
 the inversion of the $\featuredim \times \featuredim$ matrix $\mX^{T} \mX$. 
@@ -5117,10 +5155,10 @@ any control on this condition number as we face datapoints with arbitrary
 feature vectors. 
 
 Section \ref{sec_lin_reg} discusses a method for computing the optimal weight vector 
-$\vw_{\rm opt}$ which does not require any matrix inversion. This method, 
+$\widehat{\vw}$ which does not require any matrix inversion. This method, 
 referred to as {\bf gradient descent} (GD), constructs a sequence 
 $\vw^{(0)}, \vw^{(1)},\ldots$ of increasingly accurate approximations 
-of $\vw_{\rm opt}$. This iterative method has two major benefits 
+of $\widehat{\vw}$. This iterative method has two major benefits 
 compared to evaluating the formula \eqref{equ_close_form_lin_reg} using 
 direct matrix inversion, such as Gauss-Jordan elimination \cite{golub96}. 
 First, gradient descent requires much fewer arithmetic operations compared 
@@ -5633,7 +5671,7 @@ gradient $\nabla f(\vw)$ for a smooth function $f(\vw)$ at every point $\vw$.
 For a smooth loss function, the resulting ERM (see \eqref{eq_def_ERM_weight})  
 \begin{align}
 \label{equ_def_ERM_continous}
-\vw_{\rm opt} & = \argmin_{\vw \in \mathbb{R}^{\featuredim}}  \emperror( h^{(\vw)} \mid \dataset)  \nonumber \\
+\widehat{\vw} & = \argmin_{\vw \in \mathbb{R}^{\featuredim}}  \emperror( h^{(\vw)} \mid \dataset)  \nonumber \\
 & = \underbrace{(1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h^{(\vw)}}}_{\defeq f(\vw)} 
 \end{align} 
 is a {\bf smooth optimization problem}
@@ -5682,11 +5720,11 @@ many state-of-the-art ML methods, including deep learning methods.
 \label{sec_basic_GD_iteration}
 
 We now discuss a very simple, yet quite powerful, algorithm for 
-finding the weight vector $\vw_{\rm opt}$ which solves continuous 
+finding the weight vector $\widehat{\vw}$ which solves continuous 
 optimization problems like \eqref{equ_def_ERM_continous}. 
 
 Let us assume we have already some guess (or approximation) 
-$\vw^{(k)}$ for the optimal weight vector $\vw_{\rm opt}$ and 
+$\vw^{(k)}$ for the optimal weight vector $\widehat{\vw}$ and 
 would like to improve it to a new guess $\vw^{(k+1)}$ which yields 
 a smaller value of the objective function $f(\vw^{(k+1)}) < f(\vw^{(k)})$. 
 
@@ -5706,7 +5744,7 @@ The update \eqref{equ_def_GD_step} amounts to a {\bf gradient descent (GD) step}
 For a convex differentiable objective function $f(\vw)$ 
 and sufficiently small step size $\alpha$, the iterates $f(\vw^{(k)})$ 
 obtained by repeating the GD steps \eqref{equ_def_GD_step} converge 
-to a minimum, i.e., $\lim_{k \rightarrow \infty} f(\vw^{(k)}) = f(\vw_{\rm opt})$ (see Figure \ref{fig_basic_GD_step}). 
+to a minimum, i.e., $\lim_{k \rightarrow \infty} f(\vw^{(k)}) = f\big(\widehat{\vw}\big)$ (see Figure \ref{fig_basic_GD_step}). 
 
 When the GD step is used within an ML method (see Section \ref{sec_lin_reg} 
 and Section \ref{sec_LogReg}), the step size $\alpha$ is also referred to 
@@ -5796,11 +5834,11 @@ the optimal weight vector $\vw^{(\rm opt)}$ (see \eqref{equ_def_cost_linreg}).
 
 If we choose the step size $\alpha$ too small (see Figure \ref{fig_small_large_alpha}-(a)), 
 the updates \eqref{equ_def_GD_step} make only very little progress towards 
-approximating the optimal weight vector $\vw_{\rm opt}$. In applications that
+approximating the optimal weight vector $\widehat{\vw}$. In applications that
 require real-time processing of data streams, it is possible to repeat the GD 
 steps only for a moderate number. If the GD step size is chosen too 
 small, Algorithm \ref{alg:gd_linreg} will fail to deliver a good approximation 
-of $\vw_{\rm opt}$ within an acceptable number of iterations (which translates 
+of $\widehat{\vw}$ within an acceptable number of iterations (which translates 
 to computation time). 
 
 The optimal choice of the step size $\alpha$ of GD can be a challenging 
@@ -5811,7 +5849,7 @@ convergence of the GD iterations $\vw^{(k)}$ for $k=1,2,\ldots$.
 
 If the objective function $f(\vw)$ is convex and smooth, the 
 GD steps \eqref{equ_def_GD_step} converge to an optimum 
-$\vw_{\rm opt}$ for any step size $\alpha$ satisfying \cite{nestrov04}
+$\widehat{\vw}$ for any step size $\alpha$ satisfying \cite{nestrov04}
 \begin{equation} 
 \label{equ_GD_conv_guarantee}
 \alpha \leq \frac{1}{\lambda_{\rm max} \big( \nabla^{2} f(\vw) \big) }\mbox{ for all } \vw \in \mathbb{R}^{\featuredim}. 
@@ -5848,22 +5886,22 @@ The weight vector is chosen to minimize average
 squared error loss \eqref{equ_squared_loss}
 \begin{equation} 
 \label{equ_def_cost_linreg}
-%f(\vw_{\rm opt})= \min_{\vw \in \mathbb{R}^{\featuredim}} 
+%f(datapoin)= \min_{\vw \in \mathbb{R}^{\featuredim}} 
 \emperror(h^{(\vw)}| \dataset) \stackrel{\eqref{eq_def_ERM_weight}}{=} (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - \vw^{T} \vx^{(\sampleidx)})^{2}, 
 \end{equation}
 incurred by the predictor $h^{(\vw)}(\vx)$ when applied to 
 the labeled dataset $\dataset=\{ (\vx^{(\sampleidx)}, y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$. 
-The optimal weight vector $\vw_{\rm opt}$ for \eqref{equ_def_lin_pred_GD} is 
+The optimal weight vector $\widehat{\vw}$ for \eqref{equ_def_lin_pred_GD} is 
 characterized as
 \begin{equation} 
 \label{equ_smooth_problem_linreg}
-\vw_{\rm opt} = \argmin_{\vw \in \mathbb{R}^{\featuredim}} f(\vw) \mbox{ with } f(\vw) = (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - \vw^{T} \vx^{(\sampleidx)})^{2}. 
+\widehat{\vw} = \argmin_{\vw \in \mathbb{R}^{\featuredim}} f(\vw) \mbox{ with } f(\vw) = (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - \vw^{T} \vx^{(\sampleidx)})^{2}. 
 \end{equation} 
 
 The optimization problem \eqref{equ_smooth_problem_linreg} is an instance of the smooth 
 optimization problem \eqref{equ_generic_smooth_problem}.  
 We can therefore use GD \eqref{equ_def_GD_step} to solve \eqref{equ_smooth_problem_linreg}, 
-to obtain the optimal weight vector $\vw_{\rm opt}$. To implement GD, we need to compute 
+to obtain the optimal weight vector $\widehat{\vw}$. To implement GD, we need to compute 
 the gradient $\nabla f(\vw)$. 
 
 The gradient of the objective function in \eqref{equ_smooth_problem_linreg} is given by 
@@ -5884,7 +5922,7 @@ $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and labels $y^{(\sampleidx)} \
 \State $k \defeq k +1$    (increase iteration counter) 
 \State  $\vw^{(k)} \defeq \vw^{(k\!-\!1)} + \alpha (2/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - \big(\vw^{(k\!-\!1)})^{T} \vx^{(\sampleidx)}) \vx^{(\sampleidx)}$  (do a GD step \eqref{equ_def_GD_step})
 \Until convergence 
-\Ensure $\vw^{(k)}$ (which approximates $\vw_{\rm opt}$ in \eqref{equ_smooth_problem_linreg})
+\Ensure $\vw^{(k)}$ (which approximates $\widehat{\vw}$ in \eqref{equ_smooth_problem_linreg})
 \end{algorithmic}
 \end{algorithm}
 
@@ -5894,7 +5932,7 @@ Let us have a closer look on the update in step $3$ of Algorithm \ref{alg:gd_lin
 \vw^{(k)} \defeq \vw^{(k\!-\!1)} + \alpha (2/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - \big(\vw^{(k\!-\!1)})^{T} \vx^{(\sampleidx)})\vx^{(\sampleidx)}. 
 \end{equation}
 The update \eqref{equ_update_gd_linreg} has an appealing form as it amounts to correcting the previous guess (or approximation) $\vw^{(k\!-\!1)}$ for 
-the optimal weight vector $\vw_{\rm opt}$ by the correction term 
+the optimal weight vector $\widehat{\vw}$ by the correction term 
 \begin{equation}
 \label{equ_corr_term_linreg}
  (2\alpha/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \underbrace{(y^{(\sampleidx)} - \big(\vw^{(k\!-\!1)})^{T} \vx^{(\sampleidx)})}_{e^{(\sampleidx)}} \vx^{(\sampleidx)}. 
@@ -5954,13 +5992,13 @@ choosing the step size $\alpha =1$.
 
 %We can now formulate a full-fledged ML algorithm for solving a linear regression problem (see Section \ref{sec_lin_regression}). 
 As discussed in Section \ref{sec_LogReg}, logistic regression learns 
-a linear hypothesis $h^{(\vw_{\rm opt})}$ by minimizing the average 
+a linear hypothesis $h^{(\widehat{\vw})}$ by minimizing the average 
 logistic loss \eqref{equ_def_emp_risk_logreg} obtained for a dataset $\dataset= \{ (\vx^{(\sampleidx)}, y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize}$, with features $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and binary labels 
 $y^{(\sampleidx)} \in \{-1,1\}$. This minimization problem is an instance 
 of the smooth optimization problem \eqref{equ_generic_smooth_problem},
 \begin{align} 
 \label{equ_smooth_problem_logeg}
-\vw_{\rm opt} & = \argmin_{\vw \in \mathbb{R}^{\featuredim}} f(\vw) \nonumber \\ 
+\widehat{\vw} & = \argmin_{\vw \in \mathbb{R}^{\featuredim}} f(\vw) \nonumber \\ 
  \mbox{ with } f(\vw) & = (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \log( 1\!+\!\exp ( - y^{(\sampleidx)} \vw^{T} \vx^{(\sampleidx)})). 
 \end{align} 
 
@@ -5984,7 +6022,7 @@ $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and labels $y^{(\sampleidx)} \
 \State $\itercntr\!\defeq\! \itercntr\!+\!1$    (increase iteration counter) 
 \State  $\vw^{(\itercntr)} \defeq \vw^{(\itercntr\!-\!1)}\!+\!\alpha (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \frac{y^{(\sampleidx)}}{1\!+\!\exp \big( y^{(\sampleidx)} \big(\vw^{(\itercntr\!-\!1)}\big)^{T} \vx^{(\sampleidx)}\big)} \vx^{(\sampleidx)}$  (do a GD step \eqref{equ_def_GD_step})
 \Until convergence 
-\Ensure $\vw^{(\itercntr)}$, which approximates a solution $\vw_{\rm opt}$ of \eqref{equ_smooth_problem_logeg})
+\Ensure $\vw^{(\itercntr)}$, which approximates a solution $\widehat{\vw}$ of \eqref{equ_smooth_problem_logeg})
 \end{algorithmic}
 \end{algorithm}
 
@@ -5994,7 +6032,7 @@ Let us have a closer look on the update in step $3$ of Algorithm \ref{alg:gd_log
 \vw^{(k)} \defeq \vw^{(k\!-\!1)} + \alpha (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \frac{y^{(\sampleidx)}}{1 + \exp \big( y^{(\sampleidx)} \big( \vw^{(k\!-\!1)}  \big)^{T} \vx^{(\sampleidx)}\big)} \vx^{(\sampleidx)}. 
 \end{equation}
 The update \eqref{equ_update_logreg_GD} has an appealing form as it amounts to correcting the previous 
-guess (or approximation) $\vw^{(k\!-\!1)}$ for the optimal weight vector $\vw_{\rm opt}$ by the correction term 
+guess (or approximation) $\vw^{(k\!-\!1)}$ for the optimal weight vector $\widehat{\vw}$ by the correction term 
 \begin{equation}
 \label{equ_correction_logreg_GD}
 (\alpha/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \underbrace{ \frac{y^{(\sampleidx)}}{1 + \exp ( y^{(\sampleidx)} \vw^{T} \vx^{(\sampleidx)})}}_{e^{(\sampleidx)}} \vx^{(\sampleidx)}. 
@@ -6028,7 +6066,7 @@ This makes the analysis of Algorithm \ref{alg:gd_logreg} and the optimal choice 
 more difficult compared to Algorithm \ref{alg:gd_linreg}. However, since the diagonal entries \eqref{equ_diag_entries_log_reg} 
 take values in the interval $[0,1]$, for normalized features (with $\| \vx^{(\sampleidx)} \|=1$) the step size $\alpha=1$ 
 ensures convergence of the GD updates \eqref{equ_update_logreg_GD} to the optimal weight vector 
-$\vw_{\rm opt}$ solving \eqref{equ_smooth_problem_logeg}. 
+$datapoin$ solving \eqref{equ_smooth_problem_logeg}. 
 
 \section{Data Normalization} 
 
@@ -6387,21 +6425,19 @@ little point in modifying the ML method as it already performs (nearly) optimal.
 \section{Overfitting}
 \label{sec_overfitting_sec_6}
 
-Let us illustrate the phenomenon of overfitting by considering linear regression that 
-we discussed in Section \ref{sec_lin_regression}. Here, the goal is to learn a linear 
-hypothesis $h(\vx) = \vw^{T} \mathbf{x}$ which is parametrized by the weight 
-vector $\vw \in \mathbb{R}^{\featurelen}$. The hypothesis is used to predict the 
-numeric label $y$ of a datapoint based on its feature vector $\vx \in \mathbb{R}^{\featurelen}$. 
+We now have a closer look at the occurrence of overfitting in linear regression which is 
+one of the ML method discussed in Section \ref{sec_lin_regression}. Linear regression 
+methods learn a linear hypothesis $h(\vx) = \vw^{T} \mathbf{x}$ which is parametrized by the 
+weight vector $\vw \in \mathbb{R}^{\featurelen}$. The learnt hypothesis is then used to predict the 
+numeric label $y \in \mathbb{R}$ of a datapoint based on its feature vector $\vx \in \mathbb{R}^{\featurelen}$. 
 
-Linear regression methods learn the weight vector $\vw$ of a linear predictor by 
-minimizing the average squared error loss incurred on some training set 
+Linear regression aims at finding a weight vector $\widehat{\vw}$ with minimum 
+average squared error loss incurred on a training set 
  $$\dataset = \big\{ \big(\vx^{(1)},y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)},y^{(\samplesize)}\big)  \big\}.$$ 
-The training set consists of $\samplesize$ datapoints $\big(\vx^{(1)},y^{(1)}\big)$, 
+The training set consists of $\samplesize$ datapoints $\big(\vx^{(\sampleidx)},y^{(\sampleidx)}\big)$, 
 for $\sampleidx=1,\ldots,\samplesize$, with known label values $y^{(\sampleidx)}$. 
-
 %We show it many pictures and tell for each picture 
 %f there is a ``tractor'' or if there is ``no tractor'' depicted. 
-
 %Assume that we have taught the child using the image collection 
 %$\trainset$ depicted in Figure \ref{fig_misleading_data_set}. For some 
 %reason, one of the images is labeled erroneously as ``tractor'' 
@@ -6427,22 +6463,23 @@ for $\sampleidx=1,\ldots,\samplesize$, with known label values $y^{(\sampleidx)}
 %		$\trainset$ in Figure \ref{fig_misleading_data_set}, might ``see'' a lot of tractors during the next beach holiday.}
 %	\label{equ_wave_as_tractor}   
 %\end{figure}
-
-
 %For the sake of argument, we assume that the child uses a linear predictor 
 %$h^{(\vw)}(\vx) = \vx^{T} \vw$, using the features $\vx$ of the image, and encodes 
 %the fact of showing a tractor by $y=1$ and if it is not showing a tractor by $y=-1$. 
 %We learn the weight vector by minimizing the squared error loss \eqref{equ_def_cost_MSE} 
 %on the training dataset $\dataset^{(\rm train)}$.
-
-Let us stack the feature vectors $\vx^{(\sampleidx)}$ and labels $y^{(\sampleidx)}$ of 
+It will be convenient to stack the feature vectors $\vx^{(\sampleidx)}$ and labels $y^{(\sampleidx)}$ of 
 the training data into the feature matrix $\mX=(\vx^{(1)},\ldots,\vx^{(\samplesize)})^{T}$ 
-and label vector $\vy=(y^{(1)},\ldots,y^{(\samplesize)})^{T}$.The optimal linear hypothesis  
-is obtained for any weight vector $\widehat{\vw}$ that solves \eqref{equ_zero_gradient_lin_reg}. 
-The corresponding minimum training error is obtained from \eqref{equ_emp_risk_lin_proje} as 
-\begin{equation}
-\emperror(h^{(\widehat{\vw})} \mid \dataset) = \min_{\vw \in \mathbb{R}^{\featuredim}} \emperror(h^{(\vw)}) = \|  (\mathbf{I}- \mathbf{P}) \vy \|^{2}.
-\end{equation} 
+and label vector $\vy=(y^{(1)},\ldots,y^{(\samplesize)})^{T}$. 
+
+The resulting ERM \eqref{equ_emp_risk_lin_proje} of linear regression is solved by any weight vector $\widehat{\vw}$ 
+that solves \eqref{equ_zero_gradient_lin_reg}. The (optimal) training error of the hypothesis $h^{(\widehat{\vw})}$ 
+is obtained as 
+\begin{align}
+\emperror(h^{(\widehat{\vw})} \mid \dataset) & \stackrel{\eqref{}}{=} 
+  \min_{\vw \in \mathbb{R}^{\featuredim}} \emperror(h^{(\vw)}) \nonumber \\ 
+& = \|  (\mathbf{I}- \mathbf{P}) \vy \|^{2}.
+\end{align} 
 Here, we used the orthogonal projection matrix $\mathbf{P}$ on the linear span 
 \begin{equation} 
 \nonumber
@@ -6470,11 +6507,11 @@ coincides with $\mathbb{R}^{\samplesize}$ which implies, in turn, $\mathbf{P} = 
 Inserting $\mathbf{P} = \mathbf{I}$ into \eqref{equ_emp_risk_lin_proje} yields 
 \begin{equation}
 \label{eq_zero_trianing_error}
-\emperror(h^{(\vw_{\rm opt})} \mid \dataset^{(\rm train)}) = 0.
+\emperror(h^{(\widehat{\vw})} \mid \dataset^{(\rm train)}) = 0.
 \end{equation} 
 To sum up, as soon as the number  $\samplesize_{\rm t} = | \dataset_{\rm train}|$ 
 of training datapoints is smaller than the number $\featuredim$ of features $\vx$, there 
-is a linear predictor $h^{(\vw_{\rm opt})}$ achieving {\bf zero empirical risk} 
+is a linear predictor $h^{(\widehat{\vw})}$ achieving {\bf zero empirical risk} 
 (see \eqref{eq_zero_trianing_error}) on the training data. 
 
 The result \eqref{eq_zero_trianing_error} only applies if the feature vectors of 
@@ -6483,9 +6520,9 @@ vectors $\vx^{(1)},\ldots,\vx^{(\samplesize)} \in \mathbb{R}^{\featuredim}$
 are realizations of i.i.d.\ RVs with a continuous probability distribution, 
 then with probability one they are linearly independent whenever \eqref{equ_condition_overfitting} holds. 
 
-While the learnt predictor $h^{(\vw_{\rm opt})}$ is perfectly accurate on the training 
+While the learnt predictor $h^{(\widehat{\vw})}$ is perfectly accurate on the training 
 data (the training error is zero!), it will typically incur a non-zero average prediction error 
-$y - h^{(\vw_{\rm opt})}(\vx)$ on datapoints $(\vx,y)$ which are different from the 
+$y - h^{(\widehat{\vw})}(\vx)$ on datapoints $(\vx,y)$ which are different from the 
 training data (see Figure \ref{fig_polyn_training}). 
 
 
@@ -6803,7 +6840,7 @@ y^{(\sampleidx)} = \bar{\vw}^{T}  \vx^{(\sampleidx)} + \varepsilon^{(\sampleidx)
 with i.i.d.\ noise $\varepsilon, \varepsilon^{(\sampleidx)} \sim \mathcal{N}(0,\sigma^{2})$. 
 
 As discussed in Chapter \ref{ch_Optimization}, the training error $\emperror (h^{(\vw)} \mid \trainset)$ 
-is minimized by the predictor $h^{(\hat{\vw})}(\vx) =  \hat{\vw}^{T} \mathbf{I}_{r \times \featuredim} \vx$, 
+is minimized by the predictor $h^{(\widehat{\vw})}(\vx) =  \widehat{\vw}^{T} \mathbf{I}_{r \times \featuredim} \vx$, 
 with weight vector 
 \begin{equation}
 \label{equ_optimal_weight_closed_form}
@@ -6868,8 +6905,8 @@ depends crucially on the {\bf mean squared estimation error (MSE)}
 \mathcal{E}_{\rm est} \defeq \expect \{  \| \Delta \vw \|^{2}_{2} \} =  \expect \big\{ \big \| \widehat{\vw} - \bar{\vw} \big\|^{2}_{2} \big \}. 
 \end{equation}
 We can decompose the MSE $\mathcal{E}_{\rm est}$ into two components. 
-The first component is the {\bf bias} which characterizes the properties of 
-the learn hypothesis on average (over all different realizations of training sets). 
+The first component is the {\bf bias} which characterizes the average behaviour, 
+over all different realizations of training sets, of the learnt hypothesis. 
 The second component is the {\bf variance} which quantifies the amount of 
 random fluctuations of the hypothesis obtained from ERM applied to 
 different realizations of the training set. Both components depend on the model 
@@ -6958,7 +6995,7 @@ has to balance between a small variance and a small bias.
 
 
 {\bf Generalization.}
-Consider the linear hypothesis $h(\vx) = \hat{\vw}^{T} \vx$ with the weight 
+Consider the linear hypothesis $h(\vx) = \widehat{\vw}^{T} \vx$ with the weight 
 vector \eqref{equ_optimal_weight_closed_form} which results in a minimum 
 training error. We would like this predictor to generalize well to datapoints 
 which are different from the training set. This generalization capability can 
@@ -7392,14 +7429,14 @@ For a hypothesis space $\hypospace$ that is parameterized by some weight vector 
 we can rewrite SRM \eqref{equ_ERM_fun_regularized} as 
 \begin{align} 
 \label{equ_rerm}
-\hat{\vw}^{(\lambda)}  & = \argmin_{\vw \in  \mathbb{R}^{\featurelen}} \big[ \emperror(h^{(\vw)}|\dataset)+ \lambda \mathcal{R}(\vw)\big] \nonumber \\ %  \nonumber \\ 
+\widehat{\vw}^{(\lambda)}  & = \argmin_{\vw \in  \mathbb{R}^{\featurelen}} \big[ \emperror(h^{(\vw)}|\dataset)+ \lambda \mathcal{R}(\vw)\big] \nonumber \\ %  \nonumber \\ 
 &  = \argmin_{\vw \in  \mathbb{R}^{\featurelen}} \big[(1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h^{(\vw)}} + \lambda \mathcal{R}(\vw) \big]. 
 \end{align}
 For the particular choice of squared error loss \eqref{equ_squared_loss}, linear hypothesis space \eqref{equ_lin_hypospace} 
 and regularizer $\mathcal{R}(\vw)=\| \vw \|_{2}^{2}$, SRM \eqref{equ_rerm} specializes to 
 \begin{align} 
 \label{equ_rerm_ridge_regression}
-\hat{\vw}^{(\lambda)}  & = \argmin_{\vw \in  \mathbb{R}^{\featurelen}} \big[(1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \big( y^{(\sampleidx)} - \vw^{T} \vx^{(\sampleidx)}\big)^{2} + \lambda \| \vw \|_{2}^{2}\big]. 
+\widehat{\vw}^{(\lambda)}  & = \argmin_{\vw \in  \mathbb{R}^{\featurelen}} \big[(1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \big( y^{(\sampleidx)} - \vw^{T} \vx^{(\sampleidx)}\big)^{2} + \lambda \| \vw \|_{2}^{2}\big]. 
 \end{align}
 The SRM special case \eqref{equ_rerm_ridge_regression} is also known as ridge regression. 
 
@@ -7629,7 +7666,7 @@ Specialising \eqref{equ_rerm} to the squared error loss and linear predictors
 yields {\bf regularized linear regression} (see \eqref{equ_def_cost_MSE}): 
 \begin{equation} 
 \label{equ_reg_lin_reg_opt_weight}
-\hat{\vw}^{(\lambda)} = \argmin_{\vw \in \mathbb{R}^{\featuredim}} \big[ (1/\samplesize_{\rm t}) \sum_{\sampleidx=1}^{\samplesize_{\rm t}}  (y^{(\sampleidx)} - \vw^{T}\vx^{(\sampleidx)}  )^2 + \lambda \| \vw \|^{2}_{2}\big], 
+\widehat{\vw}^{(\lambda)} = \argmin_{\vw \in \mathbb{R}^{\featuredim}} \big[ (1/\samplesize_{\rm t}) \sum_{\sampleidx=1}^{\samplesize_{\rm t}}  (y^{(\sampleidx)} - \vw^{T}\vx^{(\sampleidx)}  )^2 + \lambda \| \vw \|^{2}_{2}\big], 
 \end{equation} 
 The optimization problem \eqref{equ_reg_lin_reg_opt_weight} is also known 
 under the name {\bf ridge regression} \cite{hastie01statisticallearning}. 
@@ -7646,12 +7683,12 @@ and label vector $\vy=(y^{(1)},\ldots,y^{(\samplesize_{\rm t})})^{T}$,
 we can rewrite \eqref{equ_reg_lin_reg_opt_weight} more compactly as 
 \begin{equation} 
 \label{equ_def_rlr_w_opt}
-\hat{\vw}^{(\lambda)} = \argmin_{\vw \in \mathbb{R}^{\featuredim}} \big[ (1/\samplesize_{\rm t}) \| \vy - \mX \vw \|^{2}_{2} + \lambda \| \vw \|^{2}_{2}\big].
+\widehat{\vw}^{(\lambda)} = \argmin_{\vw \in \mathbb{R}^{\featuredim}} \big[ (1/\samplesize_{\rm t}) \| \vy - \mX \vw \|^{2}_{2} + \lambda \| \vw \|^{2}_{2}\big].
 \end{equation} 
 The solution of \eqref{equ_def_rlr_w_opt} is given by 
 \begin{equation}
 \label{equ_close_form_reglinreg}
-\hat{\vw}^{(\lambda)} = (1/\samplesize_{\rm t}) ((1/\samplesize_{\rm t}) \mX^{T} \mX + \lambda \mathbf{I})^{-1} \mX^{T} \vy. 
+\widehat{\vw}^{(\lambda)} = (1/\samplesize_{\rm t}) ((1/\samplesize_{\rm t}) \mX^{T} \mX + \lambda \mathbf{I})^{-1} \mX^{T} \vy. 
 \end{equation}
 This reduces to the closed-form expression \eqref{equ_optimal_weight_closed_form} 
 when $\lambda=0$ in which case regularized linear regression reduces to ordinary linear 
@@ -7662,7 +7699,7 @@ that for $\lambda> 0$ the optimization problem \eqref{equ_def_rlr_w_opt} (and \e
 has a unique solution (which is given by \eqref{equ_close_form_reglinreg}). 
 
 We now study the effect of regularization on the bias, variance 
-and average prediction error incurred by the predictor $h^{(\hat{\vw}^{(\lambda)})}(\vx) = \big(\hat{\vw}^{(\lambda)}\big)^{T} \vx$. 
+and average prediction error incurred by the predictor $h^{(\widehat{\vw}^{(\lambda)})}(\vx) = \big(\widehat{\vw}^{(\lambda)}\big)^{T} \vx$. 
 To this end, we will again invoke the simple probabilistic toy 
 model (see \eqref{equ_linear_obs_model}, \eqref{equ_toy_model_iid} 
 and \eqref{equ_labels_training_data}) used already in Section \ref{sec_gen_linreg}. 
@@ -7727,8 +7764,8 @@ here we obtain a continuous trade-off via the real-valued parameter $\lambda$.
 \begin{center}
     \begin{tikzpicture}
               \draw [thick, <->] (0,3.5) -- (0,0) -- (6.2,0);
-             \draw[red, ultra thick, domain=0:5] plot (\x,  {2*\x/(1+\x)}) node [above] {bias of $\hat{\vw}^{(\lambda)}$};
-              \draw[blue, ultra thick, domain=0:5] plot (\x,  {2/(1+\x)}) node [above]  {variance of $\hat{\vw}^{(\lambda)}$};
+             \draw[red, ultra thick, domain=0:5] plot (\x,  {2*\x/(1+\x)}) node [above] {bias of $\widehat{\vw}^{(\lambda)}$};
+              \draw[blue, ultra thick, domain=0:5] plot (\x,  {2/(1+\x)}) node [above]  {variance of $\widehat{\vw}^{(\lambda)}$};
               \node [below] at (5,0) {regularization parameter $\lambda$};
      \end{tikzpicture}
 \end{center}
@@ -7801,7 +7838,7 @@ $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and labels $y^{(\sampleidx)} \
 \State $k \defeq k +1$    (increase iteration counter) 
 \State  $\vw^{(k)} \defeq (1- \alpha \lambda) \vw^{(k\!-\!1)} + \alpha (2/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - \big(\vw^{(k\!-\!1)})^{T} \vx^{(\sampleidx)}) \vx^{(\sampleidx)}$  (do a GD step \eqref{equ_def_GD_step})
 \Until convergence 
-\Ensure $\vw^{(k)}$ (which approximates $\hat{\vw}^{(\lambda)}$ in \eqref{equ_def_rlr_w_opt})
+\Ensure $\vw^{(k)}$ (which approximates $\widehat{\vw}^{(\lambda)}$ in \eqref{equ_def_rlr_w_opt})
 \end{algorithmic}
 \end{algorithm}
 
@@ -7811,7 +7848,7 @@ and model selection (see Section \ref{sec_modsel}). The regularized ERM \eqref{e
 can be shown (see \cite[Ch. 5]{BertsekasNonLinProgr}) to be equivalent to 
 \begin{equation} 
 \label{equ_restr_ERM}
-\hat{\vw}^{(\lambda)} = \argmin_{h^{(\vw)} \in \hypospace^{(\lambda)}}  (1/m_{\rm t}) \sum_{\sampleidx=1}^{\samplesize_{\rm t}}  (y^{(\sampleidx)} - h^{(\vw)}(\vx^{(\sampleidx)})  )^2
+\widehat{\vw}^{(\lambda)} = \argmin_{h^{(\vw)} \in \hypospace^{(\lambda)}}  (1/m_{\rm t}) \sum_{\sampleidx=1}^{\samplesize_{\rm t}}  (y^{(\sampleidx)} - h^{(\vw)}(\vx^{(\sampleidx)})  )^2
 \end{equation}  
 with the restricted hypothesis space
 \begin{align} 

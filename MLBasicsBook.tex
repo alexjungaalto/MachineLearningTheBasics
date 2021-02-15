@@ -2789,11 +2789,12 @@ ML methods approximate the expected value of the loss incurred by
 a given hypothesis by an empirical (sample) average over a finite set 
 of labeled datapoints $\dataset=\big(\vx^{(1)},y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)},y^{(\samplesize)}\big)$. 
 
-The empirical risk of a predictor $h \in \hypospace$ incurred on the labeled dataset $\dataset$ is 
+We define the {\bf empirical risk} of a hypothesis $h \in \hypospace$ for a dataset $\dataset$ as 
 \begin{equation} 
 \label{eq_def_emp_error_101}
 \emperror(h|\dataset) = (1/\samplesize)\sum_{\sampleidx=1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}.  
 \end{equation} 
+The empirical risk of $h \in \hypospace$ is the average loss on the datapoints in $\dataset$. 
 To ease notational burden and if the dataset $\dataset$ is clear from the context, 
 we use $\emperror(h)$ as a shorthand for $\emperror(h|\dataset)$. Note that in general 
 the empirical risk depends on both, the hypothesis $h$ and the properties of the dataset $\dataset$. 
@@ -3285,15 +3286,14 @@ We observe a bunch of labeled datapoints which are depicted in Figure \ref{fig_s
 
 Figure \ref{fig_scatterplot_poly} suggests that the relation $x \mapsto y$ between feature 
 $x$ and label $y$ is highly non-linear. For such non-linear relations between features and 
-labels it is useful to consider a hypothesis space which is constituted by
- polynomial functions
+labels it is useful to consider a hypothesis space which is constituted by polynomial maps
 \begin{align}
 \label{equ_def_poly_hyposapce}
-\hypospace^{(\featuredim)}_{\rm poly}& = \{ h^{(\vw)}: \mathbb{R} \rightarrow \mathbb{R}: h^{(\vw)}(x) = \sum_{r=1}^{\featuredim+1} w_{r} x^{r-1} \mbox{, with } \nonumber \\ 
-& \mbox{ some } \vw\!=\!(w_{1},\ldots,w_{\featuredim+1})^{T}\!\in\!\mathbb{R}^{\featuredim+1} \}. 
+\hypospace^{(\featuredim)}_{\rm poly}& = \{ h^{(\vw)}: \mathbb{R} \rightarrow \mathbb{R}: h^{(\vw)}(x) = \sum_{r=1}^{\featuredim} w_{r} x^{r-1} \mbox{, with } \nonumber \\ 
+& \mbox{ some } \vw\!=\!(w_{1},\ldots,w_{\featuredim})^{T}\!\in\!\mathbb{R}^{\featuredim} \}. 
 \end{align}
 We can approximate any non-linear relation $y\!=\!h(x)$ with any desired level of 
-accuracy using a polynomial $\sum_{r=1}^{\featuredim+1} w_{r} x^{r-1}$ of sufficiently large 
+accuracy using a polynomial $\sum_{r=1}^{\featuredim} w_{r} x^{r-1}$ of sufficiently large 
 degree $\featuredim$.\footnote{The precise formulation of this statement is known as the 
 ``Stone-Weierstrass Theorem'' \cite[Thm. 7.26]{RudinBookPrinciplesMatheAnalysis}.}
 
@@ -3307,10 +3307,9 @@ minimizing the average squared error loss (mean squared error) (see \eqref{equ_s
 \min_{h \in \hypospace_{\rm poly}^{(\featuredim)} } (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} (y^{(\sampleidx)} - h^{(\mathbf{w})}(x^{(\sampleidx)}))^{2}.
 \end{equation} 
 
-It is useful to interpret polynomial regression as a combination 
-of a feature map (transformation) (see Section \ref{sec_feature_space}) 
-and linear regression (see Section \ref{sec_lin_regression}). Indeed, 
-any polynomial predictor $h^{(\vw)} \in \hypospace_{\rm poly}^{(\featuredim)}$ 
+We can interpret polynomial regression as a combination of a feature map (transformation) 
+(see Section \ref{sec_feature_space}) and linear regression (see Section \ref{sec_lin_regression}). 
+Indeed, any polynomial predictor $h^{(\vw)} \in \hypospace_{\rm poly}^{(\featuredim)}$ 
 is obtained as a concatenation of the feature map  
 \begin{equation}
 \label{equ_poly_feature_map} 
@@ -3322,18 +3321,16 @@ with some linear map $g^{(\vw)}: \mathbb{R}^{\featuredim+1} \rightarrow \mathbb{
 h^{(\vw)}(x) = g^{(\vw)}(\phi(x)). 
 \end{equation}
 
-Thus, we can implement polynomial regression by first applying 
-the feature map $\featuremap$ (see \eqref{equ_poly_feature_map}) to 
-the scalar features $x^{(\sampleidx)}$, resulting in the transformed 
+Thus, we can implement polynomial regression by first applying the feature map $\featuremap$ 
+(see \eqref{equ_poly_feature_map}) to the scalar features $x^{(\sampleidx)}$, resulting in the transformed 
 feature vectors 
 \begin{equation} 
 \label{equ_def_poly_feature_vectors}
-\vx^{(\sampleidx)} = \featuremap \big(x^{(\sampleidx)}\big) = \big(1,x^{(\sampleidx)},\ldots,\big( x^{(\sampleidx)} \big)^{\featuredim} \big)^{T} \in \mathbb{R}^{\featuredim+1}, 
+\vx^{(\sampleidx)} = \featuremap \big(x^{(\sampleidx)}\big) = \big(1,x^{(\sampleidx)},\ldots,\big( x^{(\sampleidx)} \big)^{\featuredim-1} \big)^{T} \in \mathbb{R}^{\featuredim}, 
 \end{equation} 
-and then applying linear regression  (see Section \ref{sec_lin_regression}) 
-to these new feature vectors. By inserting \eqref{equ_concact_phi_g_poly} 
-into \eqref{opt_hypo_poly}, we end up with a linear regression problem 
-\eqref{equ_opt_weight_vector_linreg_weight} with feature vectors \eqref{equ_def_poly_feature_vectors}. 
+and then applying linear regression  (see Section \ref{sec_lin_regression}) to these new feature vectors. 
+By inserting \eqref{equ_concact_phi_g_poly} into \eqref{opt_hypo_poly}, we end up with a linear regression 
+problem \eqref{equ_opt_weight_vector_linreg_weight} with feature vectors \eqref{equ_def_poly_feature_vectors}. 
 Thus, while a predictor $h^{(\vw)} \in \hypospace_{\rm poly}^{(\featuredim)}$ 
 is a non-linear function $h^{(\vw)}(x)$ of the original feature $x$, it is a linear 
 function, given explicitly by $g^{(\vw)}(\vx) = \vw^{T}\vx$ (see \eqref{equ_concact_phi_g_poly}), 
@@ -5066,8 +5063,10 @@ extended line/.default=1cm]
 %\draw[thick,-stealth] (0,0) -- (0,4.5);
 \coordinate (A) at (-5,0);
 \coordinate (optw) at (3,0) ; 
-\coordinate (labelvec) at (3,2); 
+\coordinate (error) at (3,2); 
+\coordinate (labelvec) at (3,4); 
 \coordinate (B) at (5,0);
+ \node[right] at (error)   (a) {$\| \vy - \mX \widehat{\vw}\|$};
 \draw [dashed,line width=0.5pt]  ([xshift=-1cm]A)  --  ([xshift=-1cm]A) node [left]{$\{ \mathbf{X}\vw: \vw \in \mathbb{R}^{\featuredim}\}$} ;
 \draw [dashed,line width=0.5pt] ([xshift=-1cm]A) -- ([xshift=1cm]B) ; 
 \draw [->,,line width=2pt] (A) -- (labelvec) node[above right]{$\mathbf{y}$} ; 
@@ -5098,7 +5097,7 @@ $\widehat{\vw}$ to be a minimizer $f(\widehat{\vw})\!=\!\min_{\vw \in \mathbb{R}
 \end{equation} 
 
 Combining \eqref{equ_quadr_form_linreg} with \eqref{equ_zero_gradient}, 
-yields the following sufficient and necessary condition for a weight vector 
+yields the following necessary and sufficient condition for a weight vector 
 $\widehat{\vw}$ to solve the ERM \eqref{equ_def_cost_MSE},
 \begin{equation}
 \label{equ_zero_gradient_lin_reg}
@@ -5555,7 +5554,7 @@ continuously learning an improved model as new data arrives.
 To illustrate online learning, we consider the ML problem discussed in Section \ref{sec_putting_togehter_the_pieces}. 
 This problem amounts to learning a linear predictor for the label $y$ of datapoints 
 using a single numeric feature $x$. We learn the predictor based on some training 
-data. The weight vector for the optimal linear predictor is characterized by \eqref{equ_zero_grad_condition_putting_together_special_form_mtx}. 
+data. The weight vector for the optimal linear hypothesis is characterized by \eqref{equ_zero_grad_condition_putting_together_special_form_mtx}. 
 
 Let us assume that the training data is built up sequentially, we start with $m=1$ datapoints 
 in the first time step, then in the next time step collect another datapoint to get 
@@ -6436,121 +6435,95 @@ average squared error loss incurred on a training set
  $$\dataset = \big\{ \big(\vx^{(1)},y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)},y^{(\samplesize)}\big)  \big\}.$$ 
 The training set consists of $\samplesize$ datapoints $\big(\vx^{(\sampleidx)},y^{(\sampleidx)}\big)$, 
 for $\sampleidx=1,\ldots,\samplesize$, with known label values $y^{(\sampleidx)}$. 
-%We show it many pictures and tell for each picture 
-%f there is a ``tractor'' or if there is ``no tractor'' depicted. 
-%Assume that we have taught the child using the image collection 
-%$\trainset$ depicted in Figure \ref{fig_misleading_data_set}. For some 
-%reason, one of the images is labeled erroneously as ``tractor'' 
-%but actually shows an ocean wave. As a consequence, if the child is 
-%good in memorizing images, it might predict the presence of tractors 
-%whenever looking at a wave (Figure \ref{equ_wave_as_tractor}). 
-%
-%\begin{figure}[htbp]
-%	\centering
-%	\includegraphics[width=0.7\textwidth]{LabeledDataTractorOverfitting1.jpg}  
-%	\caption{A (misleading) training dataset $\trainset \!=\! \{ (\vx^{(\sampleidx)},y^{(\sampleidx)}) \}_{\sampleidx=1}^{\samplesize_{\rm t}}$ 
-%		consisting of $\samplesize_{\rm t}=9$ images. The $\sampleidx$-th image is characterized by the feature vector $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and labeled with $y^{(\sampleidx)}\!=\!1$ 
-%		(tractor) or with $y^{(\sampleidx)}\!=\!-1$ (no tractor).}
-%	%    \caption{Hypothesis Map}\label{fig:Hypothesis Map}
-%	\label{fig_misleading_data_set}
-%\end{figure}
-%
-%
-%\begin{figure}[htbp]
-%	\centering
-%	\includegraphics[width=0.7\textwidth]{OverfittingSample.jpg}   
-%	\caption{The child, who has been taught the concept ``tractor'' using the image collection 
-%		$\trainset$ in Figure \ref{fig_misleading_data_set}, might ``see'' a lot of tractors during the next beach holiday.}
-%	\label{equ_wave_as_tractor}   
-%\end{figure}
-%For the sake of argument, we assume that the child uses a linear predictor 
-%$h^{(\vw)}(\vx) = \vx^{T} \vw$, using the features $\vx$ of the image, and encodes 
-%the fact of showing a tractor by $y=1$ and if it is not showing a tractor by $y=-1$. 
-%We learn the weight vector by minimizing the squared error loss \eqref{equ_def_cost_MSE} 
-%on the training dataset $\dataset^{(\rm train)}$.
-It will be convenient to stack the feature vectors $\vx^{(\sampleidx)}$ and labels $y^{(\sampleidx)}$ of 
+We stack the feature vectors $\vx^{(\sampleidx)}$ and labels $y^{(\sampleidx)}$ of 
 the training data into the feature matrix $\mX=(\vx^{(1)},\ldots,\vx^{(\samplesize)})^{T}$ 
 and label vector $\vy=(y^{(1)},\ldots,y^{(\samplesize)})^{T}$. 
 
-The resulting ERM \eqref{equ_emp_risk_lin_proje} of linear regression is solved by any weight vector $\widehat{\vw}$ 
-that solves \eqref{equ_zero_gradient_lin_reg}. The (optimal) training error of the hypothesis $h^{(\widehat{\vw})}$ 
+The ERM \eqref{equ_emp_risk_lin_proje} of linear regression is solved by any weight vector $\widehat{\vw}$ 
+that solves \eqref{equ_zero_gradient_lin_reg}. The (minimum) training error of the hypothesis $h^{(\widehat{\vw})}$ 
 is obtained as 
 \begin{align}
-\emperror(h^{(\widehat{\vw})} \mid \dataset) & \stackrel{\eqref{}}{=} 
-  \min_{\vw \in \mathbb{R}^{\featuredim}} \emperror(h^{(\vw)}) \nonumber \\ 
-& = \|  (\mathbf{I}- \mathbf{P}) \vy \|^{2}.
+\emperror(h^{(\widehat{\vw})} \mid \dataset) & \stackrel{\eqref{eq_def_ERM_weight}}{=} 
+  \min_{\vw \in \mathbb{R}^{\featuredim}} \emperror(h^{(\vw)} | \dataset) \nonumber \\ 
+& \stackrel{\eqref{equ_emp_risk_lin_proje}}{=} \|  (\mathbf{I}- \mathbf{P}) \vy \|^{2}.
 \end{align} 
 Here, we used the orthogonal projection matrix $\mathbf{P}$ on the linear span 
 \begin{equation} 
 \nonumber
 {\rm span}\{ \mX \} = \big\{  \mX \va : \va \in \mathbb{R}^{\featuredim} \big\} \subseteq \mathbb{R}^{\samplesize} , 
 \end{equation}
-of the feature matrix 
-\begin{equation} 
-\label{equ_feature_matrix_overfit}
-\mX = (\vx^{(1)},\ldots,\vx^{(\samplesize)})^{T} \in \mathbb{R}^{  \samplesize \times \featuredim}. 
-\end{equation} 
+of the feature matrix $\mX = (\vx^{(1)},\ldots,\vx^{(\samplesize)})^{T} \in \mathbb{R}^{  \samplesize \times \featuredim}$. 
 
-Linear regression will overfit (with probability one) as soon as the 
-number $\featuredim$ of features exceeds the sample size $\samplesize$,
+In many ML applications, we have access to a huge number of individual datapoints. If a datapoint represents 
+a snapshot obtained from a smartphone camera, we can use millions of pixel colour intensities as its features. 
+Therefore, it is common to have more features for datapoints than the size of the training set, 
+%In general, linear regression overfits a training set of size $\samplesize$ as soon as the number $\featuredim$ of 
+%features exceeds the sample size $\samplesize$,
 \begin{equation} 
 \label{equ_condition_overfitting}
 \featuredim  \geq \samplesize. 
 \end{equation} 
+Whenever \eqref{equ_condition_overfitting} holds, the feature vectors $\vx^{(1)},\ldots,\vx^{(\samplesize)} \in \mathbb{R}^{\featuredim}$ 
+of the datapoints in $\dataset$ are typically linearly independent. As a case in point, If the feature vectors 
+$\vx^{(1)},\ldots,\vx^{(\samplesize)} \in \mathbb{R}^{\featuredim}$ are realizations of i.i.d.\ RVs with a 
+continuous probability distribution, these vectors are linearly independent with probability one \cite{Muirhead1982}. 
 
-A set of $\samplesize$ feature vectors $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ 
-is typically linearly independent whenever \eqref{equ_condition_overfitting} is satisfied. 
-If the feature vectors of the training datapoints are linearly independent, 
-the span of the transposed feature matrix \eqref{equ_feature_matrix_overfit} 
+If the feature vectors $\vx^{(1)},\ldots,\vx^{(\samplesize)} \in \mathbb{R}^{\featuredim}$ 
+are linearly independent, the span of the feature matrix $\mX =  (\vx^{(1)},\ldots,\vx^{(\samplesize)})^{T}$ 
 coincides with $\mathbb{R}^{\samplesize}$ which implies, in turn, $\mathbf{P} = \mathbf{I}$. 
-
 Inserting $\mathbf{P} = \mathbf{I}$ into \eqref{equ_emp_risk_lin_proje} yields 
 \begin{equation}
 \label{eq_zero_trianing_error}
-\emperror(h^{(\widehat{\vw})} \mid \dataset^{(\rm train)}) = 0.
+\emperror(h^{(\widehat{\vw})} \mid \dataset) = 0.
 \end{equation} 
-To sum up, as soon as the number  $\samplesize_{\rm t} = | \dataset_{\rm train}|$ 
-of training datapoints is smaller than the number $\featuredim$ of features $\vx$, there 
-is a linear predictor $h^{(\widehat{\vw})}$ achieving {\bf zero empirical risk} 
-(see \eqref{eq_zero_trianing_error}) on the training data. 
+As soon as the number $\samplesize= | \dataset|$ of training datapoints does 
+not exceed the number $\featuredim$ of features that characterize datapoints, there 
+is (with probability one) a linear predictor $h^{(\widehat{\vw})}$ achieving {\bf zero training error}.  
+%The result \eqref{eq_zero_trianing_error} only applies if the feature vectors of 
+%the training datapoints are linearly independent.
 
-The result \eqref{eq_zero_trianing_error} only applies if the feature vectors of 
-the training datapoints are linearly independent. It can be shown that if the feature 
-vectors $\vx^{(1)},\ldots,\vx^{(\samplesize)} \in \mathbb{R}^{\featuredim}$ 
-are realizations of i.i.d.\ RVs with a continuous probability distribution, 
-then with probability one they are linearly independent whenever \eqref{equ_condition_overfitting} holds. 
+While the hypothesis $h^{(\widehat{\vw})}$ achieves zero training error, it will typically incur a 
+non-zero average prediction error $y - h^{(\widehat{\vw})}(\vx)$ on datapoints $(\vx,y)$ 
+outside the training set (see Figure \ref{fig_polyn_training}). Section \ref{sec_gen_linreg} 
+will make this statement more precise by using a probabilistic model for the datapoints 
+within and outside the training set. 
 
-While the learnt predictor $h^{(\widehat{\vw})}$ is perfectly accurate on the training 
-data (the training error is zero!), it will typically incur a non-zero average prediction error 
-$y - h^{(\widehat{\vw})}(\vx)$ on datapoints $(\vx,y)$ which are different from the 
-training data (see Figure \ref{fig_polyn_training}). 
+Note that \eqref{eq_zero_trianing_error} also applies if the features $\vx$ and labels $y$ 
+of datapoints are completely unrelated. As a case in point, consider a ML problem with  
+datapoints whose labels $y$ and features are realizations of a RV that are statistically 
+independent. Thus, in a very strong sense, the features $\vx$ contain no information 
+about the label of a datapoint. Nevertheless, as soon as the number features exceeds 
+the size of the training set, such that \eqref{equ_condition_overfitting} holds, linear regression 
+will learn a hypothesis with zero training error. 
 
+We can easily extend the above discussion about the occurrence of overfitting in linear 
+regression to other methods that combine linear regression with a feature map. 
+Polynomial regression, using datapoints with a single feature $z$, combines linear 
+regression with the feature map $z \mapsto \phi(z) \defeq \big(z^{0},\ldots,z^{\featurelen-1}\big)^{T}$ 
+as discussed in Section \ref{sec_polynomial_regression}. It can be shown that whenever \eqref{equ_condition_overfitting} 
+holds and the features $z^{(1)},\ldots,z^{(\samplesize)}$ of the training data are all different, the 
+feature vectors $\vx^{(1)}=\phi\big(z^{(1)}\big),\ldots, \vx^{(\samplesize)}=\phi\big(z^{(\samplesize)}\big)$ 
+are linearly independent. This implies, in turn, that polynomial regression is guaranteed to find a hypothesis 
+with zero training error. 
 
-???
-Using a simple toy model for the data generation, we obtained the expression 
-\eqref{equ_decomp_E_pred_toy_model} for the average prediction error. This 
-average prediction error is lower bounded by the noise variance $\sigma^{2}$ 
-which might be very large even when the training error is zero. Thus, when a 
-method overfits, a small training error can be highly misleading regarding the 
-average prediction error of a hypothesis. 
-
-A simple, yet quite useful, strategy to detect if a predictor $\hat{h}$ overfits the training 
-dataset $\dataset^{(\rm train)}$, is to compare the resulting training error 
-$\emperror(\hat{h}| \dataset^{(\rm train)})$ (see \eqref{equ_def_training_error_val}) with the 
-validation error $\emperror(\hat{h}| \dataset^{(\rm val)})$ (see \eqref{equ_def_training_val_val}). 
-The validation error $\emperror(\hat{h}| \dataset^{(\rm val)})$ is the empirical risk of the predictor 
-$\hat{h}$ on the validation dataset $\dataset^{(\rm val)}$. If overfitting occurs, the validation 
-error $\emperror(\hat{h}| \dataset^{(\rm val)})$ is significantly larger than the training error 
-$\emperror(\hat{h}| \dataset^{(\rm train)})$. The occurrence of overfitting for polynomial regression with 
-degree $\featuredim$ (see Section \ref{sec_polynomial_regression}) chosen too large is depicted in 
-Figure \ref{fig_polyn_training}. 
+%Section \ref{} A simple, yet quite useful, strategy to detect if a predictor $\hat{h}$ overfits the training 
+%dataset $\dataset^{(\rm train)}$, is to compare the resulting training error 
+%$\emperror(\hat{h}| \dataset^{(\rm train)})$ (see \eqref{equ_def_training_error_val}) with the 
+%validation error $\emperror(\hat{h}| \dataset^{(\rm val)})$ (see \eqref{equ_def_training_val_val}). 
+%The validation error $\emperror(\hat{h}| \dataset^{(\rm val)})$ is the empirical risk of the predictor 
+%$\hat{h}$ on the validation dataset $\dataset^{(\rm val)}$. If overfitting occurs, the validation 
+%error $\emperror(\hat{h}| \dataset^{(\rm val)})$ is significantly larger than the training error 
+%$\emperror(\hat{h}| \dataset^{(\rm train)})$. The occurrence of overfitting for polynomial regression with 
+%degree $\featuredim$ (see Section \ref{sec_polynomial_regression}) chosen too large is depicted in 
+%Figure \ref{fig_polyn_training}. 
 
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\textwidth]{OverfittedPolyn.png}  
-	\caption{The training dataset consists of the blue crosses and can be almost perfectly 
-		fit by a high-degree polynomial. This high-degree polynomial gives only poor results 
-		for a different (validation) dataset indicated by the orange dots.}
+	\caption{Polynomial regression learns a polynomial map with degree $\featurelen-1$ 
+		by minimizing its average loss on a training set (blue crosses). Using high-degree polynomials 
+		(large $\featurelen$) results in a small training error. However, the learnt high-degree polynomial 
+	 performs poorly on datapoints outside the training set (orange dots).}
 	\label{fig_polyn_training}
 \end{figure}
 
@@ -6617,37 +6590,40 @@ Figure \ref{fig_polyn_training}.
 %	\label{fig_scatterplot_clustering}
 %\end{figure}
 
-Consider an ML method using the hypothesis space $\hypospace$ that  
-learns a hypothesis $\hat{h} \in \hypospace$ by ERM \eqref{equ_def_ERM_funs}. 
-The hypothesis $\hat{h}$ has minimum average loss (training error) on the 
-labeled dataset $\dataset$. The basic idea of validating the predictor $\hat{h}$ 
-is simple: compute the empirical risk of $\hat{h}$ on a new set of datapoints $(\vx,y)$ 
-which have not been already used for training. 
+Consider an ML method that uses ERM \eqref{equ_def_ERM_funs} to learn a hypothesis $\hat{h} \in \hypospace$ 
+out of the hypothesis space $\hypospace$. Section \ref{sec_validate_predictor} showed that the training error 
+of $\hat{h}$ can be a poor indicator for the performance of $\hat{h}$ for datapoints outside the training set that 
+has been used in ERM. The hypothesis $\hat{h}$ tends to ``look better'' for the training set on which it has 
+been tuned by ERM.
+%The hypothesis $\hat{h}$ has minimum average loss (training error) on the 
+%labeled dataset $\dataset$. 
+The basic idea of validating the predictor $\hat{h}$ is simple: after learning $\hat{h}$ using ERM on a 
+training set, compute its average loss on datapoints which have not been used in ERM. We refer to 
+the computation of the average loss on datapoints that have not been used in ERM as validation. 
 
-It is very important to validate the predictor $\hat{h}$ using labeled data 
-points which do not belong to the dataset which has been used to learn 
-$\hat{h}$ (e.g., via ERM \eqref{equ_def_ERM_funs}). The hypothesis 
-$\hat{h}$ tends to ``look better'' on the training set than for other 
-datapoints, since it is optimized precisely for the datapoints in the 
-training set. 
-\vspace*{2mm}
-\begin{center}
-\framebox[0.96\textwidth]{
- \parbox{0.9\textwidth}{
-\begin{quote}
-A golden rule of ML practice: use different datapoints for the learning 
-(see \eqref{equ_def_ERM_funs}) and the validation of a hypothesis $\hat{h}$!
-\end{quote}
-}}
-\end{center}
- 
-To validate the hypothesis learnt by a ML method we can use the following steps. 
+%It is very important to validate the predictor $\hat{h}$ using labeled data 
+%points which do not belong to the dataset which has been used to learn 
+%$\hat{h}$ (e.g., via ERM \eqref{equ_def_ERM_funs}). 
+%\vspace*{2mm}
+%\begin{center}
+%\framebox[0.96\textwidth]{
+% \parbox{0.9\textwidth}{
+%\begin{quote}
+%A golden rule of ML practice: use different datapoints for the learning 
+%(see \eqref{equ_def_ERM_funs}) and the validation of a hypothesis $\hat{h}$!
+%\end{quote}
+%}}
+%\end{center}
+Consider a dataset consisting of $\samplesize$ datapoints, 
+$$\dataset = \big\{ \big(\vx^{(1)},y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)},y^{(\samplesize)}\big)  \big\}.$$ 
+Each datapoint is characterized by a feature vector $\vx^{(\sampleidx)}$ and a label $y^{(\sampleidx)}$. 
+We can then learn and validate a hypothesis $h\in \hypospace$ by the following steps. 
 \begin{enumerate} 
 \item We randomly divide (``split'') the entire set $\dataset$ of labeled datapoints into 
 two disjoint subsets $\dataset = \trainset \cup \valset$ (see Figure \ref{fig_split_train_val}). 
-The first subset $\trainset$ is referred to as the {\bf training set}. The second subset $\valset$ 
-is referred to as the {\bf validation set}.  
-\item We learn a hypothesis $\hat{h}$ via ERM using the training data $\trainset$ (cf.\ \eqref{equ_def_ERM_funs}), 
+We refer to the first subset $\trainset$, of size $\samplesize_{t}$, as the {\bf training set}. 
+We refer to the second subset $\valset$, of size $\samplesize_{v}$, as the {\bf validation set}.  
+\item We learn a hypothesis $\hat{h}$ via ERM on the training set $\trainset$ (cf.\ \eqref{equ_def_ERM_funs}), 
 \begin{align} 
 \label{equ_def_hat_h_fitting}
 \hat{h} & = \argmin_{h \in \hypospace} \emperror(h| \trainset) \nonumber \\
@@ -6992,6 +6968,7 @@ has to balance between a small variance and a small bias.
 	a bias-variance trade-off.}
 \label{fig_bias_variance}
 \end{figure}
+
 
 
 {\bf Generalization.}

@@ -6263,49 +6263,56 @@ plot coordinates{(5,5)};
 
 
 Chapter \ref{ch_Optimization} discussed ERM as a principled approach to learning a 
-good hypothesis out of a hypothesis space or model. The idea of ERM is to learn a 
+good hypothesis out of a hypothesis space or model. ERM-based methods learn a 
 hypothesis $\hat{h} \in \hypospace$ that incurs minimum average loss on a set of 
-labeled datapoints (the training set). The minimum average loss achieved by a 
-hypothesis that solves the ERM is referred to as the training error. 
+labeled datapoints which is as the {\bf training set}. We refer to the average loss 
+incurred by a hypothesis on the training set as the {\bf training error}. The minimum 
+average loss achieved by a hypothesis that solves the ERM might be referred to as 
+the training error of the overall ML method. 
 
-ERM makes sense if the training error of a hypothesis is also a good indicator for 
-the typical loss incurred on datapoints outside the training set. Whether the training 
-error of a hypothesis is a reliable indicator for its error on datapoints outside the 
+ERM makes sense only if the training error of a hypothesis is a good indicator for 
+its loss incurred on datapoints outside the training set. Whether the training 
+error of a hypothesis is a reliable indicator for its performance outside the 
 training set depends on the statistical properties of the datapoints and on the 
 hypothesis space used by the ML method.  
 
 %The training error is often not a good estimate for the average performance 
 %of the learnt hypothesis $\hat{h}$. 
-Modern ML methods often use high-dimensional hypothesis spaces. 
-One example is linear regression with datapoints having a vast number 
-of features. This results in a high-dimensional space of linear maps. 
-Another example for a high-dimensional hypothesis space is used by 
-deep learning methods. These methods use hypothesis spaces constituted 
-by hypothesis maps represented  by deep neural networks with billions of 
+ML methods often use hypothesis spaces with a large effective dimension (see Section \ref{sec_hypo_space}). 
+As an example consider linear regression (see Section \ref{sec_lin_regression}) with datapoints 
+having a vast number $\featuredim$ of features. The effective dimension of the linear hypothesis 
+space \eqref{equ_lin_hypospace}, which is used by linear regression, is equal to the number 
+$\featuredim$ of features. Modern technology allows collect a huge number of features about 
+individual datapoints which implies, in turn, that the effective dimension of \eqref{equ_lin_hypospace} 
+is huge. For another example of large hypothesis spaces consider deep learning methods whose 
+hypothesis spaces are constituted by all maps represented by an ANN with billions of 
 tunable weights. 
 
-When using a high-dimensional hypothesis space, it is quite easy to find a 
-hypothesis that fits the given training data well and, in turn, achieve a small 
-training error. However, such a hypothesis might incur a large loss when 
-predicting the labels of datapoints outside the training data. 
+A high-dimensional hypothesis space is typically very likely to contain a hypothesis that fits perfectly 
+any given training set. Such a hypothesis achieves a very small training error but might 
+incur a large loss when predicting the labels of datapoints outside the training data. The 
+(minimum) training error achieved by a hypothesis learnt by ERM can be highly misleading. 
+We say that a ML method, such as linear regression using too many features, overfits the 
+training data it it leans a hypothesis (e.g., via ERM) that has small training error but incurs 
+much larger loss outside the training set. 
 %can be much smaller than the average loss. This happens if the training algorithm 
 %overfits the training data. 
 
-A ML method overfits if it learns a predictor $h \in \hypospace$ that 
-accurately predicts the labels of the datapoints in the training set 
-but does a poor job when predicting labels of datapoints outside 
-the training set. Section \ref{sec_overfitting_sec_6} using a probabilistic 
-model for datapoints to analyzes overfitting of linear regression methods. 
+%A ML method overfits if it learns a predictor $h \in \hypospace$ that 5
+%accurately predicts the labels of the datapoints in the training set 
+%but does a poor job when predicting labels of datapoints outside 
+%the training set. 
 
-This chapter discusses a simple validation procedure that allows to 
-detect and avoid overfitting. Section \ref{sec_validate_predictor} will 
-discuss how {\bf to validate} a learnt hypothesis by computing its 
+Section \ref{sec_overfitting_sec_6} shows why linear regression will most 
+likely overfit as soon as the number of features of a datapoint exceeds 
+the size of the training set. Section \ref{sec_validate_predictor} demonstrates 
+how {\bf to validate} a learnt hypothesis by computing its 
 average loss on datapoints which are different from the training set. 
 The datapoints used to validate the hypothesis are referred to as the 
 {\bf validation set}. When a ML method is overfitting the training set, 
 it will learn a hypothesis whose training error is much smaller than 
-the validation error. To diagnose a ML method we should always 
-compare the training with validation error (see Figure \ref{fig_bars_val_sel}). 
+the validation error. Thus, we can detect if a ML method overfits by 
+comparing its training and validation errors (see Figure \ref{fig_bars_val_sel}). 
 
 %Indeed, the ultimate goal of ML methods is to find a predictor $\hat{h}$ which is accurate 
 %when applied to a new unlabeled datapoint for which we do not know the label $y$ but 
@@ -6320,38 +6327,49 @@ compare the training with validation error (see Figure \ref{fig_bars_val_sel}).
 %is unacceptably large. This situation is referred to as {\bf overfitting} and the reasons 
 %for this to happen will be discussed in Section \ref{sec_overfitting_sec_6}. 
 
-We can use validation not only to detect if a ML method overfits. 
+We can use the validation error not only to detect if a ML method overfits. 
 The validation error can also be used as a performance measure 
-for the hypothesis space or model that is used by that method. 
-This is similar in spirit to the concept of a loss function that 
-allows to evaluate the quality of a hypothesis $h\!\in\!\hypospace$. 
+for an entire hypothesis space or model. This is similar in spirit to the concept 
+of a loss function that allows to evaluate the quality of a hypothesis $h\!\in\!\hypospace$. 
+Section \ref{sec_modsel} shows how to do model selection based on comparing 
+the validation errors obtained for different candidate models (hypothesis spaces). 
 
 The validation error allows to evaluate the quality of the entire hypothesis 
 space $\hypospace$. In ERM, we chose between different 
 hypotheses based on (average) loss on the training set. Similarly, we 
 choose between different hypothesis spaces based on their validation errors. 
-The resulting model selection strategy is detailed in Section \ref{sec_modsel}. 
+The resulting model selection strategy is detailed in
 
 Section \ref{sec_gen_linreg} uses a simple probabilistic model for the 
 data to study the relation between training error and the expected loss 
-or risk of a hypothesis. This analysis reveals the interplay between the 
-properties of the hypothesis space used by a ML method and the resulting 
-training and validation error.
+or risk of a hypothesis. The analysis of the probabilistic model reveals the 
+interplay between the data, the hypothesis space and the resulting training 
+and validation error of a ML method. 
 
-Computing validation errors not only allows to detect overfitting and 
-select between different models (hypothesis spaces). Section \ref{equ_diagnosis_ML} 
-shows how the comparison between training and validation error informs 
-possible improvements of the ML method. These improvements might be 
-obtained by collecting more datapoints, using more features of datapoints 
-or by changing the model (hypothesis space). 
+Section \ref{sec_the_bootsrap} presents the {\bf bootstrap} as a simulation-based 
+alternative to the analysis of Section \ref{sec_gen_linreg}. While Section \ref{sec_gen_linreg} 
+assumes a particular probability distribution of datapoints, the bootstrap does 
+not require no detailed assumptions about the data distribution. 
 
-Comparing training and validation errors with a benchmark also allows to 
-verify if the ML method provides satisfactory prediction quality (see Figure \ref{fig_bars_val_sel}). 
-Such a benchmark might be obtained from existing ML methods, human performance 
-levels or from a probabilistic model as used in Section \ref{sec_gen_linreg}. If the 
-training and validation error of a ML method are on the same level as the theoretically 
-optimal Bayes' estimator, there is no point in modifying the ML method as it 
-already performs optimally. 
+%Computing validation errors not only allows to detect overfitting and 
+%select between different models (hypothesis spaces). 
+For some ML applications, we might know a benchmark error level for 
+ML methods. Such a benchmark level, which is indicated in Figure \ref{fig_bars_val_sel}, 
+might be obtained from existing ML methods, human performance levels or 
+from a probabilistic model such as the one used in Section \ref{sec_gen_linreg}.
+
+Section \ref{equ_diagnosis_ML} details how the comparison between training and 
+validation error with some benchmark error level informs possible improvements 
+of the ML method. These improvements might be obtained by collecting more datapoints, 
+using more features of datapoints or by changing the model (hypothesis space). 
+Having a benchmark level also allows to tell if a ML method already provides 
+satisfactory results. If the training and validation error of a ML method are on 
+the same level as the error of the theoretically optimal Bayes' estimator, there is 
+little point in modifying the ML method as it already performs (nearly) optimal. 
+%a
+%Comparing training and validation errors with a benchmark also allows to 
+%verify if the ML method provides satisfactory prediction quality . 
+
 
 
 
@@ -7020,12 +7038,13 @@ i.i.d.\ copies, we can replace exact computations (expectations)
 by empirical approximations (sample averages).  
 
 \section{The Bootstrap} 
-?????
-In the From Features to Classification slides, on page 15 (or 49) regarding 
-0.632 bootstrap, I don't understand where the formula 1 - (1 - 1/n)n-1 comes from.
-In the same lecture slides, page 17 (or 54) and the following page, I don't 
-understand what the numbers between training and testing mean, 
-as above it says that each instance should only be left out once.???????
+\label{sec_the_bootsrap}
+%?????
+%In the From Features to Classification slides, on page 15 (or 49) regarding 
+%0.632 bootstrap, I don't understand where the formula 1 - (1 - 1/n)n-1 comes from.
+%In the same lecture slides, page 17 (or 54) and the following page, I don't 
+%understand what the numbers between training and testing mean, 
+%as above it says that each instance should only be left out once.???????
 
 Consider learning a hypothesis $\hat{h} \in \hypospace$ by minimizing the 
 average loss incurred on a dataset $\dataset=\{ \big(\vx^{(1)},y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)},y^{(\samplesize)}\big)\}$. 

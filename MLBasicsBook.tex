@@ -6499,12 +6499,13 @@ will learn a hypothesis with zero training error.
 We can easily extend the above discussion about the occurrence of overfitting in linear 
 regression to other methods that combine linear regression with a feature map. 
 Polynomial regression, using datapoints with a single feature $z$, combines linear 
-regression with the feature map $z \mapsto \phi(z) \defeq \big(z^{0},\ldots,z^{\featurelen-1}\big)^{T}$ 
+regression with the feature map $z \mapsto {\bm \Phi}(z) \defeq \big(z^{0},\ldots,z^{\featurelen-1}\big)^{T}$ 
 as discussed in Section \ref{sec_polynomial_regression}. It can be shown that whenever \eqref{equ_condition_overfitting} 
 holds and the features $z^{(1)},\ldots,z^{(\samplesize)}$ of the training data are all different, the 
-feature vectors $\vx^{(1)}=\phi\big(z^{(1)}\big),\ldots, \vx^{(\samplesize)}=\phi\big(z^{(\samplesize)}\big)$ 
+feature vectors $\vx^{(1)}={\bm \Phi}\big(z^{(1)}\big),\ldots, \vx^{(\samplesize)}={\bm \Phi}\big(z^{(\samplesize)}\big)$ 
 are linearly independent. This implies, in turn, that polynomial regression is guaranteed to find a hypothesis 
-with zero training error. 
+with zero training error whenever $\samplesize \leq \featurelen$ and the training datapoints have different 
+feature values. 
 
 %Section \ref{} A simple, yet quite useful, strategy to detect if a predictor $\hat{h}$ overfits the training 
 %dataset $\dataset^{(\rm train)}$, is to compare the resulting training error 
@@ -6558,8 +6559,7 @@ with zero training error.
 	%	\node [right] at (-9,8) {$ {\bm \Sigma}^{(3)}$} ; 
 		\end{tikzpicture}
 	\end{center}
-	\caption{We split the entire dataset $\dataset$, constituted by datapoints with features $\vx^{(\sampleidx)}$ 
-		and label $y^{(\sampleidx)}$, into a {\bf training set} $\trainset$ and a {\bf validation set} 
+	\caption{We split the dataset $\dataset$ into two subsets, a {\bf training set} $\trainset$ and a {\bf validation set} 
 		$\valset$. We use the training set to learn (find) the hypothesis $\hat{h}$ with minimum 
 		empirical risk $\emperror(\hat{h}| \trainset)$ on the training set \eqref{equ_def_ERM_funs}. 
 		We then validate $\hat{h}$ by computing its average loss $\emperror(\hat{h}| \dataset^{(\rm val)})$  
@@ -6598,8 +6598,8 @@ been tuned by ERM.
 %The hypothesis $\hat{h}$ has minimum average loss (training error) on the 
 %labeled dataset $\dataset$. 
 The basic idea of validating the predictor $\hat{h}$ is simple: after learning $\hat{h}$ using ERM on a 
-training set, compute its average loss on datapoints which have not been used in ERM. We refer to 
-the computation of the average loss on datapoints that have not been used in ERM as validation. 
+training set, compute its average loss on datapoints which have not been used in ERM. By {\bf validation} we 
+refer to the computation of the average loss on datapoints that have not been used in ERM. 
 
 %It is very important to validate the predictor $\hat{h}$ using labeled data 
 %points which do not belong to the dataset which has been used to learn 
@@ -6614,43 +6614,100 @@ the computation of the average loss on datapoints that have not been used in ERM
 %\end{quote}
 %}}
 %\end{center}
-Consider a dataset consisting of $\samplesize$ datapoints, 
+Assume we have access to a dataset of $\samplesize$ datapoints, 
 $$\dataset = \big\{ \big(\vx^{(1)},y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)},y^{(\samplesize)}\big)  \big\}.$$ 
 Each datapoint is characterized by a feature vector $\vx^{(\sampleidx)}$ and a label $y^{(\sampleidx)}$. 
-We can then learn and validate a hypothesis $h\in \hypospace$ by the following steps. 
-\begin{enumerate} 
-\item We randomly divide (``split'') the entire set $\dataset$ of labeled datapoints into 
-two disjoint subsets $\dataset = \trainset \cup \valset$ (see Figure \ref{fig_split_train_val}). 
-We refer to the first subset $\trainset$, of size $\samplesize_{t}$, as the {\bf training set}. 
-We refer to the second subset $\valset$, of size $\samplesize_{v}$, as the {\bf validation set}.  
-\item We learn a hypothesis $\hat{h}$ via ERM on the training set $\trainset$ (cf.\ \eqref{equ_def_ERM_funs}), 
-\begin{align} 
-\label{equ_def_hat_h_fitting}
-\hat{h} & = \argmin_{h \in \hypospace} \emperror(h| \trainset) \nonumber \\
-& = \argmin_{h \in \hypospace}  (1/\samplesize_{\rm t}) \sum_{(\vx,y) \in \trainset} \loss{(\vx,y)}{h} %( y- h(\vx))^2
-\end{align} 
-with corresponding {\bf training error} 
-\begin{equation} 
-\label{equ_def_training_error_val}
-\emperror(\hat{h}|\trainset)=  (1/\samplesize_{\rm t})\sum_{(\vx,y) \in \trainset}  \loss{(\vx,y)} {\hat{h}}.  %( y- \hat{h}(\vx))^2.
-\end{equation}  
-\item We validate the hypothesis $\hat{h}$ obtained from \eqref{equ_def_hat_h_fitting} by computing the empirical risk 
-\begin{equation} 
-\label{equ_def_training_val_val}
-\emperror(\hat{h}|\valset) = (1/\samplesize_{\rm v})  \sum_{(\vx,y) \in \valset} \loss{(\vx,y)} {\hat{h}}  % ( y- \hat{h}(\vx))^2, 
-\end{equation}  
-on the {\bf validation set} $\dataset^{(\rm val)}$. We refer to $\emperror(\hat{h}| \dataset^{(\rm val)})$ 
-as the {\bf validation error} of $\hat{h}$. 
-\end{enumerate} 
-The choice of the split ratio (between the size of training and validation set) $|\dataset^{(\rm val)}| / |\dataset^{(\rm train)}|$ 
-is often based on trial and error. It is difficult to make a precise statement on 
-how to choose the split ratio which applies broadly \cite{Larsen1999}. 
+Algorithm \ref{alg:validated_ERM} outlines how to learn and validate a hypothesis $h\in \hypospace$ 
+by splitting the dataset $\dataset$ into a {\bf training set} and a {\bf validation set}. 
 
-The optimal choice for the size of training and validation set depends on the 
-statistical properties of the datapoints. If we know the probability distribution 
-from which datapoints are drawn, we can derive lower bounds on the size of 
-the validation set such that the validation error \eqref{equ_def_training_val_val} 
-is close to the expected loss $\expect\{ \loss{(\vx,y)} {\hat{h}} \}$ with high probability. 
+\begin{algorithm}[htbp]
+	\caption{Validated ERM}\label{alg:validated_ERM}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\Require   dataset $\dataset=\big\{ \big(\vx^{(1)}, y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)}, y^{(\samplesize)}\big) \big\}$; split ratio $\splitratio$
+		\State randomly shuffle the datapoint in $\dataset$
+		\State create the training set $\trainset$ using the first $\samplesize_{t}\!=\! \lceil\splitratio \samplesize\rceil$ datapoints,
+		$$\trainset = \big\{ \big(\vx^{(1)}, y^{(1)}\big),\ldots,\big(\vx^{(\samplesize_{t})}, y^{(\samplesize_{t})}\big) \big\}.$$
+		\State create the validation set $\trainset$ by the $\samplesize_v = \samplesize - \samplesize_t$ remaining datapoints, 
+		$$\valset = \big\{ \big(\vx^{(\samplesize_{t}+1)}, y^{(\samplesize_{t}+1)}\big),\ldots,\big(\vx^{(\samplesize)}, y^{(\samplesize)}\big) \big\}.$$
+		\State  learn hypothesis $\hat{h}$ via ERM on the training set, 
+		\begin{equation} 
+		\label{equ_def_hat_h_fitting}
+		\hat{h} \defeq \argmin_{h\in \hypospace} \emperror\big(h| \trainset \big)
+		\end{equation} 
+		\State compute training error 
+		\begin{equation} 
+		\label{equ_def_training_error_val}
+		E_{t} \defeq \emperror\big(\hat{h}| \trainset \big) = (1/\samplesize_{t}) \sum_{\sampleidx=1}^{\samplesize_{t}} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}. 
+		\end{equation} 
+		\State compute validation error 
+		\begin{equation} 
+		\label{equ_def_training_val_val}
+		E_{v} \defeq \emperror\big(\hat{h}| \valset \big)=   (1/\samplesize_{v}) \sum_{\sampleidx=\samplesize_{t}+1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{\hat{h}}. 
+		\end{equation} 
+		\Ensure learnt hypothesis $\hat{h}$, training error $E_{t}$, validation error $E_{v}$
+	\end{algorithmic}
+\end{algorithm}
+
+%\begin{enumerate} 
+%\item We randomly divide (``split'') the entire set $\dataset$ of labeled datapoints into 
+%two disjoint subsets $\dataset = \trainset \cup \valset$ (see Figure \ref{fig_split_train_val}). 
+%We refer to the first subset $\trainset$, of size $\samplesize_{t}$, as the {\bf training set}. 
+%We refer to the second subset $\valset$, of size $\samplesize_{v}$, as the {\bf validation set}.  
+%\item We learn a hypothesis $\hat{h}$ via ERM on the training set $\trainset$ (cf.\ \eqref{equ_def_ERM_funs}), 
+%\begin{align} 
+%\label{equ_def_hat_h_fitting}
+%\hat{h} & = \argmin_{h \in \hypospace} \emperror(h| \trainset) \nonumber \\
+%& = \argmin_{h \in \hypospace}  (1/\samplesize_{\rm t}) \sum_{(\vx,y) \in \trainset} \loss{(\vx,y)}{h} %( y- h(\vx))^2
+%\end{align} 
+%with corresponding {\bf training error} 
+%\begin{equation} 
+%\label{equ_def_training_error_val}
+%\emperror(\hat{h}|\trainset)=  (1/\samplesize_{\rm t})\sum_{(\vx,y) \in \trainset}  \loss{(\vx,y)} {\hat{h}}.  %( y- \hat{h}(\vx))^2.
+%\end{equation}  
+%\item We validate the hypothesis $\hat{h}$ obtained from \eqref{equ_def_hat_h_fitting} by computing the empirical risk 
+%\begin{equation} 
+%\label{equ_def_training_val_val}
+%\emperror(\hat{h}|\valset) = (1/\samplesize_{\rm v})  \sum_{(\vx,y) \in \valset} \loss{(\vx,y)} {\hat{h}}  % ( y- \hat{h}(\vx))^2, 
+%\end{equation}  
+%on the {\bf validation set} $\dataset^{(\rm val)}$. We refer to $\emperror(\hat{h}| \dataset^{(\rm val)})$ 
+%as the {\bf validation error} of $\hat{h}$. 
+%\end{enumerate} 
+The choice of the split ratio $\splitratio \approx \samplesize_{t}/ \samplesize$  
+is often based on trial and error. It is difficult to make a precise statement on 
+how to choose the split ratio which applies broadly \cite{Larsen1999}. The optimal 
+choice for the size of training and validation set depends on the statistical properties 
+of the datapoints. 
+
+We could obtain lower bounds on the size of the validation set If we assume a 
+probabilistic model for the datapoints. Let us assume that datapoints are realizations 
+of i.i.d. random variables with the same probability distribution $p(\vx,y)$. Then the 
+validation error $\valerror$ \eqref{equ_def_training_val_val} becomes a realization of a random variable. 
+The expectation or mean $\expect \{ \valerror \}$ of this RV would be the risk $\expect\{ \loss{(\vx,y)} {\hat{h}} \}$ of $\hat{h}$. 
+
+The random validation error $\valerror$ fluctuates around its mean. We can quantify 
+this fluctuations using the variance $$\sigma_{\valerror}^{2} \defeq \expect \big\{ \big( \valerror -\expect \{ \valerror \}\big)^{2} \big\}.$$ 
+Note that the validation error is the average of the realizations $\loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{\hat{h}}$ 
+of i.i.d. RVs whose common probability distribution is determined by $p(\vx,y)$, the choice of loss function and 
+the hypothesis $\hat{h}$. If we know an upper bound $U$ on the variance of the (random) loss 
+$\loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{\hat{h}}$, we can bound the variance of $\valerror$ as 
+$$ \sigma_{\valerror}^{2}  \leq U/\samplesize_{v}.$$ We can then ensure that the variance of the validation 
+error does not exceed a given threshold $\eta$, say $\eta = (1/100) \trainerror^2$, 
+by using a validation set of size 
+\begin{equation} 
+\label{equ_lower_bound_variance}
+\samplesize_{v} \geq U/ \eta. 
+\end{equation} 
+
+The lower bound \eqref{equ_lower_bound_variance} is only useful if we can determine 
+an upper bound $U$ on the variance of the RV $\loss{(\vx,y)}{\hat{h}}$ where 
+$\big(\vx,y\big)$ is a RV with probability distribution $p(\vx,y)$. Such an upper bound 
+can be derived using probability theory when the probability distribution $p(\vx,y)$ is known. 
+Another option is to estimate the variance of $\loss{(\vx,y)}{\hat{h}}$ using the sample 
+variance of the actual loss values $\loss{(\vx^{(1)},y^{(1)})}{\hat{h}},\ldots, \loss{(\vx^{(\samplesize)},y^{(\samplesize)})}{\hat{h}}$ 
+obtained for the dataset $\dataset$. 
+
  
 % \begin{figure}[htbp]
 %    \centering
@@ -6666,13 +6723,13 @@ is close to the expected loss $\expect\{ \loss{(\vx,y)} {\hat{h}} \}$ with high 
 %    \label{fig_split_train_val}
 %\end{figure}
 
-The basic idea of randomly splitting the available labeled data into training and 
-validation sets underlies many validation techniques. A popular extension 
-of the above approach, which is known as $k$-fold cross-validation, is based 
-on repeating the splitting into training and validation sets $k$ times. During 
-each repetition, this method uses different subsets for training and validation. 
-We refer to \cite[Sec. 7.10]{hastie01statisticallearning} for a detailed discussion of $k$-fold 
-cross-validation. 
+Algorithm \ref{alg:validated_ERM} uses the most basic form of 
+splitting a given dataset $\dataset$ into a training and a validation set. Many 
+variations and extensions of this basic splitting approach have been proposed 
+and studied \cite{}. One very popular such variant, which is known as {\bf $k$-fold cross-validation} repeats the splitting into a training and a 
+validation set $k$ times. During each repetition, this method uses different subsets for 
+training and validation. We refer to \cite[Sec. 7.10]{hastie01statisticallearning} for a detailed 
+discussion of $k$-fold cross-validation. 
 
 {\bf Imbalanced Data.} 
 The simple validation approach discussed above requires the validation set to be 

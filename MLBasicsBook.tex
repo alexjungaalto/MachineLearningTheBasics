@@ -6629,7 +6629,7 @@ by splitting the dataset $\dataset$ into a {\bf training set} and a {\bf validat
 		\State randomly shuffle the datapoint in $\dataset$
 		\State create the training set $\trainset$ using the first $\samplesize_{t}\!=\! \lceil\splitratio \samplesize\rceil$ datapoints,
 		$$\trainset = \big\{ \big(\vx^{(1)}, y^{(1)}\big),\ldots,\big(\vx^{(\samplesize_{t})}, y^{(\samplesize_{t})}\big) \big\}.$$
-		\State create the validation set $\trainset$ by the $\samplesize_v = \samplesize - \samplesize_t$ remaining datapoints, 
+		\State create the validation set $\valset$ by the $\samplesize_v = \samplesize - \samplesize_t$ remaining datapoints, 
 		$$\valset = \big\{ \big(\vx^{(\samplesize_{t}+1)}, y^{(\samplesize_{t}+1)}\big),\ldots,\big(\vx^{(\samplesize)}, y^{(\samplesize)}\big) \big\}.$$
 		\State  learn hypothesis $\hat{h}$ via ERM on the training set, 
 		\begin{equation} 
@@ -6639,12 +6639,12 @@ by splitting the dataset $\dataset$ into a {\bf training set} and a {\bf validat
 		\State compute training error 
 		\begin{equation} 
 		\label{equ_def_training_error_val}
-		E_{t} \defeq \emperror\big(\hat{h}| \trainset \big) = (1/\samplesize_{t}) \sum_{\sampleidx=1}^{\samplesize_{t}} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}. 
+		\trainerror \defeq \emperror\big(\hat{h}| \trainset \big) = (1/\samplesize_{t}) \sum_{\sampleidx=1}^{\samplesize_{t}} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}. 
 		\end{equation} 
 		\State compute validation error 
 		\begin{equation} 
 		\label{equ_def_training_val_val}
-		E_{v} \defeq \emperror\big(\hat{h}| \valset \big)=   (1/\samplesize_{v}) \sum_{\sampleidx=\samplesize_{t}+1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{\hat{h}}. 
+		\valerror \defeq \emperror\big(\hat{h}| \valset \big)=   (1/\samplesize_{v}) \sum_{\sampleidx=\samplesize_{t}+1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{\hat{h}}. 
 		\end{equation} 
 		\Ensure learnt hypothesis $\hat{h}$, training error $E_{t}$, validation error $E_{v}$
 	\end{algorithmic}

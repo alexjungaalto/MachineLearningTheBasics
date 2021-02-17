@@ -6626,7 +6626,7 @@ by splitting the dataset $\dataset$ into a {\bf training set} and a {\bf validat
 		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
 		\renewcommand{\algorithmicensure}{\textbf{Output:}}
 		\Require   dataset $\dataset=\big\{ \big(\vx^{(1)}, y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)}, y^{(\samplesize)}\big) \big\}$; split ratio $\splitratio$
-		\State randomly shuffle the datapoint in $\dataset$
+		\State randomly shuffle the datapoints in $\dataset$
 		\State create the training set $\trainset$ using the first $\samplesize_{t}\!=\! \lceil\splitratio \samplesize\rceil$ datapoints,
 		$$\trainset = \big\{ \big(\vx^{(1)}, y^{(1)}\big),\ldots,\big(\vx^{(\samplesize_{t})}, y^{(\samplesize_{t})}\big) \big\}.$$
 		\State create the validation set $\valset$ by the $\samplesize_v = \samplesize - \samplesize_t$ remaining datapoints, 

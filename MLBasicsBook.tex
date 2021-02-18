@@ -6081,7 +6081,7 @@ defined as the ratio
 \end{equation} 
 between the largest and smallest eigenvalue of the matrix $\mX^{T} \mX$. 
 
-The condition number is only well defined if the columns of the feature matrix $\mX$ 
+The condition number is only well-defined if the columns of the feature matrix $\mX$ 
 (see \eqref{equ_def_vec_matrix}), which are precisely the feature vectors $\vx^{(\sampleidx)}$, 
 are linearly independent. In this case the condition number is lower bounded 
 as $\kappa( \mX^{T} \mX) \geq 1$. 
@@ -8025,20 +8025,19 @@ but using regularization (ridge).
 \label{fig_scatterplot_clustering}
 \end{figure}
 
-Up to now, we mainly considered ML methods which required 
-some labeled training data in order to learn a good predictor or 
-classifier. We will now start to discuss ML methods which do 
-not make use of labels. These methods are often referred to as 
-``unsupervised'' since they do not require a supervisor 
-(or teacher) which provides the labels for datapoints in a training set. 
+So far, we have mainly considered ML methods which require labeled training data in order to 
+learn a good hypothesis via ERM. This and the following chapter discusses ML methods which 
+do not require any labeled datapoint. These methods are often referred to as ``unsupervised'' 
+since they do not require a supervisor (or teacher) which provides the labels for datapoints that 
+can be used as a training set in ERM. 
 
-An important class of unsupervised methods, known as clustering 
-methods, aims at grouping datapoints into few subsets (or {\bf clusters}). 
-While there is no unique formal definition, we understand by cluster 
-a subset of datapoints which are more similar to each other than 
-to the remaining datapoints (belonging to different clusters). Different 
-clustering methods are obtained for different ways to measure the 
-``similarity'' between datapoints. 
+One important class of unsupervised methods, known as clustering methods, aims at grouping 
+datapoints into few subsets (or {\bf clusters}). Informally, a {\bf cluster} is a subset of datapoints 
+which are more similar to each other than to the remaining datapoints outside the cluster. Different 
+clustering methods are obtained by using different means to measure the ``similarity'' between datapoints. 
+We mainly discuss clustering methods for datapoints characterized by numeric feature vectors. The 
+similarity between such datapoints can be naturally defined in terms of the Euclidean distance between 
+feature vectors. 
 
 %
 %Consider the scatter plot in Figure \ref{fig_scatterplot_clustering} which is obtained from the redness 
@@ -8077,15 +8076,12 @@ $\vy^{(\sampleidx)} = \big(y_{1}^{(\sampleidx)},\ldots,y_{k}^{(\sampleidx)}\big)
 Thus, while hard clustering generates non-overlapping clusters, the 
 clusters produced by soft clustering methods may overlap. 
 
-We intentionally used the same symbol $y^{(\sampleidx)}$ for 
-cluster assignments of a datapoint as we used to denote an 
-associated label in classification problems. There is a strong 
-conceptual link between clustering and classification. We can 
-interpret clustering as an extreme case of classification without 
-having access to any labeled training data, i.e., we do not 
-know the label of any datapoint.To find the correct labels 
-(cluster assignments) $y_{c}^{(\sampleidx)}$, clustering method 
-rely solely on the intrinsic geometry of the datapoints. 
+We intentionally used the same symbol $y^{(\sampleidx)}$ for cluster assignments of a 
+datapoint as we used to denote an associated label in classification problems. There is 
+a strong conceptual link between clustering and classification. We can interpret clustering 
+as an extreme case of classification without having access to any labeled training data, i.e., 
+we do not know the label of any datapoint. To find the correct labels (cluster assignments) 
+$y_{c}^{(\sampleidx)}$, clustering methods rely solely on the intrinsic geometry of the datapoints. 
 %which is given by the locations of the feature vectors $\vx^{(\sampleidx)}$. 
 
 \newpage
@@ -8096,16 +8092,14 @@ In what follows we assume that datapoints $\vz^{(\sampleidx)}$, for $\sampleidx=
 are characterized by feature vectors $\vx^{(\sampleidx)} \in \mathbb{R}^{\featuredim}$ and measure 
 similarity between datapoints using the Euclidean distance $\| \vx^{(\sampleidx)} - \vx^{(j)} \|$. 
 With a slight abuse of notation, we will occasionally denote a datapoint $\vz^{(\sampleidx)}$ 
-using its feature vector $\vx^{(\sampleidx)}$. In general, the feature vector 
-is only a (incomplete) representation of a datapoint but it is customary in 
-many unsupervised ML methods to identify a datapoint with its features.
-Thus, we consider two datapoints $\vz^{(\sampleidx)}$ and $\vz^{(j)}$ 
-similar if $\| \vx^{(\sampleidx)} - \vx^{(j)} \|$ is small. Moreover, we assume 
-the number $k$ of clusters prescribed. 
+using its feature vector $\vx^{(\sampleidx)}$. In general, the feature vector is only a (incomplete) 
+representation of a datapoint but it is customary in many unsupervised ML methods to identify a 
+datapoint with its features.Thus, we consider two datapoints $\vz^{(\sampleidx)}$ and $\vz^{(j)}$ 
+similar if $\| \vx^{(\sampleidx)} - \vx^{(j)} \|$ is small. Moreover, we assume the number $k$ of clusters 
+to be fixed and known. 
 
-A simple method for hard clustering is  the ``$k$-means'' algorithm 
-which requires the number $k$ of clusters to specified before-hand. 
-The idea underlying $k$-means is quite simple. First, given a current 
+A simple method for hard clustering is  the ``$k$-means'' algorithm which requires the number $k$ of 
+clusters to specified before-hand. The idea underlying $k$-means is quite simple. First, given a current 
 guess for the cluster assignments $y^{(\sampleidx)}$, determine the 
 cluster means $\vm^{(c)} = \frac{1}{|\{i: y^{(\sampleidx)}= c\}|} \sum\limits_{i: y^{(\sampleidx)}=c} \vx^{(\sampleidx)}$ 
 for each cluster. Then, in a second step, update the cluster assignments $y^{(\sampleidx)} \in \{1,\ldots,k\}$ 
@@ -8189,16 +8183,11 @@ $\emperror$ is below a prescribed (small) threshold.
  
 A practical implementation of Algorithm \ref{alg:kmeans} needs to fix three issues: 
 \begin{itemize} 
-\item Issue 1: We need to specify a ``tie-breaking strategy'' to 
-handle the case when several different cluster indices 
-$\clusteridx\!\in\!\{1,\ldots,\nrcluster\}$ achieve the minimum 
-value in \eqref{equ_cluster_assign_update}. 
-\item Issue 2: We need to specify how to handle the situation 
-when after a cluster assignment update  \eqref{equ_cluster_assign_update}, 
-there is a cluster $\clusteridx$ with no datapoints are associated 
-with it, i.e., $|\{ \sampleidx: y^{(\sampleidx)} = \clusteridx \}|=0$. 
-In this case, the cluster means update \eqref{equ_cluster_mean_update} 
-would be not well defined for the cluster $\clusteridx$. 
+\item Issue 1: We need to specify a ``tie-breaking strategy'' to handle the case when several different cluster indices 
+$\clusteridx\!\in\!\{1,\ldots,\nrcluster\}$ achieve the minimum value in \eqref{equ_cluster_assign_update}. 
+\item Issue 2: We need to specify how to handle the situation when after a cluster assignment update  \eqref{equ_cluster_assign_update}, 
+there is a cluster $\clusteridx$ with no datapoints associated with it, $|\{ \sampleidx: y^{(\sampleidx)} = \clusteridx \}|=0$. 
+In this case, the cluster means update \eqref{equ_cluster_mean_update} would be not well-defined for the cluster $\clusteridx$. 
 \item Issue 3: We need to specify a stopping criterion (``checking convergence''). 
 \end{itemize}
 The following algorithm fixes those three issues in a particular way \cite{Gray1980}.  
@@ -8236,16 +8225,13 @@ cluster means $\vm^{(\clusteridx)}$ %and active flags $b^{(c)}$ for $c\!=\!1,\ld
 \end{algorithmic}
 \end{algorithm}
 
-The variables $b^{(c)} \in \{0,1\}$ indicate if cluster $c$ is 
-active ($b^{(c)}= 1$) or cluster $c$ is inactive ($b^{(c)}=0$), 
-in the sense of having no datapoints assigned to it during 
-the preceding cluster assignment step \eqref{equ_cluster_assign_update2}. 
-We use the cluster activity inductors $b^{(c)}$ to make sure 
-that the mean update \eqref{equ_cluster_mean_update2} only 
-to clusters $c$ with at least one datapoint $\vx^{(\sampleidx)}$. 
+The variable $b^{(\clusteridx)} \in \{0,1\}$ indicates if the cluster $\clusteridx$ is active ($b^{(\clusteridx)}= 1$) 
+or the cluster $\clusteridx$ is inactive ($b^{(c)}=0$). The cluster $\clusteridx$ is referred to as inactive if there 
+are no datapoints assigned to it during the preceding cluster assignment step \eqref{equ_cluster_assign_update2}. 
+We need the cluster activity indicators $b^{(\clusteridx)}$ to make sure that the mean update \eqref{equ_cluster_mean_update2} 
+is only applied to clusters $\clusteridx$ with at least one datapoint $\vx^{(\sampleidx)}$. 
 
-It can be shown that Algorithm \ref{alg:kmeansimpl} amounts to 
-a fixed-point iteration 
+It can be shown that Algorithm \ref{alg:kmeansimpl} amounts to a fixed-point iteration 
 \begin{equation}
 \label{equ_fixed_point_clustering}
 \{ y^{(\sampleidx)} \}_{i=1}^{\samplesize} \mapsto \mathcal{P}  \{ y^{(\sampleidx)} \}_{i=1}^{\samplesize}
@@ -8270,6 +8256,7 @@ in each column depicts the update of cluster means while the
 lower picture shows the update of the cluster assignments 
 during each iteration. 
 
+???? check image??????
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=10cm]{EvolKmeans.jpg}  
@@ -8284,10 +8271,10 @@ finite number of iterations, the delivered cluster assignments and cluster
 means might only be (approximations) of local minima of the clustering error 
 \eqref{equ_def_emp_risk_kmeans} (see Figure \ref{fig_emp_risk_k_means}). 
 
-To escape local minima, it is useful to run Algorithm \ref{alg:kmeansimpl} 
-several times, using different initializations for the cluster means, 
-and picking the cluster assignments $\{ y^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$ 
-with smallest clustering error \eqref{equ_def_emp_risk_kmeans}. 
+To escape local minima, it is useful to repeat Algorithm \ref{alg:kmeansimpl} several times. 
+For each repetition of Algorithm \ref{alg:kmeansimpl}, we use a different initializations for 
+the cluster means. We then pick the cluster assignments $\{ y^{(\sampleidx)} \}_{\sampleidx=1}^{\samplesize}$ 
+obtained for the repetition that resulted in the smallest clustering error \eqref{equ_def_emp_risk_kmeans}. 
 
 \begin{figure}[htbp]
 \begin{center}
@@ -8303,26 +8290,24 @@ the cluster means and assignments. The $k$-means algorithm
 can get trapped around a local minimum.} \label{fig_emp_risk_k_means}
 \end{figure}
 
-Up till now, we have assumed the number $k$ of clusters 
-to be given before hand. In some applications it is unclear
-what a good choice for $k$ is. The choice for the number 
-$k$ of clusters depends on how the clustering methods is 
-used within an overall ML application. If the clustering method 
-serves as a pre-processing for a supervised ML problem, we 
-could try out different values of the number $k$ and determine, 
-for each choice $k$, the corresponding validation error. We 
-pick then the value of $k$ which results in the smallest validation error. 
+Up till now, we have assumed the number $k$ of clusters to be given beforehand. 
+In some applications it is unclear what a good choice for $k$ is. The choice for the number 
+$k$ of clusters depends on the precise role of the clustering method within an overall ML application. 
+If the clustering method serves as a pre-processing for a supervised ML problem, we could try out 
+different values of the number $k$ and determine, for each choice $k$, the corresponding validation 
+error. We then pick the value of $k$ which results in the smallest validation error. If the clustering 
+method is mainly used as a tool for data visualization, we might prefer a small number of 
+clusters.  
 
-Another approach to choosing $k$ is the so-called ``elbow-method''. 
-We run the $k$-means Algorithm \ref{alg:kmeansimpl} for different choice 
-for $k$. For each choice of $k$, Algorithm \ref{alg:kmeansimpl} delivers a 
-different (approximate) optimum empirical error $$\mathcal{E}^{(\nrcluster)} = \emperror \big( \{\vm^{(\clusteridx)}\}_{\clusteridx=1}^{\nrcluster},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize} \mid \dataset \big).$$ 
-We then plot the minimum empirical error $\mathcal{E}^{(k)}$ as a 
-function of the number $k$ of clusters. Figure \ref{fig_ellbow} depicts 
-an example for such a plot which typically starts with a steep decrease 
-for increasing $k$ and then flattening out for larger values of $k$. 
-Finally, the choice of $k$ might be guided by some probabilistic 
-model which specifies a prior distribution of the values for $k$. 
+
+Another approach to choosing $k$ is the so-called ``elbow-method''. We run the $k$-means Algorithm \ref{alg:kmeansimpl} 
+for several different choices of $k$. For each choice of $k$, Algorithm \ref{alg:kmeansimpl} delivers a 
+different (approximate) optimum empirical error 
+$$\mathcal{E}^{(\nrcluster)} = \emperror \big(\{\vm^{(\clusteridx)}\}_{\clusteridx=1}^{\nrcluster},\{y^{(\sampleidx)}\}_{\sampleidx=1}^{\samplesize} \mid \dataset \big).$$ 
+We then plot the minimum empirical error $\mathcal{E}^{(k)}$ as a function of the number $k$ of clusters. 
+Figure \ref{fig_ellbow} depicts an example for such a plot which typically starts with a steep decrease 
+for increasing $k$ and then flattening out for larger values of $k$. Finally, the choice of $k$ might be 
+guided by some probabilistic model which specifies a prior distribution of the values for $k$. 
 
 
 \begin{figure}
@@ -8388,9 +8373,8 @@ of the form \eqref{equ_def_mvn_distribution} with a cluster-specific mean
 ${\bm \mu}^{(\clusteridx)} \in \mathbb{R}^{\featuredim}$ and cluster-specific 
 covariance matrix ${\bm \Sigma}^{(\clusteridx)} \in \mathbb{R}^{\featuredim \times \featuredim}$. 
 
-Since we do not know before-hand the cluster assignment $\clusteridx^{(\sampleidx)}$ 
-of the datapoint $\vx^{(\sampleidx)}$, we model $\clusteridx^{(\sampleidx)}$ 
-as a random variable with probability distribution  
+Since we do not know the cluster assignment $\clusteridx^{(\sampleidx)}$ of the datapoint $\vx^{(\sampleidx)}$ 
+beforehand, we interpret $\clusteridx^{(\sampleidx)}$ as the realization of a RV with the probability distribution  
 \begin{equation} 
 \label{equ_def_cluster_prob}
 p_{\clusteridx} \defeq \prob{c^{(\sampleidx)}=\clusteridx} \mbox{ for } \clusteridx=1,\ldots,\nrcluster.
@@ -8498,7 +8482,7 @@ the common probability distribution \eqref{equ_def_GMM}.
 We denote the estimates for the GMM parameters by $\hat{p}_{\clusteridx} (\approx p_{\clusteridx})$, $\vm^{(\clusteridx)} (\approx {\bm \mu}^{(\clusteridx)})$ and 
 $\mathbf{C}^{(\clusteridx)} (\approx {\bm \Sigma}^{(\clusteridx)})$, respectively. 
 Based on these estimates, we can then compute an estimate $\hat{y}_{\clusteridx}^{(\sampleidx)}$ 
-of the (a-posterior) probability 
+of the (a-posteriori) probability 
 \begin{equation} 
 y_{\clusteridx}^{(\sampleidx)} = \prob{c^{(\sampleidx)} = \clusteridx \mid \dataset }
 \end{equation} 
@@ -8569,9 +8553,8 @@ $$ - \log {\rm Prob} \big\{\dataset; \{ \vm^{(\clusteridx)}, \mathbf{C}^{(\clust
 to decide when to stop iterating (see step \ref{equ_conv_soft_clustering_algo} 
 of Algorithm \ref{alg:softclustering}). % the termination criterion. % Algorithm \ref{alg:softclustering}. 
 
-Similar to $k$-means Algorithm \ref{alg:kmeans}, also the soft clustering 
-Algorithm \ref{alg:softclustering} suffers from the problem of getting stuck 
-in local minima of the empirical risk \eqref{equ_def_emp_risk_soft_clustering}. 
+Similar to the $k$-means Algorithm \ref{alg:kmeans}, the soft clustering Algorithm \ref{alg:softclustering} 
+also suffers from the problem of getting stuck in local minima of the empirical risk \eqref{equ_def_emp_risk_soft_clustering}. 
 As for $k$-means, we can avoid local minima by running Algorithm \ref{alg:softclustering} 
 several times, each time with a different initialization for the GMM parameter 
 estimates $ \{ \vm^{(c)}, \mathbf{C}^{(c)}, \hat{p}_{c} \}_{c=1}^{k}$ and then 
@@ -8597,22 +8580,19 @@ using existing convergence results for EM methods \cite{XuJordan1996}.
 %(March 4, 2015): 215?236.
 %??????
 
-There is an interesting link between the soft-clustering 
-Algorithm \ref{alg:softclustering} and $k$-means. The 
-$k$-means algorithm can be interpreted as an extreme 
-case of soft-clustering Algorithm \ref{alg:softclustering}. 
-Consider fixing the cluster covariance matrices $ {\bm \Sigma}^{(c)}$ 
-within the GMM \eqref{equ_cond_dist_GMM} to be the scaled identity: 
+There is an interesting link between the soft-clustering Algorithm \ref{alg:softclustering} and $k$-means. The 
+$k$-means algorithm can be interpreted as an extreme case of the soft-clustering Algorithm \ref{alg:softclustering}. 
+Consider fixing the cluster covariance matrices $ {\bm \Sigma}^{(\clusteridx)}$ within the GMM \eqref{equ_cond_dist_GMM} 
+to be the scaled identity: 
 \begin{equation}
 \label{equ_def_special_case}
- {\bm \Sigma}^{(c)}= \sigma^{2} \mathbf{I} \mbox{ for all } c \in \{1,\ldots,k\}.  
+ {\bm \Sigma}^{(\clusteridx)}= \sigma^{2} \mathbf{I} \mbox{ for all } \clusteridx \in \{1,\ldots,k\}.  
 \end{equation} 
-We assume the covariance matrix \eqref{equ_def_special_case}, 
-with a particular value for $\sigma^{2}$, to be the actual ``correct'' 
-covariance matrix for cluster $c$. %The estimates $\mathbf{C}^{(c)}$ 
+We assume the covariance matrix \eqref{equ_def_special_case}, with a particular value for $\sigma^{2}$, 
+to be the actual ``correct'' covariance matrix for cluster $\clusteridx$. %The estimates $\mathbf{C}^{(c)}$ 
 %for the covariance matrices are then trivially given by $\mathbf{C}^{(c)} =  {\bm \Sigma}^{(c)}$.  
 Thus, we replace the covariance matrix updates in Algorithm \ref{alg:softclustering} 
-with $\mathbf{C}^{(c)} \defeq  {\bm \Sigma}^{(c)}$.
+with $\mathbf{C}^{(\clusteridx)} \defeq  {\bm \Sigma}^{(\clusteridx)}$.
  
 When choosing a very small variance $\sigma^{2}$ in \eqref{equ_def_special_case}, 
 the update \eqref{equ_update_soft_cluster_assignm} tends to enforce 
@@ -8623,23 +8603,26 @@ To summarize, for $\sigma^{2} \rightarrow 0$, the soft-clustering update
 \eqref{equ_update_soft_cluster_assignm} reduces to the hard cluster 
 assignment update \eqref{equ_cluster_assign_update} of the $k$-means Algorithm \ref{alg:kmeans}. 
 
-\section{Density Based Clustering with DBSCAN}
+\section{Density-Based Clustering with DBSCAN}
 
-Both k-means and GMM cluster datapoints using the Euclidean distance, 
-which is a natural measure of similarity in many cases. However, in some 
-applications, the data conforms to a different non-Euclidean structure. 
-One example for a non-Euclidean structure is a graph or network structure. 
-Here, two datapoints are considered similar if they can be reached by 
-intermediate datapoints that have a small Euclidean distance. Thus, 
-two datapoints can be similar in terms of connectivity, even if their 
-Euclidean distance is large.Density-based spatial clustering of 
-applications with noise (DBSCAN) is a hard clustering method that 
-uses a connectivity-based similarity measure. In contrast to k-means 
-and the GMM, DBSCAN does not require the number of clusters to 
-be pre-defined -  the number will depend on its parameters. Moreover, 
-DBSCAN detects outliers that are interpreted as degenerated clusters 
-consisting of a single datapoint. For a detailed discussion of how 
-DBSCAN works, we refer to https://en.wikipedia.org/wiki/DBSCAN.  DBSCAN 
+Both, the k-means algorithm and soft-clustering using GMM, use the Euclidean distance as a measure of similarity 
+between datapoints. However, in some applications, the datapoints do not conform to the Euclidean structure. 
+Moreover, some applications generate datapoints, such as text documents, which are not naturally represented 
+by numeric feature vectors. 
+
+There exist powerful feature extraction methods that map non-numeric datapoints to numeric features $\vx \in \mathbb{R}^{\featurelen}$. 
+However, the resulting dataset might not conform with a Euclidean structure. Similar text documents 
+might not be mapped to feature vectors that have small Euclidean distance. 
+
+Density-based spatial clustering of applications with noise (DBSCAN) is a hard clustering method that 
+uses a notion of similarity that is based on {\bf connectivity}. DBSCAN considers two datapoints as 
+similar if they can be reached by intermediate datapoints that have a small Euclidean distance. Two datapoints 
+can be similar in terms of connectivity, even if their Euclidean distance is large. 
+
+In contrast to $k$-means and GMM, DBSCAN does not require the number of clusters to be pre-defined. 
+The number of clusters delivered by DBSCAN is determined by the choice of the parameters. DBSCAN 
+also performs an implicit outlier detection. The outliers delivered by DBSCAN are those clusters which 
+contain a single datapoint only. For a detailed discussion of how DBSCAN works, we refer to https://en.wikipedia.org/wiki/DBSCAN.  
 %is implemented in the DBSCAN class in scikit-learn Documentation 
 %can be found here. DBSCAN requires specifying two parameters 
 % eps and min_samples. The meaning of these parameter are well explained here. 
@@ -8651,10 +8634,11 @@ use k-means to compress a RGB bitmap image. Instead of RGB values
 we need to store only cluster index and the cluster means. 
 
 \subsection{Compression with k-means} 
-Consider $\samplesize=10000$ datapoints are characterized by two 
-floating point numbers (32 bit). We apply k-means to cluster the 
-data set into two clusters. How many bits do we need to store the 
-clustering ? 
+Consider $\samplesize=10000$ datapoints $\vx^{(1)},\ldots,\vx^{(\samplesize)}$ 
+which are represented by numeric features vectors of length two. We apply k-means 
+to cluster the data set into two clusters. How many bits do we need to store the 
+clustering? For simplicity, we assume that any real number can stored perfectly 
+as a floating point numbers ($32$ bit). 
 
 
 \newpage

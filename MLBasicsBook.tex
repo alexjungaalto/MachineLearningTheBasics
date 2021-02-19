@@ -6718,17 +6718,89 @@ Another option is to estimate the variance of $\loss{(\vx,y)}{\hat{h}}$ using th
 variance of the actual loss values $\loss{(\vx^{(1)},y^{(1)})}{\hat{h}},\ldots, \loss{(\vx^{(\samplesize)},y^{(\samplesize)})}{\hat{h}}$ 
 obtained for the dataset $\dataset$. 
 
- 
+\subsection{$k$-Fold Cross Validation}
 Algorithm \ref{alg:validated_ERM} uses the most basic form of 
 splitting a given dataset $\dataset$ into a training and a validation set. Many 
 variations and extensions of this basic splitting approach have been proposed 
-and studied (see )\cite{Efron97} and Section \ref{sec_the_bootsrap}). One very 
-popular such variant, which is known as {\bf $k$-fold cross-validation}, repeats 
-the splitting into a training and a validation set $k$ times. During each repetition, 
-this method uses different subsets for training and validation. We refer to \cite[Sec. 7.10]{hastie01statisticallearning} 
-for a detailed discussion of $k$-fold cross-validation. 
+and studied (see )\cite{Efron97} and Section \ref{sec_the_bootsrap}). 
 
-{\bf Imbalanced Data.} 
+One very popular modification of the single split into training and validation set 
+is known as {\bf $k$-fold cross-validation} (CV) \cite[Sec. 7.10]{hastie01statisticallearning}. 
+Figure \ref{fig_k_fold_CV} depicts the operations principle behind $k$-fold CV which is based on
+dividing the entire dataset evenly into subsets or folds of same set. The training 
+and validation of a hypothesis is then repeated for $k$ times. During each 
+repetition, we use a different subsets for training and validation. The average (over 
+all repetitions) validation error is a more robust estimator for the expected loss or risk 
+compared to the validation error obtained from a single split. When using a single split 
+into training and validation set, we might choose a very atypical set of datapoint for the 
+validation set. Algorithm \ref{alg:kfoldCV_ERM} is obtained from Algorithm \ref{alg:validated_ERM} by replacing 
+the single split into training and validation set by $k$-fold CV. 
+
+\begin{figure}
+\begin{center}
+ \begin{tikzpicture}
+\matrix (M) [matrix of nodes,
+nodes={minimum height = 7mm, minimum width = 2.5cm, outer sep=0, anchor=center, draw},
+column 1/.style={nodes={draw=none}, minimum width = 4cm},
+row sep=1mm, column sep=-\pgflinewidth, nodes in empty cells,
+e/.style={fill=yellow!10}
+]
+{
+	fold $1$ & $\valset\!=\!\dataset_{1}$ & & & & \\
+	fold $2$ & & $\valset\!=\!\dataset_{2}$ & & & \\
+	fold $3$ & & & $\valset\!=\!\dataset_{3}$ & & \\
+	fold $4$ & & & &  $\valset\!=\!\dataset_{4}$ & \\
+	fold $5$ & & & & &  $\valset\!=\!\dataset_{5}$ \\
+};
+\draw (M-1-2.north west) ++(0,2mm) coordinate (LT) edge[|<->|, >= latex] node[above]{dataset $\dataset=\big\{ \big(\vx^{(1)},y^{(1)}\big),\ldots, \big(\vx^{(\samplesize)},y^{(\samplesize)}\big) \big\}$} (LT-|M-1-6.north east);
+\end{tikzpicture}
+\end{center}
+\caption{Illustration of $k$-fold CV for $k=5$. We evenly partition the entire dataset $\dataset$ into $k=5$ subsets 
+	(or folds) of the same size. We then repeat the validated ERM Algorithm \ref{alg:validated_ERM} for $k=5$ times. 
+    The $\foldidx$th repetition uses the $\foldidx$th fold as validation set and the remaining $k\!-\!1(=4)$ folds as training set.}
+\label{fig_k_fold_CV}
+\end{figure}
+
+\begin{algorithm}[htbp]
+	\caption{$k$-fold CV ERM}\label{alg:kfoldCV_ERM}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\Require   model $\hypospace$, loss function $\mathcal{L}$, dataset $\dataset=\big\{ \big(\vx^{(1)}, y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)}, y^{(\samplesize)}\big) \big\}$; number $k$ of folds
+		\State randomly shuffle the datapoints in $\dataset$ \label{alg_shuffle_step}
+		\State divide the shuffled dataset $\dataset$ into $k$ folds $\dataset_{1},\ldots,\dataset_{k}$ of size $B=\lceil\samplesize/k\rceil$, 
+		\begin{equation}
+		\hspace*{-12mm}\dataset_{1}\!=\!\big\{ \big(\vx^{(1)}, y^{(1)}\big),\ldots, \big(\vx^{(B)}, y^{(B)}\big)\} ,\ldots,\dataset_{k}\!=\!\big\{ \big(\vx^{((k\!-\!1)B+1)}, y^{((k\!-\!1)B+1)}\big),\ldots, \big(\vx^{(\samplesize)}, y^{(\samplesize)}\big)\}
+		\end{equation} 
+		\For{ fold index $\foldidx=1,\ldots,k$ }
+	%	\State \texttt{<do stuff>}
+		\State use $\foldidx$th fold as the validation set $\valset=\dataset_{\foldidx}$
+		\State use rest as the {\bf training set} $\trainset=\dataset \setminus \dataset_{\foldidx}$
+		\State  learn hypothesis $\hat{h}$ via ERM on the training set, 
+		\begin{equation} 
+		\label{equ_def_hat_h_fitting}
+		\hat{h}^{(\foldidx)} \defeq \argmin_{h\in \hypospace} \emperror\big(h| \trainset \big)
+		\end{equation} 
+		\State compute {\bf training error}
+		\begin{equation} 
+		\label{equ_def_training_error_val}
+		\trainerror^{(\foldidx)} \defeq \emperror\big(\hat{h}| \trainset \big) = (1/\samplesize_{t}) \sum_{\sampleidx=1}^{\samplesize_{t}} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}. 
+		\end{equation} 
+		\State compute {\bf validation error}
+		\begin{equation} 
+		\label{equ_def_training_val_val}
+		\valerror^{(\foldidx)} \defeq \emperror\big(\hat{h}| \valset \big)=   (1/\samplesize_{v}) \sum_{\sampleidx=\samplesize_{t}+1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{\hat{h}}. 
+		\end{equation} 
+		\EndFor
+		
+		\State compute average training and validation errors 
+		$$E_{t} \defeq (1/k) \sum_{\foldidx=1}^{k} 	\trainerror^{(\foldidx)}\mbox{, and }E_{v} \defeq (1/k) \sum_{\foldidx=1}^{k} 	\valerror^{(\foldidx)}$$
+		\Ensure learnt hypothesis $\hat{h}^{(\foldidx)}$ for each fold $\foldidx=1,\ldots,k$; average training error $E_{t}$; average validation error $E_{v}$
+	\end{algorithmic}
+\end{algorithm}
+
+\subsection{Imbalanced Data} 
+
 The simple validation approach discussed above requires the validation set to be 
 a good representative for the overall statistical properties of the data. This might 
 not be the case in applications with discrete valued labels and some of the label 
@@ -6743,41 +6815,51 @@ the validation set does not include any datapoint with $y=-1$. This cannot happe
 when using $k$-fold CV since the single data point must be one of the validation folds. 
 However, even when using $k$-fold CV for such an imbalanced dataset is problematic since 
 we evaluate the performance of a hypothesis $h(\vx)$ using only one single 
-datapoint with $y=-1$. The validation error will then be dominated by the performance 
-of $h(\vx)$ only on datapoints with $y=1$. 
+datapoint with $y=-1$. The validation error will then be dominated by the loss  
+of $h(\vx)$ incurred only on datapoints with the label $y=1$. 
+
+When learning and validating a hypothesis using imbalanced data, it might be useful to 
+to generate synthetic datapoints to enlarge the minority class. This can be done using 
+data augmentation techniques which we discuss in Section \ref{sec_data_augmentation}. 
+Another option is to use a loss function that takes the different frequency of label values 
+into account. 
+
+Consider an imbalanced dataset of size $\samplesize=100$, which contains $90$ datapoints with 
+label $y=1$ but only $10$ datapoints with label $y=-1$. We might then put more weight on wrong 
+predictions obtained for the minority class (of datapoints with $y=-1$). This can be done by using 
+a much larger value for the loss $\loss{(\vx,y=-1)}{h(\vx)=1}$ than for the loss $\loss{(\vx,y=1)}{h(\vx)=-1}$. 
+Remember that the loss function is a design choice and can been freely set by the ML engineer. 
 
 
 \section{Model Selection}
 \label{sec_modsel}
 
-We will now discuss how to use the validation principle of 
-Section \ref{sec_validate_predictor} to perform model selection. 
-As discussed in Chapter \ref{ch_Elements_ML}, the choice of 
-the hypothesis space from which we select a predictor map 
-(e.g., via solving the ERM \eqref{equ_def_ERM_funs}) is a design choice. 
-However, it is often not obvious what a good first choice 
-for the hypothesis space is. We might try out different 
-choices $\hypospace_{1},\hypospace_{2},\ldots,\hypospace_{M}$ 
-for the hypothesis space. 
+Chapter \ref{ch_some_examples} illustrated how many well-known ML methods are obtained by different 
+combinations of a hypothesis space or model, loss function and data representation. 
+While the there might often be a natural choice for the loss function and data representation 
+in a ML application, the right choice for the model is typically less obvious. This chapter shows 
+how to use the validation methods of Section \ref{sec_validate_predictor} to choose 
+between different candidate models $\hypospace_{1},\hypospace_{2},\ldots,\hypospace_{M}$. 
 
-Consider datapoints with a non-linear relation between its 
-feature $x$ and label $y$. We might then use polynomial 
-regression (see Section \ref{sec_polynomial_regression}) 
-using the hypothesis space $\hypospace_{\rm poly}^{(\featuredim)}$ 
-with some maximum degree $\featuredim$. 
+%Chapter \ref{ch_Elements_ML} discussed that the choice of the hypothesis space or model is a design choice. 
+I%t might be not obvious what a good choice for the hypothesis space is. A good strategy is often to try out several 
+%different choices $\hypospace_{1},\hypospace_{2},\ldots,\hypospace_{M}$ for the hypothesis space. 
 
-Different choices for the maximum degree $\featuredim$ yield 
-a different hypothesis space: $\hypospace_{1} = \mathcal{H}_{\rm poly}^{(0)},\hypospace_{2} = \mathcal{H}_{\rm poly}^{(1)},\ldots,\hypospace_{M} = \hypospace_{\rm poly}^{(M-1)}$. 
-We might also mix polynomial maps using maps obtained from  
-Gaussian basis functions (see Section \ref{sec_linbasreg}), 
-with different choices for the variance $\sigma$ and shifts $\mu$ 
-of the Gaussian basis function \eqref{equ_basis_Gaussian}, 
-e.g., $\hypospace_{1} = \mathcal{H}^{(2)}_{\rm Gauss}$ with $\sigma=1$ and $\mu_{1}=1$ and $\mu_{2}=2$, 
+Consider datapoints characterized by a single numeric feature $x\in \mathbb{R}$ and numeric label $y\in \mathbb{R}$. If 
+If we suspect that the relation between feature $x$ and label $y$ is non-linear, we might use 
+polynomial regression which is discussed in Section \ref{sec_polynomial_regression}. Polynomial regression uses 
+the hypothesis space $\hypospace_{\rm poly}^{(\featuredim)}$ with some maximum degree $\featuredim$. 
+Different choices for the maximum degree $\featuredim$ yield a different hypothesis space: $\hypospace_{1} = \mathcal{H}_{\rm poly}^{(0)},\hypospace_{2} = \mathcal{H}_{\rm poly}^{(1)},\ldots,\hypospace_{M} = \hypospace_{\rm poly}^{(M-1)}$. 
+
+Another ML method that learns non-linear hypothesis map is Gaussian basis regression (see Section \ref{sec_linbasreg}). 
+Here, different choices for the variance $\sigma$ and shifts $\mu$ of the Gaussian basis function \eqref{equ_basis_Gaussian} 
+result in different hypothesis spaces. For example, $\hypospace_{1} = \mathcal{H}^{(2)}_{\rm Gauss}$ with $\sigma=1$ and $\mu_{1}=1$ and $\mu_{2}=2$, 
 $\hypospace_{2} = \hypospace^{(2)}_{\rm Gauss}$ with $\sigma = 1/10$, $\mu_{1}=10$, $\mu_{2}= 20$.
 
-A principled approach for choosing a hypothesis space out of a  
-list of candidate spaces $\hypospace_{1},\hypospace_{2},\ldots,\hypospace_{M}$ 
-is as follows: 
+A principled approach for choosing between different candidate models
+$\hypospace_{1},\hypospace_{2},\ldots,\hypospace_{M}$ is to learn and validate, for each 
+hypothesis space, a hypothesis. Then, we choose the hypothesis from those model 
+which resulted in the smallest validation error. 
 \begin{itemize} 
 \item randomly divide (split) the entire dataset $\dataset$ of labeled snapshots into two disjoint subsets 
 $\trainset$ (the ``training set'') and $\valset$ (the ''validation set''): 
@@ -6796,6 +6878,15 @@ $\dataset = \trainset \cup \valset$ (see Figure \ref{fig_split_train_val}).
 obtained when applying the predictor $\hat{h}_{l}$ to the {\bf validation dataset} $\valset$. 
 \item pick the hypothesis space $\hypospace_{l}$ resulting in the smallest validation error $\emperror(\hat{h}_{l}|\valset)$
 \end{itemize} 
+
+Sometimes it might be useful to use different loss functions for the training and 
+the validation of a hypothesis. As an example, consider the methods logistic regression 
+and SVM. Both methods learn a linear hypothesis but using two different loss functions, logistic 
+loss and the hinge loss. We could then compute the validation errors using those two loss functions. 
+However, it might then be difficult to compare these two methods since their validation errors are 
+measured in different loss functions. We could instead compute the validation error for both methods, 
+logistic regression and SVM, using the $0/1$ loss (accuracy). The resulting average loss (accuracy) on the 
+validation set can then be compared directly. 
 
 
 
@@ -8185,9 +8276,9 @@ A practical implementation of Algorithm \ref{alg:kmeans} needs to fix three issu
 \begin{itemize} 
 \item Issue 1: We need to specify a ``tie-breaking strategy'' to handle the case when several different cluster indices 
 $\clusteridx\!\in\!\{1,\ldots,\nrcluster\}$ achieve the minimum value in \eqref{equ_cluster_assign_update}. 
-\item Issue 2: We need to specify how to handle the situation when after a cluster assignment update  \eqref{equ_cluster_assign_update}, 
+\item Issue 2: We need to handle the situation when after a cluster assignment update  \eqref{equ_cluster_assign_update}, 
 there is a cluster $\clusteridx$ with no datapoints associated with it, $|\{ \sampleidx: y^{(\sampleidx)} = \clusteridx \}|=0$. 
-In this case, the cluster means update \eqref{equ_cluster_mean_update} would be not well-defined for the cluster $\clusteridx$. 
+For such a cluster $\clusteridx$, the update \eqref{equ_cluster_mean_update} is not well-defined. 
 \item Issue 3: We need to specify a stopping criterion (``checking convergence''). 
 \end{itemize}
 The following algorithm fixes those three issues in a particular way \cite{Gray1980}.  
@@ -8256,13 +8347,13 @@ in each column depicts the update of cluster means while the
 lower picture shows the update of the cluster assignments 
 during each iteration. 
 
-???? check image??????
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=10cm]{EvolKmeans.jpg}  
+\includegraphics[width=9cm]{EvolKmeans.eps}  
 \vspace*{-6mm}
 \end{center}
-\caption{Evolution of cluster means and cluster assignments within $k$-means.}
+\caption{Evolution of cluster means (large dot and large cross) and cluster assignments during the iterations of 
+	$k$-means.}
 \label{fig:first_iter_kmeans}
 \end{figure}
 

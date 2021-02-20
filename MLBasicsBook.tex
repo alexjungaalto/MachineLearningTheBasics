@@ -2636,7 +2636,9 @@ This suggests to learn a hypothesis $h(\vx)$ by minimizing
 the $0/1$ loss
 \begin{equation}
 \label{equ_def_0_1}
-\loss{(\vx,y)}{h} \defeq \begin{cases} 1 &\mbox{ if } y h(\vx) < 0 \\ 0 & \mbox{ else.} \end{cases}
+\loss{(\vx,y)}{h} \defeq \begin{cases} 1 &\mbox{ if } y \neq \hat{y}  \\ 0 & \mbox{ else,} \end{cases} \mbox{ with } 
+\hat{y} = 1 \mbox{ for }h(\vx) \geq 0\mbox{, and }
+\hat{y} = -1 \mbox{ for }h(\vx) < 0.
 \end{equation} 
 Figure \ref{fig_class_loss} illustrates the $0/1$ loss \eqref{equ_def_0_1} 
 for a datapoint with features $\vx$ and label $y=1$ as a function of 
@@ -2653,14 +2655,12 @@ of such i.i.d.\ random variables,
 \label{equ_0_1_approx_prob}
 (1/\samplesize) \sum_{\sampleidx=1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h} \approx \prob{ y \neq \hat{y} }
 \end{equation} 
-with high probability for sufficiently large sample size $\samplesize$. 
-%The approximation \eqref{equ_0_1_approx_prob} is based on the fact 
-%that the average of a large number of realizations of i.i.d.\ random 
-%variables can be well approximated by their (common) mean or expectation. 
+with high probability for sufficiently large sample size $\samplesize$.
 The precise formulation of the approximation \eqref{equ_0_1_approx_prob} 
 is known as the ``law of large numbers'' \cite[Section 1]{BillingsleyProbMeasure}. 
 We can apply the law of large numbers since the loss values $\loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}$ 
-are realizations of i.i.d.\ random variables. 
+are realizations of i.i.d.\ random variables.  The average $0/1$ loss on the left-hand side 
+of \eqref{equ_0_1_approx_prob} is referred to as the {\bf accuracy} of the hypothesis $h$. 
 
 In view of \eqref{equ_0_1_approx_prob}, the $0/1$ loss seems 
 a very natural choice for assessing the quality of a classifier 
@@ -6322,9 +6322,9 @@ having a vast number $\featuredim$ of features. The effective dimension of the l
 space \eqref{equ_lin_hypospace}, which is used by linear regression, is equal to the number 
 $\featuredim$ of features. Modern technology allows collect a huge number of features about 
 individual datapoints which implies, in turn, that the effective dimension of \eqref{equ_lin_hypospace} 
-is huge. For another example of large hypothesis spaces consider deep learning methods whose 
-hypothesis spaces are constituted by all maps represented by an ANN with billions of 
-tunable weights. 
+is huge. Another example of high-dimensional hypothesis spaces are deep learning methods 
+whose hypothesis spaces are constituted by all maps represented by some ANN with {\bf billions of 
+tunable weights}. 
 
 A high-dimensional hypothesis space is typically very likely to contain a hypothesis that fits perfectly 
 any given training set. Such a hypothesis achieves a very small training error but might 
@@ -6366,17 +6366,11 @@ comparing its training and validation errors (see Figure \ref{fig_bars_val_sel})
 %for this to happen will be discussed in Section \ref{sec_overfitting_sec_6}. 
 
 We can use the validation error not only to detect if a ML method overfits. 
-The validation error can also be used as a performance measure 
+The validation error can also be used as a quality measure 
 for an entire hypothesis space or model. This is similar in spirit to the concept 
 of a loss function that allows to evaluate the quality of a hypothesis $h\!\in\!\hypospace$. 
 Section \ref{sec_modsel} shows how to do model selection based on comparing 
 the validation errors obtained for different candidate models (hypothesis spaces). 
-
-The validation error allows to evaluate the quality of the entire hypothesis 
-space $\hypospace$. In ERM, we chose between different 
-hypotheses based on (average) loss on the training set. Similarly, we 
-choose between different hypothesis spaces based on their validation errors. 
-The resulting model selection strategy is detailed in
 
 Section \ref{sec_gen_linreg} uses a simple probabilistic model for the 
 data to study the relation between training error and the expected loss 
@@ -6387,15 +6381,17 @@ and validation error of a ML method.
 Section \ref{sec_the_bootsrap} presents the {\bf bootstrap} as a simulation-based 
 alternative to the analysis of Section \ref{sec_gen_linreg}. While Section \ref{sec_gen_linreg} 
 assumes a particular probability distribution of datapoints, the bootstrap does 
-not require no detailed assumptions about the data distribution. 
+not require no detailed assumptions about the data distribution. Bootstrap methods 
+allow to analyze statistical fluctuations in the learning process that may arise from 
+using different training sets. The bootstrap allows for a more fine-grained diagnosis 
+of ML methods than by relying only on a training and validation error. 
 
 %Computing validation errors not only allows to detect overfitting and 
 %select between different models (hypothesis spaces). 
-For some ML applications, we might know a benchmark error level for 
-ML methods. Such a benchmark level, which is indicated in Figure \ref{fig_bars_val_sel}, 
+As indicated in Figure \ref{fig_bars_val_sel}, for some ML applications, 
+we might know a benchmark error level for ML methods. Such a benchmark level 
 might be obtained from existing ML methods, human performance levels or 
-from a probabilistic model such as the one used in Section \ref{sec_gen_linreg}.
-
+from a probabilistic model (see Section \ref{sec_gen_linreg}). 
 Section \ref{equ_diagnosis_ML} details how the comparison between training and 
 validation error with some benchmark error level informs possible improvements 
 of the ML method. These improvements might be obtained by collecting more datapoints, 
@@ -6719,6 +6715,7 @@ variance of the actual loss values $\loss{(\vx^{(1)},y^{(1)})}{\hat{h}},\ldots, 
 obtained for the dataset $\dataset$. 
 
 \subsection{$k$-Fold Cross Validation}
+
 Algorithm \ref{alg:validated_ERM} uses the most basic form of 
 splitting a given dataset $\dataset$ into a training and a validation set. Many 
 variations and extensions of this basic splitting approach have been proposed 
@@ -6756,8 +6753,8 @@ e/.style={fill=yellow!10}
 \end{tikzpicture}
 \end{center}
 \caption{Illustration of $k$-fold CV for $k=5$. We evenly partition the entire dataset $\dataset$ into $k=5$ subsets 
-	(or folds) of the same size. We then repeat the validated ERM Algorithm \ref{alg:validated_ERM} for $k=5$ times. 
-    The $\foldidx$th repetition uses the $\foldidx$th fold as validation set and the remaining $k\!-\!1(=4)$ folds as training set.}
+	(or folds) $\dataset_{1},\ldots,\dataset_{5}$. We then repeat the validated ERM Algorithm \ref{alg:validated_ERM} for $k=5$ times. 
+    The $\foldidx$th repetition uses the $\foldidx$th fold $\dataset_{\foldidx}$ as validation set and the remaining $k\!-\!1(=4)$ folds as training set.}
 \label{fig_k_fold_CV}
 \end{figure}
 
@@ -6767,7 +6764,7 @@ e/.style={fill=yellow!10}
 		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
 		\renewcommand{\algorithmicensure}{\textbf{Output:}}
 		\Require   model $\hypospace$, loss function $\mathcal{L}$, dataset $\dataset=\big\{ \big(\vx^{(1)}, y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)}, y^{(\samplesize)}\big) \big\}$; number $k$ of folds
-		\State randomly shuffle the datapoints in $\dataset$ \label{alg_shuffle_step}
+		\State randomly shuffle the datapoints in $\dataset$ \label{alg_shuffle_step_kCV}
 		\State divide the shuffled dataset $\dataset$ into $k$ folds $\dataset_{1},\ldots,\dataset_{k}$ of size $B=\lceil\samplesize/k\rceil$, 
 		\begin{equation}
 		\hspace*{-12mm}\dataset_{1}\!=\!\big\{ \big(\vx^{(1)}, y^{(1)}\big),\ldots, \big(\vx^{(B)}, y^{(B)}\big)\} ,\ldots,\dataset_{k}\!=\!\big\{ \big(\vx^{((k\!-\!1)B+1)}, y^{((k\!-\!1)B+1)}\big),\ldots, \big(\vx^{(\samplesize)}, y^{(\samplesize)}\big)\}
@@ -6778,24 +6775,25 @@ e/.style={fill=yellow!10}
 		\State use rest as the {\bf training set} $\trainset=\dataset \setminus \dataset_{\foldidx}$
 		\State  learn hypothesis $\hat{h}$ via ERM on the training set, 
 		\begin{equation} 
-		\label{equ_def_hat_h_fitting}
+		\label{equ_def_hat_h_fitting_cv}
 		\hat{h}^{(\foldidx)} \defeq \argmin_{h\in \hypospace} \emperror\big(h| \trainset \big)
 		\end{equation} 
 		\State compute {\bf training error}
 		\begin{equation} 
-		\label{equ_def_training_error_val}
-		\trainerror^{(\foldidx)} \defeq \emperror\big(\hat{h}| \trainset \big) = (1/\samplesize_{t}) \sum_{\sampleidx=1}^{\samplesize_{t}} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}. 
+		\label{equ_def_training_error_val_cv}
+		\trainerror^{(\foldidx)} \defeq \emperror\big(\hat{h}| \trainset \big) = (1/\big|\trainset\big|) \sum_{\sampleidx \in \trainset} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h}. 
 		\end{equation} 
 		\State compute {\bf validation error}
 		\begin{equation} 
-		\label{equ_def_training_val_val}
-		\valerror^{(\foldidx)} \defeq \emperror\big(\hat{h}| \valset \big)=   (1/\samplesize_{v}) \sum_{\sampleidx=\samplesize_{t}+1}^{\samplesize} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{\hat{h}}. 
+		\label{equ_def_training_val_val_cv}
+		\valerror^{(\foldidx)} \defeq \emperror\big(\hat{h}| \valset \big)=   (1/\big|\valset\big|) \sum_{\sampleidx \in \valset} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{\hat{h}}. 
 		\end{equation} 
 		\EndFor
 		
 		\State compute average training and validation errors 
 		$$E_{t} \defeq (1/k) \sum_{\foldidx=1}^{k} 	\trainerror^{(\foldidx)}\mbox{, and }E_{v} \defeq (1/k) \sum_{\foldidx=1}^{k} 	\valerror^{(\foldidx)}$$
-		\Ensure learnt hypothesis $\hat{h}^{(\foldidx)}$ for each fold $\foldidx=1,\ldots,k$; average training error $E_{t}$; average validation error $E_{v}$
+		\State pick a learnt hypothesis $\hat{h} \defeq 	\hat{h}^{(\foldidx)}$ for some $\foldidx \in \{1,\ldots,k\}$
+		\Ensure learnt hypothesis $\hat{h}$; average training error $\trainerror$; average validation error $\valerror$
 	\end{algorithmic}
 \end{algorithm}
 
@@ -6839,57 +6837,122 @@ combinations of a hypothesis space or model, loss function and data representati
 While the there might often be a natural choice for the loss function and data representation 
 in a ML application, the right choice for the model is typically less obvious. This chapter shows 
 how to use the validation methods of Section \ref{sec_validate_predictor} to choose 
-between different candidate models $\hypospace_{1},\hypospace_{2},\ldots,\hypospace_{M}$. 
-
-%Chapter \ref{ch_Elements_ML} discussed that the choice of the hypothesis space or model is a design choice. 
-I%t might be not obvious what a good choice for the hypothesis space is. A good strategy is often to try out several 
-%different choices $\hypospace_{1},\hypospace_{2},\ldots,\hypospace_{M}$ for the hypothesis space. 
+between different candidate models. 
 
 Consider datapoints characterized by a single numeric feature $x\in \mathbb{R}$ and numeric label $y\in \mathbb{R}$. If 
 If we suspect that the relation between feature $x$ and label $y$ is non-linear, we might use 
 polynomial regression which is discussed in Section \ref{sec_polynomial_regression}. Polynomial regression uses 
 the hypothesis space $\hypospace_{\rm poly}^{(\featuredim)}$ with some maximum degree $\featuredim$. 
-Different choices for the maximum degree $\featuredim$ yield a different hypothesis space: $\hypospace_{1} = \mathcal{H}_{\rm poly}^{(0)},\hypospace_{2} = \mathcal{H}_{\rm poly}^{(1)},\ldots,\hypospace_{M} = \hypospace_{\rm poly}^{(M-1)}$. 
+Different choices for the maximum degree $\featuredim$ yield a different hypothesis space: $\hypospace^{(1)} = \mathcal{H}_{\rm poly}^{(0)},\hypospace^{(2)} = \mathcal{H}_{\rm poly}^{(1)},\ldots,\hypospace^{(\nrmodels)} = \hypospace_{\rm poly}^{(M-1)}$. 
 
 Another ML method that learns non-linear hypothesis map is Gaussian basis regression (see Section \ref{sec_linbasreg}). 
 Here, different choices for the variance $\sigma$ and shifts $\mu$ of the Gaussian basis function \eqref{equ_basis_Gaussian} 
-result in different hypothesis spaces. For example, $\hypospace_{1} = \mathcal{H}^{(2)}_{\rm Gauss}$ with $\sigma=1$ and $\mu_{1}=1$ and $\mu_{2}=2$, 
-$\hypospace_{2} = \hypospace^{(2)}_{\rm Gauss}$ with $\sigma = 1/10$, $\mu_{1}=10$, $\mu_{2}= 20$.
+result in different hypothesis spaces. For example, $\hypospace^{(1)} = \mathcal{H}^{(2)}_{\rm Gauss}$ with $\sigma=1$ and $\mu_{1}=1$ and $\mu_{2}=2$, $\hypospace^{(2)} = \hypospace^{(2)}_{\rm Gauss}$ with $\sigma = 1/10$, $\mu_{1}=10$, $\mu_{2}= 20$.
 
-A principled approach for choosing between different candidate models
-$\hypospace_{1},\hypospace_{2},\ldots,\hypospace_{M}$ is to learn and validate, for each 
-hypothesis space, a hypothesis. Then, we choose the hypothesis from those model 
-which resulted in the smallest validation error. 
-\begin{itemize} 
-\item randomly divide (split) the entire dataset $\dataset$ of labeled snapshots into two disjoint subsets 
-$\trainset$ (the ``training set'') and $\valset$ (the ''validation set''): 
-$\dataset = \trainset \cup \valset$ (see Figure \ref{fig_split_train_val}). 
-\item for each hypothesis space $\hypospace_{l}$ learn predictor $\hat{h}_{l} \in \hypospace_{l}$ via ERM \eqref{equ_def_ERM_funs} using training data $\trainset$:
-\begin{align} 
-\label{equ_def_hat_h_fitting_sel}
-\hat{h}_{l} & = \argmin_{h \in \hypospace_{l}} \emperror(h| \trainset) \nonumber \\
-& = \argmin_{h \in \hypospace_{l}}  (1/\samplesize_{\rm t}) \sum_{\sampleidx=1}^{\samplesize_{\rm t}} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h} %( y- h(\vx))^2
-\end{align} 
-\item compute the validation error of $\hat{h}_{l}$ 
-\begin{equation} 
-\label{equ_def_training_val_val_modsel}
-\emperror(\hat{h}_{l}|\valset) = (1/\samplesize_{\rm v}) \sum_{\sampleidx=1}^{\samplesize_{\rm v}} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})} {\hat{h}_{l}}  % ( y- \hat{h}(\vx))^2, 
-\end{equation}  
-obtained when applying the predictor $\hat{h}_{l}$ to the {\bf validation dataset} $\valset$. 
-\item pick the hypothesis space $\hypospace_{l}$ resulting in the smallest validation error $\emperror(\hat{h}_{l}|\valset)$
-\end{itemize} 
+Algorithm \ref{alg:model_selection} summarizes a simple method to choose between different candidate models $\hypospace^{(1)},\hypospace^{(2)},\ldots,\hypospace^{(M)}$. The idea is to first learn and validate a hypothesis, 
+separately for each model, using Algorithm \ref{alg:kfoldCV_ERM}. For each model $\hypospace^{(\modelidx)}$, we 
+lean a hypothesis $\hat{h}^{(\modelidx)}$ (via \eqref{equ_def_hat_h_fitting}) and compute its validation error 
+$\valerror^{(\modelidx)}$ \eqref{equ_def_training_val_val}. We then choose the hypothesis $\hat{h}^{(\hat{\modelidx})}$ 
+from those model $\hypospace^{(\hat{\modelidx})}$ which resulted in the smallest validation error $\valerror^{(\hat{\modelidx})} = \min_{\modelidx=1,\ldots,\nrmodels} \valerror^{(\modelidx)}$. 
+
+The above model selection procedure has a very similar structure as ERM. The idea of 
+ERM is to find the hypothesis with a set of different candidates (these candidates form a 
+hypothesis space) based on a quality measure. For a particular hypothesis $h$ we use the (average) 
+loss as a quality measure. Model selection uses the same principle but on a higher level. 
+Instead of choosing or learning a hypothesis within a hypothesis space, we chose or learn 
+a hypothesis space within a set of candidate hypothesis spaces. For a particular hypothesis 
+space $\hypospace$ we the validation error \eqref{equ_def_training_val_val} of the hypothesis 
+$\hat{h} \in \hypospace$ with minimum training error \eqref{equ_def_hat_h_fitting}. 
+
+We have introduced validation techniques as a method to assess the quality of a  
+hypothesis $\hat{h}$ that is learnt using ERM on a training set. The idea was to try out the 
+hypothesis on a validation set which consists of datapoints that have not been 
+used for learning or tuning the hypothesis $\hat{h}$. 
+
+The model selection Algorithm \ref{alg:model_selection} learns a hypothesis $\hat{h}$ not 
+only by using a training set for ERM (see \eqref{equ_def_hat_h_fitting_cv}). We also use the 
+validation set in \eqref{equ_def_training_val_val_cv} to find the best model $\hypospace^{(\hat{\modelidx})}$ (see step \ref{step_pick_optimal_model})
+which contains $\hat{h}$. Since we use the validation set to learn or 
+tune the final hypothesis $\hat{h}$ delivered by Algorithm  \ref{alg:model_selection}, 
+we cannot use the validation error \eqref{equ_def_training_val_val_cv} as a good indicator for the general 
+performance of $\hat{h}$. 
+
+We must try out the final hypothesis $\hat{h}$ on a test set which contains datapoints that have neither 
+been used for ERM nor for validation of the different models $\hypospace^{(\modelidx)}$. This is implemented 
+in the steps \ref{step_construct_test_set_mo_sel} and \ref{step_compute_test_error_mod_selection} of Algorithm \ref{alg:model_selection}. 
+
+
+\begin{algorithm}[htbp]
+	\caption{Model Selection}\label{alg:model_selection}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+		\renewcommand{\algorithmicensure}{\textbf{Output:}}
+		\Require   list of candidate models $\hypospace^{(1)},\ldots,\hypospace^{(\nrmodels)}$, 
+		loss function $\mathcal{L}$, dataset $\dataset=\big\{ \big(\vx^{(1)}, y^{(1)}\big),\ldots,\big(\vx^{(\samplesize)}, y^{(\samplesize)}\big) \big\}$; 
+		number $k$ of folds, test fraction $\rho$
+		\State randomly shuffle the datapoints in $\dataset$ \label{alg_shuffle_step_model-sel}
+		\State determine size $\samplesize' \defeq \lceil \rho \samplesize \rceil$ of test set
+		\State construct {\bf test set} \label{step_construct_test_set_mo_sel}
+		$$\testset= \big\{\big(\vx^{(1)}, y^{(1)}\big),\ldots,\big(\vx^{(\samplesize')}, y^{(\samplesize')}\big) \big\}$$
+		\State construct the set used for training and validation, 
+		$$\dataset^{(\rm trainval)} = \big\{\big(\vx^{(\samplesize'+1)}, y^{(\samplesize'+1)}\big),\ldots,\big(\vx^{(\samplesize)}, y^{(\samplesize)}\big) \big\}$$
+		\For{ model index $\modelidx=1,\ldots,\nrmodels$ }
+		%	\State \texttt{<do stuff>}
+		\State run Algorithm \ref{alg:kfoldCV_ERM} using $\hypospace=\hypospace^{(\modelidx)}$, dataset $\dataset=\dataset^{(\rm trainval)}$, loss $\mathcal{L}$ 
+		and $k$ folds
+		\State Algorithm \ref{alg:kfoldCV_ERM} delivers hypothesis $\hat{h}$ and validation error $\valerror$
+		\State store learnt hypothesis $\hat{h}^{(\modelidx)}\defeq\hat{h}$ and validation error $\valerror^{(\modelidx)}\defeq\valerror$
+	
+		\EndFor
+		
+		\State pick model $\hypospace^{(\hat{\modelidx})}$ with minimum validation error 
+		$\valerror^{(\hat{\modelidx})}\!=\!\min_{\modelidx=1,\ldots,M}\valerror^{(\modelidx)}$ \label{step_pick_optimal_model}
+		
+		\State define optimal hypothesis $\hat{h}= \hat{h}^{(\hat{\modelidx})}$ 
+		
+		\State compute {\bf test error}  \label{step_compute_test_error_mod_selection}
+		\begin{equation} 
+		\label{equ_def_training_error_val}
+		\testerror \defeq \emperror\big(\hat{h}| \testset \big) = (1/\big|\testset\big|) \sum_{\sampleidx \in \testset} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{\hat{h}}. 
+		\end{equation} 
+		
+		
+		\Ensure  hypothesis $\hat{h}$; training error $\trainerror^{(\hat{\modelidx})}$; validation error $\valerror^{(\hat{\modelidx})}$, 
+		test error $\testerror$. 
+	\end{algorithmic}
+\end{algorithm}
+%\begin{itemize} 
+%\item randomly divide (split) the entire dataset $\dataset$ of labeled snapshots into two disjoint subsets 
+%$\trainset$ (the ``training set'') and $\valset$ (the ''validation set''): 
+%$\dataset = \trainset \cup \valset$ (see Figure \ref{fig_split_train_val}). 
+%\item for each hypothesis space $\hypospace_{l}$ learn predictor $\hat{h}_{l} \in \hypospace_{l}$ via ERM \eqref{equ_def_ERM_funs} using training data $\trainset$:
+%\begin{align} 
+%\label{equ_def_hat_h_fitting_sel}
+%\hat{h}_{l} & = \argmin_{h \in \hypospace_{l}} \emperror(h| \trainset) \nonumber \\
+%& = \argmin_{h \in \hypospace_{l}}  (1/\samplesize_{\rm t}) \sum_{\sampleidx=1}^{\samplesize_{\rm t}} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})}{h} %( y- h(\vx))^2
+%\end{align} 
+%\item compute the validation error of $\hat{h}_{l}$ 
+%\begin{equation} 
+%\label{equ_def_training_val_val_modsel}
+%\emperror(\hat{h}_{l}|\valset) = (1/\samplesize_{\rm v}) \sum_{\sampleidx=1}^{\samplesize_{\rm v}} \loss{(\vx^{(\sampleidx)},y^{(\sampleidx)})} {\hat{h}_{l}}  % ( y- \hat{h}(\vx))^2, 
+%\end{equation}  
+%obtained when applying the predictor $\hat{h}_{l}$ to the {\bf validation dataset} $\valset$. 
+%\item pick the hypothesis space $\hypospace_{l}$ resulting in the smallest validation error $\emperror(\hat{h}_{l}|\valset)$
+%\end{itemize} 
 
 Sometimes it might be useful to use different loss functions for the training and 
 the validation of a hypothesis. As an example, consider the methods logistic regression 
-and SVM. Both methods learn a linear hypothesis but using two different loss functions, logistic 
-loss and the hinge loss. We could then compute the validation errors using those two loss functions. 
-However, it might then be difficult to compare these two methods since their validation errors are 
-measured in different loss functions. We could instead compute the validation error for both methods, 
-logistic regression and SVM, using the $0/1$ loss (accuracy). The resulting average loss (accuracy) on the 
-validation set can then be compared directly. 
+and SVM. Both methods learn a linear hypothesis but using two different loss functions, the 
+logistic loss \eqref{equ_log_loss} and the hinge loss \eqref{equ_hinge_loss}, respectively. We then compute the 
+validation errors using those two loss functions. 
+
+It is difficult to compare these two methods since their validation errors are measured in different 
+loss functions, the logistic loss \eqref{equ_log_loss} and the hinge loss \eqref{equ_hinge_loss}, respectively. We could 
+instead compute the validation error for both methods, logistic regression and SVM, using the average $0/1$ 
+loss \eqref{equ_def_0_1} (``accuracy''). The resulting average loss (accuracy) on the validation set can then be compared directly. 
 
 
-
+\newpage
 \section{A Probabilistic Analysis of Generalization} 
 \label{sec_gen_linreg}
 \emph{More Data Beats Clever Algorithms ?; More Data Beats Clever Feature Selection?}
@@ -7454,6 +7517,7 @@ too large relative to the available training data $\dataset$. Examples for large
 are linear maps using a large number features or ANNs using too many neurons. Section \ref{sec_hypo_space} 
 introduced the concept of the effective dimension of a hypothesis space $\hypospace$ which 
 is the maximum number of datapoints that can be perfectly fit by some $h \in \hypospace$. 
+
 Roughly speaking, as soon as the effective dimension of the hypothesis space in \eqref{equ_def_ERM_funs} 
 exceeds the number $\samplesize$ of training data points, we can easily find a hypothesis that 
 perfectly fits the training data but might be of no use outside the training data. 

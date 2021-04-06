@@ -1,8 +1,17 @@
-# Book Draft for "Machine Learning. The Basics" 
+# Working Draft for the Textbook "Machine Learning. The Basics" 
 
-If you found this book useful for your blog post, research article or product, I would be grateful if you would cite this book. You can cite the book like this:
+This book portrays machine learning as combining three main components: data, a model and a loss. Any ML method is obtained by combining particular design choices for the data representation, the model and the loss. If you find this book useful for your blog post, research article or product, I would be grateful if you would cite this book. You can cite the book like this:
 
-Jung, Alexander. "Machine Learning. The Basics.", 2021. https://github.com/alexjungaalto/MachineLearningTheBasics.
+<pre><code>A. Jung, "Machine Learning: The Basics.", 2021. available online at https://alexjungaalto.github.io/MLBasicsBook.pdf.</code></pre>
+
+<pre><code>@book{jung2021,
+  title      = {Machine Learning: The Basics},
+  author     = {Alexander Jung},
+  note       = {\url{https://alexjungaalto.github.io/MLBasicsBook.pdf}},
+  year       = {2021},
+  subtitle   = {Machine Learning: The Basics.}
+}</code></pre>
+
 
 ## License
 
